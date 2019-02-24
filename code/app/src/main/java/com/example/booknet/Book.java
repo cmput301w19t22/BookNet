@@ -2,6 +2,7 @@ package com.example.booknet;
 
 public class Book {
     private String title, author, description;
+    private int ownerID, holderID;
 
     // Constructors
     public void Book(String title, String author, String description) {
@@ -44,6 +45,6 @@ public class Book {
         return this.author;
     }
     public String getDescription() {
-        return this.author;
+        return this.description;
     }
 }

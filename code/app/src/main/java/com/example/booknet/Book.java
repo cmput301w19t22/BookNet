@@ -5,6 +5,13 @@ public class Book {
     private int ownerID, holderID;
 
     // Constructors
+    public Book(String title, String author, String description, int ownerID, int holderID) {
+        this.title = title;
+        this.author = author;
+        this.description = description;
+        this.ownerID = ownerID;
+        this.holderID = holderID;
+    }
     public void Book(String title, String author, String description) {
         this.title = title;
         this.author = author;
@@ -36,6 +43,12 @@ public class Book {
     public void setDescription(String description) {
         this.description = description;
     }
+    public void setOwnerID(int ownerID) {
+        this.ownerID = ownerID;
+    }
+    public void setHolderID(int holderID) {
+        this.holderID = holderID;
+    }
 
     // Basic Getters
     public String getTitle() {
@@ -46,5 +59,11 @@ public class Book {
     }
     public String getDescription() {
         return this.description;
+    }
+    public int getOwnerID() {
+        return ownerID;
+    }
+    public int getHolderID() {
+        return holderID;
     }
 }

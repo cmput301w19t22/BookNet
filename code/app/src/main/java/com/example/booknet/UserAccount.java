@@ -10,7 +10,7 @@ public class UserAccount {
     private BookLibrary ownedLibrary;
     private BookLibrary requestedBooks;
 
-    // Basic Constructor
+    //Constructor
     public UserAccount(String username, String accountPassword) {
         this.username = username;
         this.accountPassword = accountPassword;
@@ -68,5 +68,22 @@ public class UserAccount {
         this.ownedLibrary = library;
     }
     //#endregion
+
+    public void addBookToOwned(BookListing book) {
+        //todo: implement
+    }
+
+    public void removeBookFromOwned(BookListing listing) {
+        //todo: implement
+    }
+
+    public void addListingToRequested(BookListing listing) {
+        //todo: implement
+    }
+
+    public void removeListingFromRequested(BookListing listing) {
+        //todo: implement
+    }
+
 
 }

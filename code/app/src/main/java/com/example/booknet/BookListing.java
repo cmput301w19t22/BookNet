@@ -13,16 +13,16 @@ public class BookListing {
 
     private Book book;
     private Status status;
-    private String ownerName;
-    private ArrayList<String> requests;
-    private String borrowerName;
+    private UserAccount ownerName;
+    private ArrayList<UserAccount> requests;
+    private UserAccount borrowerName;
     private Location geoLocation;
 
-    public BookListing(Book book, String ownerName) {
+    public BookListing(Book book, UserAccount ownerName) {
         this.book = book;
         this.ownerName = ownerName;
         this.status = Status.Available;
-        this.requests = new ArrayList<String>();
+        this.requests = new ArrayList<UserAccount>();
     }
 
     //#region Getters Setters
@@ -34,15 +34,15 @@ public class BookListing {
         return status;
     }
 
-    public String getOwnerName() {
+    public UserAccount getOwnerName() {
         return ownerName;
     }
 
-    public ArrayList<String> getRequesterNames() {
+    public ArrayList<UserAccount> getRequesters() {
         return requests;
     }
 
-    public String getBorrowerName() {
+    public UserAccount getBorrowerName() {
         return borrowerName;
     }
 

@@ -1,7 +1,5 @@
 package com.example.booknet;
 
-import android.location.Location;
-
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -18,7 +16,8 @@ public class BookListingTest {
     @Test
     public void Constructor() {
         Book book = new Book("title", "author", "description");
-        BookListing listing = new BookListing(book, "owner");
+        UserAccount owner = new UserAccount("owner", "password");
+        BookListing listing = new BookListing(book, owner);
 
         assertEquals(book, listing.getBook());
         assertEquals("owner", listing.getOwnerName());
@@ -27,11 +26,12 @@ public class BookListingTest {
     @Test
     public void AddRequest() {
         Book book = new Book("title", "author", "description");
-        BookListing listing = new BookListing(book, "owner");
+        UserAccount owner = new UserAccount("owner", "password");
+        BookListing listing = new BookListing(book, owner);
 
         listing.addRequest("requester1");
 
-        ArrayList<String> requesters = listing.getRequesterNames();
+        ArrayList<UserAccount> requesters = listing.getRequesters();
 
         assertTrue("Request Added", requesters.contains("requester1"));
 
@@ -41,14 +41,15 @@ public class BookListingTest {
     @Test
     public void AcceptRequest() {
         Book book = new Book("title", "author", "description");
-        BookListing listing = new BookListing(book, "owner");
+        UserAccount owner = new UserAccount("owner", "password");
+        BookListing listing = new BookListing(book, owner);
 
         listing.addRequest("requester1");
         listing.addRequest("requester2");
 
         listing.acceptRequest("requester1");
 
-        assertTrue(listing.getRequesterNames().size()<=1);
+        assertTrue(listing.getRequesters().size()<=1);
         assertEquals("requester1", listing.getBorrowerName());
 
         assertEquals(BookListing.Status.Accepted, listing.getStatus());
@@ -57,7 +58,8 @@ public class BookListingTest {
     @Test
     public void DenyRequest() {
         Book book = new Book("title", "author", "description");
-        BookListing listing = new BookListing(book, "owner");
+        UserAccount owner = new UserAccount("owner", "password");
+        BookListing listing = new BookListing(book, owner);
 
         listing.addRequest("requester1");
         listing.addRequest("requester2");
@@ -65,7 +67,7 @@ public class BookListingTest {
         listing.denyRequest("requester1");
 
         //Check removed from requesters
-        ArrayList<String> requesters = listing.getRequesterNames();
+        ArrayList<UserAccount> requesters = listing.getRequesters();
         assertFalse("Request Denied", requesters.contains("requester1"));
 
         //Still one request left
@@ -79,7 +81,8 @@ public class BookListingTest {
     @Test
     public void BookBorrowed() {
         Book book = new Book("title", "author", "description");
-        BookListing listing = new BookListing(book, "owner");
+        UserAccount owner = new UserAccount("owner", "password");
+        BookListing listing = new BookListing(book, owner);
 
         listing.addRequest("requester1");
         listing.addRequest("requester2");
@@ -88,14 +91,15 @@ public class BookListingTest {
         listing.bookBorrowed();
 
         assertEquals("requester1", listing.getBorrowerName());
-        assertTrue(listing.getRequesterNames().isEmpty());
+        assertTrue(listing.getRequesters().isEmpty());
         assertEquals(BookListing.Status.Borrowed, listing.getStatus());
     }
 
     @Test
     public void BookReturned() {
         Book book = new Book("title", "author", "description");
-        BookListing listing = new BookListing(book, "owner");
+        UserAccount owner = new UserAccount("owner", "password");
+        BookListing listing = new BookListing(book, owner);
 
         listing.addRequest("requester1");
         listing.addRequest("requester2");
@@ -111,9 +115,11 @@ public class BookListingTest {
     @Test
     public void SetGeoLocation(){
         Book book = new Book("title", "author", "description");
-        BookListing listing = new BookListing(book, "owner");
+        UserAccount owner = new UserAccount("owner", "password");
+        BookListing listing = new BookListing(book, owner);
 
         //listing.setGeoLocation(new Location());
+        //todo: how to get location?
 
         assertNotNull(listing.getGeoLocation());
     }

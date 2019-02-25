@@ -14,14 +14,16 @@ public class BookLibrary {
         return books;
     }
 
-    public void addBook(BookListing bookListing) {
+    public void addBookListing(BookListing bookListing) {
         this.books.add(bookListing);
     }
 
-    public void removeBook(BookListing bookListing) {
+    public void removeBookListing(BookListing bookListing) {
         this.books.remove(bookListing);
     }
 
-
+    public boolean containsListingFor(Book book) {
+        return false;
+    }
 
 }

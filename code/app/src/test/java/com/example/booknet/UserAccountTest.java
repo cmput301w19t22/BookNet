@@ -7,7 +7,6 @@ import java.util.ArrayList;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 public class UserAccountTest {
@@ -44,7 +43,65 @@ public class UserAccountTest {
 
         //Reviews
         ArrayList<Review> reviews = new ArrayList<Review>();
-        reviews.add(new Review(user));
+        UserAccount user2 = new UserAccount("user2", "password");
+        reviews.add(new Review(user, user2, 4, "review1"));
+        user.setReviews(reviews);
+        assertEquals(reviews, user.getReviews());
     }
 
+    @Test
+    public void AddBookToOwned() {
+        UserAccount user = new UserAccount("user1", "password");
+        Book book = new Book("title", "author", "description");
+        BookListing listing = new BookListing(book, user);
+
+        user.addBookToOwned(listing);
+
+        BookLibrary owned = user.getOwnedLibrary();
+        assertTrue(owned.containsListingFor(book));
+    }
+
+    @Test
+    public void RemoveBookFromOwned() {
+        UserAccount user = new UserAccount("user1", "password");
+        Book book = new Book("title", "author", "description");
+        BookListing listing = new BookListing(book, user);
+
+        user.addBookToOwned(listing);
+        BookLibrary owned = user.getOwnedLibrary();
+        assertTrue(owned.containsListingFor(book));
+
+        user.removeBookFromOwned(listing);
+        owned = user.getOwnedLibrary();
+        assertFalse(owned.containsListingFor(book));
+    }
+
+    @Test
+    public void AddListingToRequested() {
+        UserAccount user = new UserAccount("user1", "password");
+        UserAccount owner = new UserAccount("notMe", "password");
+        Book book = new Book("title", "author", "description");
+        BookListing listing = new BookListing(book, owner);
+
+        user.addListingToRequested(listing);
+
+        BookLibrary requests = user.getRequestedBooks();
+        assertTrue(requests.containsListingFor(book));
+    }
+
+    @Test
+    public void RemoveListingFromOwned() {
+        UserAccount user = new UserAccount("user1", "password");
+        UserAccount owner = new UserAccount("notMe", "password");
+        Book book = new Book("title", "author", "description");
+        BookListing listing = new BookListing(book, owner);
+
+        user.addListingToRequested(listing);
+        BookLibrary requests = user.getRequestedBooks();
+        assertTrue(requests.containsListingFor(book));
+
+        user.removeListingFromRequested(listing);
+        requests = user.getOwnedLibrary();
+        assertFalse(requests.containsListingFor(book));
+    }
 }

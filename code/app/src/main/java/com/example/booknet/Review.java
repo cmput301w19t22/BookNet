@@ -52,4 +52,11 @@ public class Review {
     public void setMessage(String message) {
         this.message = message;
     }
+
+
+    public static void editReview(UserAccount reviewerAccount,
+                                    UserAccount reviewedAccount,
+                                    int score, String message){
+        //TODO: implement
+    }
 }

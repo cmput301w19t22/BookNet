@@ -3,50 +3,70 @@ package com.example.booknet;
 import java.util.ArrayList;
 
 public class UserAccount {
-    private int accountID;
+    private String username;
     private String accountPassword;
+    private UserProfile profile;
     private ArrayList<Review> reviews;
-    private ArrayList<Book> ownedBooks;
-    private ArrayList<Book> requestedBooks;
+    private BookLibrary ownedLibrary;
+    private BookLibrary requestedBooks;
 
     // Basic Constructor
-    public void UserAccount(int accountID, String accountPassword) {
-        this.accountID = accountID;
+    public UserAccount(String username, String accountPassword) {
+        this.username = username;
         this.accountPassword = accountPassword;
         this.reviews = new ArrayList<Review>();
-        this.ownedBooks = new ArrayList<Book>();
-        this.requestedBooks = new ArrayList<Book>();
+        this.ownedLibrary = new BookLibrary();
+        this.requestedBooks = new BookLibrary();
     }
 
-    // Basic Getters and Setters
-    public int getAccountID() {
-        return accountID;
+    //#region Getters and Setters
+    public String getUsername() {
+        return username;
     }
-    public void setAccountID(int accountID) {
-        this.accountID = accountID;
+
+    public void setUsername(String username) {
+        this.username = username;
     }
+
     public String getAccountPassword() {
         return accountPassword;
     }
+
     public void setAccountPassword(String accountPassword) {
         this.accountPassword = accountPassword;
     }
+
     public ArrayList<Review> getReviews() {
         return reviews;
     }
+
     public void setReviews(ArrayList<Review> reviews) {
         this.reviews = reviews;
     }
-    public ArrayList<Book> getOwnedBooks() {
-        return ownedBooks;
-    }
-    public void setOwnedBooks(ArrayList<Book> ownedBooks) {
-        this.ownedBooks = ownedBooks;
-    }
-    public ArrayList<Book> getRequestedBooks() {
+
+    public BookLibrary getRequestedBooks() {
         return requestedBooks;
     }
-    public void setRequestedBooks(ArrayList<Book> requestedBooks) {
+
+    public void setRequestedBooks(BookLibrary requestedBooks) {
         this.requestedBooks = requestedBooks;
     }
+
+    public UserProfile getProfile() {
+        return profile;
+    }
+
+    public void setProfile(UserProfile profile) {
+        this.profile = profile;
+    }
+
+    public BookLibrary getOwnedLibrary() {
+        return ownedLibrary;
+    }
+
+    public void setOwnedLibrary(BookLibrary library) {
+        this.ownedLibrary = library;
+    }
+    //#endregion
+
 }

@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="32b5b2a8-e355-4036-9265-4b823239a79e" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/booknet/Book.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/booknet/Book.java" afterDir="false" />
-    </list>
+    <list default="true" id="32b5b2a8-e355-4036-9265-4b823239a79e" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

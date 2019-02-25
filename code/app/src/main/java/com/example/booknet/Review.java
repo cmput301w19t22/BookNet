@@ -6,28 +6,15 @@ public class Review {
     private int score;
     private String message;
 
-    // Constructors
+    // Constructor
     public Review(UserAccount reviewerAccount, UserAccount reviewedAccount, int score, String message) {
         this.reviewerAccount = reviewerAccount;
         this.reviewedAccount = reviewedAccount;
         this.score = score;
         this.message = message;
     }
-    public Review(UserAccount reviewerAccount, UserAccount reviewedAccount, int score) {
-        this.reviewerAccount = reviewerAccount;
-        this.reviewedAccount = reviewedAccount;
-        this.score = score;
-        this.message = "";
-    }
-    public Review(UserAccount reviewerAccount, UserAccount reviewedAccount) {
-        this.reviewerAccount = reviewerAccount;
-        this.reviewedAccount = reviewedAccount;
-    }
-    public Review(UserAccount reviewerAccount) {
-        this.reviewerAccount = reviewerAccount;
-    }
 
-    // Basic Getters and Setters
+    //#region Getters and Setters
     public UserAccount getReviewerAccount() {
         return reviewerAccount;
     }
@@ -53,6 +40,7 @@ public class Review {
         this.message = message;
     }
 
+    //#endregion
 
     public static void editReview(UserAccount reviewerAccount,
                                     UserAccount reviewedAccount,

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ListingViewActivity">
+
+    <ImageView
+        android:id="@+id/bookPhoto"
+        android:layout_width="128dp"
+        android:layout_height="128dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="395dp"
+        android:layout_marginRight="395dp"
+        android:layout_marginBottom="715dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@mipmap/ic_launcher" />
+
+    <TextView
+        android:id="@+id/bookTitleLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginTop="8dp"
+        android:text="[Book Title]"
+        android:textSize="24sp"
+        app:layout_constraintStart_toEndOf="@+id/bookPhoto"
+        app:layout_constraintTop_toTopOf="@+id/bookPhoto" />
+
+    <TextView
+        android:id="@+id/bookAuthorLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:text="[Author]"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="@+id/bookTitleLabel"
+        app:layout_constraintTop_toBottomOf="@+id/bookTitleLabel" />
+
+    <TextView
+        android:id="@+id/bookDescriptionLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:text="[Description]"
+        app:layout_constraintStart_toStartOf="@+id/bookTitleLabel"
+        app:layout_constraintTop_toBottomOf="@+id/isbnLabel" />
+
+    <TextView
+        android:id="@+id/isbnLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:text="[ISBN]"
+        app:layout_constraintStart_toStartOf="@+id/bookTitleLabel"
+        app:layout_constraintTop_toBottomOf="@+id/bookAuthorLabel" />
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="395dp"
+        android:layout_height="1dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:background="?android:attr/listDivider"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/bookPhoto" />
+
+</android.support.constraint.ConstraintLayout>

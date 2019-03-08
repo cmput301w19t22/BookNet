@@ -7,6 +7,7 @@
     tools:context=".OwnedLibraryActivity">
 
     <android.support.v7.widget.RecyclerView
+        android:id="@+id/bookList"
         android:layout_width="395dp"
         android:layout_height="0dp"
         android:layout_marginStart="16dp"
@@ -24,7 +25,7 @@
         android:id="@+id/addBookButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Button"
+        android:text="Add Book"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -33,7 +34,7 @@
         android:id="@+id/debugLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="owned books"
+        android:text="Owned Books"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 </android.support.constraint.ConstraintLayout>

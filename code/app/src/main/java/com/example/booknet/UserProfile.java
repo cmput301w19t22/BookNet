@@ -1,6 +1,8 @@
 package com.example.booknet;
 
-public class UserProfile {
+import java.io.Serializable;
+
+public class UserProfile implements Serializable {
     private String name;
     private String email;
     private String phoneNumber;

@@ -1,15 +1,19 @@
 package com.example.booknet;
 
-public class Book {
+import java.io.Serializable;
+
+public class Book implements Serializable {
     private String title;
     private String author;
     private String description;
+    private String isbn;
 
     // Constructors
-    public Book(String title, String author, String description) {
+    public Book(String title, String author, String description, String isbn) {
         this.title = title;
         this.author = author;
         this.description = description;
+        this.isbn = isbn;
     }
 
     public Book() {
@@ -31,6 +35,10 @@ public class Book {
         return this.description;
     }
 
+    public String getIsbn() {
+        return isbn;
+    }
+
     public void setTitle(String title) {
         this.title = title;
     }
@@ -42,5 +50,10 @@ public class Book {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    public void setIsbn(String isbn) {
+        this.isbn = isbn;
+    }
+
     //#endregion
 }

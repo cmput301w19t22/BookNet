@@ -1,8 +1,9 @@
 package com.example.booknet;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class BookLibrary {
+public class BookLibrary implements Serializable {
 
     private ArrayList<BookListing> books;
 
@@ -20,6 +21,10 @@ public class BookLibrary {
 
     public void removeBookListing(BookListing bookListing) {
         this.books.remove(bookListing);
+    }
+
+    public int size(){
+        return books.size();
     }
 
     public boolean containsListingFor(Book book) {

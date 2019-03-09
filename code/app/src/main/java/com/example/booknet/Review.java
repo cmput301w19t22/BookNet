@@ -1,6 +1,8 @@
 package com.example.booknet;
 
-public class Review {
+import java.io.Serializable;
+
+public class Review implements Serializable {
     private UserAccount reviewerAccount;
     private UserAccount reviewedAccount;
     private int score;

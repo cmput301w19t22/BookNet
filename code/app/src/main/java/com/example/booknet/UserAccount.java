@@ -1,12 +1,14 @@
 package com.example.booknet;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class UserAccount {
+public class UserAccount implements Serializable {
     private String username;
     private String accountPassword;
     private UserProfile profile;
     private ArrayList<Review> reviews;
+    private float reviewScore;
     private BookLibrary ownedLibrary;
     private BookLibrary requestedBooks;
 
@@ -68,6 +70,15 @@ public class UserAccount {
         this.ownedLibrary = library;
     }
     //#endregion
+
+    /**
+     * Gets the user's rating in 1 to 5 stars.
+     * @return A float of the user rating
+     */
+    public float getRatingScore(){
+        //todo implement
+        return 5;
+    }
 
     public void addBookToOwned(BookListing book) {
         //todo: implement

@@ -2,13 +2,29 @@ package com.example.booknet;
 
 import android.location.Location;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 
-public class BookListing {
+public class BookListing implements Serializable {
 
     public enum Status {
-        Available, Requested, Accepted, Borrowed
+        Available, Requested, Accepted, Borrowed;
+
+        /**
+         * Returns the status as a text string.
+         * @return
+         */
+        @Override
+        public String toString() {
+            switch (this){
+                case Available: return "Available";
+                case Requested: return "Requested";
+                case Accepted: return "Accepted";
+                case Borrowed: return "Borrowed";
+            }
+            return super.toString();
+        }
     }
 
     private Book book;
@@ -53,6 +69,7 @@ public class BookListing {
     public void setGeoLocation(Location location) {
         this.geoLocation = location;
     }
+
     //#endregion
 
     //#region Methods

@@ -37,8 +37,6 @@
         android:id="@+id/bookAuthorLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
         android:text="[Author]"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="@+id/bookTitleLabel"
@@ -48,8 +46,6 @@
         android:id="@+id/isbnLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
         android:text="[ISBN]"
         app:layout_constraintStart_toStartOf="@+id/bookTitleLabel"
         app:layout_constraintTop_toBottomOf="@+id/bookAuthorLabel" />
@@ -61,8 +57,8 @@
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:text="[OwnerName]"
-        android:textSize="18sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/statusLabel"
+        android:textSize="14sp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/ownedLabel"
         app:layout_constraintStart_toEndOf="@+id/statusLabel" />
 
     <TextView
@@ -71,9 +67,18 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginBottom="8dp"
         android:text="[Status]"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="@+id/bookThumbnail"
+        app:layout_constraintStart_toEndOf="@+id/bookThumbnail" />
+
+    <TextView
+        android:id="@+id/ownedLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:text="Owned by: "
+        app:layout_constraintBottom_toTopOf="@+id/statusLabel"
         app:layout_constraintStart_toEndOf="@+id/bookThumbnail" />
 </android.support.constraint.ConstraintLayout>

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ListingViewActivity">
+    tools:context=".OwnListingViewActivity">
 
     <ImageView
         android:id="@+id/bookThumbnail"
@@ -84,18 +84,19 @@
         android:layout_marginLeft="8dp"
         android:text="[OwnerName]"
         android:textSize="18sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/ownerProfileButton"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:visibility="gone"
+        app:layout_constraintBaseline_toBaselineOf="@+id/statusLabel2"
+        app:layout_constraintStart_toEndOf="@+id/statusLabel2" />
 
     <TextView
         android:id="@+id/statusLabel2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
         android:text="[Status]"
         android:textSize="18sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/requestButton"
+        app:layout_constraintBaseline_toBaselineOf="@+id/viewRequestsButton"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
@@ -105,9 +106,9 @@
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         android:text="Send Request"
-        android:visibility="visible"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider" />
+        android:visibility="gone"
+        app:layout_constraintBaseline_toBaselineOf="@+id/statusLabel2"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <Button
         android:id="@+id/viewRequestsButton"
@@ -116,16 +117,14 @@
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         android:text="View Requests"
-        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider3" />
+        app:layout_constraintTop_toBottomOf="@+id/divider" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/editPhotoButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:clickable="true"
-        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/bookThumbnail"
         app:layout_constraintEnd_toEndOf="@+id/bookThumbnail"
         app:srcCompat="@android:drawable/ic_menu_edit" />
@@ -134,12 +133,13 @@
         android:id="@+id/deleteButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         android:text="Delete Listing"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/viewRequestsButton" />
+        app:layout_constraintTop_toBottomOf="@+id/divider3" />
 
     <View
         android:id="@+id/divider3"
@@ -147,22 +147,12 @@
         android:layout_height="1dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:background="?android:attr/listDivider"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/requestButton" />
-
-    <Button
-        android:id="@+id/ownerProfileButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:text="View Profile"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider3" />
+        app:layout_constraintTop_toBottomOf="@+id/statusLabel2" />
 
 </android.support.constraint.ConstraintLayout>

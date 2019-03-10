@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 public class UserProfileTest {
     @Test
     public void Constructors(){
+
         UserProfile user = new UserProfile("name","email@site.com","555-555-5555");
 
         assertEquals("name",user.getName());

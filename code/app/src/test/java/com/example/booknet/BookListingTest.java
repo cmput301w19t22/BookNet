@@ -15,7 +15,7 @@ public class BookListingTest {
 
     @Test
     public void Constructor() {
-        Book book = new Book("title", "author", "description");
+        Book book = new Book("title", "author", "description", "1234567890");
         UserAccount owner = new UserAccount("owner", "password");
         BookListing listing = new BookListing(book, owner);
 
@@ -25,7 +25,7 @@ public class BookListingTest {
 
     @Test
     public void AddRequest() {
-        Book book = new Book("title", "author", "description");
+        Book book = new Book("title", "author", "description", "1234567890");
         UserAccount owner = new UserAccount("owner", "password");
         BookListing listing = new BookListing(book, owner);
 
@@ -40,7 +40,7 @@ public class BookListingTest {
 
     @Test
     public void AcceptRequest() {
-        Book book = new Book("title", "author", "description");
+        Book book = new Book("title", "author", "description", "1234567890");
         UserAccount owner = new UserAccount("owner", "password");
         BookListing listing = new BookListing(book, owner);
 
@@ -57,7 +57,7 @@ public class BookListingTest {
 
     @Test
     public void DenyRequest() {
-        Book book = new Book("title", "author", "description");
+        Book book = new Book("title", "author", "description", "1234567890");
         UserAccount owner = new UserAccount("owner", "password");
         BookListing listing = new BookListing(book, owner);
 
@@ -80,7 +80,7 @@ public class BookListingTest {
 
     @Test
     public void BookBorrowed() {
-        Book book = new Book("title", "author", "description");
+        Book book = new Book("title", "author", "description", "1234567890");
         UserAccount owner = new UserAccount("owner", "password");
         BookListing listing = new BookListing(book, owner);
 
@@ -97,7 +97,7 @@ public class BookListingTest {
 
     @Test
     public void BookReturned() {
-        Book book = new Book("title", "author", "description");
+        Book book = new Book("title", "author", "description", "1234567890");
         UserAccount owner = new UserAccount("owner", "password");
         BookListing listing = new BookListing(book, owner);
 
@@ -114,7 +114,7 @@ public class BookListingTest {
 
     @Test
     public void SetGeoLocation(){
-        Book book = new Book("title", "author", "description");
+        Book book = new Book("title", "author", "description", "1234567890");
         UserAccount owner = new UserAccount("owner", "password");
         BookListing listing = new BookListing(book, owner);
 

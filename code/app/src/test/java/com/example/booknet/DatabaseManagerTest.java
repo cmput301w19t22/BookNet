@@ -26,8 +26,8 @@ public class DatabaseManagerTest {
         DatabaseManager databaseManager = new DatabaseManager();
 
         UserAccount user = new UserAccount("testuser", "debug");
-        Book book = new Book("title", "author", "description");
-        BookListing listing = new BookListing(book, "testuser");
+        Book book = new Book("title", "author", "description", "1234567890");
+        BookListing listing = new BookListing(book, user);
 
         databaseManager.writeBookListing(listing);
 
@@ -39,7 +39,7 @@ public class DatabaseManagerTest {
         DatabaseManager databaseManager = new DatabaseManager();
 
         UserAccount user = new UserAccount("testuser", "debug");
-        Book book = new Book("title", "author", "description");
+        Book book = new Book("title", "author", "description", "1234567890");
 
         databaseManager.writeBookInfo(book);
 
@@ -52,8 +52,8 @@ public class DatabaseManagerTest {
 
         UserAccount user1 = new UserAccount("testuser", "debug");
         UserAccount user2 = new UserAccount("testuser2", "debug");
-        Book book = new Book("title", "author", "description");
-        BookListing listing = new BookListing(book, "testuser");
+        Book book = new Book("title", "author", "description", "1234567890");
+        BookListing listing = new BookListing(book, user2);
 
         Review review = new Review(user1, user2, 4, "test");
 
@@ -82,7 +82,7 @@ public class DatabaseManagerTest {
         DatabaseManager databaseManager = new DatabaseManager();
 
         //Add a book
-        Book book = new Book("title", "author", "description");
+        Book book = new Book("title", "author", "description", "1234567890");
         databaseManager.writeBookInfo(book);
 
         //Read the book
@@ -114,8 +114,9 @@ public class DatabaseManagerTest {
         DatabaseManager databaseManager = new DatabaseManager();
 
         //Add a listing
-        Book book = new Book("title", "author", "description");
-        BookListing listing = new BookListing(book, "testuser");
+        UserAccount user1 = new UserAccount("testuser", "debug");
+        Book book = new Book("title", "author", "description","1234567890");
+        BookListing listing = new BookListing(book, user1);
         databaseManager.writeBookListing(listing);
 
         //Read the listing back
@@ -131,8 +132,9 @@ public class DatabaseManagerTest {
         DatabaseManager databaseManager = new DatabaseManager();
 
         //Add a listing
-        Book book = new Book("title", "author", "description");
-        BookListing listing = new BookListing(book, "testuser2");
+        UserAccount user1 = new UserAccount("testuser", "debug");
+        Book book = new Book("title", "author", "description","1234567890");
+        BookListing listing = new BookListing(book, user1);
         listing.addRequest("testuser");
         databaseManager.writeBookListing(listing);
 

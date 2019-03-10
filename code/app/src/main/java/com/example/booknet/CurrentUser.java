@@ -21,7 +21,9 @@ public class CurrentUser {
 
     public void Logout(){}
 
-
+    public UserAccount getUserAccount() {
+        return account;
+    }
 
     public void requestAddBook(Book book) {
         BookListing newListing = new BookListing(book, account);

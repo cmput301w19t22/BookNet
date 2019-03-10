@@ -7,6 +7,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.MenuInflater;
 import android.widget.Spinner;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
 
 /**
@@ -32,15 +38,31 @@ public class BookSearchActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_search);
 
-
         //todo get real search results
         //temp fake results
         bookListings=new ArrayList<>();
-        Book b1 = new Book("Title 1","Author 1","","1234567890");
+
+        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference("BookListings");
+
+        // Attach a listener to read the data at our posts reference
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                BookListing bookListing = dataSnapshot.getValue(BookListing.class);
+                System.out.println(bookListing);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                System.out.println("The read failed: " + databaseError.getCode());
+            }
+        });
+
+        /*Book b1 = new Book("Title 1","Author 1","","1234567890");
         Book b2 = new Book("Title 2","Author 2","","1234567890");
         UserAccount u1 = new UserAccount("debug","debug");
         bookListings.add(new BookListing(b1,u1));
-        bookListings.add(new BookListing(b2,u1));
+        bookListings.add(new BookListing(b2,u1));*/
 
         //Setup RecyclerView
         searchResults = findViewById(R.id.searchResults);

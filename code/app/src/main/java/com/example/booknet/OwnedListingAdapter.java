@@ -24,7 +24,6 @@ public class OwnedListingAdapter extends RecyclerView.Adapter<OwnedListingAdapte
     //The BookLibrary to display
     private BookLibrary data;
 
-
     //The activity this adapter was created from
     private AppCompatActivity sourceActivity;
 

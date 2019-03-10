@@ -9,7 +9,6 @@ import java.util.ArrayList;
 public class BookLibrary implements Serializable {
 
     private ArrayList<BookListing> books;
-    private FirebaseDatabase database;
 
     public BookLibrary() {
         this.books = new ArrayList<BookListing>();

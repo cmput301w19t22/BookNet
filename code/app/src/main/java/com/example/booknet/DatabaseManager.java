@@ -1,5 +1,6 @@
 package com.example.booknet;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -31,9 +32,31 @@ public class DatabaseManager {
         //todo: implement
     }
 
+    public void writeData(UserAccount userAccount){
+        //todo: implement
+    }
 
+    public void writeLibraryListings(BookLibrary bookLibrary){
+        //todo: implement
+    }
 
     //#endregion
+
+    public void removeBookListing(BookListing bookListing){
+        //todo: implement
+    }
+
+    public void setBookListingStatus(BookListing bookListing, BookListing.Status status){
+        //todo: implement
+    }
+
+    public void addRequestToListing(BookListing bookListing, UserAccount requester){
+        //todo: implement
+    }
+
+    public void removeRequestFromListing(BookListing bookListing, UserAccount requester){
+        //todo: implement
+    }
 
     //#region Reading From Database
     public UserAccount readUserAccount(String username){
@@ -42,6 +65,11 @@ public class DatabaseManager {
     }
 
     public Book readBookInfo(String isbn){
+        //todo: implement
+        return null;
+    }
+
+    public ArrayList<BookListing> readAllBookListings(){
         //todo: implement
         return null;
     }

@@ -55,7 +55,16 @@ public class BookLibrary implements Serializable {
     }
 
     public boolean containsListingFor(Book book) {
-        return false;
+
+        boolean hasListing = false;
+
+        for(BookListing bookListing : books){
+            if(bookListing.getBook() == book){
+                hasListing = true;
+            }
+        }
+
+        return hasListing;
     }
 
 }

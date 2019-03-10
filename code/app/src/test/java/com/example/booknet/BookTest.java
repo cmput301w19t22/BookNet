@@ -7,13 +7,19 @@ public class BookTest {
 
     @Test
     public void Constructors() {
-        //Constructor 1
-        Book book = new Book("Title","Author","Description", "ISBN");
 
-        assertEquals("Title",book.getTitle());
-        assertEquals("Author",book.getAuthor());
-        assertEquals("Description",book.getDescription());
-        assertEquals("ISBN", book.getDescription());
+        String title = "Harry Potter and the Prisoner of Azkaban";
+        String author = "J.K. Rowling";
+        String description = "A magical boy goes down a toilet to fight a snake";
+        String isbn = "0747542155";
+
+
+        Book book = new Book(title, author, description, isbn);
+
+        assertEquals(title,book.getTitle());
+        assertEquals(author,book.getAuthor());
+        assertEquals(description,book.getDescription());
+        assertEquals(isbn, book.getIsbn());
 
         //Constructor 2
         book = new Book();
@@ -27,16 +33,22 @@ public class BookTest {
 
     @Test
     public void Setters() {
+
+        String title = "Harry Potter and the Prisoner of Azkaban";
+        String author = "J.K. Rowling";
+        String description = "A magical boy goes down a toilet to fight a snake";
+        String isbn = "0747542155";
+
         Book book = new Book("init","init","init", "init");
 
-        book.setTitle("New1");
-        book.setAuthor("New2");
-        book.setDescription("New3");
-        book.setIsbn("New4");
+        book.setTitle(title);
+        book.setAuthor(author);
+        book.setDescription(description);
+        book.setIsbn(isbn);
 
-        assertEquals("New1",book.getTitle());
-        assertEquals("New2",book.getAuthor());
-        assertEquals("New3",book.getDescription());
-        assertEquals("New4",book.getIsbn());
+        assertEquals(title ,book.getTitle());
+        assertEquals(author,book.getAuthor());
+        assertEquals(description,book.getDescription());
+        assertEquals(isbn,book.getIsbn());
     }
 }

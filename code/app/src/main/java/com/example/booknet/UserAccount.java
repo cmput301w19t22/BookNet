@@ -12,6 +12,9 @@ public class UserAccount implements Serializable {
     private BookLibrary ownedLibrary;
     private BookLibrary requestedBooks;
 
+    /**
+     * Create a UserAccount object, using empty strings as username and password
+    */
     public UserAccount() {
         this.username = "";
         this.accountPassword = "";
@@ -21,6 +24,12 @@ public class UserAccount implements Serializable {
     }
 
     //Constructor
+    /**
+     * Constructor; creates a UserAccount object, using parameters as username and password
+     *
+     * @param username String - The UserAccount username
+     * @param accountPassword String - The password for the UserAccount
+     */
     public UserAccount(String username, String accountPassword) {
         this.username = username;
         this.accountPassword = accountPassword;
@@ -30,10 +39,19 @@ public class UserAccount implements Serializable {
     }
 
     //#region Getters and Setters
+
+    /**
+     * Gets the username of the UserAccount
+     * @return String of the username of this UserAccount
+     */
     public String getUsername() {
         return username;
     }
 
+    /**
+     * Sets the username of the UserAccount to the passed in value.
+     * @param username String - what the username of UserAccount is going to be set to.
+     */
     public void setUsername(String username) {
         this.username = username;
     }

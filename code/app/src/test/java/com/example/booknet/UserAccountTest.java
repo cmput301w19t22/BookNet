@@ -90,7 +90,7 @@ public class UserAccountTest {
     }
 
     @Test
-    public void RemoveListingFromOwned() {
+    public void RemoveListingFromRequested() {
         UserAccount user = new UserAccount("user1", "password");
         UserAccount owner = new UserAccount("notMe", "password");
         Book book = new Book("title", "author", "description", "1234567890");

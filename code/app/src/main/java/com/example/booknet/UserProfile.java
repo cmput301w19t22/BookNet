@@ -14,6 +14,12 @@ public class UserProfile implements Serializable {
         this.phoneNumber = phoneNumber;
     }
 
+    public UserProfile() {
+        this.name = "";
+        this.email = "";
+        this.phoneNumber = "";
+    }
+
     //#region Getters and Setters
     public String getName() {
         return name;

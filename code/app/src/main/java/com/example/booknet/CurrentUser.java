@@ -40,6 +40,11 @@ public class CurrentUser {
         account.addListingToOwned(newListing);
         MockDatabase.getInstance().writeBookListing(newListing);
         //MockDatabase.getInstance().writeUserAccount(account);
+
+        BookListing testListing = new BookListing(book, new UserAccount());
+
+        DatabaseManager databaseManager = new DatabaseManager();
+        databaseManager.writeBookListing(testListing);
     }
 
     public BookLibrary getOwnedLibrary() {

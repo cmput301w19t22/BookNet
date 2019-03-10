@@ -21,9 +21,6 @@ public class BookLibrary implements Serializable {
     public void addBookListing(BookListing bookListing) {
 
         this.books.add(bookListing);
-
-        //DatabaseManager databaseManager = new DatabaseManager();
-        //databaseManager.writeBookListing(bookListing);
     }
 
     public void removeBookListing(BookListing bookListing) {

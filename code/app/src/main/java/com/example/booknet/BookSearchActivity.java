@@ -41,7 +41,7 @@ public class BookSearchActivity extends AppCompatActivity {
         //temp fake results
         bookListings=new ArrayList<>();
 
-        //todo Reemove this
+        //todo Remove this
         final DatabaseReference ref = FirebaseDatabase.getInstance().getReference("BookListings");
 
         // Attach a listener to read the data at our posts reference

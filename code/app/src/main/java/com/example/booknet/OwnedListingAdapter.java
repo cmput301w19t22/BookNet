@@ -58,7 +58,7 @@ public class OwnedListingAdapter extends RecyclerView.Adapter<OwnedListingAdapte
      * Routine for binding new data to a list item
      *
      * @param ownedListingViewHolder The ViewHolder to be assigned
-     * @param position              Index in the list to use for this list slot
+     * @param position               Index in the list to use for this list slot
      */
     @Override
     public void onBindViewHolder(@NonNull OwnedListingViewHolder ownedListingViewHolder, int position) {
@@ -77,22 +77,26 @@ public class OwnedListingAdapter extends RecyclerView.Adapter<OwnedListingAdapte
         ownedListingViewHolder.statusLabel.setText(item.getStatus().toString());
 
         //Add the click listener to the item
-        ownedListingViewHolder.itemView.setOnClickListener(bookListingListener);
+        ownedListingViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                clickedItem(item);
+            }
+        });
     }
 
     /**
      * Click Listener for individual list items. Starts view activity for the clicked item.
      */
-    View.OnClickListener bookListingListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            //Start View/Edit Activity with Clicked Item
-            Intent intent = new Intent(sourceActivity, OwnListingViewActivity.class);
-            //intent.putExtra(ListingViewActivity, index);//Send listing object to activity
-            //todo: intent
-            sourceActivity.startActivity(intent);
-        }
-    };
+    public void clickedItem(BookListing item) {
+        //Start View/Edit Activity with Clicked Item
+        Intent intent = new Intent(sourceActivity, OwnListingViewActivity.class);
+        //intent.putExtra(ListingViewActivity, index);//Send listing object to activity
+        intent.putExtra("username", item.getOwnerUsername().getUsername());
+        intent.putExtra("bookisbn", item.getBook().getIsbn());
+        //todo: intent
+        sourceActivity.startActivity(intent);
+    }
 
     /**
      * Override to get the number of items in the dataset

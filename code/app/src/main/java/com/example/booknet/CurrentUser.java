@@ -9,7 +9,11 @@ public class CurrentUser {
     }
 
     private CurrentUser() {
-        account = new UserAccount("debug","debug");
+        account = new UserAccount("tester", "debug");
+        account.setProfile(new UserProfile("name", "email", "phone"));
+        //requestAddBook(new Book("Real1", "Author1", "Description", "isbn1"));
+        //requestAddBook(new Book("Title2", "Author2", "Description", "isbn2"));
+        //MockDatabase.getInstance().writeUserAccount(account);
     }
 
     //Attributes
@@ -17,9 +21,15 @@ public class CurrentUser {
 
     //todo implement everything
 
-    public void Login(){}
+    public void Login() {
+    }
 
-    public void Logout(){}
+    public void Logout() {
+    }
+
+    public void setAccount(UserAccount account) {
+        this.account = account;
+    }
 
     public UserAccount getUserAccount() {
         return account;
@@ -27,10 +37,12 @@ public class CurrentUser {
 
     public void requestAddBook(Book book) {
         BookListing newListing = new BookListing(book, account);
-        account.addBookToOwned(newListing);
+        account.addListingToOwned(newListing);
+        MockDatabase.getInstance().writeBookListing(newListing);
+        //MockDatabase.getInstance().writeUserAccount(account);
     }
 
-    public BookLibrary getOwnedLibrary(){
+    public BookLibrary getOwnedLibrary() {
         return account.getOwnedLibrary();
     }
 }

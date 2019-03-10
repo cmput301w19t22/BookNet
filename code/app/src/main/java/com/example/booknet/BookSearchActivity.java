@@ -1,11 +1,9 @@
 package com.example.booknet;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.MenuInflater;
-import android.widget.Spinner;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -17,6 +15,7 @@ import java.util.ArrayList;
 
 /**
  * Activity to search the database for available books.
+ *
  * @author Jamie
  * @version 1.0
  */
@@ -42,6 +41,7 @@ public class BookSearchActivity extends AppCompatActivity {
         //temp fake results
         bookListings=new ArrayList<>();
 
+        //todo Reemove this
         final DatabaseReference ref = FirebaseDatabase.getInstance().getReference("BookListings");
 
         // Attach a listener to read the data at our posts reference
@@ -63,13 +63,23 @@ public class BookSearchActivity extends AppCompatActivity {
         UserAccount u1 = new UserAccount("debug","debug");
         bookListings.add(new BookListing(b1,u1));
         bookListings.add(new BookListing(b2,u1));*/
+        bookListings = MockDatabase.getInstance().readAllBookListings();
 
-        //Setup RecyclerView
-        searchResults = findViewById(R.id.searchResults);
-        searchResults.setLayoutManager(new LinearLayoutManager(this));
-        listingAdapter = new BookListingAdapter(bookListings,this);
-        searchResults.setAdapter(listingAdapter);
+
+        fillLayout();//todo delete when using real db
 
 
     }
+
+    /**
+     *
+     */
+    private void fillLayout(){
+        //Setup RecyclerView
+        searchResults = findViewById(R.id.searchResults);
+        searchResults.setLayoutManager(new LinearLayoutManager(this));
+        listingAdapter = new BookListingAdapter(bookListings, this);
+        searchResults.setAdapter(listingAdapter);
+    }
+
 }

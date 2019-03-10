@@ -20,6 +20,7 @@ public class Book implements Serializable {
         this.title = "";
         this.author = "";
         this.description = "";
+        this.isbn = "";
     }
 
     //#region Getters Setters

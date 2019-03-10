@@ -1,6 +1,8 @@
 package com.example.booknet;
 
 import android.location.Location;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -8,7 +10,7 @@ import java.util.ArrayList;
 
 public class BookListing implements Serializable {
 
-    public enum Status {
+    public enum Status{
         Available, Requested, Accepted, Borrowed;
 
         /**
@@ -46,8 +48,10 @@ public class BookListing implements Serializable {
     public BookListing(Book book, UserAccount ownerUsername) {
         this.book = book;
         this.ownerUsername = ownerUsername;
+        this.borrowerName = null;
         this.status = Status.Available;
         this.requests = new ArrayList<UserAccount>();
+        this.geoLocation = new Location("");
     }
 
     //#region Getters Setters
@@ -103,4 +107,5 @@ public class BookListing implements Serializable {
         //todo: implement}
     }
     //#endregion
+
 }

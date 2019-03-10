@@ -22,19 +22,8 @@ public class BookLibrary implements Serializable {
 
         this.books.add(bookListing);
 
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
-
-        UserAccount currentUserAccount = bookListing.getOwnerUsername();
-        Book currentBook = bookListing.getBook();
-
-        DatabaseReference listingRef = ref.child("BookListings");
-
-        DatabaseReference userBookRef = ref.child("UserBooks");
-
-        listingRef.push().setValue(bookListing);
-
-        userBookRef.child(currentUserAccount.getUsername())
-                .child(currentBook.getIsbn()).setValue(currentBook);
+        //DatabaseManager databaseManager = new DatabaseManager();
+        //databaseManager.writeBookListing(bookListing);
     }
 
     public void removeBookListing(BookListing bookListing) {
@@ -49,4 +38,9 @@ public class BookLibrary implements Serializable {
         return false;
     }
 
+    protected BookLibrary clone(){
+        BookLibrary cloned = new BookLibrary();
+        cloned.books = (ArrayList<BookListing>) this.books.clone();
+        return cloned;
+    }
 }

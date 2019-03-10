@@ -12,6 +12,14 @@ public class UserAccount implements Serializable {
     private BookLibrary ownedLibrary;
     private BookLibrary requestedBooks;
 
+    public UserAccount() {
+        this.username = "";
+        this.accountPassword = "";
+        this.reviews = new ArrayList<Review>();
+        this.ownedLibrary = new BookLibrary();
+        this.requestedBooks = new BookLibrary();
+    }
+
     //Constructor
     public UserAccount(String username, String accountPassword) {
         this.username = username;

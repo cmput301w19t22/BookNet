@@ -20,7 +20,7 @@ public class BookListingTest {
         BookListing listing = new BookListing(book, owner);
 
         assertEquals(book, listing.getBook());
-        assertEquals("owner", listing.getOwnerName());
+        assertEquals("owner", listing.getOwnerUsername());
     }
 
     @Test

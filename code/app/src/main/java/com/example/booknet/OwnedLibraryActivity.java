@@ -37,8 +37,8 @@ public class OwnedLibraryActivity extends AppCompatActivity {
         //data = new BookLibrary();
         Book b1 = new Book("Title 1", "Author 1", "","1234567890");
         Book b2 = new Book("Title 2", "Author 2", "","1234567891");
-        //UserAccount u1 = new UserAccount("myself", "debug");
-        UserAccount currentUserAccount = CurrentUser.getInstance().getUserAccount();
+        UserAccount currentUserAccount = new UserAccount("myself", "debug");
+        //UserAccount currentUserAccount = CurrentUser.getInstance().getUserAccount();
         data.addBookListing(new BookListing(b1, currentUserAccount));
         data.addBookListing(new BookListing(b2, currentUserAccount));
 

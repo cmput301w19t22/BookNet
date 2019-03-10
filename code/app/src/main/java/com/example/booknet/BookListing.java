@@ -29,14 +29,23 @@ public class BookListing implements Serializable {
 
     private Book book;
     private Status status;
-    private UserAccount ownerName;
+    private UserAccount ownerUsername;
     private ArrayList<UserAccount> requests;
     private UserAccount borrowerName;
     private Location geoLocation;
 
-    public BookListing(Book book, UserAccount ownerName) {
+    public BookListing() {
+        this.book = new Book();
+        this.ownerUsername = new UserAccount();
+        this.borrowerName = new UserAccount();
+        this.status = Status.Available;
+        this.requests = new ArrayList<UserAccount>();
+        this.geoLocation = new Location("");
+    }
+
+    public BookListing(Book book, UserAccount ownerUsername) {
         this.book = book;
-        this.ownerName = ownerName;
+        this.ownerUsername = ownerUsername;
         this.status = Status.Available;
         this.requests = new ArrayList<UserAccount>();
     }
@@ -50,8 +59,8 @@ public class BookListing implements Serializable {
         return status;
     }
 
-    public UserAccount getOwnerName() {
-        return ownerName;
+    public UserAccount getOwnerUsername() {
+        return ownerUsername;
     }
 
     public ArrayList<UserAccount> getRequesters() {

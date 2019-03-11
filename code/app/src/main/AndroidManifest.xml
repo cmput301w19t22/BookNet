@@ -13,7 +13,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".RequestsViewActivity"></activity>
+        <activity android:name=".ProfileEditActivity"></activity>
+        <activity android:name=".RequestsViewActivity" />
         <activity android:name=".OwnListingViewActivity" />
         <activity
             android:name=".LoginActivity"

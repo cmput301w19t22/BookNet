@@ -35,7 +35,7 @@ public class DatabaseManager {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
 
         //Get Info for this listing
-        UserAccount currentUserAccount = listing.getOwnerUsername();
+        //UserAccount currentUserAccount = listing.getOwnerUsername();
         Book currentBook = listing.getBook();
 
         //Obtain Database
@@ -47,7 +47,7 @@ public class DatabaseManager {
 
         //Write Book
         userBookRef.child("UserBooks")
-                .child(currentUserAccount.getUsername())
+                .child(listing.getOwnerUsername())
                 .child(currentBook.getIsbn()).setValue(currentBook);
     }
 

@@ -75,7 +75,7 @@ public class ListingViewActivity extends AppCompatActivity {
             bookTitleLabel.setText(listing.getBook().getTitle());
             bookAuthorLabel.setText(listing.getBook().getAuthor());
             isbnLabel.setText(listing.getBook().getIsbn());
-            ownerLabel.setText(listing.getOwnerUsername().getUsername());
+            ownerLabel.setText(listing.getOwnerUsername());
             statusLabel.setText(listing.getStatus().toString());
         }
     }
@@ -92,7 +92,7 @@ public class ListingViewActivity extends AppCompatActivity {
      */
     private void viewOwnerProfile() {
         Intent intent = new Intent(this, UserProfileViewActivity.class);
-        intent.putExtra("username", listing.getOwnerUsername().getUsername());
+        intent.putExtra("username", listing.getOwnerUsername());
         startActivity(intent);
     }
 }

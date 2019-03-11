@@ -75,7 +75,7 @@ public class BookListingAdapter extends RecyclerView.Adapter<BookListingAdapter.
         bookListingViewHolder.bookTitleLabel.setText(item.getBook().getTitle());
         bookListingViewHolder.bookAuthorLabel.setText(item.getBook().getAuthor());
         bookListingViewHolder.isbnLabel.setText(item.getBook().getIsbn());
-        bookListingViewHolder.ownerLabel.setText(item.getOwnerUsername().getUsername());
+        bookListingViewHolder.ownerLabel.setText(item.getOwnerUsername());
         bookListingViewHolder.statusLabel.setText(item.getStatus().toString());
         bookListingViewHolder.item = item;
 
@@ -96,7 +96,7 @@ public class BookListingAdapter extends RecyclerView.Adapter<BookListingAdapter.
         //Start View/Edit Activity with Clicked Item
         Intent intent = new Intent(sourceActivity, ListingViewActivity.class);
         //intent.putExtra("listing", (Serializable) item);//Send listing object to activity
-        intent.putExtra("username",item.getOwnerUsername().getUsername());
+        intent.putExtra("username",item.getOwnerUsername());
         intent.putExtra("bookisbn",item.getBook().getIsbn());
 
         //todo: intent

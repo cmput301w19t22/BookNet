@@ -98,7 +98,7 @@ public class OwnListingViewActivity extends AppCompatActivity {
             bookTitleLabel.setText(listing.getBook().getTitle());
             bookAuthorLabel.setText(listing.getBook().getAuthor());
             isbnLabel.setText(listing.getBook().getIsbn());
-            ownerLabel.setText(listing.getOwnerUsername().getUsername());
+            ownerLabel.setText(listing.getOwnerUsername());
             statusLabel.setText(listing.getStatus().toString());
         }
     }
@@ -110,7 +110,7 @@ public class OwnListingViewActivity extends AppCompatActivity {
     private void viewRequests(BookListing item) {
         Intent intent = new Intent(this, RequestsViewActivity.class);
 
-        intent.putExtra("username", item.getOwnerUsername().getUsername());
+        intent.putExtra("username", item.getOwnerUsername());
         intent.putExtra("bookisbn", item.getBook().getIsbn());
         startActivity(intent);
     }

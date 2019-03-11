@@ -44,7 +44,7 @@ public class CurrentUser {
         BookListing testListing = new BookListing(book, new UserAccount());
 
         DatabaseManager databaseManager = new DatabaseManager();
-        databaseManager.writeBookListing(testListing);
+        databaseManager.writeBookListing(newListing);
     }
 
     public BookLibrary getOwnedLibrary() {

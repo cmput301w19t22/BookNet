@@ -25,6 +25,7 @@ public class UserAccount implements Serializable,Cloneable {
     public UserAccount(String username, String accountPassword) {
         this.username = username;
         this.accountPassword = accountPassword;
+        this.profile= new UserProfile();
         this.reviews = new ArrayList<Review>();
         this.ownedLibrary = new BookLibrary();
         this.requestedBooks = new BookLibrary();

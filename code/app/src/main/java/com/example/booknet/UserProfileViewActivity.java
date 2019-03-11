@@ -12,17 +12,18 @@ import android.widget.Toast;
 public class UserProfileViewActivity extends AppCompatActivity {
 
     //Layout Objects
-    TextView usernameLabel;
-    TextView phoneLabel;
-    TextView emailLabel;
-    TextView ratingLabel;
-    ImageView star1;
-    ImageView star2;
-    ImageView star3;
-    ImageView star4;
-    ImageView star5;
-    Button reviewsButton;
-    Button booksButton;
+    private TextView usernameLabel;
+    private TextView phoneLabel;
+    private TextView emailLabel;
+    private TextView ratingLabel;
+    private ImageView star1;
+    private ImageView star2;
+    private ImageView star3;
+    private ImageView star4;
+    private ImageView star5;
+    private Button reviewsButton;
+    private Button booksButton;
+    private Button editButton;
 
     //Data
     UserAccount userAccount;
@@ -45,6 +46,7 @@ public class UserProfileViewActivity extends AppCompatActivity {
         star5 = findViewById(R.id.ratingStar5);
         reviewsButton = findViewById(R.id.reviewsButton);
         booksButton = findViewById(R.id.libraryButton);
+        editButton = findViewById(R.id.editButton);
 
         //Get Profile
         Intent intent = getIntent();
@@ -57,13 +59,21 @@ public class UserProfileViewActivity extends AppCompatActivity {
             username = intent.getStringExtra("username");
             if (intent.hasExtra("isMe")) {
                 //Get local copy if viewing own account
-                userAccount = CurrentUser.getInstance().getUserAccount();
+                //userAccount = CurrentUser.getInstance().getUserAccount();
+                userAccount = fetchUser(username);
+                editButton.setVisibility(View.VISIBLE);
             } else {
                 userAccount = fetchUser(username);
             }
             fillLayout();
         }
 
+        editButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editProfile();
+            }
+        });
 
         booksButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,7 +109,20 @@ public class UserProfileViewActivity extends AppCompatActivity {
         return MockDatabase.getInstance().readUserAccount(username);
     }
 
+    /**
+     * Starts the activity to edit the user profile
+     */
+    private void editProfile() {
+        Intent intent = new Intent(this, ProfileEditActivity.class);
+        intent.putExtra("username", username);
+        startActivity(intent);
+    }
 
+    /**
+     * Starts the activity to view the user's owned library.
+     *
+     * @param user
+     */
     private void viewUserBooks(UserAccount user) {
         //todo: implement
     }

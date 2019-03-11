@@ -1,11 +1,13 @@
 package com.example.booknet;
 
+import android.support.v7.app.AppCompatActivity;
+
 import java.io.Serializable;
 
 /**
  * Data structure to store a user's profile info
  */
-public class UserProfile implements Serializable {
+public class UserProfile extends AppCompatActivity implements Serializable {
     //Attributes
     private String name;
     private String email;

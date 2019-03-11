@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 public class UserProfileTest {
     @Test
     public void Constructors(){
+
         UserProfile user = new UserProfile("name","email@site.com","555-555-5555");
 
         assertEquals("name",user.getName());
@@ -27,10 +28,12 @@ public class UserProfileTest {
 
     @Test
     public void EmailFormat(){
+        assertTrue(false);
         //TODO: implement later
     }
     @Test
     public void PhoneFormat(){
+        assertTrue(false);
         //TODO: implement later
     }
 

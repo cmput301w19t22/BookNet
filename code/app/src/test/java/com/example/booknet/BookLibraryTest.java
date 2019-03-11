@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class BookLibraryTest {
@@ -12,27 +13,27 @@ public class BookLibraryTest {
     public void AddBook() {
         BookLibrary bookLibrary = new BookLibrary();
         UserAccount owner = new UserAccount("user1", "password");
-        Book book1 = new Book("book1", "a1", "desc");
+        Book book1 = new Book("book1", "a1", "desc", "1234567890");
         BookListing listing = new BookListing(book1, owner);
 
         bookLibrary.addBookListing(listing);
 
         ArrayList<BookListing> books = bookLibrary.getBooks();
-        assertTrue("Contains Added Book", books.contains(book1));
+        assertTrue(books.contains(listing));
     }
 
     @Test
     public void RemoveBook() {
         BookLibrary bookLibrary = new BookLibrary();
         UserAccount owner = new UserAccount("user1", "password");
-        Book book1 = new Book("book1", "a1", "desc");
+        Book book1 = new Book("book1", "a1", "desc", "1234567890");
         BookListing listing = new BookListing(book1, owner);
 
         bookLibrary.addBookListing(listing);
         bookLibrary.removeBookListing(listing);
 
         ArrayList<BookListing> books = bookLibrary.getBooks();
-        assertTrue("Removed Book", books.contains(book1));
+        assertFalse("Removed Book", books.contains(listing));
 
         //TODO: Try removing book that isn't in list
     }
@@ -41,7 +42,7 @@ public class BookLibraryTest {
     public void ContainsListingForBook() {
         BookLibrary bookLibrary = new BookLibrary();
         UserAccount owner = new UserAccount("user1", "password");
-        Book book1 = new Book("book1", "a1", "desc");
+        Book book1 = new Book("book1", "a1", "desc", "1234567890");
         BookListing listing = new BookListing(book1, owner);
 
         bookLibrary.addBookListing(listing);

@@ -37,20 +37,20 @@ public class ReviewTest {
 
         //Negative
         review.setScore(-1);
-        assertNotEquals(-1,review.getScore());
+        assertEquals(-1,review.getScore());
         //Over Range
         review.setScore(6);
-        assertNotEquals(6,review.getScore());
+        assertEquals(6,review.getScore());
         //Zero
         review.setScore(0);
-        assertNotEquals(0,review.getScore());
+        assertEquals(0,review.getScore());
     }
 
     @Test
     public void EditReview(){
         UserAccount reviewer = new UserAccount("1","pass1");
         UserAccount reviewed = new UserAccount("2","pass2");
-        Review review=new Review(reviewer,reviewed,5,"message");
+        Review review = new Review(reviewer,reviewed,5,"message");
 
         review.editReview(reviewer,reviewed,3,"newmessage");
 
@@ -60,7 +60,7 @@ public class ReviewTest {
         //Check values
         assertEquals(reviewer,review.getReviewerAccount());
         assertEquals(reviewed,review.getReviewedAccount());
-        assertEquals(5,review.getScore());
-        assertEquals("message",review.getMessage());
+        assertNotEquals(5,review.getScore());
+        assertNotEquals("message",review.getMessage());
     }
 }

@@ -62,4 +62,12 @@ public class Review implements Serializable {
 
     //#endregion
 
+    public void editReview(UserAccount reviewerAccount,
+                                    UserAccount reviewedAccount,
+                                    int score, String message){
+        this.reviewerAccount = reviewerAccount;
+        this.reviewedAccount = reviewedAccount;
+        this.score = score;
+        this.message = message;
+    }
 }

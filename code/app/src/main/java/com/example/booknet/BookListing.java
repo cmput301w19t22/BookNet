@@ -1,8 +1,6 @@
 package com.example.booknet;
 
 import android.location.Location;
-import android.os.Parcel;
-import android.os.Parcelable;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -34,7 +32,7 @@ public class BookListing implements Serializable {
     private String ownerUsername;
     private ArrayList<UserAccount> requests;
     private String borrowerName;
-    private Location geoLocation;
+    private UserLocation geoLocation;
 
     public BookListing() {
         this.book = new Book();
@@ -42,7 +40,7 @@ public class BookListing implements Serializable {
         this.borrowerName = "";
         this.status = Status.Available;
         this.requests = new ArrayList<UserAccount>();
-        this.geoLocation = new Location("");
+        this.geoLocation = new UserLocation();
     }
 
     public BookListing(Book book, UserAccount owner) {
@@ -51,7 +49,7 @@ public class BookListing implements Serializable {
         this.borrowerName = "";
         this.status = Status.Available;
         this.requests = new ArrayList<UserAccount>();
-        this.geoLocation = new Location("");
+        this.geoLocation = new UserLocation();
     }
 
     //#region Getters Setters
@@ -75,12 +73,12 @@ public class BookListing implements Serializable {
         return borrowerName;
     }
 
-    public Location getGeoLocation() {
+    public UserLocation getGeoLocation() {
         return geoLocation;
     }
 
-    public void setGeoLocation(Location location) {
-        this.geoLocation = location;
+    public void setGeoLocation(UserLocation userLocation) {
+        this.geoLocation = userLocation;
     }
 
     //#endregion

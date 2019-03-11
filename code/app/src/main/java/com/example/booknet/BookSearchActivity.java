@@ -25,6 +25,7 @@ public class BookSearchActivity extends AppCompatActivity {
     //Layout Objects
     private RecyclerView searchResults;
     private BookListingAdapter listingAdapter;
+    private DatabaseManager databaseManager;
 
     //App Data
     ArrayList<BookListing> bookListings;
@@ -42,32 +43,23 @@ public class BookSearchActivity extends AppCompatActivity {
         //temp fake results
         bookListings = new ArrayList<>();
 
-        //todo Remove this
-        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference("BookListings");
+        searchResults = findViewById(R.id.searchResults);
+        searchResults.setLayoutManager(new LinearLayoutManager(this));
+        listingAdapter = new BookListingAdapter(bookListings, this);
+        searchResults.setAdapter(listingAdapter);
 
-        // Attach a listener to read the data at our posts reference
-        ref.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot data : dataSnapshot.getChildren()) {
-                    BookListing bookListing = data.child("BookListing").getValue(BookListing.class);
-                    if (bookListing != null) {
-                        System.out.println(bookListing.getOwnerUsername());
-                        bookListings.add(bookListing);
-                    }
-                }
-                fillLayout();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                System.out.println("The read failed: " + databaseError.getCode());
-            }
-        });
+        databaseManager = new DatabaseManager();
+        databaseManager.readAllBookListings(this);
 
         //bookListings = MockDatabase.getInstance().readAllBookListings();
 
     }
+
+    public void addListingToList(BookListing listing){
+        bookListings.add(listing);
+        listingAdapter.notifyDataSetChanged();
+    }
+
 
     /**
      * Fills the recycler view list with the search data

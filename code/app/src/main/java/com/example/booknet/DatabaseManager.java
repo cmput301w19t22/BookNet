@@ -1,7 +1,10 @@
 package com.example.booknet;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -11,6 +14,8 @@ import java.util.ArrayList;
 public class DatabaseManager {
 
     //todo: attributes, if any
+
+    //ArrayList<BookListing> bookListings;
 
     //Constructor
     //public DatabaseManager() {}
@@ -175,8 +180,30 @@ public class DatabaseManager {
      *
      * @return A list of BookListings from the database if any are found
      */
-    public ArrayList<BookListing> readAllBookListings() {
-        return null;
+    public void readAllBookListings(final BookSearchActivity activity) {
+
+        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference("BookListings");
+        //bookListings = new ArrayList<>();
+
+        // Attach a listener to read the data at our posts reference
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot data : dataSnapshot.getChildren()) {
+                    BookListing bookListing = data.child("BookListing").getValue(BookListing.class);
+                    if (bookListing != null) {
+                        System.out.println(bookListing.getOwnerUsername());
+                        activity.addListingToList(bookListing);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                System.out.println("The read failed: " + databaseError.getCode());
+            }
+        });
+
     }
 
     /**

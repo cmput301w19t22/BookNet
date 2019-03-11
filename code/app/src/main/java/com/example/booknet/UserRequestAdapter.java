@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -18,6 +19,9 @@ public class UserRequestAdapter extends RecyclerView.Adapter<UserRequestAdapter.
     //The requesters to display
     ArrayList<UserAccount> requesters;
 
+    //The listing the requests are for
+    BookListing listing;
+
     //The activity this adapter was created from
     private AppCompatActivity sourceActivity;
 
@@ -25,10 +29,23 @@ public class UserRequestAdapter extends RecyclerView.Adapter<UserRequestAdapter.
     /**
      * Creates the adapter
      *
-     * @param requesters     The UserAccounts to use for the list display
+     * @param listing        The UserAccounts to use for the list display
      * @param sourceActivity The activity that created this adapter
      */
-    public UserRequestAdapter(ArrayList<UserAccount> requesters, AppCompatActivity sourceActivity) {
+    public UserRequestAdapter(BookListing listing, AppCompatActivity sourceActivity) {
+        this.listing = listing;
+        this.requesters = listing.getRequesters();
+        this.sourceActivity = sourceActivity;
+    }
+
+    /**
+     * Creates the adapter
+     *
+     * @param listing        The UserAccounts to use for the list display
+     * @param sourceActivity The activity that created this adapter
+     */
+    public UserRequestAdapter(BookListing listing, ArrayList<UserAccount> requesters, AppCompatActivity sourceActivity) {
+        this.listing = listing;
         this.requesters = requesters;
         this.sourceActivity = sourceActivity;
     }
@@ -58,13 +75,13 @@ public class UserRequestAdapter extends RecyclerView.Adapter<UserRequestAdapter.
     @Override
     public void onBindViewHolder(@NonNull RequestViewHolder requestViewHolder, int position) {
         //Get the data at the provided position
-        final UserAccount item = requesters.get(position);
+        final UserAccount account = requesters.get(position);
         //Index to pass to the edit activity
         final int index = requestViewHolder.getAdapterPosition();
 
         //Fill the text fields with the object's data
-        requestViewHolder.username.setText(item.getUsername());
-        requestViewHolder.ratingText.setText(String.format("%1.1f", item.getRatingScore()));
+        requestViewHolder.username.setText(account.getUsername());
+        requestViewHolder.ratingText.setText(String.format("%1.1f", account.getRatingScore()));
         //todo apply to stars
 
         requestViewHolder.username.setOnClickListener(new View.OnClickListener() {
@@ -77,13 +94,13 @@ public class UserRequestAdapter extends RecyclerView.Adapter<UserRequestAdapter.
         requestViewHolder.acceptButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //todo accept the request
+                acceptButton(account);
             }
         });
         requestViewHolder.declineButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //todo deny the request
+                declineButton(account);
             }
         });
     }
@@ -96,9 +113,34 @@ public class UserRequestAdapter extends RecyclerView.Adapter<UserRequestAdapter.
     /**
      * Action to view the profile of the clicked user.
      */
-    public void goToProfile() {
+    private void goToProfile() {
         Intent intent = new Intent(sourceActivity, UserProfileViewActivity.class);
         sourceActivity.startActivity(intent);
+    }
+
+    /**
+     * Accepts the request from the account. Called when the accept button is pressed.
+     *
+     * @param account The user whose request will be accepted.
+     */
+    private void acceptButton(UserAccount account) {
+        //todo accept the request
+        listing.acceptRequest(account.getUsername());
+        MockDatabase.getInstance().acceptRequestForListing(listing, account);
+        Toast.makeText(sourceActivity, "Accepted " + account.getUsername(), Toast.LENGTH_LONG).show();
+        sourceActivity.finish();
+    }
+
+    /**
+     * Declines the request from the account. Called when the decline button is pressed.
+     *
+     * @param account The user whose request will be declined.
+     */
+    private void declineButton(UserAccount account) {
+        //todo deny the request
+        listing.denyRequest(account.getUsername());
+        MockDatabase.getInstance().declineRequestForListing(listing, account);
+        Toast.makeText(sourceActivity, "Declined " + account.getUsername(), Toast.LENGTH_LONG).show();
     }
 
     /**

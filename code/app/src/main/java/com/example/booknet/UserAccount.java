@@ -3,18 +3,19 @@ package com.example.booknet;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class UserAccount implements Serializable {
+public class UserAccount implements Serializable,Cloneable {
     private String username;
     private String accountPassword;
     private UserProfile profile;
     private ArrayList<Review> reviews;
-    private float reviewScore;
+    private float reviewScore = 5;
     private BookLibrary ownedLibrary;
     private BookLibrary requestedBooks;
 
     public UserAccount() {
         this.username = "";
         this.accountPassword = "";
+        this.profile = new UserProfile();
         this.reviews = new ArrayList<Review>();
         this.ownedLibrary = new BookLibrary();
         this.requestedBooks = new BookLibrary();
@@ -81,19 +82,24 @@ public class UserAccount implements Serializable {
 
     /**
      * Gets the user's rating in 1 to 5 stars.
+     *
      * @return A float of the user rating
      */
-    public float getRatingScore(){
+    public float getRatingScore() {
         //todo implement
         return 5;
     }
 
-    public void addBookToOwned(BookListing book) {
-        //todo: implement
+    public void addBookToOwned(Book book) {
+        ownedLibrary.addBookListing(new BookListing(book,this));
+    }
+
+    public void addListingToOwned(BookListing book) {
+        ownedLibrary.addBookListing(book);
     }
 
     public void removeBookFromOwned(BookListing listing) {
-        //todo: implement
+        ownedLibrary.removeBookListing(listing);
     }
 
     public void addListingToRequested(BookListing listing) {
@@ -104,5 +110,25 @@ public class UserAccount implements Serializable {
         //todo: implement
     }
 
+    @Override
+    public String toString() {
+        return "UserAccount{" +
+                "username='" + username + '\'' +
+                ", accountPassword='" + accountPassword + '\'' +
+                ", profile=" + profile +
+                ", reviews=" + reviews.toString() +
+                ", reviewScore=" + reviewScore +
+                ", ownedLibrary=" + ownedLibrary.toString() +
+                ", requestedBooks=" + requestedBooks.toString() +
+                '}';
+    }
 
+    protected UserAccount clone() {
+        UserAccount cloned = new UserAccount(username, accountPassword);
+        cloned.setProfile(this.profile);
+        cloned.setOwnedLibrary(ownedLibrary.clone());
+        cloned.setRequestedBooks(requestedBooks.clone());
+        cloned.setReviews((ArrayList<Review>) reviews.clone());
+        return cloned;
+    }
 }

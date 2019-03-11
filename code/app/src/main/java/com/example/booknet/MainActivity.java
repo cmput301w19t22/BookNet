@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
 
         searchBar = findViewById(R.id.mainSearch);
 
+        MockDatabase.getInstance();
     }
 
 
@@ -60,6 +61,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void myAccountClicked() {
         Intent intent = new Intent(this, UserProfileViewActivity.class);
+        String username = CurrentUser.getInstance().getUserAccount().getUsername();
+        intent.putExtra("username",username);
+        intent.putExtra("isMe",true);
         startActivity(intent);
     }
 

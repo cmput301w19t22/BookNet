@@ -32,21 +32,10 @@ public class OwnedLibraryActivity extends AppCompatActivity {
         });
 
         //todo get real data
-        data=CurrentUser.getInstance().getOwnedLibrary();
-        //temp fake data
-        //data = new BookLibrary();
-        Book b1 = new Book("Title 1", "Author 1", "","1234567890");
-        Book b2 = new Book("Title 2", "Author 2", "","1234567891");
-        //UserAccount u1 = new UserAccount("myself", "debug");
-        UserAccount currentUserAccount = CurrentUser.getInstance().getUserAccount();
-        data.addBookListing(new BookListing(b1, currentUserAccount));
-        data.addBookListing(new BookListing(b2, currentUserAccount));
+        //data = CurrentUser.getInstance().getOwnedLibrary();
+        data=MockDatabase.getInstance().readUserOwnedLibrary(CurrentUser.getInstance().getUserAccount().getUsername());
 
-        //Setup RecyclerView
-        libraryListView = findViewById(R.id.bookLibrary);
-        libraryListView.setLayoutManager(new LinearLayoutManager(this));
-        listingAdapter = new OwnedListingAdapter(data, this);
-        libraryListView.setAdapter(listingAdapter);
+        fillLayout();//todo delete when using real db
 
     }
 
@@ -58,6 +47,28 @@ public class OwnedLibraryActivity extends AppCompatActivity {
         listingAdapter.notifyDataSetChanged();
     }
 
+    private void fillLayout(){
+
+        //temp fake data
+        //data = new BookLibrary();
+
+        if (data == null) {
+            Book b1 = new Book("Fake Book 1", "Author 1", "", "1234567890");
+            Book b2 = new Book("Fake Book 2", "Author 2", "", "1234567891");
+            UserAccount u1 = new UserAccount("myself", "debug");
+            UserAccount currentUserAccount = CurrentUser.getInstance().getUserAccount().clone();
+            //Log.d("useraccount",u1.toString());
+            //Toast.makeText(this,"UserAccount: "+u1.toString(),Toast.LENGTH_LONG).show();
+            data.addBookListing(new BookListing(b1, currentUserAccount));
+            data.addBookListing(new BookListing(b2, currentUserAccount));
+        }
+
+        //Setup RecyclerView
+        libraryListView = findViewById(R.id.bookLibrary);
+        libraryListView.setLayoutManager(new LinearLayoutManager(this));
+        listingAdapter = new OwnedListingAdapter(data, this);
+        libraryListView.setAdapter(listingAdapter);
+    }
 
 
     private void addBook() {

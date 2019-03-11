@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public class BookListing implements Serializable {
 
-    public enum Status {
+    public enum Status{
         Available, Requested, Accepted, Borrowed;
 
         /**
@@ -29,25 +29,27 @@ public class BookListing implements Serializable {
 
     private Book book;
     private Status status;
-    private UserAccount ownerUsername;
+    private String ownerUsername;
     private ArrayList<UserAccount> requests;
-    private UserAccount borrowerName;
-    private Location geoLocation;
+    private String borrowerName;
+    private UserLocation geoLocation;
 
     public BookListing() {
         this.book = new Book();
-        this.ownerUsername = new UserAccount();
-        this.borrowerName = new UserAccount();
+        this.ownerUsername = "";
+        this.borrowerName = "";
         this.status = Status.Available;
         this.requests = new ArrayList<UserAccount>();
-        this.geoLocation = new Location("");
+        this.geoLocation = new UserLocation();
     }
 
-    public BookListing(Book book, UserAccount ownerUsername) {
+    public BookListing(Book book, UserAccount owner) {
         this.book = book;
-        this.ownerUsername = ownerUsername;
+        this.ownerUsername = owner.getUsername();
+        this.borrowerName = "";
         this.status = Status.Available;
         this.requests = new ArrayList<UserAccount>();
+        this.geoLocation = new UserLocation();
     }
 
     //#region Getters Setters
@@ -59,7 +61,7 @@ public class BookListing implements Serializable {
         return status;
     }
 
-    public UserAccount getOwnerUsername() {
+    public String getOwnerUsername() {
         return ownerUsername;
     }
 
@@ -67,16 +69,16 @@ public class BookListing implements Serializable {
         return requests;
     }
 
-    public UserAccount getBorrowerName() {
+    public String getBorrowerName() {
         return borrowerName;
     }
 
-    public Location getGeoLocation() {
+    public UserLocation getGeoLocation() {
         return geoLocation;
     }
 
-    public void setGeoLocation(Location location) {
-        this.geoLocation = location;
+    public void setGeoLocation(UserLocation userLocation) {
+        this.geoLocation = userLocation;
     }
 
     //#endregion
@@ -103,4 +105,5 @@ public class BookListing implements Serializable {
         //todo: implement}
     }
     //#endregion
+
 }

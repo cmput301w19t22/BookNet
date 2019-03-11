@@ -31,9 +31,9 @@ public class BookListingTest {
 
         listing.addRequest("requester1");
 
-        ArrayList<UserAccount> requesters = listing.getRequesters();
+        ArrayList<String> requestersList = listing.getRequesters();
 
-        assertTrue("Request Added", requesters.contains("requester1"));
+        assertTrue("Request Added", requestersList.contains("requester1"));
 
         assertEquals(BookListing.Status.Requested, listing.getStatus());
     }
@@ -49,7 +49,7 @@ public class BookListingTest {
 
         listing.acceptRequest("requester1");
 
-        assertTrue(listing.getRequesters().size()<=1);
+        assertTrue(listing.getRequesters().size()==0);
         assertEquals("requester1", listing.getBorrowerName());
 
         assertEquals(BookListing.Status.Accepted, listing.getStatus());
@@ -67,11 +67,12 @@ public class BookListingTest {
         listing.denyRequest("requester1");
 
         //Check removed from requesters
-        ArrayList<UserAccount> requesters = listing.getRequesters();
+        ArrayList<String> requesters = listing.getRequesters();
         assertFalse("Request Denied", requesters.contains("requester1"));
 
         //Still one request left
         assertEquals(BookListing.Status.Requested, listing.getStatus());
+        assertTrue(requesters.contains("requester2"));
 
         //Remove all requests
         listing.denyRequest("requester2");

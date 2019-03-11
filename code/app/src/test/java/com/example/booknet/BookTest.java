@@ -27,7 +27,7 @@ public class BookTest {
         assertEquals("",book.getTitle());
         assertEquals("",book.getAuthor());
         assertEquals("",book.getDescription());
-        assertNull(book.getIsbn());
+        assertEquals("",book.getIsbn());
 
     }
 

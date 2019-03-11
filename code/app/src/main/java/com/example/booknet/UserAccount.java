@@ -145,16 +145,18 @@ public class UserAccount implements Serializable, Cloneable {
      * @param listing The listing to add
      */
     public void addListingToRequested(BookListing listing) {
-        //todo: implement
+        listing.addRequest(getUsername());
+        requestedBooks.addBookListing(listing);
     }
 
     /**
-     * Removes a listing fromm this user's requested library
+     * Removes a listing from this user's requested library
      *
      * @param listing The listing to remove
      */
     public void removeListingFromRequested(BookListing listing) {
-        //todo: implement
+        listing.cancelRequest(this.username);
+        requestedBooks.removeBookListing(listing);
     }
 
     /**

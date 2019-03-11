@@ -46,10 +46,19 @@ public class UserAccount extends AppCompatActivity implements Serializable, Clon
     }
 
     //#region Getters and Setters
+
+    /**
+     * Gets the username of the UserAccount
+     * @return String of the username of this UserAccount
+     */
     public String getUsername() {
         return username;
     }
 
+    /**
+     * Sets the username of the UserAccount to the passed in value.
+     * @param username String - what the username of UserAccount is going to be set to.
+     */
     public void setUsername(String username) {
         this.username = username;
     }
@@ -138,16 +147,18 @@ public class UserAccount extends AppCompatActivity implements Serializable, Clon
      * @param listing The listing to add
      */
     public void addListingToRequested(BookListing listing) {
-        //todo: implement
+        listing.addRequest(getUsername());
+        requestedBooks.addBookListing(listing);
     }
 
     /**
-     * Removes a listing fromm this user's requested library
+     * Removes a listing from this user's requested library
      *
      * @param listing The listing to remove
      */
     public void removeListingFromRequested(BookListing listing) {
-        //todo: implement
+        listing.cancelRequest(this.username);
+        requestedBooks.removeBookListing(listing);
     }
 
     /**

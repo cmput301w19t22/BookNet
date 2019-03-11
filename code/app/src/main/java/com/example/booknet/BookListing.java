@@ -2,6 +2,7 @@ package com.example.booknet;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Keeps track of a book that is listed on the app.
@@ -115,6 +116,8 @@ public class BookListing implements Serializable {
             if (!requests.contains(requesterName)) {
                 requests.add(requesterName);
             }
+            //change status to reflect change
+            this.status = Status.Requested;
             //todo send to database
         } else {
             //todo notify cannot add request
@@ -129,12 +132,14 @@ public class BookListing implements Serializable {
     public void acceptRequest(String requesterName) {
         if (status == Status.Requested) {
             if (requests.contains(requesterName)) {
+                requests.remove(requesterName);
+
                 //Deny other requests
-                for (String user : requests) {
-                    if (!user.equals(requesterName)) {
-                        denyRequest(user);
-                    }
+                for (Integer i = 0; i < requests.size();) {
+                    String otherRequesterName = requests.get(i);
+                    denyRequest(otherRequesterName);
                 }
+
                 requests.clear();
 
                 //Accept this request
@@ -147,13 +152,26 @@ public class BookListing implements Serializable {
     }
 
     /**
+     * Cancels a user's request for this book.
+     *
+     * @param requesterName The user whose request to cancel
+     */
+    public void cancelRequest(String requesterName){
+        this.requests.remove(requesterName);
+        //todo send notification for successful removal?
+    }
+
+
+    /**
      * Denies a user's request for this book.
      *
-     * @param requesterName
+     *
+     * @param requesterName - String -
      */
     public void denyRequest(String requesterName) {
         if (requests.contains(requesterName)) {
             requests.remove(requesterName);
+            if(requests.size() < 1) this.status = Status.Available;
             //todo notify database
         }
     }

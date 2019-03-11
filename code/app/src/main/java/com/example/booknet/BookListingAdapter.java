@@ -71,7 +71,7 @@ public class BookListingAdapter extends RecyclerView.Adapter<BookListingAdapter.
         final int index = bookListingViewHolder.getAdapterPosition();
 
         //Fill the text fields with the object's data
-        //bookListingViewHolder.bookThumbnail.
+        //bookListingViewHolder.bookThumbnail.//todo apply photo
         bookListingViewHolder.bookTitleLabel.setText(item.getBook().getTitle());
         bookListingViewHolder.bookAuthorLabel.setText(item.getBook().getAuthor());
         bookListingViewHolder.isbnLabel.setText(item.getBook().getIsbn());
@@ -91,15 +91,16 @@ public class BookListingAdapter extends RecyclerView.Adapter<BookListingAdapter.
         });
     }
 
-
-    void clickedItem(BookListing item) {
+    /**
+     * To be called when an item is clicked. Starts a view activity for the clicked Booklisting
+     *
+     * @param item The BookListing we clicked on
+     */
+    private void clickedItem(BookListing item) {
         //Start View/Edit Activity with Clicked Item
         Intent intent = new Intent(sourceActivity, ListingViewActivity.class);
-        //intent.putExtra("listing", (Serializable) item);//Send listing object to activity
-        intent.putExtra("username",item.getOwnerUsername());
-        intent.putExtra("bookisbn",item.getBook().getIsbn());
-
-        //todo: intent
+        intent.putExtra("username", item.getOwnerUsername());
+        intent.putExtra("bookisbn", item.getBook().getIsbn());
         sourceActivity.startActivity(intent);
     }
 

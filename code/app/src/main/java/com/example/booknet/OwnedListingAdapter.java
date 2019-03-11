@@ -68,7 +68,7 @@ public class OwnedListingAdapter extends RecyclerView.Adapter<OwnedListingAdapte
         final int index = ownedListingViewHolder.getAdapterPosition();
 
         //Fill the text fields with the object's data
-        //ownedListingViewHolder.bookThumbnail.
+        //ownedListingViewHolder.bookThumbnail.//todo listing photo
         ownedListingViewHolder.bookTitleLabel.setText(item.getBook().getTitle());
         ownedListingViewHolder.bookAuthorLabel.setText(item.getBook().getAuthor());
         ownedListingViewHolder.isbnLabel.setText(item.getBook().getIsbn());
@@ -91,10 +91,8 @@ public class OwnedListingAdapter extends RecyclerView.Adapter<OwnedListingAdapte
     public void clickedItem(BookListing item) {
         //Start View/Edit Activity with Clicked Item
         Intent intent = new Intent(sourceActivity, OwnListingViewActivity.class);
-        //intent.putExtra(ListingViewActivity, index);//Send listing object to activity
         intent.putExtra("username", item.getOwnerUsername());
         intent.putExtra("bookisbn", item.getBook().getIsbn());
-        //todo: intent
         sourceActivity.startActivity(intent);
     }
 

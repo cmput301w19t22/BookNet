@@ -34,7 +34,8 @@ public class UserRequestAdapter extends RecyclerView.Adapter<UserRequestAdapter.
      */
     public UserRequestAdapter(BookListing listing, AppCompatActivity sourceActivity) {
         this.listing = listing;
-        this.requesters = listing.getRequesters();
+        //this.requesters = listing.getRequesters();
+        getUserAccounts();
         this.sourceActivity = sourceActivity;
     }
 
@@ -76,14 +77,16 @@ public class UserRequestAdapter extends RecyclerView.Adapter<UserRequestAdapter.
     public void onBindViewHolder(@NonNull RequestViewHolder requestViewHolder, int position) {
         //Get the data at the provided position
         final UserAccount account = requesters.get(position);
+        final String username = account.getUsername();
         //Index to pass to the edit activity
         final int index = requestViewHolder.getAdapterPosition();
 
         //Fill the text fields with the object's data
-        requestViewHolder.username.setText(account.getUsername());
+        requestViewHolder.username.setText(username);
         requestViewHolder.ratingText.setText(String.format("%1.1f", account.getRatingScore()));
         //todo apply to stars
 
+        //Set Click Listeners
         requestViewHolder.username.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -94,21 +97,40 @@ public class UserRequestAdapter extends RecyclerView.Adapter<UserRequestAdapter.
         requestViewHolder.acceptButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                acceptButton(account);
+                acceptButton(username);
             }
         });
         requestViewHolder.declineButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                declineButton(account);
+                declineButton(username);
             }
         });
     }
 
+    /**
+     * Override to get the number of items in the dataset
+     *
+     * @return
+     */
     @Override
     public int getItemCount() {
         return requesters.size();
     }
+
+    /**
+     * Copies the BookListing's requesters into an array of UserAccounts
+     */
+    private void getUserAccounts() {
+        for (String username : listing.getRequesters()) {
+            //Obtain the user from the database
+            UserAccount requester = MockDatabase.getInstance().readUserAccount(username);
+            if (requester != null) {
+                requesters.add(requester);
+            }
+        }
+    }
+
 
     /**
      * Action to view the profile of the clicked user.
@@ -123,11 +145,11 @@ public class UserRequestAdapter extends RecyclerView.Adapter<UserRequestAdapter.
      *
      * @param account The user whose request will be accepted.
      */
-    private void acceptButton(UserAccount account) {
-        //todo accept the request
-        listing.acceptRequest(account.getUsername());
+    private void acceptButton(String account) {
+        //todo accept the request in real db
+        listing.acceptRequest(account);
         MockDatabase.getInstance().acceptRequestForListing(listing, account);
-        Toast.makeText(sourceActivity, "Accepted " + account.getUsername(), Toast.LENGTH_LONG).show();
+        Toast.makeText(sourceActivity, "Accepted " + account, Toast.LENGTH_LONG).show();
         sourceActivity.finish();
     }
 
@@ -136,11 +158,11 @@ public class UserRequestAdapter extends RecyclerView.Adapter<UserRequestAdapter.
      *
      * @param account The user whose request will be declined.
      */
-    private void declineButton(UserAccount account) {
-        //todo deny the request
-        listing.denyRequest(account.getUsername());
+    private void declineButton(String account) {
+        //todo deny the request in real db
+        listing.denyRequest(account);
         MockDatabase.getInstance().declineRequestForListing(listing, account);
-        Toast.makeText(sourceActivity, "Declined " + account.getUsername(), Toast.LENGTH_LONG).show();
+        Toast.makeText(sourceActivity, "Declined " + account, Toast.LENGTH_LONG).show();
     }
 
     /**

@@ -8,6 +8,14 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
+/**
+ * Activity to display another user's BookListing.
+ * Contains controls to request the book.
+ *
+ * @author Jamie
+ * @version 1.0
+ */
 public class ListingViewActivity extends AppCompatActivity {
 
     //Layout Objects
@@ -20,9 +28,18 @@ public class ListingViewActivity extends AppCompatActivity {
     private Button requestButton;
     private Button ownerProfileButton;
 
+    //Activity Data
     private BookListing listing;
 
-
+    /**
+     * Called when creating the activity.
+     * Performs the following tasks:
+     * - Obtain the layout object refs
+     * - Obtain the intent for obtaining the listing
+     * - Setup click listeners for the controls
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +65,7 @@ public class ListingViewActivity extends AppCompatActivity {
         }
         fillLayout();//todo delete when using real db
 
+        //#region Listeners
         requestButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -61,14 +79,13 @@ public class ListingViewActivity extends AppCompatActivity {
                 viewOwnerProfile();
             }
         });
-
-
+        //#endregion
     }
 
     /**
      * Fills the layout with the data in the listing
      */
-    private void fillLayout(){
+    private void fillLayout() {
         if (listing == null) {
             Toast.makeText(this, "Listing Not Found", Toast.LENGTH_LONG).show();
         } else {
@@ -84,7 +101,7 @@ public class ListingViewActivity extends AppCompatActivity {
      * Creates a request for this book listing from the current user.
      */
     private void sendRequest() {
-        MockDatabase.getInstance().addRequestToListing(listing, CurrentUser.getInstance().getUserAccount());
+        MockDatabase.getInstance().addRequestToListing(listing, CurrentUser.getInstance().getUserAccount().getUsername());
     }
 
     /**

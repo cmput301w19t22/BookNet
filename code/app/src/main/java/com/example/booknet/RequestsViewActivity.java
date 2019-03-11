@@ -17,7 +17,7 @@ public class RequestsViewActivity extends AppCompatActivity {
 
     //App Data
     BookListing listing;
-    ArrayList<UserAccount> requests;
+    ArrayList<String> requests;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,13 +51,10 @@ public class RequestsViewActivity extends AppCompatActivity {
             requests = listing.getRequesters();
         }
 
-        //Add a fake request just for debugging
-        requests.add(new UserAccount("ghostRequester", "debug"));
-
         //Setup RecyclerView
         requestsList = findViewById(R.id.requestList);
         requestsList.setLayoutManager(new LinearLayoutManager(this));
-        requestAdapter = new UserRequestAdapter(listing, requests, this);
+        requestAdapter = new UserRequestAdapter(listing, this);
         requestsList.setAdapter(requestAdapter);
     }
 }

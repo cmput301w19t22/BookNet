@@ -1,12 +1,14 @@
 package com.example.booknet;
 
+import android.support.v7.app.AppCompatActivity;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Data structure representing an account on the app.
  */
-public class UserAccount implements Serializable, Cloneable {
+public class UserAccount extends AppCompatActivity implements Serializable, Cloneable {
     //Attributes
     private String username;
     private String accountPassword;

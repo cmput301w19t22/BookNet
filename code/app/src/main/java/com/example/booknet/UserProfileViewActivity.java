@@ -30,6 +30,7 @@ public class UserProfileViewActivity extends AppCompatActivity {
     private Button reviewsButton;
     private Button booksButton;
     private Button editButton;
+    private Button logoutButton;
 
     //Activity Data
     UserAccount userAccount;
@@ -59,6 +60,7 @@ public class UserProfileViewActivity extends AppCompatActivity {
         reviewsButton = findViewById(R.id.reviewsButton);
         booksButton = findViewById(R.id.libraryButton);
         editButton = findViewById(R.id.editButton);
+        logoutButton = findViewById(R.id.logoutButton);
 
         //Get Profile
         Intent intent = getIntent();
@@ -74,6 +76,7 @@ public class UserProfileViewActivity extends AppCompatActivity {
                 //userAccount = CurrentUser.getInstance().getUserAccount();
                 userAccount = fetchUser(username);
                 editButton.setVisibility(View.VISIBLE);
+                logoutButton.setVisibility(View.VISIBLE);
             } else {
                 userAccount = fetchUser(username);
             }
@@ -92,6 +95,13 @@ public class UserProfileViewActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 viewUserBooks(userAccount);
+            }
+        });
+
+        logoutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(), LoginPageActivity.class));
             }
         });
         //#endregion

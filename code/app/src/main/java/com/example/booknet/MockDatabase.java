@@ -152,8 +152,7 @@ public class MockDatabase extends DatabaseManager {
     }
 
     @Override
-    public ArrayList<BookListing> readAllBookListings() {
-        return bookListings;
+    public void readAllBookListings(BookSearchActivity activity) {
     }
 
     @Override

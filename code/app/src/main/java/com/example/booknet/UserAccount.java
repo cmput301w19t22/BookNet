@@ -3,7 +3,11 @@ package com.example.booknet;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class UserAccount implements Serializable,Cloneable {
+/**
+ * Data structure representing an account on the app.
+ */
+public class UserAccount implements Serializable, Cloneable {
+    //Attributes
     private String username;
     private String accountPassword;
     private UserProfile profile;
@@ -12,6 +16,9 @@ public class UserAccount implements Serializable,Cloneable {
     private BookLibrary ownedLibrary;
     private BookLibrary requestedBooks;
 
+    /**
+     * Constructor to make an empty account
+     */
     public UserAccount() {
         this.username = "";
         this.accountPassword = "";
@@ -21,11 +28,16 @@ public class UserAccount implements Serializable,Cloneable {
         this.requestedBooks = new BookLibrary();
     }
 
-    //Constructor
+    /**
+     * Constructor to create a new account
+     *
+     * @param username        The new account's username
+     * @param accountPassword The new accounts password
+     */
     public UserAccount(String username, String accountPassword) {
         this.username = username;
         this.accountPassword = accountPassword;
-        this.profile= new UserProfile();
+        this.profile = new UserProfile();
         this.reviews = new ArrayList<Review>();
         this.ownedLibrary = new BookLibrary();
         this.requestedBooks = new BookLibrary();
@@ -91,26 +103,56 @@ public class UserAccount implements Serializable,Cloneable {
         return 5;
     }
 
+    /**
+     * Adds a book to this user's owned library and creates a listing for it.
+     *
+     * @param book The book to add
+     */
     public void addBookToOwned(Book book) {
-        ownedLibrary.addBookListing(new BookListing(book,this));
+        ownedLibrary.addBookListing(new BookListing(book, this));
     }
 
-    public void addListingToOwned(BookListing book) {
-        ownedLibrary.addBookListing(book);
+    /**
+     * Adds a listing to this user's owned library.
+     *
+     * @param listing The listing to add
+     */
+    public void addListingToOwned(BookListing listing) {
+        ownedLibrary.addBookListing(listing);
     }
 
+    /**
+     * Removes a listing from this user's owned library
+     *
+     * @param listing The listing to remove
+     */
     public void removeBookFromOwned(BookListing listing) {
         ownedLibrary.removeBookListing(listing);
     }
 
+    /**
+     * Adds a listing to this user's requested library
+     *
+     * @param listing The listing to add
+     */
     public void addListingToRequested(BookListing listing) {
         //todo: implement
     }
 
+    /**
+     * Removes a listing fromm this user's requested library
+     *
+     * @param listing The listing to remove
+     */
     public void removeListingFromRequested(BookListing listing) {
         //todo: implement
     }
 
+    /**
+     * Creates a string containing this UserAccount's attributes
+     *
+     * @return
+     */
     @Override
     public String toString() {
         return "UserAccount{" +
@@ -124,6 +166,11 @@ public class UserAccount implements Serializable,Cloneable {
                 '}';
     }
 
+    /**
+     * Creates a copy of this UserAccount
+     *
+     * @return Returns the copy of this UserAccount
+     */
     protected UserAccount clone() {
         UserAccount cloned = new UserAccount(username, accountPassword);
         cloned.setProfile(this.profile);

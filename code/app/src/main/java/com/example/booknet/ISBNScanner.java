@@ -8,6 +8,8 @@ package com.example.booknet;
  */
 public class ISBNScanner {
 
+    //todo place actual scanning code here
+
     /**
      * Checks if the given string value is a valid ISBN format.
      * Does not check that the ISBN matches an existing book.

@@ -5,19 +5,26 @@ import java.util.ArrayList;
 /**
  * A fake memory based database for testing the activities. Uses the same function
  * signatures as the real database but overrides their functions.
+ *
  * @author Jamie
+ * @see DatabaseManager
  */
 public class MockDatabase extends DatabaseManager {
+    //Singleton Pattern
     private static final MockDatabase ourInstance = new MockDatabase();
 
     public static MockDatabase getInstance() {
         return ourInstance;
     }
 
+    //Data
     ArrayList<BookListing> bookListings;
     ArrayList<UserAccount> userAccounts;
     ArrayList<Book> books;
 
+    /**
+     * Private constructor to init the mock database and populate it.
+     */
     private MockDatabase() {
         bookListings = new ArrayList<>();
         userAccounts = new ArrayList<>();
@@ -53,7 +60,7 @@ public class MockDatabase extends DatabaseManager {
         writeUserAccount(CurrentUser.getInstance().getUserAccount());
     }
 
-
+    //#region Overridden Methods
     @Override
     public void writeUserAccount(UserAccount account) {
         //Remove old version
@@ -119,9 +126,10 @@ public class MockDatabase extends DatabaseManager {
 
     /**
      * Reads a specific BookListing
+     *
      * @param username Owner
      * @param bookisbn Book Id
-     * @param library Which library to search? Owned = 0, Requests = 1
+     * @param library  Which library to search? Owned = 0, Requests = 1
      * @return
      */
     public BookListing readBookListing(String username, String bookisbn, int library) {
@@ -169,5 +177,5 @@ public class MockDatabase extends DatabaseManager {
         }
         return null;
     }
-
+    //#endregion
 }

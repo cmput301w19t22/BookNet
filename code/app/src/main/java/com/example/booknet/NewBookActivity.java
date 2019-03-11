@@ -6,6 +6,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+/**
+ * Activity to create a new book. Can create the book by scanning
+ * an ISBN or by entering the data manually.
+ *
+ * @author Jamie
+ * @version 1.0
+ */
 public class NewBookActivity extends AppCompatActivity {
 
     //Layout Objects
@@ -16,9 +23,12 @@ public class NewBookActivity extends AppCompatActivity {
     private Button addButton;
     private Button cancelButton;
 
-    //Data
-    BookLibrary userLibrary;//temp for testing
-
+    /**
+     * Called when creating the activity.
+     * Obtains the layout objects and sets listeners.
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,7 +58,6 @@ public class NewBookActivity extends AppCompatActivity {
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //todo anything else here?
                 finish();
             }
         });
@@ -57,14 +66,18 @@ public class NewBookActivity extends AppCompatActivity {
 
 
     /**
-     * Attempts to create a book.
+     * Attempts to create a book with the data in the activity's fields.
+     *
+     * @return A new book from the data
      */
     private Book createBook() {
+        //Get the data from the layout fields
         String title = titleField.getText().toString();
         String author = authorField.getText().toString();
         String isbn = isbnField.getText().toString();
         String description = descriptionField.getText().toString();
 
+        //Create and return the book
         Book newBook = new Book(title, author, description, isbn);
         return newBook;
     }

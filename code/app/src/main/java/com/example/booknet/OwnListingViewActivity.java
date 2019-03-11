@@ -10,6 +10,12 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+/**
+ * Activity to view a listing that the current user owns.
+ *
+ * @author Jamie
+ * @version 1.0
+ */
 public class OwnListingViewActivity extends AppCompatActivity {
 
     //Layout Objects
@@ -23,8 +29,17 @@ public class OwnListingViewActivity extends AppCompatActivity {
     private Button viewRequestsButton;
     private Button deleteButton;
 
+    //Activity Data
     private BookListing listing;
 
+    /**
+     * Called when the activity is created.
+     * Performs the following actions:
+     * - Gets the intent
+     * - Sets listeners for the controls
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,7 +65,7 @@ public class OwnListingViewActivity extends AppCompatActivity {
             listing = MockDatabase.getInstance().readBookListing(username, isbn, MockDatabase.OWNEDLIBRARY);
         }
 
-
+        //Set Listener for ViewRequests Button
         viewRequestsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -91,10 +106,11 @@ public class OwnListingViewActivity extends AppCompatActivity {
     /**
      * Fills the layout with the data in the listing
      */
-    private void fillLayout(){
+    private void fillLayout() {
         if (listing == null) {
             Toast.makeText(this, "Listing Not Found", Toast.LENGTH_LONG).show();
         } else {
+            //Set Layout Objects
             bookTitleLabel.setText(listing.getBook().getTitle());
             bookAuthorLabel.setText(listing.getBook().getAuthor());
             isbnLabel.setText(listing.getBook().getIsbn());
@@ -105,11 +121,11 @@ public class OwnListingViewActivity extends AppCompatActivity {
 
     /**
      * Start an activity to view this listing's requests.
+     *
      * @param item
      */
     private void viewRequests(BookListing item) {
         Intent intent = new Intent(this, RequestsViewActivity.class);
-
         intent.putExtra("username", item.getOwnerUsername());
         intent.putExtra("bookisbn", item.getBook().getIsbn());
         startActivity(intent);

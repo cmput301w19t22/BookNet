@@ -9,6 +9,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+/**
+ * Activity to edit a user profile. Only actually allows you to edit your own.
+ *
+ * @author Jamie
+ * @version 1.0
+ */
 public class ProfileEditActivity extends AppCompatActivity {
 
     //Layout Objects
@@ -18,10 +24,16 @@ public class ProfileEditActivity extends AppCompatActivity {
     private Button applyButton;
     private Button cancelButton;
 
-    //Data
+    //Activity Data
     private UserAccount user;
     private String username;
 
+    /**
+     * Called when creating the activity
+     * Gets the intent and sets listeners
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,7 +46,7 @@ public class ProfileEditActivity extends AppCompatActivity {
         applyButton = findViewById(R.id.applyButton);
         cancelButton = findViewById(R.id.cancelButton);
 
-        //Get Profile
+        //Get Intent
         Intent intent = getIntent();
         //Check that we have a username to check
         if (!intent.hasExtra("username")) {
@@ -47,7 +59,7 @@ public class ProfileEditActivity extends AppCompatActivity {
             fillLayout();
         }
 
-
+        //Set Listeners
         applyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -84,7 +96,7 @@ public class ProfileEditActivity extends AppCompatActivity {
     /**
      * Obtains the UserAccount from the database
      *
-     * @param username
+     * @param username The username to fetch
      * @return
      */
     private UserAccount fetchUser(String username) {

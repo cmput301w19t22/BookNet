@@ -9,6 +9,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+/**
+ * Activity to view a user's profile.
+ *
+ * @author Jamie
+ * @version 1.0
+ */
 public class UserProfileViewActivity extends AppCompatActivity {
 
     //Layout Objects
@@ -25,10 +31,16 @@ public class UserProfileViewActivity extends AppCompatActivity {
     private Button booksButton;
     private Button editButton;
 
-    //Data
+    //Activity Data
     UserAccount userAccount;
     String username = "";
 
+    /**
+     * Called when creating the activity
+     * Gets the intent and sets click listeners
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,6 +80,7 @@ public class UserProfileViewActivity extends AppCompatActivity {
             fillLayout();
         }
 
+        //#region Listeners
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -81,6 +94,7 @@ public class UserProfileViewActivity extends AppCompatActivity {
                 viewUserBooks(userAccount);
             }
         });
+        //#endregion
     }
 
     /**

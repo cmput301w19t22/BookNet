@@ -9,11 +9,18 @@ import android.view.MenuItem;
 import android.widget.SearchView;
 import android.widget.TextView;
 
+/**
+ * Activity for the app's homepage.
+ *
+ * @version 0.1
+ */
 public class MainActivity extends AppCompatActivity {
 
+    //Layout Objects
     private TextView mTextMessage;
     private SearchView searchBar;
 
+    //Set Click Listener for Navigation Bar
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -21,11 +28,9 @@ public class MainActivity extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_search:
-                    //mTextMessage.setText(R.string.title_home);
                     searchClicked();
                     return true;
                 case R.id.navigation_mybooks:
-                    //mTextMessage.setText(R.string.title_dashboard);
                     myBooksClicked();
                     return true;
                 case R.id.navigation_myaccount:
@@ -62,8 +67,8 @@ public class MainActivity extends AppCompatActivity {
     private void myAccountClicked() {
         Intent intent = new Intent(this, UserProfileViewActivity.class);
         String username = CurrentUser.getInstance().getUserAccount().getUsername();
-        intent.putExtra("username",username);
-        intent.putExtra("isMe",true);
+        intent.putExtra("username", username);
+        intent.putExtra("isMe", true);
         startActivity(intent);
     }
 

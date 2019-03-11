@@ -30,7 +30,7 @@ public class Book implements Serializable {
     }
 
     /**
-     * Constructor that creates a blank book object.
+     * Constructor that creates a blank book object, with empty Strings for all the values.
      */
     public Book() {
         this.title = "";

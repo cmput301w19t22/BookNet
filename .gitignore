@@ -14,7 +14,7 @@
 */out/
 
 # Gradle files
-*/.gradle/
+code/.gradle/*
 code/build/
 
 # Local configuration file (sdk path, etc)
@@ -63,3 +63,4 @@ fastlane/Preview.html
 fastlane/screenshots
 fastlane/test_output
 fastlane/readme.md
+code/.gradle/4.10.1/fileHashes/fileHashes.bin

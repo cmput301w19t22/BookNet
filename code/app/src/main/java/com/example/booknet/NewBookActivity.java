@@ -1,10 +1,15 @@
 package com.example.booknet;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
+
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 public class NewBookActivity extends AppCompatActivity {
 
@@ -15,6 +20,7 @@ public class NewBookActivity extends AppCompatActivity {
     EditText descriptionField;
     private Button addButton;
     private Button cancelButton;
+    private Button scanButton;
 
     //Data
     BookLibrary userLibrary;//temp for testing
@@ -33,6 +39,7 @@ public class NewBookActivity extends AppCompatActivity {
 
         addButton = findViewById(R.id.addButton);
         cancelButton = findViewById(R.id.cancelButton);
+        scanButton = findViewById(R.id.scanButton);
 
         //#region Set Listeners
         addButton.setOnClickListener(new View.OnClickListener() {
@@ -50,6 +57,13 @@ public class NewBookActivity extends AppCompatActivity {
             public void onClick(View v) {
                 //todo anything else here?
                 finish();
+            }
+        });
+
+        scanButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                scanNow();
             }
         });
         //#endregion
@@ -76,5 +90,34 @@ public class NewBookActivity extends AppCompatActivity {
      */
     private void addBookRequest(Book book) {
         CurrentUser.getInstance().requestAddBook(book);
+    }
+
+    // ISBN Scanner
+    /**
+     * Handles the retrieval of the Data from the ISBN scanner
+     * @author Andi Aspin - https://www.youtube.com/watch?v=PRIVHoEyeL0&t=41s
+     */
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode,resultCode,data);
+        if (result != null) {
+            if (result.getContents() == null) {
+                Toast.makeText(this,"Result Not Found", Toast.LENGTH_SHORT).show();
+            } else {
+                isbnField.setText(result.getContents());
+            }
+        }
+    }
+    /**
+     * Runs the code needed for the use of the ISBN scanner
+     * @author Andi Aspin - https://www.youtube.com/watch?v=PRIVHoEyeL0&t=41s
+     */
+    private void scanNow() {
+        IntentIntegrator integrator = new IntentIntegrator(this);
+        integrator.setCaptureActivity(Portrait.class);
+        integrator.setOrientationLocked(false);
+        integrator.setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES);
+        integrator.setPrompt("Scan Your Barcode");
+        integrator.initiateScan();
     }
 }

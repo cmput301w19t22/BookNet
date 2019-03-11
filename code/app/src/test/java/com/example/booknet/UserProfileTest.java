@@ -28,10 +28,12 @@ public class UserProfileTest {
 
     @Test
     public void EmailFormat(){
+        assertTrue(false);
         //TODO: implement later
     }
     @Test
     public void PhoneFormat(){
+        assertTrue(false);
         //TODO: implement later
     }
 

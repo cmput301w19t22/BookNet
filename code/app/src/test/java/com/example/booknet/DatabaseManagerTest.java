@@ -18,7 +18,8 @@ public class DatabaseManagerTest {
 
         databaseManager.writeUserAccount(user);
 
-        //todo: what to assert?
+        assertTrue(false);
+        //todo: interact with actual database
     }
 
     @Test
@@ -31,7 +32,8 @@ public class DatabaseManagerTest {
 
         databaseManager.writeBookListing(listing);
 
-        //todo: what to assert?
+        assertTrue(false);
+        //todo: interact with actual database
     }
 
     @Test
@@ -43,23 +45,27 @@ public class DatabaseManagerTest {
 
         databaseManager.writeBookInfo(book);
 
-        //todo: what to assert?
+        assertTrue(false);
+        //todo: interact with actual database
     }
 
     @Test
     public void WriteReview() {
         DatabaseManager databaseManager = new DatabaseManager();
 
-        UserAccount user1 = new UserAccount("testuser", "debug");
-        UserAccount user2 = new UserAccount("testuser2", "debug");
+        UserAccount reviewer = new UserAccount("testuser", "debug");
+        UserAccount reviewed= new UserAccount("testuser2", "debug");
         Book book = new Book("title", "author", "description", "1234567890");
-        BookListing listing = new BookListing(book, user2);
+        BookListing listing = new BookListing(book, reviewed);
 
-        Review review = new Review(user1, user2, 4, "test");
+        Review review = new Review(reviewer, reviewed, 4, "test");
 
         databaseManager.writeReview(review);
 
-        //todo: what to assert?
+        ArrayList<Review> reviewedUserReviews = reviewed.getReviews();
+
+        assertTrue(false);
+        //todo: interact with actual database
     }
 
     @Test

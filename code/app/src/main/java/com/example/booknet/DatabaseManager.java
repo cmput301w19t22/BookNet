@@ -1,7 +1,10 @@
 package com.example.booknet;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -35,19 +38,19 @@ public class DatabaseManager {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
 
         //Get Info for this listing
-        //UserAccount currentUserAccount = listing.getOwnerUsername();
+        String currentUserAccount = listing.getOwnerUsername();
         Book currentBook = listing.getBook();
 
         //Obtain Database
         DatabaseReference listingRef = ref.child("BookListings");
-        DatabaseReference userBookRef = ref.child("BookListings");
+        DatabaseReference userBookRef = ref.child("UserBooks");
 
         //Write Listing
-        listingRef.push().setValue(listing);
+        listingRef.push().child("BookListing").setValue(listing);
 
         //Write Book
         userBookRef.child("UserBooks")
-                .child(listing.getOwnerUsername())
+                .child(currentUserAccount)
                 .child(currentBook.getIsbn()).setValue(currentBook);
     }
 
@@ -105,7 +108,6 @@ public class DatabaseManager {
     }
 
     public ArrayList<BookListing> readAllBookListings() {
-        //todo: implement
         return null;
     }
 

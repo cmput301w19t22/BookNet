@@ -48,8 +48,12 @@ public class BookSearchActivity extends AppCompatActivity {
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                BookListing bookListing = dataSnapshot.getValue(BookListing.class);
-                System.out.println(bookListing);
+                for (DataSnapshot data : dataSnapshot.getChildren()){
+                    BookListing bookListing = data.child("BookListing").getValue(BookListing.class);
+                    System.out.println(bookListing.getOwnerUsername());
+                    bookListings.add(bookListing);
+                }
+                fillLayout();
             }
 
             @Override
@@ -63,12 +67,11 @@ public class BookSearchActivity extends AppCompatActivity {
         UserAccount u1 = new UserAccount("debug","debug");
         bookListings.add(new BookListing(b1,u1));
         bookListings.add(new BookListing(b2,u1));*/
-        bookListings = MockDatabase.getInstance().readAllBookListings();
 
+
+        //bookListings = MockDatabase.getInstance().readAllBookListings();
 
         fillLayout();//todo delete when using real db
-
-
     }
 
     /**

@@ -2,13 +2,26 @@ package com.example.booknet;
 
 import java.io.Serializable;
 
+/**
+ * Simple data structure for a book.
+ */
 public class Book implements Serializable {
+    //Attributes
     private String title;
     private String author;
     private String description;
     private String isbn;
 
-    // Constructors
+    //#region Constructors
+
+    /**
+     * Constructor that takes all attributes as parameters.
+     *
+     * @param title       The title of the book
+     * @param author      The author of the book
+     * @param description The description of the book
+     * @param isbn        The book's ISBN
+     */
     public Book(String title, String author, String description, String isbn) {
         this.title = title;
         this.author = author;
@@ -16,12 +29,16 @@ public class Book implements Serializable {
         this.isbn = isbn;
     }
 
+    /**
+     * Constructor that creates a blank book object.
+     */
     public Book() {
         this.title = "";
         this.author = "";
         this.description = "";
-
+        this.isbn = "";
     }
+    //#endregion
 
     //#region Getters Setters
     public String getTitle() {
@@ -55,6 +72,6 @@ public class Book implements Serializable {
     public void setIsbn(String isbn) {
         this.isbn = isbn;
     }
-
     //#endregion
+
 }

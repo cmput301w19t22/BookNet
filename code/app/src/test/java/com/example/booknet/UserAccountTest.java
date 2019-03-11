@@ -55,7 +55,7 @@ public class UserAccountTest {
         Book book = new Book("title", "author", "description",  "1234567890");
         BookListing listing = new BookListing(book, user);
 
-        user.addBookToOwned(listing);
+        user.addListingToOwned(listing);
 
         BookLibrary owned = user.getOwnedLibrary();
         assertTrue(owned.containsListingFor(book));
@@ -67,7 +67,7 @@ public class UserAccountTest {
         Book book = new Book("title", "author", "description", "1234567890");
         BookListing listing = new BookListing(book, user);
 
-        user.addBookToOwned(listing);
+        user.addListingToOwned(listing);
         BookLibrary owned = user.getOwnedLibrary();
         assertTrue(owned.containsListingFor(book));
 

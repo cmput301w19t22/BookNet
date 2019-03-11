@@ -71,30 +71,38 @@ public class BookListingAdapter extends RecyclerView.Adapter<BookListingAdapter.
         final int index = bookListingViewHolder.getAdapterPosition();
 
         //Fill the text fields with the object's data
-        //bookListingViewHolder.bookThumbnail.
+        //bookListingViewHolder.bookThumbnail.//todo apply photo
         bookListingViewHolder.bookTitleLabel.setText(item.getBook().getTitle());
         bookListingViewHolder.bookAuthorLabel.setText(item.getBook().getAuthor());
         bookListingViewHolder.isbnLabel.setText(item.getBook().getIsbn());
-        bookListingViewHolder.ownerLabel.setText(item.getOwnerUsername().getUsername());
+        bookListingViewHolder.ownerLabel.setText(item.getOwnerUsername());
         bookListingViewHolder.statusLabel.setText(item.getStatus().toString());
+        bookListingViewHolder.item = item;
 
         //Add the click listener to the item
-        bookListingViewHolder.itemView.setOnClickListener(bookListingListener);
+        /**
+         * Click Listener for individual list items. Starts view activity for the clicked item.
+         */
+        bookListingViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                clickedItem(item);
+            }
+        });
     }
 
     /**
-     * Click Listener for individual list items. Starts view activity for the clicked item.
+     * To be called when an item is clicked. Starts a view activity for the clicked Booklisting
+     *
+     * @param item The BookListing we clicked on
      */
-    View.OnClickListener bookListingListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            //Start View/Edit Activity with Clicked Item
-            Intent intent = new Intent(sourceActivity, ListingViewActivity.class);
-            //intent.putExtra(ListingViewActivity, index);//Send listing object to activity
-            //todo: intent
-            sourceActivity.startActivity(intent);
-        }
-    };
+    private void clickedItem(BookListing item) {
+        //Start View/Edit Activity with Clicked Item
+        Intent intent = new Intent(sourceActivity, ListingViewActivity.class);
+        intent.putExtra("username", item.getOwnerUsername());
+        intent.putExtra("bookisbn", item.getBook().getIsbn());
+        sourceActivity.startActivity(intent);
+    }
 
     /**
      * Override to get the number of items in the dataset
@@ -118,6 +126,7 @@ public class BookListingAdapter extends RecyclerView.Adapter<BookListingAdapter.
         private TextView isbnLabel;
         private TextView ownerLabel;
         private TextView statusLabel;
+        private BookListing item;
 
         /**
          * Creates the BookListingViewHolder

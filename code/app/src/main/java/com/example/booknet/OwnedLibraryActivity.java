@@ -8,6 +8,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
 
+/**
+ * An activity to display the owned library of a user.
+ *
+ * @author Jamie
+ * @version 1.0
+ */
 public class OwnedLibraryActivity extends AppCompatActivity {
 
     //Layout Objects
@@ -15,14 +21,21 @@ public class OwnedLibraryActivity extends AppCompatActivity {
     private OwnedListingAdapter listingAdapter;
     private Button addButton;
 
-    //App Data
-    private BookLibrary data;
+    //Activity Data
+    private BookLibrary library;
 
+    /**
+     * Called when creating the activity.
+     * Sets a click listener for the add button
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_owned_library);
 
+        //Add Click Listener
         addButton = findViewById(R.id.addBookButton);
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -31,25 +44,18 @@ public class OwnedLibraryActivity extends AppCompatActivity {
             }
         });
 
-        //todo get real data
-        data=CurrentUser.getInstance().getOwnedLibrary();
-        //temp fake data
-        //data = new BookLibrary();
-        Book b1 = new Book("Title 1", "Author 1", "","1234567890");
-        Book b2 = new Book("Title 2", "Author 2", "","1234567891");
-        //UserAccount u1 = new UserAccount("myself", "debug");
-        UserAccount currentUserAccount = CurrentUser.getInstance().getUserAccount();
-        data.addBookListing(new BookListing(b1, currentUserAccount));
-        data.addBookListing(new BookListing(b2, currentUserAccount));
+        //Get Data From the Database
+        //todo get real library
+        library = MockDatabase.getInstance().readUserOwnedLibrary(CurrentUser.getInstance().getUserAccount().getUsername());
 
-        //Setup RecyclerView
-        libraryListView = findViewById(R.id.bookLibrary);
-        libraryListView.setLayoutManager(new LinearLayoutManager(this));
-        listingAdapter = new OwnedListingAdapter(data, this);
-        libraryListView.setAdapter(listingAdapter);
+        fillLayout();//todo delete when using real db
 
     }
 
+    /**
+     * Called when the activity starts
+     * Tells the list's adapter to update.
+     */
     @Override
     protected void onStart() {
         super.onStart();
@@ -58,8 +64,30 @@ public class OwnedLibraryActivity extends AppCompatActivity {
         listingAdapter.notifyDataSetChanged();
     }
 
+    /**
+     * Fills the activity layout from the data.
+     */
+    private void fillLayout() {
+        //Create fake data if there's no real data.
+        //todo remove block
+        if (library == null) {
+            Book b1 = new Book("Fake Book 1", "Author 1", "", "1234567890");
+            Book b2 = new Book("Fake Book 2", "Author 2", "", "1234567891");
+            UserAccount currentUserAccount = CurrentUser.getInstance().getUserAccount().clone();
+            library.addBookListing(new BookListing(b1, currentUserAccount));
+            library.addBookListing(new BookListing(b2, currentUserAccount));
+        }
 
+        //Setup RecyclerView
+        libraryListView = findViewById(R.id.bookLibrary);
+        libraryListView.setLayoutManager(new LinearLayoutManager(this));
+        listingAdapter = new OwnedListingAdapter(library, this);
+        libraryListView.setAdapter(listingAdapter);
+    }
 
+    /**
+     * Starts the activity to add a new book
+     */
     private void addBook() {
         Intent intent = new Intent(this, NewBookActivity.class);
         startActivity(intent);

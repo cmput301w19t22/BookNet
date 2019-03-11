@@ -2,16 +2,35 @@ package com.example.booknet;
 
 import java.io.Serializable;
 
+/**
+ * Data structure to store a user's profile info
+ */
 public class UserProfile implements Serializable {
+    //Attributes
     private String name;
     private String email;
     private String phoneNumber;
 
-    // Constructor
+    /**
+     * Creates a new profile with given attributes
+     *
+     * @param name        The user's name (not their username)
+     * @param email       The user's email address
+     * @param phoneNumber The user's phone number
+     */
     public UserProfile(String name, String email, String phoneNumber) {
         this.name = name;
         this.email = email;
         this.phoneNumber = phoneNumber;
+    }
+
+    /**
+     * Creates a blank profile
+     */
+    public UserProfile() {
+        this.name = "";
+        this.email = "";
+        this.phoneNumber = "";
     }
 
     //#region Getters and Setters

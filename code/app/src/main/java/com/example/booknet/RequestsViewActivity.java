@@ -1,9 +1,11 @@
 package com.example.booknet;
 
-import android.support.v7.app.AppCompatActivity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -14,7 +16,8 @@ public class RequestsViewActivity extends AppCompatActivity {
     private UserRequestAdapter requestAdapter;
 
     //App Data
-    ArrayList<UserAccount> requests;
+    BookListing listing;
+    ArrayList<String> requests;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,17 +25,36 @@ public class RequestsViewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_requests_view);
 
         //todo get real data
-        //temp dummy data
-        requests = new ArrayList<>();
-        requests.add(new UserAccount("User1","debug"));
-        requests.add(new UserAccount("User2","debug"));
-        requests.add(new UserAccount("User3","debug"));
+        //Get Intent
+        Intent intent = getIntent();
+        if (intent.hasExtra("listing")) {
+            //listing = (BookListing) intent.getSerializableExtra("listing");
+        }
+        //Check if given info to fetch listing
+        if (intent.hasExtra("username") && intent.hasExtra("bookisbn")) {
+            String username = intent.getStringExtra("username");
+            String isbn = intent.getStringExtra("bookisbn");
+            listing = MockDatabase.getInstance().readBookListing(username, isbn, MockDatabase.OWNEDLIBRARY);
+
+        }
+        fillLayout();
+
+    }
+
+    /**
+     * Fills the layout with the data in the listing
+     */
+    private void fillLayout() {
+        if (listing == null) {
+            Toast.makeText(this, "Listing Not Found", Toast.LENGTH_LONG).show();
+        } else {
+            requests = listing.getRequesters();
+        }
 
         //Setup RecyclerView
         requestsList = findViewById(R.id.requestList);
         requestsList.setLayoutManager(new LinearLayoutManager(this));
-        requestAdapter = new UserRequestAdapter(requests,this);
+        requestAdapter = new UserRequestAdapter(listing, this);
         requestsList.setAdapter(requestAdapter);
-
     }
 }

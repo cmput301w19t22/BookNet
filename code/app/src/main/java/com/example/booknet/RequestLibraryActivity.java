@@ -61,6 +61,7 @@ public class RequestLibraryActivity extends AppCompatActivity {
      * Fills the activity layout from the data.
      */
     private void fillLayout() {
+
         //Setup RecyclerView
         libraryListView = findViewById(R.id.bookLibrary);
         libraryListView.setLayoutManager(new LinearLayoutManager(this));

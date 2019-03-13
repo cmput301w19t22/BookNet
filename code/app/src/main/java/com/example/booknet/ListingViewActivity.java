@@ -109,7 +109,9 @@ public class ListingViewActivity extends AppCompatActivity {
      */
     private void viewOwnerProfile() {
         Intent intent = new Intent(this, UserProfileViewActivity.class);
-        intent.putExtra("username", listing.getOwnerUsername());
+        if (listing != null) {
+            intent.putExtra("username", listing.getOwnerUsername());
+        }
         startActivity(intent);
     }
 }

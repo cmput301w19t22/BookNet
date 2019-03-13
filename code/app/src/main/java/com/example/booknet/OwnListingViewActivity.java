@@ -126,8 +126,10 @@ public class OwnListingViewActivity extends AppCompatActivity {
      */
     private void viewRequests(BookListing item) {
         Intent intent = new Intent(this, RequestsViewActivity.class);
-        intent.putExtra("username", item.getOwnerUsername());
-        intent.putExtra("bookisbn", item.getBook().getIsbn());
+        if (item != null) {
+            intent.putExtra("username", item.getOwnerUsername());
+            intent.putExtra("bookisbn", item.getBook().getIsbn());
+        }
         startActivity(intent);
     }
 

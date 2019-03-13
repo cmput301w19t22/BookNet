@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -24,8 +26,10 @@ public class BookSearchActivity extends AppCompatActivity {
 
     //Layout Objects
     private RecyclerView searchResults;
+    private ProgressBar progressBar;
     private BookListingAdapter listingAdapter;
     private DatabaseManager databaseManager;
+
 
     //App Data
     ArrayList<BookListing> bookListings;
@@ -38,6 +42,9 @@ public class BookSearchActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_search);
+
+        progressBar = findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.VISIBLE);
 
         //todo get real search results
         //temp fake results
@@ -57,6 +64,7 @@ public class BookSearchActivity extends AppCompatActivity {
 
     public void addListingToList(BookListing listing){
         bookListings.add(listing);
+        MockDatabase.getInstance().bookListings.add(listing);
         listingAdapter.notifyDataSetChanged();
     }
 
@@ -70,6 +78,8 @@ public class BookSearchActivity extends AppCompatActivity {
         searchResults.setLayoutManager(new LinearLayoutManager(this));
         listingAdapter = new BookListingAdapter(bookListings, this);
         searchResults.setAdapter(listingAdapter);
+        //Deactivate the progress bar
+        progressBar.setVisibility(View.GONE);
     }
 
 }

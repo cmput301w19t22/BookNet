@@ -16,7 +16,7 @@ public class CurrentUser {
      */
     private CurrentUser() {
         //Create a default user account
-        account = new UserAccount("default", "debug");
+        account = new UserAccount("default");
         account.setProfile(new UserProfile("name", "email", "phone"));
         //MockDatabase.getInstance().writeUserAccount(account);
     }

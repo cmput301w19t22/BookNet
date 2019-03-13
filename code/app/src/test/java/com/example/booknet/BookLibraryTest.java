@@ -12,7 +12,7 @@ public class BookLibraryTest {
     @Test
     public void AddBook() {
         BookLibrary bookLibrary = new BookLibrary();
-        UserAccount owner = new UserAccount("user1", "password");
+        UserAccount owner = new UserAccount("user1");
         Book book1 = new Book("book1", "a1", "desc", "1234567890");
         BookListing listing = new BookListing(book1, owner);
 
@@ -25,7 +25,7 @@ public class BookLibraryTest {
     @Test
     public void RemoveBook() {
         BookLibrary bookLibrary = new BookLibrary();
-        UserAccount owner = new UserAccount("user1", "password");
+        UserAccount owner = new UserAccount("user1");
         Book book1 = new Book("book1", "a1", "desc", "1234567890");
         BookListing listing = new BookListing(book1, owner);
 
@@ -41,7 +41,7 @@ public class BookLibraryTest {
     @Test
     public void ContainsListingForBook() {
         BookLibrary bookLibrary = new BookLibrary();
-        UserAccount owner = new UserAccount("user1", "password");
+        UserAccount owner = new UserAccount("user1");
         Book book1 = new Book("book1", "a1", "desc", "1234567890");
         BookListing listing = new BookListing(book1, owner);
 

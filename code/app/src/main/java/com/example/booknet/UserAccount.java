@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class UserAccount extends AppCompatActivity implements Serializable, Cloneable {
     //Attributes
     private String username;
-    private String accountPassword;
+    //private String accountPassword;
     private UserProfile profile;
     private ArrayList<Review> reviews;
     private float reviewScore = 5;
@@ -23,7 +23,7 @@ public class UserAccount extends AppCompatActivity implements Serializable, Clon
      */
     public UserAccount() {
         this.username = "";
-        this.accountPassword = "";
+        //this.accountPassword = "";
         this.profile = new UserProfile();
         this.reviews = new ArrayList<Review>();
         this.ownedLibrary = new BookLibrary();
@@ -33,12 +33,11 @@ public class UserAccount extends AppCompatActivity implements Serializable, Clon
     /**
      * Constructor to create a new account
      *
-     * @param username        The new account's username
-     * @param accountPassword The new accounts password
+     * @param username The new account's username
      */
-    public UserAccount(String username, String accountPassword) {
+    public UserAccount(String username) {
         this.username = username;
-        this.accountPassword = accountPassword;
+        //this.accountPassword = accountPassword;
         this.profile = new UserProfile();
         this.reviews = new ArrayList<Review>();
         this.ownedLibrary = new BookLibrary();
@@ -49,6 +48,7 @@ public class UserAccount extends AppCompatActivity implements Serializable, Clon
 
     /**
      * Gets the username of the UserAccount
+     *
      * @return String of the username of this UserAccount
      */
     public String getUsername() {
@@ -57,19 +57,20 @@ public class UserAccount extends AppCompatActivity implements Serializable, Clon
 
     /**
      * Sets the username of the UserAccount to the passed in value.
+     *
      * @param username String - what the username of UserAccount is going to be set to.
      */
     public void setUsername(String username) {
         this.username = username;
     }
 
-    public String getAccountPassword() {
+    /*public String getAccountPassword() {
         return accountPassword;
     }
 
     public void setAccountPassword(String accountPassword) {
         this.accountPassword = accountPassword;
-    }
+    }*/
 
     public ArrayList<Review> getReviews() {
         return reviews;
@@ -106,12 +107,21 @@ public class UserAccount extends AppCompatActivity implements Serializable, Clon
 
     /**
      * Gets the user's rating in 1 to 5 stars.
+     * Calculated as the average of the user's review ratings.
+     * If no reviews exist the function returns 0.
      *
      * @return A float of the user rating
      */
     public float getRatingScore() {
-        //todo implement
-        return 5;
+        if (reviews.size() > 0) {
+            float val = 0;
+            for (Review review : reviews) {
+                val += review.getScore();
+            }
+            return val / reviews.size();
+        } else {
+            return 0;
+        }
     }
 
     /**
@@ -170,7 +180,7 @@ public class UserAccount extends AppCompatActivity implements Serializable, Clon
     public String toString() {
         return "UserAccount{" +
                 "username='" + username + '\'' +
-                ", accountPassword='" + accountPassword + '\'' +
+                //", accountPassword='" + accountPassword + '\'' +
                 ", profile=" + profile +
                 ", reviews=" + reviews.toString() +
                 ", reviewScore=" + reviewScore +
@@ -185,7 +195,7 @@ public class UserAccount extends AppCompatActivity implements Serializable, Clon
      * @return Returns the copy of this UserAccount
      */
     protected UserAccount clone() {
-        UserAccount cloned = new UserAccount(username, accountPassword);
+        UserAccount cloned = new UserAccount(username);
         cloned.setProfile(this.profile);
         cloned.setOwnedLibrary(ownedLibrary.clone());
         cloned.setRequestedBooks(requestedBooks.clone());

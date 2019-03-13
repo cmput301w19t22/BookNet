@@ -36,9 +36,9 @@ public class MockDatabase extends DatabaseManager {
      * Inserts testing data into the mock database
      */
     private void populateDatabase() {
-        UserAccount user1 = new UserAccount("User1", "debug");
-        UserAccount user2 = new UserAccount("User2", "debug");
-        UserAccount user3 = new UserAccount("User3", "debug");
+        UserAccount user1 = new UserAccount("User1");
+        UserAccount user2 = new UserAccount("User2");
+        UserAccount user3 = new UserAccount("User3");
 
         Book book1 = new Book("Title1", "Author1", "Description", "1000");
         Book book2 = new Book("Title2", "Author2", "Description", "1001");

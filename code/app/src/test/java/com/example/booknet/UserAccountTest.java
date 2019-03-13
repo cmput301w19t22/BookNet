@@ -13,7 +13,7 @@ public class UserAccountTest {
 
     @Test
     public void Constructor() {
-        UserAccount user = new UserAccount("user1", "password");
+        UserAccount user = new UserAccount("user1");
 
         assertEquals("user1", user.getUsername());
         assertEquals("password", user.getAccountPassword());
@@ -21,7 +21,7 @@ public class UserAccountTest {
 
     @Test
     public void Setters() {
-        UserAccount user = new UserAccount("user1", "password");
+        UserAccount user = new UserAccount("user1");
 
         //Check Id and Password
         user.setUsername("newname");
@@ -43,7 +43,7 @@ public class UserAccountTest {
 
         //Reviews
         ArrayList<Review> reviews = new ArrayList<Review>();
-        UserAccount user2 = new UserAccount("user2", "password");
+        UserAccount user2 = new UserAccount("user2");
         reviews.add(new Review(user, user2, 4, "review1"));
         user.setReviews(reviews);
         assertEquals(reviews, user.getReviews());
@@ -51,7 +51,7 @@ public class UserAccountTest {
 
     @Test
     public void AddBookToOwned() {
-        UserAccount user = new UserAccount("user1", "password");
+        UserAccount user = new UserAccount("user1");
         Book book = new Book("title", "author", "description",  "1234567890");
         BookListing listing = new BookListing(book, user);
 
@@ -63,7 +63,7 @@ public class UserAccountTest {
 
     @Test
     public void RemoveBookFromOwned() {
-        UserAccount user = new UserAccount("user1", "password");
+        UserAccount user = new UserAccount("user1");
         Book book = new Book("title", "author", "description", "1234567890");
         BookListing listing = new BookListing(book, user);
 
@@ -78,8 +78,8 @@ public class UserAccountTest {
 
     @Test
     public void AddListingToRequested() {
-        UserAccount user = new UserAccount("user1", "password");
-        UserAccount owner = new UserAccount("notMe", "password");
+        UserAccount user = new UserAccount("user1");
+        UserAccount owner = new UserAccount("notMe");
         Book book = new Book("title", "author", "description", "1234567890");
         BookListing listing = new BookListing(book, owner);
 
@@ -91,8 +91,8 @@ public class UserAccountTest {
 
     @Test
     public void RemoveListingFromRequested() {
-        UserAccount user = new UserAccount("user1", "password");
-        UserAccount owner = new UserAccount("notMe", "password");
+        UserAccount user = new UserAccount("user1");
+        UserAccount owner = new UserAccount("notMe");
         Book book = new Book("title", "author", "description", "1234567890");
         BookListing listing = new BookListing(book, owner);
 

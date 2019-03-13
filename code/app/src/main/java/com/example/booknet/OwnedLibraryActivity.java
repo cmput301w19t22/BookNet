@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -45,8 +46,10 @@ public class OwnedLibraryActivity extends AppCompatActivity {
         });
 
         //Get Data From the Database
-        //todo get real library
-        library = MockDatabase.getInstance().readUserOwnedLibrary(CurrentUser.getInstance().getUserAccount().getUsername());
+        library = new BookLibrary();
+
+        MockDatabase manager = new MockDatabase(library);
+//        manager.readUserOwnedLibrary();
 
         fillLayout();//todo delete when using real db
 
@@ -70,13 +73,17 @@ public class OwnedLibraryActivity extends AppCompatActivity {
     private void fillLayout() {
         //Create fake data if there's no real data.
         //todo remove block
+
         if (library == null) {
+            Log.d("mattTag", "123");
             Book b1 = new Book("Fake Book 1", "Author 1", "", "1234567890");
             Book b2 = new Book("Fake Book 2", "Author 2", "", "1234567891");
             UserAccount currentUserAccount = CurrentUser.getInstance().getUserAccount().clone();
             library.addBookListing(new BookListing(b1, currentUserAccount));
             library.addBookListing(new BookListing(b2, currentUserAccount));
         }
+
+        Log.d("mattTag", "1456");
 
         //Setup RecyclerView
         libraryListView = findViewById(R.id.bookLibrary);

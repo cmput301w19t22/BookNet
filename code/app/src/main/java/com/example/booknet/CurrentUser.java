@@ -1,5 +1,7 @@
 package com.example.booknet;
 
+import com.google.firebase.auth.FirebaseUser;
+
 /**
  * A singleton data structure that contains the currently logged in user data.
  */
@@ -14,6 +16,7 @@ public class CurrentUser {
     /**
      * Constructs the CurrentUser structure, cannot be called by others.
      */
+
     private CurrentUser() {
         //Create a default user account
         account = new UserAccount("default", "debug");
@@ -60,7 +63,9 @@ public class CurrentUser {
         //Add the listing to my library
         account.addListingToOwned(newListing);
         //Send the listing to the database
-        MockDatabase.getInstance().writeBookListing(newListing);
+
+        MockDatabase.writeBookListing(account, newListing);
+
         DatabaseManager databaseManager = new DatabaseManager();
         databaseManager.writeBookListing(newListing);
     }

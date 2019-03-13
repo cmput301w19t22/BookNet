@@ -1,5 +1,15 @@
 package com.example.booknet;
 
+import android.util.Log;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 
 /**
@@ -10,26 +20,40 @@ import java.util.ArrayList;
  * @see DatabaseManager
  */
 public class MockDatabase extends DatabaseManager {
-    //Singleton Pattern
-    private static final MockDatabase ourInstance = new MockDatabase();
-
-    public static MockDatabase getInstance() {
-        return ourInstance;
-    }
 
     //Data
-    ArrayList<BookListing> bookListings;
+//    ArrayList<BookListing> bookListings;
+    BookLibrary library;
     ArrayList<UserAccount> userAccounts;
     ArrayList<Book> books;
 
-    /**
-     * Private constructor to init the mock database and populate it.
-     */
-    private MockDatabase() {
-        bookListings = new ArrayList<>();
-        userAccounts = new ArrayList<>();
-        books = new ArrayList<>();
-        populateDatabase();
+    public MockDatabase(BookLibrary lib){
+        library = lib;
+
+        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference("/UserOwned/"+CurrentUser.getInstance().getUserAccount().getUsername());
+        //bookListings = new ArrayList<>();
+
+        // Attach a listener to read the data at our posts reference
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot data : dataSnapshot.getChildren()) {
+                    BookListing bookListing = data.child("BookListings").getValue(BookListing.class);
+                    if (bookListing != null) {
+                        System.out.println(bookListing.getOwnerUsername());
+                        library.addBookListing(bookListing);
+
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                System.out.println("The read failed: " + databaseError.getCode());
+            }
+        });
+
+
     }
 
     /**
@@ -77,9 +101,27 @@ public class MockDatabase extends DatabaseManager {
         }
     }
 
-    @Override
-    public void writeBookListing(BookListing listing) {
-        bookListings.add(listing);
+//    @Override
+//    public void writeBookListing(UserAccount account, BookListing listing) {
+//        DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+//
+//        //Get Info for this listing
+//        String currentUserName = listing.getOwnerUsername();
+//        Book currentBook = listing.getBook();
+//
+//        DatabaseReference userBookListingsRef = ref.child("UserOwned").child(currentUserName).child("BookListings");
+//
+//        userBookListingsRef.push().setValue(listing);
+//    }
+
+    public static void writeBookListing(UserAccount account, BookListing listing) {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+
+        String currentUserName = listing.getOwnerUsername();
+
+        DatabaseReference userBookListingsRef = ref.child("UserOwned").child(currentUserName).child("BookListings");
+
+        userBookListingsRef.push().setValue(listing);
     }
 
     @Override
@@ -151,18 +193,57 @@ public class MockDatabase extends DatabaseManager {
         return null;
     }
 
-    @Override
-    public void readAllBookListings(BookSearchActivity activity) {
-    }
+
 
     @Override
     public BookLibrary readUserOwnedLibrary(String username) {
-        //Find the user in the array
-        for (UserAccount user : userAccounts) {
-            if (user.getUsername().equals(username)) {
-                return user.getOwnedLibrary();
+
+
+        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+        ref.child("users").child(username)
+
+        //bookListings = new ArrayList<>();
+
+        // Attach a listener to read the data at our posts reference
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot data : dataSnapshot.getChildren()) {
+                    BookListing bookListing = data.child("BookListing").getValue(BookListing.class);
+                    if (bookListing != null) {
+                        System.out.println(bookListing.getOwnerUsername());
+                        activity.addListingToList(bookListing);
+                    }
+                }
             }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                System.out.println("The read failed: " + databaseError.getCode());
+            }
+        });
+
+
+
+
+
+        //Find the user in the array
+        try {
+            final DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users");
+        }catch(Exception e){
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            e.printStackTrace(pw);
+            String sStackTrace = sw.toString();
+            Log.d("mattTag", sStackTrace);
         }
+
+
+//        for (UserAccount user : userAccounts) {
+//            if (user.getUsername().equals(username)) {
+//                return user.getOwnedLibrary();
+//            }
+//        }
         return null;
     }
 

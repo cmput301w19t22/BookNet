@@ -62,7 +62,7 @@ public class OwnListingViewActivity extends AppCompatActivity {
         if (intent.hasExtra("username") && intent.hasExtra("bookisbn")) {
             String username = intent.getStringExtra("username");
             String isbn = intent.getStringExtra("bookisbn");
-            listing = MockDatabase.getInstance().readBookListing(username, isbn, MockDatabase.OWNEDLIBRARY);
+            listing = (new MockDatabase()).readBookListing(username, isbn, MockDatabase.OWNEDLIBRARY);
         }
 
         //Set Listener for ViewRequests Button
@@ -83,7 +83,7 @@ public class OwnListingViewActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 //Delete
                 Toast.makeText(getApplicationContext(), "Deleted Item", Toast.LENGTH_SHORT).show();
-                MockDatabase.getInstance().removeBookListing(listing);
+                (new MockDatabase()).removeBookListing(listing);
                 finish();
             }
         });

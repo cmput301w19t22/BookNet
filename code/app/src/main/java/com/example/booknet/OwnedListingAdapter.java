@@ -44,6 +44,7 @@ public class OwnedListingAdapter extends RecyclerView.Adapter<OwnedListingAdapte
      *
      * @return A new OwnedListingViewHolder using the list layout
      */
+
     @NonNull
     @Override
     public OwnedListingViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
@@ -83,6 +84,7 @@ public class OwnedListingAdapter extends RecyclerView.Adapter<OwnedListingAdapte
                 clickedItem(item);
             }
         });
+
     }
 
     /**

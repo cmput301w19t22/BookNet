@@ -64,8 +64,9 @@ public class BookSearchActivity extends AppCompatActivity {
 
     public void addListingToList(BookListing listing){
         bookListings.add(listing);
-        MockDatabase.getInstance().bookListings.add(listing);
+        MockDatabase.getInstance().writeBookListing(listing);
         listingAdapter.notifyDataSetChanged();
+        progressBar.setVisibility(View.GONE);
     }
 
 
@@ -79,7 +80,7 @@ public class BookSearchActivity extends AppCompatActivity {
         listingAdapter = new BookListingAdapter(bookListings, this);
         searchResults.setAdapter(listingAdapter);
         //Deactivate the progress bar
-        progressBar.setVisibility(View.GONE);
+
     }
 
 }

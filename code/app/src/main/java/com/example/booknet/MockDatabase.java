@@ -148,6 +148,12 @@ public class MockDatabase extends DatabaseManager {
                 }
             }
         }
+        //Try with all listings
+        for(BookListing bookListing:bookListings){
+            if (bookListing.getBook().getIsbn().equals(bookisbn)) {
+                return bookListing;
+            }
+        }
         return null;
     }
 

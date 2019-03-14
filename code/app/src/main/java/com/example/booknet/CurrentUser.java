@@ -5,7 +5,7 @@ import com.google.firebase.auth.FirebaseUser;
 /**
  * A singleton data structure that contains the currently logged in user data.
  */
-public class CurrentUser {
+public class CurrentUser{
     //Create Singleton Pattern
     private static final CurrentUser instance = new CurrentUser();
 
@@ -19,15 +19,25 @@ public class CurrentUser {
 
     private CurrentUser() {
         //Create a default user account
-        account = new UserAccount("default", "debug");
-        account.setProfile(new UserProfile("name", "email", "phone"));
+
+        account = new UserAccount("Jhon_Doe");
+        account.setProfile(new UserProfile("Jhon_Doe", "default_email", "phone"));
+
         //MockDatabase.getInstance().writeUserAccount(account);
     }
 
     //Attributes
     private UserAccount account;
 
-    //todo implement everything
+    private FirebaseUser user;
+
+    public void setUser(FirebaseUser user){
+        this.user = user;
+        account.setProfileEmail(user.getEmail());
+    }
+
+
+
 
     /**
      * Method to call when loging in as a new user to update the structure.

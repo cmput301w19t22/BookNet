@@ -11,7 +11,6 @@ import java.util.ArrayList;
 public class UserAccount extends AppCompatActivity implements Serializable, Cloneable {
     //Attributes
     private String username;
-    private String accountPassword;
     private UserProfile profile;
     private ArrayList<Review> reviews;
     private float reviewScore = 5;
@@ -23,7 +22,6 @@ public class UserAccount extends AppCompatActivity implements Serializable, Clon
      */
     public UserAccount() {
         this.username = "";
-        this.accountPassword = "";
         this.profile = new UserProfile();
         this.reviews = new ArrayList<Review>();
         this.ownedLibrary = new BookLibrary();
@@ -36,9 +34,8 @@ public class UserAccount extends AppCompatActivity implements Serializable, Clon
      * @param username        The new account's username
      * @param accountPassword The new accounts password
      */
-    public UserAccount(String username, String accountPassword) {
+    public UserAccount(String username) {
         this.username = username;
-        this.accountPassword = accountPassword;
         this.profile = new UserProfile();
         this.reviews = new ArrayList<Review>();
         this.ownedLibrary = new BookLibrary();
@@ -93,6 +90,10 @@ public class UserAccount extends AppCompatActivity implements Serializable, Clon
 
     public void setProfile(UserProfile profile) {
         this.profile = profile;
+    }
+
+    public void setProfileEmail(String email){
+        profile.setEmail(email);
     }
 
     public BookLibrary getOwnedLibrary() {

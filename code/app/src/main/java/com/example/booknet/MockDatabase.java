@@ -27,6 +27,10 @@ public class MockDatabase extends DatabaseManager {
     ArrayList<UserAccount> userAccounts;
     ArrayList<Book> books;
 
+    static public MockDatabase getInstance(){
+
+    }
+
     public MockDatabase(BookLibrary lib){
         library = lib;
 
@@ -228,13 +232,16 @@ public class MockDatabase extends DatabaseManager {
 
 
         //Find the user in the array
+
         try {
             final DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users");
         }catch(Exception e){
+
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
             e.printStackTrace(pw);
             String sStackTrace = sw.toString();
+
             Log.d("mattTag", sStackTrace);
         }
 

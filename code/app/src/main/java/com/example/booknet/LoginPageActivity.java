@@ -43,6 +43,13 @@ public class LoginPageActivity extends AppCompatActivity implements View.OnClick
         // TODO: Get a reference to the Firebase auth object
         mAuth = FirebaseAuth.getInstance();
 
+
+        // Async database initiation task
+        // read all the database data to private attributes.
+        // These data are updated in real time once the database changes.
+        DatabaseManager manager = DatabaseManager.getInstance();
+        manager.connetToDatabase();
+
         // TODO: Attach a new AuthListener to detect sign in and out
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -146,6 +153,10 @@ public class LoginPageActivity extends AppCompatActivity implements View.OnClick
                                     //Intent intent = new Intent(LoginPageActivity.this, UserProfile.class);
                                     //intent.putExtra("emailLabel", email);
                                     //startActivity(intent);
+
+                                    //save current user for future use
+                                    CurrentUser.getInstance().setUser(mAuth.getCurrentUser());
+
                                     startActivity(new Intent(getApplicationContext(), MainActivity.class));
                                 }
                                 else {

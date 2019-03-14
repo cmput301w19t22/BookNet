@@ -48,6 +48,10 @@ public class BookLibrary implements Serializable {
         }
     }
 
+    public void removeAllBooks(){
+        books.clear();
+    }
+
     /**
      * Get the number of books in this library.
      *

@@ -1,5 +1,8 @@
 package com.example.booknet;
 
+import android.os.AsyncTask;
+import android.util.Log;
+
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -13,34 +16,33 @@ import java.util.ArrayList;
  */
 public class DatabaseManager {
 
-    //todo: attributes, if any
+    //singleton pattern
+    private static final DatabaseManager manager = new DatabaseManager();
 
-    //ArrayList<BookListing> bookListings;
+    private BookLibrary userLibrary;
+    private ArrayList<BookListing> booklistings;
 
-    //Constructor
-    //public DatabaseManager() {}
+    private boolean readwritePermission = false;
 
-    //#region Methods
-    //#region Writing To Database
+    private DatabaseManager(){
 
-    /**
-     * Writes a user account to the database.
-     * Includes profile info and libraries.
-     *
-     * @param account The account to write
-     */
-    public void writeUserAccount(UserAccount account) {
-        //todo: implement
     }
+
+    public static DatabaseManager getInstance(){
+        return manager;
+    }
+
+
 
     /**
      * Writes a BookListing to the database
      *
      * @param listing The listing to write
      */
+
     public void writeBookListing(BookListing listing) {
         //Get Database Connection
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("/UserBooks/");
 
         //Get Info for this listing
         String currentUserAccount = listing.getOwnerUsername();
@@ -238,6 +240,84 @@ public class DatabaseManager {
         //todo: implement
         return null;
     }
+
+    public void connetToDatabase() {
+        new InitiationTask().execute();
+    }
+
     //#endregion
     //#endregion
+    public class InitiationTask extends AsyncTask<Void, Void, Boolean> {
+
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+
+            final DatabaseReference listingsRef = FirebaseDatabase.getInstance().getReference("BookListings");
+            // This listener should take care of database value change automatically
+            listingsRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+
+
+                    booklistings.clear();
+                    for (DataSnapshot data : dataSnapshot.getChildren()) {
+                        BookListing bookListing = data.child("BookListing").getValue(BookListing.class);
+
+                        if (bookListing != null) {
+                            // once the data is changed, we just change the corresponding static variable
+                            booklistings.add(bookListing);
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    System.out.println("The read failed: " + databaseError.getCode());
+                }
+            });
+
+            final DatabaseReference userLibraryRef = FirebaseDatabase.getInstance().getReference("UserOwned");
+
+            // This listener should take care of database value change automatically
+            userLibraryRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    // once the data is changed, we just change our corresponding static variable
+
+                    //first empty it
+                    userLibrary.removeAllBooks();
+
+                    // then fill it as it is in the database
+                    for (DataSnapshot data : dataSnapshot.getChildren()) {
+                        BookListing bookListing = data.child("BookListing").getValue(BookListing.class);
+                        if (bookListing != null) {
+                            userLibrary.addBookListing(bookListing);
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    System.out.println("The read failed: " + databaseError.getCode());
+                }
+            });
+
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean success) {
+            Log.d("mattTag", "DatabaseManager: database connected, allowing read/writes");
+            if (success) allowReadWrite();
+        }
+
+    }
+
+    public void allowReadWrite(){
+        readwritePermission = true;
+    }
+
+
+
 }

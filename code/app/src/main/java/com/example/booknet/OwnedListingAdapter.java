@@ -46,6 +46,9 @@ public class OwnedListingAdapter extends RecyclerView.Adapter<OwnedListingAdapte
      * @return A new OwnedListingViewHolder using the list layout
      */
 
+
+
+
     @NonNull
     @Override
     public OwnedListingViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
@@ -77,6 +80,7 @@ public class OwnedListingAdapter extends RecyclerView.Adapter<OwnedListingAdapte
         ownedListingViewHolder.ownerLabel.setVisibility(View.GONE);//Exclude this element
         ownedListingViewHolder.ownedLabel.setVisibility(View.GONE);//Exclude this element
         ownedListingViewHolder.statusLabel.setText(item.getStatus().toString());
+
 
         //Add the click listener to the item
         ownedListingViewHolder.itemView.setOnClickListener(new View.OnClickListener() {

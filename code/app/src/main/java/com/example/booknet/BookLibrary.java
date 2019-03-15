@@ -1,5 +1,7 @@
 package com.example.booknet;
 
+import android.util.Log;
+
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -85,7 +87,8 @@ public class BookLibrary implements Serializable, Iterable<BookListing> {
      */
     public BookLibrary clone() {
         BookLibrary cloned = new BookLibrary();
-        cloned.books = (ArrayList<BookListing>) this.books.clone();
+        cloned.books = new ArrayList<>();
+        for (BookListing booklisting: books) cloned.books.add(booklisting.clone());
         return cloned;
     }
 
@@ -103,5 +106,30 @@ public class BookLibrary implements Serializable, Iterable<BookListing> {
     }
 
 
+    public void filterByStatus(BookLibrary library, BookListing.Status status) {
+        books.clear();
+        for (BookListing bookListing: library){
 
+            if (bookListing.getStatus() == status){
+                books.add(bookListing);
+            }
+        }
+    }
+
+    public void copyOneByOne(BookLibrary library) {
+        removeAllBooks();
+        for (BookListing bookListing: library){
+            books.add(bookListing.clone());
+        }
+    }
+
+
+    @Override
+    public String toString() {
+        String s = "";
+        for (BookListing bookListing: books){
+            s += bookListing.toString();
+        }
+        return s;
+    }
 }

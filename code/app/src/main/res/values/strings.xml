@@ -17,4 +17,15 @@
         completions."
     </string>
     <string name="search_hint">Search Books</string>
+
+    <string-array name="status_array">
+        <item>All</item>
+        <item>Available</item>
+        <item>Requested</item>
+        <item>Accepted</item>
+        <item>Borrowed</item>
+    </string-array>
+
+    <string name="status_filter_prompt">Filter By Status: </string>
+
 </resources>

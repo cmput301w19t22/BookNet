@@ -130,7 +130,7 @@ public class UserProfileViewActivity extends AppCompatActivity {
      * @return
      */
     private UserAccount fetchUser(String username) {
-        return MockDatabase.getInstance().readUserAccount(username);
+        return CurrentUser.getInstance().getUserAccount();
     }
 
     /**

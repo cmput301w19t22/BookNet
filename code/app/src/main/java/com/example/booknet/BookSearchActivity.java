@@ -25,10 +25,11 @@ public class BookSearchActivity extends AppCompatActivity {
     //Layout Objects
     private RecyclerView searchResults;
     private BookListingAdapter listingAdapter;
-    private DatabaseManager databaseManager;
+    private DatabaseManager manager = DatabaseManager.getInstance();
 
     //App Data
-    ArrayList<BookListing> bookListings;
+    BookLibrary allBookListings;
+
 
     /**
      * Called when the activity is created.
@@ -40,23 +41,24 @@ public class BookSearchActivity extends AppCompatActivity {
         setContentView(R.layout.activity_book_search);
 
         //todo get real search results
-        //temp fake results
-        bookListings = new ArrayList<>();
+
+
+        allBookListings = manager.readAllBookListings();
 
         searchResults = findViewById(R.id.searchResults);
         searchResults.setLayoutManager(new LinearLayoutManager(this));
-        listingAdapter = new BookListingAdapter(bookListings, this);
+        listingAdapter = new BookListingAdapter(allBookListings, this);
         searchResults.setAdapter(listingAdapter);
 
-        databaseManager = new DatabaseManager();
-        databaseManager.readAllBookListings(this);
+
+
 
         //bookListings = MockDatabase.getInstance().readAllBookListings();
 
     }
 
     public void addListingToList(BookListing listing){
-        bookListings.add(listing);
+        allBookListings.addBookListing(listing);
         listingAdapter.notifyDataSetChanged();
     }
 
@@ -68,7 +70,7 @@ public class BookSearchActivity extends AppCompatActivity {
         //Setup RecyclerView
         searchResults = findViewById(R.id.searchResults);
         searchResults.setLayoutManager(new LinearLayoutManager(this));
-        listingAdapter = new BookListingAdapter(bookListings, this);
+        listingAdapter = new BookListingAdapter(allBookListings, this);
         searchResults.setAdapter(listingAdapter);
     }
 

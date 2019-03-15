@@ -16,9 +16,6 @@
         <activity android:name=".ProfileEditActivity"></activity>
         <activity android:name=".RequestsViewActivity" />
         <activity android:name=".OwnListingViewActivity" />
-        <activity
-            android:name=".LoginActivity"
-            android:label="@string/title_activity_login" />
         <activity android:name=".NewBookActivity" />
         <activity android:name=".BookSearchActivity">
             <intent-filter>

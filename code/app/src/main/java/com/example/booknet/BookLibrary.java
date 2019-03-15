@@ -1,13 +1,15 @@
 package com.example.booknet;
 
 import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Container for a list of book listings. Used for either a user's owned books, or
  * the books they have requested.
  */
-public class BookLibrary implements Serializable {
+public class BookLibrary implements Serializable, Iterable<BookListing> {
 
 
     private ArrayList<BookListing> books;
@@ -48,6 +50,10 @@ public class BookLibrary implements Serializable {
         }
     }
 
+    public void removeAllBooks(){
+        books.clear();
+    }
+
     /**
      * Get the number of books in this library.
      *
@@ -82,4 +88,20 @@ public class BookLibrary implements Serializable {
         cloned.books = (ArrayList<BookListing>) this.books.clone();
         return cloned;
     }
+
+    public ArrayList<BookListing> asArray(){
+        return books;
+    }
+
+    @Override
+    public Iterator<BookListing> iterator() {
+        return books.iterator();
+    }
+
+    public BookListing getBookAtPosition(int position) {
+        return books.get(position);
+    }
+
+
+
 }

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,6 +45,7 @@ public class OwnedListingAdapter extends RecyclerView.Adapter<OwnedListingAdapte
      *
      * @return A new OwnedListingViewHolder using the list layout
      */
+
     @NonNull
     @Override
     public OwnedListingViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
@@ -83,6 +85,7 @@ public class OwnedListingAdapter extends RecyclerView.Adapter<OwnedListingAdapte
                 clickedItem(item);
             }
         });
+
     }
 
     /**
@@ -91,8 +94,8 @@ public class OwnedListingAdapter extends RecyclerView.Adapter<OwnedListingAdapte
     public void clickedItem(BookListing item) {
         //Start View/Edit Activity with Clicked Item
         Intent intent = new Intent(sourceActivity, OwnListingViewActivity.class);
-        intent.putExtra("username", item.getOwnerUsername());
         intent.putExtra("bookisbn", item.getBook().getIsbn());
+
         sourceActivity.startActivity(intent);
     }
 

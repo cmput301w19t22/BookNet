@@ -1,9 +1,13 @@
 package com.example.booknet;
 
+import android.provider.ContactsContract;
+
+import com.google.firebase.auth.FirebaseUser;
+
 /**
  * A singleton data structure that contains the currently logged in user data.
  */
-public class CurrentUser {
+public class CurrentUser{
     //Create Singleton Pattern
     private static final CurrentUser instance = new CurrentUser();
 
@@ -11,20 +15,35 @@ public class CurrentUser {
         return instance;
     }
 
+    private DatabaseManager manager = DatabaseManager.getInstance();
+
     /**
      * Constructs the CurrentUser structure, cannot be called by others.
      */
+
     private CurrentUser() {
         //Create a default user account
-        account = new UserAccount("default", "debug");
-        account.setProfile(new UserProfile("name", "email", "phone"));
+
+        account = new UserAccount("Jhon_Doe");
+        account.setProfile(new UserProfile("Jhon_Doe", "default_email", "phone"));
+
         //MockDatabase.getInstance().writeUserAccount(account);
     }
 
     //Attributes
     private UserAccount account;
 
-    //todo implement everything
+    private FirebaseUser user;
+
+    public void setUser(FirebaseUser user){
+        this.user = user;
+        account.setProfileEmail(user.getEmail());
+    }
+
+    public String getUID(){
+        return user.getUid();
+    }
+
 
     /**
      * Method to call when loging in as a new user to update the structure.
@@ -55,14 +74,19 @@ public class CurrentUser {
      * @param book The book to add.
      */
     public void requestAddBook(Book book) {
+
+
+
+
         //Create a listing for the new book
         BookListing newListing = new BookListing(book, account);
-        //Add the listing to my library
-        account.addListingToOwned(newListing);
-        //Send the listing to the database
-        MockDatabase.getInstance().writeBookListing(newListing);
-        DatabaseManager databaseManager = new DatabaseManager();
-        databaseManager.writeBookListing(newListing);
+
+        // no more adding to memory, adding to database is enough
+//        account.addListingToOwned(newListing);
+
+        //add the listing to the database
+        manager.writeUserBookListing(newListing);
+
     }
 
     /**

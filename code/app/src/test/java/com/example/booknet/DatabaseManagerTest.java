@@ -30,7 +30,7 @@ public class DatabaseManagerTest {
         Book book = new Book("title", "author", "description", "1234567890");
         BookListing listing = new BookListing(book, user);
 
-        databaseManager.writeBookListing(listing);
+        databaseManager.writeToAllBookListings(listing);
 
         assertTrue(false);
         //todo: interact with actual database
@@ -123,7 +123,7 @@ public class DatabaseManagerTest {
         UserAccount user1 = new UserAccount("testuser", "debug");
         Book book = new Book("title", "author", "description","1234567890");
         BookListing listing = new BookListing(book, user1);
-        databaseManager.writeBookListing(listing);
+        databaseManager.writeToAllBookListings(listing);
 
         //Read the listing back
         BookLibrary library = databaseManager.readUserOwnedLibrary("testuser");
@@ -142,7 +142,7 @@ public class DatabaseManagerTest {
         Book book = new Book("title", "author", "description","1234567890");
         BookListing listing = new BookListing(book, user1);
         listing.addRequest("testuser");
-        databaseManager.writeBookListing(listing);
+        databaseManager.writeToAllBookListings(listing);
 
         //Read the listing back
         BookLibrary library = databaseManager.readUserRequests("testuser");

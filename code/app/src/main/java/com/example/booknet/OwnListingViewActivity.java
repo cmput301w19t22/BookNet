@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -28,6 +29,7 @@ public class OwnListingViewActivity extends AppCompatActivity {
     private Button requestButton;
     private Button viewRequestsButton;
     private Button deleteButton;
+    private DatabaseManager manager = DatabaseManager.getInstance();
 
     //Activity Data
     private BookListing listing;
@@ -59,10 +61,16 @@ public class OwnListingViewActivity extends AppCompatActivity {
         //Get Intent
         Intent intent = getIntent();
         //Check if given info to fetch listing
-        if (intent.hasExtra("username") && intent.hasExtra("bookisbn")) {
-            String username = intent.getStringExtra("username");
+        if (intent.hasExtra("bookisbn")) {
             String isbn = intent.getStringExtra("bookisbn");
-            listing = MockDatabase.getInstance().readBookListing(username, isbn, MockDatabase.OWNEDLIBRARY);
+            listing = manager.readUserOwnedBookListingWithISBN(isbn);
+
+            bookTitleLabel.setText(listing.getBook().getTitle());
+            bookAuthorLabel.setText(listing.getBook().getAuthor());
+            isbnLabel.setText(listing.getBook().getIsbn());
+            ownerLabel.setText(listing.getOwnerUsername());
+            statusLabel.setText(listing.getStatus().toString());
+
         }
 
         //Set Listener for ViewRequests Button
@@ -83,7 +91,7 @@ public class OwnListingViewActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 //Delete
                 Toast.makeText(getApplicationContext(), "Deleted Item", Toast.LENGTH_SHORT).show();
-                MockDatabase.getInstance().removeBookListing(listing);
+                manager.removeBookListing(listing);
                 finish();
             }
         });
@@ -103,21 +111,7 @@ public class OwnListingViewActivity extends AppCompatActivity {
         });
     }
 
-    /**
-     * Fills the layout with the data in the listing
-     */
-    private void fillLayout() {
-        if (listing == null) {
-            Toast.makeText(this, "Listing Not Found", Toast.LENGTH_LONG).show();
-        } else {
-            //Set Layout Objects
-            bookTitleLabel.setText(listing.getBook().getTitle());
-            bookAuthorLabel.setText(listing.getBook().getAuthor());
-            isbnLabel.setText(listing.getBook().getIsbn());
-            ownerLabel.setText(listing.getOwnerUsername());
-            statusLabel.setText(listing.getStatus().toString());
-        }
-    }
+
 
     /**
      * Start an activity to view this listing's requests.

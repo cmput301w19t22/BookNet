@@ -14,6 +14,7 @@ public class RequestsViewActivity extends AppCompatActivity {
     //Layout Objects
     private RecyclerView requestsList;
     private UserRequestAdapter requestAdapter;
+    private DatabaseManager manager = DatabaseManager.getInstance();
 
     //App Data
     BookListing listing;
@@ -34,7 +35,7 @@ public class RequestsViewActivity extends AppCompatActivity {
         if (intent.hasExtra("username") && intent.hasExtra("bookisbn")) {
             String username = intent.getStringExtra("username");
             String isbn = intent.getStringExtra("bookisbn");
-            listing = MockDatabase.getInstance().readBookListing(username, isbn, MockDatabase.OWNEDLIBRARY);
+            listing = manager.readBookListingWithUIDAndISBN(CurrentUser.getInstance().getUID(), isbn);
 
         }
         fillLayout();

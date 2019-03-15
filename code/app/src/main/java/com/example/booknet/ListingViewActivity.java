@@ -27,6 +27,7 @@ public class ListingViewActivity extends AppCompatActivity {
     private TextView statusLabel;
     private Button requestButton;
     private Button ownerProfileButton;
+    private DatabaseManager manager=DatabaseManager.getInstance();
 
     //Activity Data
     private BookListing listing;
@@ -61,7 +62,7 @@ public class ListingViewActivity extends AppCompatActivity {
         if (intent.hasExtra("username") && intent.hasExtra("bookisbn")) {
             String username = intent.getStringExtra("username");
             String isbn = intent.getStringExtra("bookisbn");
-            listing = MockDatabase.getInstance().readBookListing(username, isbn, MockDatabase.OWNEDLIBRARY);
+            listing = manager.readBookListingWithUIDAndISBN(CurrentUser.getInstance().getUID(), isbn);
         }
         fillLayout();//todo delete when using real db
 
@@ -100,8 +101,9 @@ public class ListingViewActivity extends AppCompatActivity {
     /**
      * Creates a request for this book listing from the current user.
      */
+    // todo: fix request, MockdataBase deprecated
     private void sendRequest() {
-        MockDatabase.getInstance().addRequestToListing(listing, CurrentUser.getInstance().getUserAccount().getUsername());
+//        MockDatabase.getInstance().addRequestToListing(listing, CurrentUser.getInstance().getUserAccount().getUsername());
     }
 
     /**

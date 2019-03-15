@@ -125,6 +125,7 @@ public class DatabaseManager {
      */
     public void removeBookListing(BookListing bookListing) {
         userLisitngsRef.child(bookListing.getBook().getIsbn()).removeValue();
+        allListingsRef.child(bookListing.getBook().getIsbn()+"-"+CurrentUser.getInstance().getUID()).removeValue();
     }
 
 

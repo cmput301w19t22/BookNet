@@ -1,5 +1,6 @@
 package com.example.booknet;
 
+import android.app.Activity;
 import android.os.AsyncTask;
 import android.provider.ContactsContract;
 import android.util.Log;
@@ -25,6 +26,8 @@ public class DatabaseManager {
     private DatabaseReference allListingsRef;
     private DatabaseReference userLisitngsRef;
     private boolean readwritePermission = false;
+
+
 
 
 
@@ -67,7 +70,6 @@ public class DatabaseManager {
     // also adds the listing to the app
     public void writeUserBookListing(BookListing listing){
 
-        String uid = CurrentUser.getInstance().getUID();
 
         userLisitngsRef.child(listing.getBook().getIsbn()).setValue(listing);
 
@@ -315,6 +317,8 @@ public class DatabaseManager {
                 }
             });
 
+
+
             return true;
         }
 
@@ -325,6 +329,8 @@ public class DatabaseManager {
         }
 
     }
+
+
 
     // temporarily not in effect: database read/write permission is always allowed even if connection failed
     // to make this work, handler of failing read/write cases should be added.

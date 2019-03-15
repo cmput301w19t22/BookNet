@@ -1,5 +1,7 @@
 package com.example.booknet;
 
+import android.util.Log;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -7,7 +9,7 @@ import java.util.Iterator;
 /**
  * Keeps track of a book that is listed on the app.
  */
-public class BookListing implements Serializable {
+public class BookListing implements Serializable, Cloneable {
 
     /**
      * Enum for the status of a BookListing, so the values are more easily tracked
@@ -192,6 +194,43 @@ public class BookListing implements Serializable {
         status = Status.Available;
         borrowerName = "";
     }
+
+    public BookListing clone(){
+
+        BookListing cloned = new BookListing();
+        cloned.setBook(book);
+        cloned.setBorrowerName(borrowerName);
+        cloned.setStatus(status);
+        cloned.setRequests(requests);
+        cloned.setGeoLocation(geoLocation);
+
+        return cloned;
+    }
+
+    private void setRequests(ArrayList<String> requests) {
+        this.requests = requests;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    private void setBorrowerName(String borrowerName) {
+        this.borrowerName = borrowerName;
+    }
+
+    private void setBook(Book book) {
+        this.book = book;
+    }
+
+
+    @Override
+    public String toString() {
+        String s = "";
+        s += book.toString() + " " + borrowerName + " " + status.toString() + " " + requests.toString();
+        return s;
+    }
+
     //#endregion
 
 }

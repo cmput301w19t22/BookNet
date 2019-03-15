@@ -84,7 +84,11 @@ public class CurrentUser{
         // no more adding to memory, adding to database is enough
 //        account.addListingToOwned(newListing);
 
+
+
         //add the listing to the database
+
+
         manager.writeUserBookListing(newListing);
 
     }

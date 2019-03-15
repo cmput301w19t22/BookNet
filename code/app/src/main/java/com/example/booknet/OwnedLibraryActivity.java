@@ -1,5 +1,6 @@
 package com.example.booknet;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -7,7 +8,14 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.Spinner;
+import android.widget.TextView;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 
 /**
  * An activity to display the owned library of a user.
@@ -21,11 +29,14 @@ public class OwnedLibraryActivity extends AppCompatActivity {
     private RecyclerView libraryListView;
     private OwnedListingAdapter listingAdapter;
     private Button addButton;
+    private ValueEventListener valueEventListener = null;
 
     //Activity Data
     private BookLibrary library;
-    DatabaseManager manager = DatabaseManager.getInstance();
+    private BookLibrary filteredLibrary = new BookLibrary();
+    private ValueEventListener listener;
 
+    DatabaseManager manager = DatabaseManager.getInstance();
     /**
      * Called when creating the activity.
      * Sets a click listener for the add button
@@ -50,10 +61,68 @@ public class OwnedLibraryActivity extends AppCompatActivity {
         library = manager.readUserOwnedLibrary();
 
 
+        listener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // once the data is changed, we just change our corresponding static variable
+
+                //first empty it
+                filteredLibrary.removeAllBooks();
+
+                // then fill it as it is in the database
+                for (DataSnapshot data : dataSnapshot.getChildren()) {
+                    BookListing bookListing = data.getValue(BookListing.class);
+                    if (bookListing != null) {
+                        filteredLibrary.addBookListing(bookListing.clone());
+                    }
+                }
+
+                listingAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                System.out.println("The read failed: " + databaseError.getCode());
+            }
+        };
+
+        manager.getUserLisitngsRef().addValueEventListener(listener);
+
+        filteredLibrary = library.clone();
+
+
+        Log.d("matt", "creating new adpator");
         libraryListView = findViewById(R.id.bookLibrary);
         libraryListView.setLayoutManager(new LinearLayoutManager(this));
-        listingAdapter = new OwnedListingAdapter(library, this);
+        listingAdapter = new OwnedListingAdapter(filteredLibrary, this);
         libraryListView.setAdapter(listingAdapter);
+
+        Spinner filter = findViewById(R.id.spinner);
+
+        filter.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                TextView selectedView = (TextView) view;
+                String selectedItem = selectedView.getText().toString();
+                if (selectedItem.equals("All")) {
+                    Log.d("mattTag", "copying one by one");
+                    filteredLibrary.copyOneByOne(library);
+                    Log.d("mattTag", "after copying: " + filteredLibrary.toString());
+                }
+                else {
+                    Log.d("mattTag", "yi");
+                    filteredLibrary.filterByStatus(library, BookListing.Status.valueOf(selectedItem));
+                }
+
+                listingAdapter.notifyDataSetChanged();
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
 
 
 
@@ -67,11 +136,22 @@ public class OwnedLibraryActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
+        Log.d("mattTag", "starting the activity, notifying");
+        Log.d("mattTag", "when starting, the books are: "+filteredLibrary.toString());
         //Update List Data
         listingAdapter.notifyDataSetChanged();
     }
 
+    public void onDestroy() {
+        Log.d("mattTag", "DESTROIIEIIEIIII");
+        manager.getUserLisitngsRef().removeEventListener(listener);
+        super.onDestroy();
+
+    }
+    public void notifyDataSetChanged(){
+        Log.d("mattTag", "activity has the notification");
+        listingAdapter.notifyDataSetChanged();
+    }
 
     /**
      * Starts the activity to add a new book
@@ -80,4 +160,8 @@ public class OwnedLibraryActivity extends AppCompatActivity {
         Intent intent = new Intent(this, NewBookActivity.class);
         startActivity(intent);
     }
+
+
+
+
 }

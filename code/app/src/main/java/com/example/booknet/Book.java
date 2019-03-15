@@ -74,4 +74,8 @@ public class Book implements Serializable {
     }
     //#endregion
 
+    public String toString(){
+        return "book titled: " + title;
+    }
+
 }

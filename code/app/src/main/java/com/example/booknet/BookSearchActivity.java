@@ -43,7 +43,6 @@ public class BookSearchActivity extends AppCompatActivity {
         //todo get real search results
 
 
-
         allBookListings = manager.readAllBookListings();
 
         searchResults = findViewById(R.id.searchResults);

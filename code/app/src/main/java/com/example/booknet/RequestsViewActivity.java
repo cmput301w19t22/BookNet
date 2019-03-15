@@ -2,7 +2,6 @@ package com.example.booknet;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -36,7 +35,7 @@ public class RequestsViewActivity extends AppCompatActivity {
         if (intent.hasExtra("username") && intent.hasExtra("bookisbn")) {
             String username = intent.getStringExtra("username");
             String isbn = intent.getStringExtra("bookisbn");
-            listing = manager.readBookListingWithISBN(isbn);
+            listing = manager.readBookListingWithUIDAndISBN(CurrentUser.getInstance().getUID(), isbn);
 
         }
         fillLayout();

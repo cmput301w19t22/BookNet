@@ -57,10 +57,10 @@ public class DatabaseManager {
     public void writeToAllBookListings(BookListing listing) {
 
 
-        final DatabaseReference allListingsRef = FirebaseDatabase.getInstance().getReference("/BookListings/");
-        allListingsRef.child(listing.getBook().getIsbn()).setValue(listing);
+        allListingsRef.child(listing.getBook().getIsbn()+"-"+CurrentUser.getInstance().getUID()).setValue(listing);
 
     }
+
 
 
     // write a book to the user owned book listings
@@ -71,7 +71,7 @@ public class DatabaseManager {
 
         userLisitngsRef.child(listing.getBook().getIsbn()).setValue(listing);
 
-        allListingsRef.child(listing.getBook().getIsbn()).setValue(listing);
+        allListingsRef.child(listing.getBook().getIsbn()+"-"+CurrentUser.getInstance().getUID()).setValue(listing);
 
     }
 
@@ -248,7 +248,7 @@ public class DatabaseManager {
         return null;
     }
 
-    public BookListing readBookListingWithISBN(String isbn) {
+    public BookListing readBookListingWithUIDAndISBN(String UID, String isbn) {
         for (BookListing listing: allBookLibrary){
             if (listing.getBook().getIsbn().equals(isbn)){
                 return listing;
@@ -289,7 +289,7 @@ public class DatabaseManager {
             });
 
             String uid = CurrentUser.getInstance().getUID();
-            userLisitngsRef = FirebaseDatabase.getInstance().getReference("/UserBooks/"+uid+"/BookListings");
+            userLisitngsRef = FirebaseDatabase.getInstance().getReference("/UserBooks/"+uid);
 
             // This listener should take care of database value change automatically
             userLisitngsRef.addValueEventListener(new ValueEventListener() {

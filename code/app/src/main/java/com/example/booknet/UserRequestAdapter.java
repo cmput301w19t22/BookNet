@@ -121,6 +121,7 @@ public class UserRequestAdapter extends RecyclerView.Adapter<UserRequestAdapter.
     /**
      * Copies the BookListing's requesters into an array of UserAccounts
      */
+    // todo: mockdatabase deprecated. I'll fix this - Matt
     private void getUserAccounts() {
         for (String username : listing.getRequesters()) {
             //Obtain the user from the database
@@ -146,9 +147,9 @@ public class UserRequestAdapter extends RecyclerView.Adapter<UserRequestAdapter.
      * @param account The user whose request will be accepted.
      */
     private void acceptButton(String account) {
-        //todo accept the request in real db
+        //todo accept the request in real db. I'll fixe this -matt
         listing.acceptRequest(account);
-        MockDatabase.getInstance().acceptRequestForListing(listing, account);
+//        MockDatabase.getInstance().acceptRequestForListing(listing, account);
         Toast.makeText(sourceActivity, "Accepted " + account, Toast.LENGTH_LONG).show();
         sourceActivity.finish();
     }
@@ -159,9 +160,9 @@ public class UserRequestAdapter extends RecyclerView.Adapter<UserRequestAdapter.
      * @param account The user whose request will be declined.
      */
     private void declineButton(String account) {
-        //todo deny the request in real db
+        //todo deny the request in real db, I'll fix this - matt
         listing.denyRequest(account);
-        MockDatabase.getInstance().declineRequestForListing(listing, account);
+//        MockDatabase.getInstance().declineRequestForListing(listing, account);
         Toast.makeText(sourceActivity, "Declined " + account, Toast.LENGTH_LONG).show();
     }
 

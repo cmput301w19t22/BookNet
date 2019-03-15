@@ -2,6 +2,7 @@ package com.example.booknet;
 
 import android.content.Intent;;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -19,6 +20,7 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
 
 public class LoginPageActivity extends AppCompatActivity implements View.OnClickListener {
     private final String TAG = "FB_SIGNIN";
@@ -28,6 +30,7 @@ public class LoginPageActivity extends AppCompatActivity implements View.OnClick
 
     private EditText etPass;
     private EditText etEmail;
+    private DatabaseManager manager = DatabaseManager.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,8 +50,7 @@ public class LoginPageActivity extends AppCompatActivity implements View.OnClick
         // Async database initiation task
         // read all the database data to private attributes.
         // These data are updated in real time once the database changes.
-        DatabaseManager manager = DatabaseManager.getInstance();
-        manager.connetToDatabase();
+
 
         // TODO: Attach a new AuthListener to detect sign in and out
         mAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -156,6 +158,10 @@ public class LoginPageActivity extends AppCompatActivity implements View.OnClick
 
                                     //save current user for future use
                                     CurrentUser.getInstance().setUser(mAuth.getCurrentUser());
+
+                                    Log.d("mattTag", "ready to connect to database");
+                                    manager.connetToDatabase();
+
 
                                     startActivity(new Intent(getApplicationContext(), MainActivity.class));
                                 }

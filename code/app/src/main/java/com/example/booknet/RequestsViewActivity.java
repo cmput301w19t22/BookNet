@@ -2,6 +2,7 @@ package com.example.booknet;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,6 +15,7 @@ public class RequestsViewActivity extends AppCompatActivity {
     //Layout Objects
     private RecyclerView requestsList;
     private UserRequestAdapter requestAdapter;
+    private DatabaseManager manager = DatabaseManager.getInstance();
 
     //App Data
     BookListing listing;
@@ -34,7 +36,7 @@ public class RequestsViewActivity extends AppCompatActivity {
         if (intent.hasExtra("username") && intent.hasExtra("bookisbn")) {
             String username = intent.getStringExtra("username");
             String isbn = intent.getStringExtra("bookisbn");
-            listing = MockDatabase.getInstance().readBookListing(username, isbn, MockDatabase.OWNEDLIBRARY);
+            listing = manager.readBookListingWithISBN(isbn);
 
         }
         fillLayout();

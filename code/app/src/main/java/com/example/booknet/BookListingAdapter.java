@@ -24,7 +24,7 @@ import java.util.ArrayList;
 public class BookListingAdapter extends RecyclerView.Adapter<BookListingAdapter.BookListingViewHolder> {
 
     //The list of BookListings to display
-    private ArrayList<BookListing> data;
+    private BookLibrary data;
 
 
     //The activity this adapter was created from
@@ -36,7 +36,7 @@ public class BookListingAdapter extends RecyclerView.Adapter<BookListingAdapter.
      * @param data           The list of BookListings to use for the list display
      * @param sourceActivity The activity that created this adapter
      */
-    public BookListingAdapter(ArrayList<BookListing> data, AppCompatActivity sourceActivity) {
+    public BookListingAdapter(BookLibrary data, AppCompatActivity sourceActivity) {
         this.data = data;
         this.sourceActivity = sourceActivity;
     }
@@ -66,7 +66,7 @@ public class BookListingAdapter extends RecyclerView.Adapter<BookListingAdapter.
     @Override
     public void onBindViewHolder(@NonNull BookListingViewHolder bookListingViewHolder, int position) {
         //Get the data at the provided position
-        final BookListing item = data.get(position);
+        final BookListing item = data.getBookAtPosition(position);
         //Index to pass to the edit activity
         final int index = bookListingViewHolder.getAdapterPosition();
 

@@ -100,13 +100,14 @@ public class ProfileEditActivity extends AppCompatActivity {
      * @return
      */
     private UserAccount fetchUser(String username) {
-        return MockDatabase.getInstance().readUserAccount(username);
+        return CurrentUser.getInstance().getUserAccount();
     }
 
     /**
      * Updates the user profile
      */
+    // todo: MockdataBase deprecated, use real db instead. I'll fix this -Matt
     private void updateProfile() {
-        MockDatabase.getInstance().writeUserAccount(user);
+//        MockDatabase.getInstance().writeUserAccount(user);
     }
 }

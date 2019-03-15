@@ -24,6 +24,7 @@ public class OwnedLibraryActivity extends AppCompatActivity {
 
     //Activity Data
     private BookLibrary library;
+    DatabaseManager manager = DatabaseManager.getInstance();
 
     /**
      * Called when creating the activity.
@@ -45,13 +46,17 @@ public class OwnedLibraryActivity extends AppCompatActivity {
             }
         });
 
-        //Get Data From the Database
-        library = new BookLibrary();
+        //Get Data From the Database, library will get auto updated (it's magic babe)
+        library = manager.readUserOwnedLibrary();
 
-        MockDatabase manager = new MockDatabase(library);
-//        manager.readUserOwnedLibrary();
 
-        fillLayout();//todo delete when using real db
+        libraryListView = findViewById(R.id.bookLibrary);
+        libraryListView.setLayoutManager(new LinearLayoutManager(this));
+        listingAdapter = new OwnedListingAdapter(library, this);
+        libraryListView.setAdapter(listingAdapter);
+
+
+
 
     }
 
@@ -67,30 +72,6 @@ public class OwnedLibraryActivity extends AppCompatActivity {
         listingAdapter.notifyDataSetChanged();
     }
 
-    /**
-     * Fills the activity layout from the data.
-     */
-    private void fillLayout() {
-        //Create fake data if there's no real data.
-        //todo remove block
-
-        if (library == null) {
-            Log.d("mattTag", "123");
-            Book b1 = new Book("Fake Book 1", "Author 1", "", "1234567890");
-            Book b2 = new Book("Fake Book 2", "Author 2", "", "1234567891");
-            UserAccount currentUserAccount = CurrentUser.getInstance().getUserAccount().clone();
-            library.addBookListing(new BookListing(b1, currentUserAccount));
-            library.addBookListing(new BookListing(b2, currentUserAccount));
-        }
-
-        Log.d("mattTag", "1456");
-
-        //Setup RecyclerView
-        libraryListView = findViewById(R.id.bookLibrary);
-        libraryListView.setLayoutManager(new LinearLayoutManager(this));
-        listingAdapter = new OwnedListingAdapter(library, this);
-        libraryListView.setAdapter(listingAdapter);
-    }
 
     /**
      * Starts the activity to add a new book

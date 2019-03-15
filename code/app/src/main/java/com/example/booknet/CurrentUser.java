@@ -1,5 +1,7 @@
 package com.example.booknet;
 
+import android.provider.ContactsContract;
+
 import com.google.firebase.auth.FirebaseUser;
 
 /**
@@ -12,6 +14,8 @@ public class CurrentUser{
     public static CurrentUser getInstance() {
         return instance;
     }
+
+    private DatabaseManager manager = DatabaseManager.getInstance();
 
     /**
      * Constructs the CurrentUser structure, cannot be called by others.
@@ -36,7 +40,9 @@ public class CurrentUser{
         account.setProfileEmail(user.getEmail());
     }
 
-
+    public String getUID(){
+        return user.getUid();
+    }
 
 
     /**
@@ -68,16 +74,19 @@ public class CurrentUser{
      * @param book The book to add.
      */
     public void requestAddBook(Book book) {
+
+
+
+
         //Create a listing for the new book
         BookListing newListing = new BookListing(book, account);
-        //Add the listing to my library
-        account.addListingToOwned(newListing);
-        //Send the listing to the database
 
-        MockDatabase.writeBookListing(account, newListing);
+        // no more adding to memory, adding to database is enough
+//        account.addListingToOwned(newListing);
 
-        DatabaseManager databaseManager = new DatabaseManager();
-        databaseManager.writeBookListing(newListing);
+        //add the listing to the database
+        manager.writeUserBookListing(newListing);
+
     }
 
     /**

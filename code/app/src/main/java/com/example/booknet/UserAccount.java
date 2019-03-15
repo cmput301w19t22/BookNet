@@ -32,7 +32,7 @@ public class UserAccount extends AppCompatActivity implements Serializable, Clon
      * Constructor to create a new account
      *
      * @param username        The new account's username
-     * @param accountPassword The new accounts password
+
      */
     public UserAccount(String username) {
         this.username = username;
@@ -60,12 +60,14 @@ public class UserAccount extends AppCompatActivity implements Serializable, Clon
         this.username = username;
     }
 
+    @Deprecated
     public String getAccountPassword() {
-        return accountPassword;
+        return null;
     }
 
+    @Deprecated
     public void setAccountPassword(String accountPassword) {
-        this.accountPassword = accountPassword;
+
     }
 
     public ArrayList<Review> getReviews() {
@@ -171,7 +173,6 @@ public class UserAccount extends AppCompatActivity implements Serializable, Clon
     public String toString() {
         return "UserAccount{" +
                 "username='" + username + '\'' +
-                ", accountPassword='" + accountPassword + '\'' +
                 ", profile=" + profile +
                 ", reviews=" + reviews.toString() +
                 ", reviewScore=" + reviewScore +
@@ -186,7 +187,7 @@ public class UserAccount extends AppCompatActivity implements Serializable, Clon
      * @return Returns the copy of this UserAccount
      */
     protected UserAccount clone() {
-        UserAccount cloned = new UserAccount(username, accountPassword);
+        UserAccount cloned = new UserAccount(username);
         cloned.setProfile(this.profile);
         cloned.setOwnedLibrary(ownedLibrary.clone());
         cloned.setRequestedBooks(requestedBooks.clone());

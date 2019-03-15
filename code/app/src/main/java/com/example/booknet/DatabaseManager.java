@@ -1,6 +1,7 @@
 package com.example.booknet;
 
 import android.os.AsyncTask;
+import android.provider.ContactsContract;
 import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
@@ -19,18 +20,31 @@ public class DatabaseManager {
     //singleton pattern
     private static final DatabaseManager manager = new DatabaseManager();
 
-    private BookLibrary userLibrary;
-    private ArrayList<BookListing> booklistings;
-
+    private BookLibrary userBookLibrary = new BookLibrary();
+    private BookLibrary allBookLibrary = new BookLibrary();
+    private DatabaseReference allListingsRef;
+    private DatabaseReference userLisitngsRef;
     private boolean readwritePermission = false;
+
+
 
     private DatabaseManager(){
 
     }
 
+    public DatabaseReference getUserLisitngsRef(){
+        return userLisitngsRef;
+    }
+    public DatabaseReference getAllLisitngsRef(){
+        return allListingsRef;
+    }
+
+
+
     public static DatabaseManager getInstance(){
         return manager;
     }
+
 
 
 
@@ -40,25 +54,25 @@ public class DatabaseManager {
      * @param listing The listing to write
      */
 
-    public void writeBookListing(BookListing listing) {
-        //Get Database Connection
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("/UserBooks/");
+    public void writeToAllBookListings(BookListing listing) {
 
-        //Get Info for this listing
-        String currentUserAccount = listing.getOwnerUsername();
-        Book currentBook = listing.getBook();
 
-        //Obtain Database
-        DatabaseReference listingRef = ref.child("BookListings");
-        DatabaseReference userBookRef = ref.child("UserBooks");
+        final DatabaseReference allListingsRef = FirebaseDatabase.getInstance().getReference("/BookListings/");
+        allListingsRef.child(listing.getBook().getIsbn()).setValue(listing);
 
-        //Write Listing
-        listingRef.push().child("BookListing").setValue(listing);
+    }
 
-        //Write Book
-        userBookRef.child("UserBooks")
-                .child(currentUserAccount)
-                .child(currentBook.getIsbn()).setValue(currentBook);
+
+    // write a book to the user owned book listings
+    // also adds the listing to the app
+    public void writeUserBookListing(BookListing listing){
+
+        String uid = CurrentUser.getInstance().getUID();
+
+        userLisitngsRef.child(listing.getBook().getIsbn()).setValue(listing);
+
+        allListingsRef.child(listing.getBook().getIsbn()).setValue(listing);
+
     }
 
     /**
@@ -79,14 +93,17 @@ public class DatabaseManager {
         //todo: implement
     }
 
-    /**
-     * Writes the user's library of owned books to the database
-     *
-     * @param bookLibrary
-     */
-    public void writeOwnedLibrary(BookLibrary bookLibrary) {
-        //todo: implement
-    }
+
+    //replaced by writeUserBookListing
+
+//    /**
+//     * Writes the user's library of owned books to the database
+//     *
+//     * @param bookLibrary
+//     */
+//    public void writeOwnedLibrary(BookLibrary bookLibrary) {
+//    }
+
 
     /**
      * Writes the user's library of requested books to the database
@@ -105,7 +122,7 @@ public class DatabaseManager {
      * @param bookListing The BookListing to delete
      */
     public void removeBookListing(BookListing bookListing) {
-        //todo: implement
+        userLisitngsRef.child(bookListing.getBook().getIsbn()).removeValue();
     }
 
 
@@ -153,7 +170,6 @@ public class DatabaseManager {
         //todo:implement
     }
 
-    //#region Reading From Database
 
     /**
      * Reads a user account from the database.
@@ -182,29 +198,9 @@ public class DatabaseManager {
      *
      * @return A list of BookListings from the database if any are found
      */
-    public void readAllBookListings(final BookSearchActivity activity) {
+    public BookLibrary readAllBookListings() {
 
-        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference("BookListings");
-        //bookListings = new ArrayList<>();
-
-        // Attach a listener to read the data at our posts reference
-        ref.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot data : dataSnapshot.getChildren()) {
-                    BookListing bookListing = data.child("BookListing").getValue(BookListing.class);
-                    if (bookListing != null) {
-                        System.out.println(bookListing.getOwnerUsername());
-                        activity.addListingToList(bookListing);
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                System.out.println("The read failed: " + databaseError.getCode());
-            }
-        });
+        return allBookLibrary;
 
     }
 
@@ -222,12 +218,10 @@ public class DatabaseManager {
     /**
      * Reads the user's library of owned books from the database.
      *
-     * @param username The user whose books to read.
      * @return A BookLibrary for the given user
      */
-    public BookLibrary readUserOwnedLibrary(String username) {
-        //todo: implement
-        return null;
+    public BookLibrary readUserOwnedLibrary() {
+        return userBookLibrary;
     }
 
     /**
@@ -245,28 +239,45 @@ public class DatabaseManager {
         new InitiationTask().execute();
     }
 
-    //#endregion
-    //#endregion
+    public BookListing readUserOwnedBookListingWithISBN(String isbn) {
+        for (BookListing listing: userBookLibrary){
+            if (listing.getBook().getIsbn().equals(isbn)){
+                return listing;
+            }
+        }
+        return null;
+    }
+
+    public BookListing readBookListingWithISBN(String isbn) {
+        for (BookListing listing: allBookLibrary){
+            if (listing.getBook().getIsbn().equals(isbn)){
+                return listing;
+            }
+        }
+        return null;
+    }
+
+
     public class InitiationTask extends AsyncTask<Void, Void, Boolean> {
 
 
         @Override
         protected Boolean doInBackground(Void... params) {
-
-            final DatabaseReference listingsRef = FirebaseDatabase.getInstance().getReference("BookListings");
+            Log.d("mattTag", "database connection task started");
+            allListingsRef = FirebaseDatabase.getInstance().getReference("BookListings");
             // This listener should take care of database value change automatically
-            listingsRef.addValueEventListener(new ValueEventListener() {
+            allListingsRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
 
 
-                    booklistings.clear();
+                    allBookLibrary.removeAllBooks();
                     for (DataSnapshot data : dataSnapshot.getChildren()) {
-                        BookListing bookListing = data.child("BookListing").getValue(BookListing.class);
+                        BookListing bookListing = data.getValue(BookListing.class);
 
                         if (bookListing != null) {
                             // once the data is changed, we just change the corresponding static variable
-                            booklistings.add(bookListing);
+                            allBookLibrary.addBookListing(bookListing);
                         }
                     }
                 }
@@ -277,22 +288,23 @@ public class DatabaseManager {
                 }
             });
 
-            final DatabaseReference userLibraryRef = FirebaseDatabase.getInstance().getReference("UserOwned");
+            String uid = CurrentUser.getInstance().getUID();
+            userLisitngsRef = FirebaseDatabase.getInstance().getReference("/UserBooks/"+uid+"/BookListings");
 
             // This listener should take care of database value change automatically
-            userLibraryRef.addValueEventListener(new ValueEventListener() {
+            userLisitngsRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     // once the data is changed, we just change our corresponding static variable
 
                     //first empty it
-                    userLibrary.removeAllBooks();
+                    userBookLibrary.removeAllBooks();
 
                     // then fill it as it is in the database
                     for (DataSnapshot data : dataSnapshot.getChildren()) {
-                        BookListing bookListing = data.child("BookListing").getValue(BookListing.class);
+                        BookListing bookListing = data.getValue(BookListing.class);
                         if (bookListing != null) {
-                            userLibrary.addBookListing(bookListing);
+                            userBookLibrary.addBookListing(bookListing);
                         }
                     }
                 }
@@ -314,6 +326,8 @@ public class DatabaseManager {
 
     }
 
+    // temporarily not in effect: database read/write permission is always allowed even if connection failed
+    // to make this work, handler of failing read/write cases should be added.
     public void allowReadWrite(){
         readwritePermission = true;
     }

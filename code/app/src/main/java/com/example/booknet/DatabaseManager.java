@@ -9,6 +9,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -355,6 +356,10 @@ public class DatabaseManager {
 
     }
 
+    public DatabaseReference getUserListingsRef() {
+        return userLisitngsRef;
+    }
+
 
     public class InitiationTask extends AsyncTask<Void, Void, Boolean> {
         Activity context;
@@ -402,8 +407,11 @@ public class DatabaseManager {
 
                     userProfile.clear();
                     HashMap<String, String> fetchedProfile = (HashMap<String, String>) dataSnapshot.getValue();
-                    Log.d("mattTag", "fetched" + String.valueOf(fetchedProfile.size()));
-                    userProfile.putAll(fetchedProfile);
+//                    Log.d("mattTag", "fetched" + String.valueOf(fetchedProfile.size()));
+                    if (fetchedProfile != null){
+                        userProfile.putAll(fetchedProfile);
+                    }
+
                 }
 
                 @Override

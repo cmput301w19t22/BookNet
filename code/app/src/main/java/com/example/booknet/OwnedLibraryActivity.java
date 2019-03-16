@@ -86,7 +86,7 @@ public class OwnedLibraryActivity extends AppCompatActivity {
             }
         };
 
-        manager.getUserLisitngsRef().addValueEventListener(listener);
+        manager.getUserListingsRef().addValueEventListener(listener);
 
         filteredLibrary = library.clone();
 
@@ -144,7 +144,7 @@ public class OwnedLibraryActivity extends AppCompatActivity {
 
     public void onDestroy() {
         Log.d("mattTag", "DESTROIIEIIEIIII");
-        manager.getUserLisitngsRef().removeEventListener(listener);
+        manager.getUserListingsRef().removeEventListener(listener);
         super.onDestroy();
 
     }

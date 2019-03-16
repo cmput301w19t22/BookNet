@@ -50,28 +50,11 @@ public class BookSearchActivity extends AppCompatActivity {
         listingAdapter = new BookListingAdapter(allBookListings, this);
         searchResults.setAdapter(listingAdapter);
 
-
-
-
-        //bookListings = MockDatabase.getInstance().readAllBookListings();
+        findViewById(R.id.searchBar);
 
     }
 
-    public void addListingToList(BookListing listing){
-        allBookListings.addBookListing(listing);
-        listingAdapter.notifyDataSetChanged();
-    }
 
 
-    /**
-     * Fills the recycler view list with the search data
-     */
-    private void fillLayout() {
-        //Setup RecyclerView
-        searchResults = findViewById(R.id.searchResults);
-        searchResults.setLayoutManager(new LinearLayoutManager(this));
-        listingAdapter = new BookListingAdapter(allBookListings, this);
-        searchResults.setAdapter(listingAdapter);
-    }
 
 }

@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_search:
-                    searchClicked();
+                    onSearchClicked();
                     return true;
                 case R.id.navigation_mybooks:
                     myBooksClicked();
@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void searchClicked() {
+    private void onSearchClicked() {
         Intent intent = new Intent(this, BookSearchActivity.class);
         startActivity(intent);
     }

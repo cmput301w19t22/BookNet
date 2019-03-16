@@ -1,5 +1,6 @@
 package com.example.booknet;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 /**
@@ -50,12 +51,6 @@ public class CurrentUser{
 
     }
 
-    /**
-     * Method to call when loging out as a new user to update the structure.
-     */
-    public void onLogout() {
-
-    }
 
     /**
      * Returns the account for the current user.
@@ -143,5 +138,15 @@ public class CurrentUser{
 
     public String getAccountPhone() {
         return account.getPhoneNumber();
+    }
+
+    public void logout() {
+        FirebaseAuth.getInstance().signOut();
+        manager.onLogOut();
+        account = new UserAccount(null);
+        account.setProfile(new UserProfile(null, "default_email", null));
+        user = null;
+
+
     }
 }

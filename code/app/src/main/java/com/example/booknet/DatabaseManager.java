@@ -360,6 +360,12 @@ public class DatabaseManager {
         return userLisitngsRef;
     }
 
+    public void onLogOut() {
+        resetAllRefs();
+        phoneLoaded = false;
+        nameLoaded = false;
+    }
+
 
     public class InitiationTask extends AsyncTask<Void, Void, Boolean> {
         Activity context;

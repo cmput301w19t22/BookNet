@@ -281,6 +281,7 @@ public class LoginPageActivity extends AppCompatActivity implements View.OnClick
             CurrentUser.getInstance().setUsername(username);
             CurrentUser.getInstance().setAccountPhone(phonenumber);
             startActivity(new Intent(getApplicationContext(), MainActivity.class));
+            finish();
 
         }
 
@@ -311,6 +312,7 @@ public class LoginPageActivity extends AppCompatActivity implements View.OnClick
 
     public void goToMainPage() {
         startActivity(new Intent(getApplicationContext(), MainActivity.class));
+        finish();
     }
 }
 

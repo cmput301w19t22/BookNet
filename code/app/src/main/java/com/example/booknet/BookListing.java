@@ -1,10 +1,7 @@
 package com.example.booknet;
 
-import android.util.Log;
-
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 /**
  * Keeps track of a book that is listed on the app.
@@ -64,13 +61,12 @@ public class BookListing implements Serializable, Cloneable {
 
     /**
      * Creates a BookListing for a book owned by a given user.
+     *  @param book  The book in the new listing
      *
-     * @param book  The book in the new listing
-     * @param owner The owner of this listing
      */
-    public BookListing(Book book, UserAccount owner) {
+    public BookListing(Book book) {
         this.book = book;
-        this.ownerUsername = owner.getUsername();
+        this.ownerUsername = CurrentUser.getInstance().getUsername();
         this.borrowerName = "";
         this.status = Status.Available;
         this.requests = new ArrayList<String>();
@@ -207,8 +203,13 @@ public class BookListing implements Serializable, Cloneable {
         cloned.setStatus(status);
         cloned.setRequests(requests);
         cloned.setGeoLocation(geoLocation);
+        cloned.setOwnerUsername(ownerUsername);
 
         return cloned;
+    }
+
+    private void setOwnerUsername(String ownerUsername) {
+        this.ownerUsername = ownerUsername;
     }
 
     private void setRequests(ArrayList<String> requests) {

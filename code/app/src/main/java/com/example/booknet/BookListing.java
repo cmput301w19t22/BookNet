@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class BookListing implements Serializable, Cloneable {
 
     public boolean containKeyword(String keyword) {
-        return book.getTitle().contains(keyword) || book.getAuthor().contains(keyword);
+        return book.getTitle().contains(keyword) || book.getAuthor().contains(keyword) || getOwnerUsername().contains(keyword);
     }
 
     /**

@@ -1,9 +1,10 @@
 package com.example.booknet;
 
+import android.app.Activity;
 import android.content.Intent;;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -20,9 +21,8 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
 
-public class LoginPageActivity extends AppCompatActivity implements View.OnClickListener {
+public class LoginPageActivity extends AppCompatActivity implements View.OnClickListener, InitialUserProfileDialog.InitialUserProfileListener {
     private final String TAG = "FB_SIGNIN";
 
     private FirebaseAuth mAuth;
@@ -32,9 +32,15 @@ public class LoginPageActivity extends AppCompatActivity implements View.OnClick
     private EditText etEmail;
     private DatabaseManager manager = DatabaseManager.getInstance();
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+        manager.setOnLoginPage(true);
+        manager.resetAllRefs();
         setContentView(R.layout.activity_log_in);
 
         findViewById(R.id.btnCreate).setOnClickListener(this);
@@ -143,7 +149,8 @@ public class LoginPageActivity extends AppCompatActivity implements View.OnClick
         final String email = etEmail.getText().toString();
         String password = etPass.getText().toString();
 
-        // TODO: sign the user in with email and password credentials
+        final Activity loginPageActivity = this;
+
         mAuth.signInWithEmailAndPassword(email,password)
                 .addOnCompleteListener(this,
                         new OnCompleteListener<AuthResult>() {
@@ -157,13 +164,35 @@ public class LoginPageActivity extends AppCompatActivity implements View.OnClick
                                     //startActivity(intent);
 
                                     //save current user for future use
-                                    CurrentUser.getInstance().setUser(mAuth.getCurrentUser());
+                                    CurrentUser.getInstance().updateUser(mAuth.getCurrentUser());
 
-                                    Log.d("mattTag", "ready to connect to database");
-                                    manager.connetToDatabase();
+                                    //Shows in-progress dialog during connection
+                                    // As user phone/name needs to be checked, connection needs to be established first
+                                    //this method also takes care of following intents
+                                    manager.connectToDatabase(LoginPageActivity.this);
+
+//                                    Log.d("mattTag",CurrentUser.getInstance().getUsername());
+//                                    if (CurrentUser.getInstance().getUsername() == null || CurrentUser.getInstance().getPhone() == null){
+//                                        DialogFragment dialog = new InitialUserProfileDialog();
+//                                        dialog.show(getSupportFragmentManager(), "InitialUserProfileDialog");
+//                                    }
+//
+//                                    else{
+//
+//                                        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+//                                    }
 
 
-                                    startActivity(new Intent(getApplicationContext(), MainActivity.class));
+//                                    AlertDialog.Builder builder = new AlertDialog.Builder(loginPageActivity);
+//                                    builder.setMessage(R.string.usernameRequiredMessage)
+//                                            .setTitle(R.string.usernameRequiredTitle);
+//                                    AlertDialog dialog = builder.create();
+
+
+
+
+
+
                                 }
                                 else {
                                     Toast.makeText(LoginPageActivity.this, "Sign in failed", Toast.LENGTH_SHORT)
@@ -231,5 +260,57 @@ public class LoginPageActivity extends AppCompatActivity implements View.OnClick
                 });
     }
 
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog, String phonenumber, String username) {
+        Log.d("mattTag", "yonk");
+
+
+        //todo: validate phonenumber
+        boolean takenUsername = manager.isUsernameTaken(username);
+        Log.d("mattTag", phonenumber);
+        Log.d("mattTag", username);
+        if (takenUsername){
+            Toast.makeText(LoginPageActivity.this, "Username taken!", Toast.LENGTH_SHORT)
+                    .show();
+        }
+        else{
+
+            Log.d("mattTag", "yeas");
+            manager.writeUsername(username);
+            manager.writeUserPhone(phonenumber);
+            CurrentUser.getInstance().setUsername(username);
+            CurrentUser.getInstance().setAccountPhone(phonenumber);
+            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+
+        }
+
+
+
+
+
+    }
+
+    public void onDestroy() {
+        Log.d("mattTag", "destroyed haha");
+        manager.setOnLoginPage(false);
+        super.onDestroy();
+    }
+
+
+    public void promptInitialProfile(){
+        DialogFragment dialog = new InitialUserProfileDialog();
+        dialog.show(getSupportFragmentManager(), "InitialUserProfileDialog");
+
+    }
+
+
+    @Override
+    public void onDialogNegativeClick(DialogFragment dialog) {
+        Log.d("mattTag", "yonkkk");
+    }
+
+    public void goToMainPage() {
+        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+    }
 }
 

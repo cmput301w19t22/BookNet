@@ -3,11 +3,13 @@ package com.example.booknet;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import java.util.HashMap;
 
 /**
  * Activity to view a user's profile.
@@ -31,10 +33,13 @@ public class UserProfileViewActivity extends AppCompatActivity {
     private Button booksButton;
     private Button editButton;
     private Button logoutButton;
+    private DatabaseManager manager = DatabaseManager.getInstance();
 
     //Activity Data
     UserAccount userAccount;
     String username = "";
+
+    HashMap<String, String> userProfile = new HashMap<String, String>();
 
     /**
      * Called when creating the activity
@@ -46,6 +51,14 @@ public class UserProfileViewActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_profile_view);
+
+//        Intent i = getIntent();
+//        if (i.hasExtra("Email")){
+//            userProfile.put("Email", i.getStringExtra("Email"));
+//            userProfile.put("Email", i.getStringExtra("Email"));
+//        }
+
+        userProfile = manager.readUserProfile();
 
         //Obtain References To Layout Objects
         usernameLabel = findViewById(R.id.userNameLabel);
@@ -62,28 +75,8 @@ public class UserProfileViewActivity extends AppCompatActivity {
         editButton = findViewById(R.id.editButton);
         logoutButton = findViewById(R.id.logoutButton);
 
-        //Get Profile
-        Intent intent = getIntent();
-        //Check that we have a username to check
-        if (!intent.hasExtra("username")) {
-            Toast.makeText(this, "View Not Passed With Username", Toast.LENGTH_LONG).show();
-            //finish();
-        } else {
-            //Obtain the UserAccount for the username
-            username = intent.getStringExtra("username");
-            if (intent.hasExtra("isMe")) {
-                //Get local copy if viewing own account
-                //userAccount = CurrentUser.getInstance().getUserAccount();
-                userAccount = fetchUser(username);
-                editButton.setVisibility(View.VISIBLE);
-                logoutButton.setVisibility(View.VISIBLE);
-            } else {
-                userAccount = fetchUser(username);
-            }
-            fillLayout();
-        }
 
-        //#region Listeners
+        fillLayout();
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -111,16 +104,17 @@ public class UserProfileViewActivity extends AppCompatActivity {
      * Fills the layout with info from the user account
      */
     private void fillLayout() {
-        if (userAccount == null) {
-            Toast.makeText(this, "User Not Found: " + username, Toast.LENGTH_LONG).show();
-            //finish();
-        } else {
-            //Fill Layout With Info
-            usernameLabel.setText(userAccount.getUsername());
-            phoneLabel.setText(userAccount.getProfile().getPhoneNumber());
-            emailLabel.setText(userAccount.getProfile().getEmail());
-            ratingLabel.setText(String.format("%1.1f", userAccount.getRatingScore()));
-        }
+
+        usernameLabel.setText(CurrentUser.getInstance().getUsername());
+        Log.d("mattTag", "lmao");
+//        Log.d("mattTag", userProfile.get("Phone"));
+        phoneLabel.setText(userProfile.get("Phone"));
+        emailLabel.setText(userProfile.get("Email"));
+
+        // todo: fix rating score
+//        ratingLabel.setText(String.format("%1.1f", userAccount.getRatingScore()));
+        ratingLabel.setText("0.0" );
+
     }
 
     /**
@@ -149,5 +143,13 @@ public class UserProfileViewActivity extends AppCompatActivity {
      */
     private void viewUserBooks(UserAccount user) {
         //todo: implement
+    }
+
+    public TextView getPhoneLabel() {
+        return phoneLabel;
+    }
+
+    public TextView getEmailLabel() {
+        return emailLabel;
     }
 }

@@ -27,7 +27,7 @@ public class ProfileEditActivity extends AppCompatActivity {
     //Activity Data
     private UserAccount user;
     private String username;
-
+    private DatabaseManager manager = DatabaseManager.getInstance();
     /**
      * Called when creating the activity
      * Gets the intent and sets listeners
@@ -106,8 +106,13 @@ public class ProfileEditActivity extends AppCompatActivity {
     /**
      * Updates the user profile
      */
-    // todo: MockdataBase deprecated, use real db instead. I'll fix this -Matt
+
     private void updateProfile() {
+        String newEmail = emailField.getText().toString();
+        String newPhone = phoneField.getText().toString();
+        manager.writeUserProfile(newEmail, newPhone);
+        Intent i = new Intent(getApplicationContext(), UserProfileViewActivity.class);
+        startActivity(i);
 //        MockDatabase.getInstance().writeUserAccount(user);
     }
 }

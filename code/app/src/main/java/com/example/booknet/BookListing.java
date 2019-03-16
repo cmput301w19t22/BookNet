@@ -11,6 +11,10 @@ import java.util.Iterator;
  */
 public class BookListing implements Serializable, Cloneable {
 
+    public boolean containKeyword(String keyword) {
+        return book.getTitle().contains(keyword) || book.getAuthor().contains(keyword);
+    }
+
     /**
      * Enum for the status of a BookListing, so the values are more easily tracked
      */

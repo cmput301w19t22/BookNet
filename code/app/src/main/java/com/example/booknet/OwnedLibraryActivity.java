@@ -76,7 +76,7 @@ public class OwnedLibraryActivity extends AppCompatActivity {
                         filteredLibrary.addBookListing(bookListing.clone());
                     }
                 }
-
+                Log.d("mattTag","shit, useless overhead");
                 listingAdapter.notifyDataSetChanged();
             }
 
@@ -143,7 +143,6 @@ public class OwnedLibraryActivity extends AppCompatActivity {
     }
 
     public void onDestroy() {
-        Log.d("mattTag", "DESTROIIEIIEIIII");
         manager.getUserListingsRef().removeEventListener(listener);
         super.onDestroy();
 
@@ -160,6 +159,7 @@ public class OwnedLibraryActivity extends AppCompatActivity {
         Intent intent = new Intent(this, NewBookActivity.class);
         startActivity(intent);
     }
+
 
 
 

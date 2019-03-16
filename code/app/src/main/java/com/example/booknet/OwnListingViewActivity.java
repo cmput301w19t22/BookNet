@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -26,9 +25,11 @@ public class OwnListingViewActivity extends AppCompatActivity {
     private TextView isbnLabel;
     private TextView ownerLabel;
     private TextView statusLabel;
+    private TextView requestCountLabel;
     private Button requestButton;
     private Button viewRequestsButton;
     private Button deleteButton;
+    private Button editButton;
     private DatabaseManager manager = DatabaseManager.getInstance();
 
     //Activity Data
@@ -54,9 +55,13 @@ public class OwnListingViewActivity extends AppCompatActivity {
         isbnLabel = findViewById(R.id.isbnLabel);
         ownerLabel = findViewById(R.id.ownerLabel);
         statusLabel = findViewById(R.id.statusLabel);
+        requestCountLabel = findViewById(R.id.requestCountLabel);
         requestButton = findViewById(R.id.requestButton);
         viewRequestsButton = findViewById(R.id.viewRequestsButton);
         deleteButton = findViewById(R.id.deleteButton);
+        editButton = findViewById(R.id.editButton);
+        bookTitleLabel.setSelected(true);//select to enable scrolling
+        bookAuthorLabel.setSelected(true);
 
         //Get Intent
         Intent intent = getIntent();
@@ -70,8 +75,20 @@ public class OwnListingViewActivity extends AppCompatActivity {
             isbnLabel.setText(listing.getBook().getIsbn());
             ownerLabel.setText(listing.getOwnerUsername());
             statusLabel.setText(listing.getStatus().toString());
-
+            int numRequests = listing.getRequesters().size();
+            if (numRequests > 0) {
+                requestCountLabel.setText(numRequests);
+            } else {
+                //requestCountLabel.setVisibility(View.INVISIBLE);//todo ???
+            }
         }
+
+        editButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editBook(listing);
+            }
+        });
 
         //Set Listener for ViewRequests Button
         viewRequestsButton.setOnClickListener(new View.OnClickListener() {
@@ -111,6 +128,19 @@ public class OwnListingViewActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Start an activity to edit the book for this listing.
+     *
+     * @param item
+     */
+    private void editBook(BookListing item) {
+        if (item != null) {
+            Intent intent = new Intent(this, EditBookActivity.class);
+            intent.putExtra("username", item.getOwnerUsername());
+            intent.putExtra("bookisbn", item.getBook().getIsbn());
+            startActivity(intent);
+        }
+    }
 
 
     /**
@@ -120,9 +150,11 @@ public class OwnListingViewActivity extends AppCompatActivity {
      */
     private void viewRequests(BookListing item) {
         Intent intent = new Intent(this, RequestsViewActivity.class);
-        intent.putExtra("username", item.getOwnerUsername());
-        intent.putExtra("bookisbn", item.getBook().getIsbn());
-        startActivity(intent);
+        if (item != null) {
+            intent.putExtra("username", item.getOwnerUsername());
+            intent.putExtra("bookisbn", item.getBook().getIsbn());
+            startActivity(intent);
+        }
     }
 
 }

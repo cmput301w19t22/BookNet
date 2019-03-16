@@ -1,6 +1,7 @@
 package com.example.booknet;
 
 import android.util.Log;
+import android.graphics.Bitmap;
 
 import java.io.Serializable;
 import java.util.ArrayList;

@@ -10,8 +10,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-
 //Reused/adapted code from assignment 1
 
 /**
@@ -99,8 +97,10 @@ public class BookListingAdapter extends RecyclerView.Adapter<BookListingAdapter.
     private void clickedItem(BookListing item) {
         //Start View/Edit Activity with Clicked Item
         Intent intent = new Intent(sourceActivity, ListingViewActivity.class);
-        intent.putExtra("username", item.getOwnerUsername());
-        intent.putExtra("bookisbn", item.getBook().getIsbn());
+        if (item != null) {
+            intent.putExtra("username", item.getOwnerUsername());
+            intent.putExtra("bookisbn", item.getBook().getIsbn());
+        }
         sourceActivity.startActivity(intent);
     }
 
@@ -143,6 +143,10 @@ public class BookListingAdapter extends RecyclerView.Adapter<BookListingAdapter.
             isbnLabel = itemView.findViewById(R.id.isbnLabel);
             ownerLabel = itemView.findViewById(R.id.ownerLabel);
             statusLabel = itemView.findViewById(R.id.statusLabel);
+
+            bookTitleLabel.setSelected(true);//select to enable scrolling
+            bookAuthorLabel.setSelected(true);
+            ownerLabel.setSelected(true);
         }
     }
 

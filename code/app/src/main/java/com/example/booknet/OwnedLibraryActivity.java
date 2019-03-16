@@ -1,6 +1,5 @@
 package com.example.booknet;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -37,6 +36,7 @@ public class OwnedLibraryActivity extends AppCompatActivity {
     private ValueEventListener listener;
 
     DatabaseManager manager = DatabaseManager.getInstance();
+
     /**
      * Called when creating the activity.
      * Sets a click listener for the add button
@@ -59,7 +59,6 @@ public class OwnedLibraryActivity extends AppCompatActivity {
 
         //Get Data From the Database, library will get auto updated (it's magic babe)
         library = manager.readUserOwnedLibrary();
-
 
         listener = new ValueEventListener() {
             @Override
@@ -92,6 +91,7 @@ public class OwnedLibraryActivity extends AppCompatActivity {
 
 
         Log.d("matt", "creating new adpator");
+
         libraryListView = findViewById(R.id.bookLibrary);
         libraryListView.setLayoutManager(new LinearLayoutManager(this));
         listingAdapter = new OwnedListingAdapter(filteredLibrary, this);
@@ -108,8 +108,7 @@ public class OwnedLibraryActivity extends AppCompatActivity {
                     Log.d("mattTag", "copying one by one");
                     filteredLibrary.copyOneByOne(library);
                     Log.d("mattTag", "after copying: " + filteredLibrary.toString());
-                }
-                else {
+                } else {
                     Log.d("mattTag", "yi");
                     filteredLibrary.filterByStatus(library, BookListing.Status.valueOf(selectedItem));
                 }
@@ -125,8 +124,6 @@ public class OwnedLibraryActivity extends AppCompatActivity {
         });
 
 
-
-
     }
 
     /**
@@ -137,7 +134,7 @@ public class OwnedLibraryActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         Log.d("mattTag", "starting the activity, notifying");
-        Log.d("mattTag", "when starting, the books are: "+filteredLibrary.toString());
+        Log.d("mattTag", "when starting, the books are: " + filteredLibrary.toString());
         //Update List Data
         listingAdapter.notifyDataSetChanged();
     }
@@ -148,7 +145,8 @@ public class OwnedLibraryActivity extends AppCompatActivity {
         super.onDestroy();
 
     }
-    public void notifyDataSetChanged(){
+
+    public void notifyDataSetChanged() {
         Log.d("mattTag", "activity has the notification");
         listingAdapter.notifyDataSetChanged();
     }
@@ -160,8 +158,6 @@ public class OwnedLibraryActivity extends AppCompatActivity {
         Intent intent = new Intent(this, NewBookActivity.class);
         startActivity(intent);
     }
-
-
 
 
 }

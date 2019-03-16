@@ -5,7 +5,7 @@ import com.google.firebase.auth.FirebaseUser;
 /**
  * A singleton data structure that contains the currently logged in user data.
  */
-public class CurrentUser{
+public class CurrentUser {
     //Create Singleton Pattern
     private static final CurrentUser instance = new CurrentUser();
 
@@ -33,12 +33,12 @@ public class CurrentUser{
 
     private FirebaseUser user;
 
-    public void setUser(FirebaseUser user){
+    public void setUser(FirebaseUser user) {
         this.user = user;
         account.setProfileEmail(user.getEmail());
     }
 
-    public String getUID(){
+    public String getUID() {
         return user.getUid();
     }
 
@@ -67,13 +67,21 @@ public class CurrentUser{
     }
 
     /**
+     * Checks whether the current user is the given username
+     *
+     * @param username The username to check for
+     * @return Whether the username matches
+     */
+    public boolean isMe(String username) {
+        return account.getUsername().equals(username);
+    }
+
+    /**
      * Creates a request to add a book for this user.
      *
      * @param book The book to add.
      */
     public void requestAddBook(Book book) {
-
-
 
 
         //Create a listing for the new book

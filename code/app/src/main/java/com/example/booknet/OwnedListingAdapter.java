@@ -23,7 +23,7 @@ import android.widget.TextView;
 public class OwnedListingAdapter extends RecyclerView.Adapter<OwnedListingAdapter.OwnedListingViewHolder> {
 
     //The BookLibrary to display
-    private BookLibrary data;
+    private BookLibrary library;
 
     //The activity this adapter was created from
     private AppCompatActivity sourceActivity;
@@ -31,11 +31,11 @@ public class OwnedListingAdapter extends RecyclerView.Adapter<OwnedListingAdapte
     /**
      * Creates the adapter
      *
-     * @param data           The BookLibrary to use for the list display
+     * @param library        The BookLibrary to use for the list display
      * @param sourceActivity The activity that created this adapter
      */
-    public OwnedListingAdapter(BookLibrary data, AppCompatActivity sourceActivity) {
-        this.data = data;
+    public OwnedListingAdapter(BookLibrary library, AppCompatActivity sourceActivity) {
+        this.library = library;
         this.sourceActivity = sourceActivity;
     }
 
@@ -60,19 +60,19 @@ public class OwnedListingAdapter extends RecyclerView.Adapter<OwnedListingAdapte
     }
 
     /**
-     * Routine for binding new data to a list item
+     * Routine for binding new library to a list item
      *
      * @param ownedListingViewHolder The ViewHolder to be assigned
      * @param position               Index in the list to use for this list slot
      */
     @Override
     public void onBindViewHolder(@NonNull OwnedListingViewHolder ownedListingViewHolder, int position) {
-        //Get the data at the provided position
-        final BookListing item = data.getBooks().get(position);
+        //Get the library at the provided position
+        final BookListing item = library.getBookAtPosition(position);
         //Index to pass to the edit activity
         final int index = ownedListingViewHolder.getAdapterPosition();
 
-        //Fill the text fields with the object's data
+        //Fill the text fields with the object's library
         //ownedListingViewHolder.bookThumbnail.//todo listing photo
         ownedListingViewHolder.bookTitleLabel.setText(item.getBook().getTitle());
         ownedListingViewHolder.bookAuthorLabel.setText(item.getBook().getAuthor());
@@ -98,8 +98,10 @@ public class OwnedListingAdapter extends RecyclerView.Adapter<OwnedListingAdapte
     public void clickedItem(BookListing item) {
         //Start View/Edit Activity with Clicked Item
         Intent intent = new Intent(sourceActivity, OwnListingViewActivity.class);
-        intent.putExtra("bookisbn", item.getBook().getIsbn());
-
+        if (item != null) {
+            intent.putExtra("username", item.getOwnerUsername());
+            intent.putExtra("bookisbn", item.getBook().getIsbn());
+        }
         sourceActivity.startActivity(intent);
     }
 
@@ -110,11 +112,11 @@ public class OwnedListingAdapter extends RecyclerView.Adapter<OwnedListingAdapte
      */
     @Override
     public int getItemCount() {
-        return data.size();
+        return library.size();
     }
 
     /**
-     * Stores the view data for a list item.
+     * Stores the view library for a list item.
      */
     public static class OwnedListingViewHolder extends RecyclerView.ViewHolder {
 
@@ -144,6 +146,10 @@ public class OwnedListingAdapter extends RecyclerView.Adapter<OwnedListingAdapte
             ownerLabel = itemView.findViewById(R.id.ownerLabel);
             ownedLabel = itemView.findViewById(R.id.ownedLabel);
             statusLabel = itemView.findViewById(R.id.statusLabel);
+
+            bookTitleLabel.setSelected(true);//select to enable scrolling
+            bookAuthorLabel.setSelected(true);
+            ownerLabel.setSelected(true);
         }
     }
 

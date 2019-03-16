@@ -24,8 +24,8 @@ public class CurrentUser{
     private CurrentUser() {
         //Create a default user account
 
-        account = new UserAccount("Jhon_Doe");
-        account.setProfile(new UserProfile("Jhon_Doe", "default_email", "phone"));
+        account = new UserAccount(null);
+        account.setProfile(new UserProfile(null, "default_email", null));
 
         //MockDatabase.getInstance().writeUserAccount(account);
     }
@@ -100,5 +100,40 @@ public class CurrentUser{
      */
     public BookLibrary getOwnedLibrary() {
         return account.getOwnedLibrary();
+    }
+
+    public String getUsername() {
+        return getUserAccount().getUsername();
+    }
+
+    public String getPhone() {
+        return getUserAccount().getProfile().getPhoneNumber();
+    }
+
+    public void setUsername(String username) {
+        account.setUsername(username);
+        account.getProfile().setName(username);
+    }
+
+    public void setPhone(String phonenumber) {
+        account.getProfile().setPhoneNumber(phonenumber);
+    }
+
+    /**
+     * called after email and password are authenticated.
+     * saves account info to CurrentUser singleton for future use
+     *
+     * makes username and phone blank. As later a database check will be performed to check username and phone
+     * Username and phone info will be updated after the database check.
+     *
+     * @param currentUser
+     */
+    public void updateUser(FirebaseUser currentUser) {
+        this.user = currentUser;
+        account.setProfileEmail(user.getEmail());
+
+        // currently unkown
+        setUsername(null);
+        setPhone(null);
     }
 }

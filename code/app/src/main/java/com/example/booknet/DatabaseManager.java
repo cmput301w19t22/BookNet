@@ -1,8 +1,13 @@
 package com.example.booknet;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.provider.ContactsContract;
+import android.support.v4.app.DialogFragment;
+import android.util.EventLog;
 import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
@@ -12,6 +17,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.EventListener;
+import java.util.HashMap;
+import java.util.Map;
+
+import static android.support.v4.content.ContextCompat.startActivity;
 
 /**
  * Class that interfaces with the database
@@ -23,8 +33,26 @@ public class DatabaseManager {
 
     private BookLibrary userBookLibrary = new BookLibrary();
     private BookLibrary allBookLibrary = new BookLibrary();
+    private Map<String, String> usernames = new HashMap<>();
+
+    //used to freeze user interaction when connecting
+    private ProgressDialog progressDialog;
+
     private DatabaseReference allListingsRef;
     private DatabaseReference userLisitngsRef;
+    private DatabaseReference usernameRef;
+    private DatabaseReference userPhoneRef;
+
+    private ValueEventListener allListingsListener;
+    private ValueEventListener userLstingsListener;
+    private ValueEventListener usernameListener;
+    private ValueEventListener userPhoneListener;
+
+    private Boolean phoneLoaded = false;
+    private Boolean nameLoaded = false;
+    private Boolean onLoginPage = true;
+
+    //not in effect
     private boolean readwritePermission = false;
 
 
@@ -238,8 +266,19 @@ public class DatabaseManager {
         return null;
     }
 
-    public void connetToDatabase() {
-        new InitiationTask().execute();
+    public void connectToDatabase(Activity context) {
+
+        progressDialog = new ProgressDialog(context);
+        progressDialog.setMessage("connecting to database");
+
+        progressDialog.show();
+        new InitiationTask(context).execute();
+
+
+
+
+
+
     }
 
     public BookListing readUserOwnedBookListingWithISBN(String isbn) {
@@ -260,16 +299,59 @@ public class DatabaseManager {
         return null;
     }
 
+    public boolean isUsernameTaken(String username) {
+        return usernames.containsKey(username);
+    }
+
+    /**
+     * writes the username under the current user's UID (this method should only be called when the user is signed in)
+     *
+     * @param username the username to write to the database
+     */
+    public void writeUsername(String username){
+        usernameRef.child(username).setValue(CurrentUser.getInstance().getUID());
+    }
+
+    public void writeUserPhone(String phone){
+        userPhoneRef.child(CurrentUser.getInstance().getUID()).setValue(phone);
+    }
+
+    public void setOnLoginPage(boolean b) {
+        onLoginPage = b;
+    }
+
+    public void resetAllRefs() {
+        if (allListingsRef != null && allListingsListener != null) {
+            allListingsRef.removeEventListener(allListingsListener);
+        }
+        if (userLisitngsRef != null && userLstingsListener != null) {
+            userLisitngsRef.removeEventListener(userLstingsListener);
+        }
+        if (userPhoneRef!= null && userPhoneListener!= null) {
+            userPhoneRef.removeEventListener(userPhoneListener);
+        }
+        if (usernameRef!= null && usernameListener!= null) {
+            usernameRef.removeEventListener(usernameListener);
+        }
+
+
+    }
+
 
     public class InitiationTask extends AsyncTask<Void, Void, Boolean> {
+        Activity context;
+
+
+        InitiationTask(Activity context) {
+            this.context = context;
+        }
 
 
         @Override
         protected Boolean doInBackground(Void... params) {
             Log.d("mattTag", "database connection task started");
-            allListingsRef = FirebaseDatabase.getInstance().getReference("BookListings");
-            // This listener should take care of database value change automatically
-            allListingsRef.addValueEventListener(new ValueEventListener() {
+
+            allListingsListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -289,13 +371,16 @@ public class DatabaseManager {
                 public void onCancelled(DatabaseError databaseError) {
                     System.out.println("The read failed: " + databaseError.getCode());
                 }
-            });
+            };
+            allListingsRef = FirebaseDatabase.getInstance().getReference("BookListings");
+            // This listener should take care of database value change automatically
+            allListingsRef.addValueEventListener(allListingsListener);
 
             String uid = CurrentUser.getInstance().getUID();
-            userLisitngsRef = FirebaseDatabase.getInstance().getReference("/UserBooks/"+uid);
 
-            // This listener should take care of database value change automatically
-            userLisitngsRef.addValueEventListener(new ValueEventListener() {
+
+            userLisitngsRef = FirebaseDatabase.getInstance().getReference("/UserBooks/"+uid);
+            userLstingsListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     // once the data is changed, we just change our corresponding static variable
@@ -316,8 +401,118 @@ public class DatabaseManager {
                 public void onCancelled(DatabaseError databaseError) {
                     System.out.println("The read failed: " + databaseError.getCode());
                 }
-            });
+            };
 
+            // This listener should take care of database value change automatically
+            userLisitngsRef.addValueEventListener(userLstingsListener);
+
+
+            usernameRef = FirebaseDatabase.getInstance().getReference("Usernames");
+
+            // This listener should take care of database value change automatically
+            usernameListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    // once the data is changed, we just change our corresponding static variable
+
+                    usernames.clear();
+
+
+                    // then fill it as it is in the database
+                    for (DataSnapshot data : dataSnapshot.getChildren()) {
+                        String name = data.getKey();
+                        String uid = data.getValue(String.class);
+                        usernames.put(name, uid);
+                        if (uid.equals(CurrentUser.getInstance().getUID())){
+                            CurrentUser.getInstance().setUsername(name);
+                        }
+
+                    }
+
+                    nameLoaded = true;
+                    Log.d("mattTag", "nameLoaded");
+                    if (phoneLoaded && progressDialog != null){
+                        Log.d("mattTag", "checking from name");
+                        if (onLoginPage){
+                            LoginPageActivity loginPageActivity = (LoginPageActivity) context;
+                            progressDialog.dismiss();
+                            progressDialog = null;
+                            Log.d("mattTag", "dismissed from name");
+
+                            if (CurrentUser.getInstance().getUsername() == null || CurrentUser.getInstance().getPhone() == null){
+                                loginPageActivity.promptInitialProfile();
+                            }
+                            else{
+                                loginPageActivity.goToMainPage();
+                            }
+
+                        }
+
+                    }
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    System.out.println("The read failed: " + databaseError.getCode());
+                }
+            };
+
+            usernameRef.addValueEventListener(usernameListener);
+
+
+
+            userPhoneListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    // once the data is changed, we just change our corresponding static variable
+
+
+
+                    // then fill it as it is in the database
+                    for (DataSnapshot data : dataSnapshot.getChildren()) {
+                        String uid = data.getKey();
+                        String phone = data.getValue(String.class);
+
+                        if (uid.equals(CurrentUser.getInstance().getUID())){
+                            CurrentUser.getInstance().setPhone(phone);
+                        }
+
+                    }
+                    phoneLoaded = true;
+                    Log.d("mattTag", "phoneLoaded");
+                    if (nameLoaded && progressDialog != null){
+                        Log.d("mattTag", "checking from phone");
+                        Log.d("mattTag", onLoginPage.toString());
+                        if (onLoginPage){
+
+                            LoginPageActivity loginPageActivity = (LoginPageActivity) context;
+                            progressDialog.dismiss();
+                            progressDialog = null;
+
+
+                            if (CurrentUser.getInstance().getUsername() == null || CurrentUser.getInstance().getPhone() == null){
+                                loginPageActivity.promptInitialProfile();
+                            }
+                            else{
+                                loginPageActivity.goToMainPage();
+                            }
+
+                        }
+
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    System.out.println("The read failed: " + databaseError.getCode());
+                }
+            };
+
+            userPhoneRef = FirebaseDatabase.getInstance().getReference("UserPhones");
+
+            // This listener should take care of database value change automatically
+            userPhoneRef.addValueEventListener(userPhoneListener);
 
 
             return true;
@@ -327,6 +522,7 @@ public class DatabaseManager {
         protected void onPostExecute(final Boolean success) {
             Log.d("mattTag", "DatabaseManager: database connected, allowing read/writes");
             if (success) allowReadWrite();
+//            dialog.dismiss();
         }
 
     }

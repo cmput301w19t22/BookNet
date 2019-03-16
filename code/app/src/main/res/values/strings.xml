@@ -27,5 +27,7 @@
     </string-array>
 
     <string name="status_filter_prompt">Filter By Status: </string>
+    <string name="usernameRequiredMessage">You need a unique username to proceed</string>
+    <string name="usernameRequiredTitle">Set Username</string>
 
 </resources>

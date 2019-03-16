@@ -340,7 +340,7 @@ public class DatabaseManager {
     }
 
     public HashMap<String, String> readUserProfile(){
-        String uid = CurrentUser.getInstance().getUID();
+
         if (userProfile.size() == 2){
             return (HashMap<String, String>) userProfile;
         }

@@ -21,7 +21,6 @@ public class CurrentUser {
 
     private CurrentUser() {
         //Create a default user account
-
         account = new UserAccount(null);
         account.setProfile(new UserProfile(null, "default_email", null));
 
@@ -91,7 +90,6 @@ public class CurrentUser {
 //        account.addListingToOwned(newListing);
 
 
-
         //add the listing to the database
 
 
@@ -128,7 +126,7 @@ public class CurrentUser {
     /**
      * called after email and password are authenticated.
      * saves account info to CurrentUser singleton for future use
-     *
+     * <p>
      * makes username and phone blank. As later a database check will be performed to check username and phone
      * Username and phone info will be updated after the database check.
      *

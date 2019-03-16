@@ -2,12 +2,7 @@ package com.example.booknet;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.Intent;
 import android.os.AsyncTask;
-import android.provider.ContactsContract;
-import android.support.v4.app.DialogFragment;
-import android.util.EventLog;
 import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
@@ -17,11 +12,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.EventListener;
 import java.util.HashMap;
 import java.util.Map;
-
-import static android.support.v4.content.ContextCompat.startActivity;
 
 /**
  * Class that interfaces with the database
@@ -34,6 +26,7 @@ public class DatabaseManager {
     private BookLibrary userBookLibrary = new BookLibrary();
     private BookLibrary allBookLibrary = new BookLibrary();
     private Map<String, String> usernames = new HashMap<>();
+    private Map<String, String> userProfile = new HashMap<>();
 
     //used to freeze user interaction when connecting
     private ProgressDialog progressDialog;
@@ -42,11 +35,13 @@ public class DatabaseManager {
     private DatabaseReference userLisitngsRef;
     private DatabaseReference usernameRef;
     private DatabaseReference userPhoneRef;
+    private DatabaseReference userProfileRef;
 
     private ValueEventListener allListingsListener;
     private ValueEventListener userLstingsListener;
     private ValueEventListener usernameListener;
     private ValueEventListener userPhoneListener;
+    private ValueEventListener userProfileListener;
 
     private Boolean phoneLoaded = false;
     private Boolean nameLoaded = false;
@@ -333,7 +328,30 @@ public class DatabaseManager {
         if (usernameRef!= null && usernameListener!= null) {
             usernameRef.removeEventListener(usernameListener);
         }
+        if (userProfileRef != null && userProfileListener != null){
+            userProfileRef.removeEventListener(userProfileListener);
+        }
 
+    }
+
+    public void writeUserProfile(String newEmail, String newPhone) {
+        userProfileRef.child("Email").setValue(newEmail);
+        userProfileRef.child("Phone").setValue(newPhone);
+    }
+
+    public HashMap<String, String> readUserProfile(){
+        String uid = CurrentUser.getInstance().getUID();
+        if (userProfile.size() == 2){
+            return (HashMap<String, String>) userProfile;
+        }
+        else{
+            Log.d("mattTag", "nahnah");
+            Log.d("mattTag", String.valueOf(userProfile.size()));
+            HashMap<String, String> profile = new HashMap<String, String>();
+            profile.put("Email", CurrentUser.getInstance().getDefaultEmail());
+            profile.put("Phone", CurrentUser.getInstance().getAccountPhone());
+            return profile;
+        }
 
     }
 
@@ -373,6 +391,29 @@ public class DatabaseManager {
                 }
             };
             allListingsRef = FirebaseDatabase.getInstance().getReference("BookListings");
+            // This listener should take care of database value change automatically
+            allListingsRef.addValueEventListener(allListingsListener);
+
+
+            userProfileListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+
+
+                    userProfile.clear();
+                    HashMap<String, String> fetchedProfile = (HashMap<String, String>) dataSnapshot.getValue();
+                    Log.d("mattTag", "fetched" + String.valueOf(fetchedProfile.size()));
+                    userProfile.putAll(fetchedProfile);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    System.out.println("The read failed: " + databaseError.getCode());
+                }
+            };
+            userProfileRef = FirebaseDatabase.getInstance().getReference("/UserProfiles/"+CurrentUser.getInstance().getUID());
+            userProfileRef.addValueEventListener(userProfileListener);
+
             // This listener should take care of database value change automatically
             allListingsRef.addValueEventListener(allListingsListener);
 
@@ -439,7 +480,7 @@ public class DatabaseManager {
                             progressDialog = null;
                             Log.d("mattTag", "dismissed from name");
 
-                            if (CurrentUser.getInstance().getUsername() == null || CurrentUser.getInstance().getPhone() == null){
+                            if (CurrentUser.getInstance().getUsername() == null || CurrentUser.getInstance().getAccountPhone() == null){
                                 loginPageActivity.promptInitialProfile();
                             }
                             else{
@@ -475,7 +516,7 @@ public class DatabaseManager {
                         String phone = data.getValue(String.class);
 
                         if (uid.equals(CurrentUser.getInstance().getUID())){
-                            CurrentUser.getInstance().setPhone(phone);
+                            CurrentUser.getInstance().setAccountPhone(phone);
                         }
 
                     }
@@ -491,7 +532,7 @@ public class DatabaseManager {
                             progressDialog = null;
 
 
-                            if (CurrentUser.getInstance().getUsername() == null || CurrentUser.getInstance().getPhone() == null){
+                            if (CurrentUser.getInstance().getUsername() == null || CurrentUser.getInstance().getAccountPhone() == null){
                                 loginPageActivity.promptInitialProfile();
                             }
                             else{

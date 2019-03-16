@@ -1,7 +1,5 @@
 package com.example.booknet;
 
-import android.provider.ContactsContract;
-
 import com.google.firebase.auth.FirebaseUser;
 
 /**
@@ -115,8 +113,8 @@ public class CurrentUser{
         account.getProfile().setName(username);
     }
 
-    public void setPhone(String phonenumber) {
-        account.getProfile().setPhoneNumber(phonenumber);
+    public void setAccountPhone(String phonenumber) {
+        account.setPhoneNumber(phonenumber);
     }
 
     /**
@@ -134,6 +132,16 @@ public class CurrentUser{
 
         // currently unkown
         setUsername(null);
-        setPhone(null);
+        setAccountPhone(null);
+    }
+
+    public String getDefaultEmail() {
+        return user.getEmail();
+
+    }
+
+
+    public String getAccountPhone() {
+        return account.getPhoneNumber();
     }
 }

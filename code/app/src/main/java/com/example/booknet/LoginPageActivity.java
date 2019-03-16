@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -280,7 +279,7 @@ public class LoginPageActivity extends AppCompatActivity implements View.OnClick
             manager.writeUsername(username);
             manager.writeUserPhone(phonenumber);
             CurrentUser.getInstance().setUsername(username);
-            CurrentUser.getInstance().setPhone(phonenumber);
+            CurrentUser.getInstance().setAccountPhone(phonenumber);
             startActivity(new Intent(getApplicationContext(), MainActivity.class));
 
         }

@@ -16,6 +16,7 @@ public class UserAccount extends AppCompatActivity implements Serializable, Clon
     private float reviewScore = 5;
     private BookLibrary ownedLibrary;
     private BookLibrary requestedBooks;
+    private String phoneNumber;
 
     /**
      * Constructor to make an empty account
@@ -193,5 +194,13 @@ public class UserAccount extends AppCompatActivity implements Serializable, Clon
         cloned.setRequestedBooks(requestedBooks.clone());
         cloned.setReviews((ArrayList<Review>) reviews.clone());
         return cloned;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
     }
 }

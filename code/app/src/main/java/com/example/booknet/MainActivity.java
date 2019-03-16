@@ -1,9 +1,11 @@
 package com.example.booknet;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
@@ -72,10 +74,32 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra("username", username);
         intent.putExtra("isMe", true);
         startActivity(intent);
+
     }
 
     private void onSearchClicked() {
         Intent intent = new Intent(this, BookSearchActivity.class);
         startActivity(intent);
+
     }
+
+    @Override
+    public void onBackPressed() {
+        new AlertDialog.Builder(this)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("Are you sure?")
+                .setMessage("Log out and close app?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+
+                })
+                .setNegativeButton("No", null)
+                .show();
+    }
+
+
 }

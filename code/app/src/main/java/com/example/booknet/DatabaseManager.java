@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -15,6 +16,9 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.example.booknet.BookListing.Status.Available;
+import static com.example.booknet.BookListing.Status.Requested;
 
 /**
  * Class that interfaces with the database
@@ -364,6 +368,28 @@ public class DatabaseManager {
         resetAllRefs();
         phoneLoaded = false;
         nameLoaded = false;
+    }
+
+    /**
+     * @param listing
+     * @return whether the request goes through
+     */
+    public boolean requestBookListing(BookListing listing) {
+        if (isBookListingAvailable(listing)){
+            allListingsRef.child(listing.getISBN()+"-"+CurrentUser.getInstance().getUID()).child("status").setValue(Requested);
+            return true;
+        }
+        return false;
+
+    }
+
+    private boolean isBookListingAvailable(BookListing listing) {
+        for (BookListing l: allBookLibrary){
+            if (l.getOwnerUsername().equals(listing.getOwnerUsername()) && l.getISBN().equals(listing.getISBN())){
+                return listing.getStatus() == Available;
+            }
+        }
+        return false;
     }
 
 

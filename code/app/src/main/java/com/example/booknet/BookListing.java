@@ -12,6 +12,10 @@ public class BookListing implements Serializable, Cloneable {
         return book.getTitle().contains(keyword) || book.getAuthor().contains(keyword) || getOwnerUsername().contains(keyword);
     }
 
+    public String getISBN() {
+        return book.getIsbn();
+    }
+
     /**
      * Enum for the status of a BookListing, so the values are more easily tracked
      */

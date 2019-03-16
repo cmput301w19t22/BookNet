@@ -27,9 +27,10 @@ public class BookSearchActivity extends AppCompatActivity {
     private RecyclerView searchResults;
     private BookListingAdapter listingAdapter;
     private DatabaseManager manager = DatabaseManager.getInstance();
-    private SoundPool mSoundPool;
-    private final int MAX_STREAM = 10;
-    private boolean soundLoaded = false;
+
+//    private SoundPool mSoundPool;
+//    private final int MAX_STREAM = 10;
+//    private boolean soundLoaded = false;
 
     //App Data
     BookLibrary allBookListings;
@@ -86,8 +87,8 @@ public class BookSearchActivity extends AppCompatActivity {
 
         manager.getAllLisitngsRef().addValueEventListener(listener);
 
-        mSoundPool = new SoundPool(MAX_STREAM, AudioManager.STREAM_MUSIC, 0);
-        final int backgroundSoundId = mSoundPool.load(this, R.raw.nice_keyboard_sound, 0);
+//        mSoundPool = new SoundPool(MAX_STREAM, AudioManager.STREAM_MUSIC, 0);
+//        final int backgroundSoundId = mSoundPool.load(this, R.raw.nice_keyboard_sound, 0);
 
 //        player.prepareAsync();
         setContentView(R.layout.activity_book_search);
@@ -113,7 +114,7 @@ public class BookSearchActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextChange(String s) {
                 // async sound play needs to use the soundpool thing
-                mSoundPool.play(backgroundSoundId, (float)1, (float)1, 1, 0, (float)1);
+//                mSoundPool.play(backgroundSoundId, (float)1, (float)1, 1, 0, (float)1);
 
 
                 filteredLibrary.removeAllBooks();

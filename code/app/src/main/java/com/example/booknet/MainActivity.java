@@ -158,17 +158,20 @@ public class MainActivity extends FragmentActivity {
         new AlertDialog.Builder(this)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle("Are you sure?")
-                .setMessage("Log out and close app?")
+                .setMessage("Log out?")
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener()
                 {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        CurrentUser.getInstance().logout();
+
                         finish();
                     }
 
                 })
                 .setNegativeButton("No", null)
                 .show();
+
     }
 
 

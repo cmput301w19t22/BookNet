@@ -14,7 +14,7 @@ public class DatabaseManagerTest {
     public void WriteUserAccount() {
         DatabaseManager databaseManager = new DatabaseManager();
 
-        UserAccount user = new UserAccount("testuser", "debug");
+        UserAccount user = new UserAccount("testuser");
 
         databaseManager.writeUserAccount(user);
 
@@ -26,7 +26,7 @@ public class DatabaseManagerTest {
     public void WriteBookListing() {
         DatabaseManager databaseManager = new DatabaseManager();
 
-        UserAccount user = new UserAccount("testuser", "debug");
+        UserAccount user = new UserAccount("testuser");
         Book book = new Book("title", "author", "description", "1234567890");
         BookListing listing = new BookListing(book);
 
@@ -40,7 +40,7 @@ public class DatabaseManagerTest {
     public void WriteBookInfo() {
         DatabaseManager databaseManager = new DatabaseManager();
 
-        UserAccount user = new UserAccount("testuser", "debug");
+        UserAccount user = new UserAccount("testuser");
         Book book = new Book("title", "author", "description", "1234567890");
 
         databaseManager.writeBookInfo(book);
@@ -53,8 +53,8 @@ public class DatabaseManagerTest {
     public void WriteReview() {
         DatabaseManager databaseManager = new DatabaseManager();
 
-        UserAccount reviewer = new UserAccount("testuser", "debug");
-        UserAccount reviewed= new UserAccount("testuser2", "debug");
+        UserAccount reviewer = new UserAccount("testuser");
+        UserAccount reviewed= new UserAccount("testuser2");
         Book book = new Book("title", "author", "description", "1234567890");
         BookListing listing = new BookListing(book);
 
@@ -73,7 +73,7 @@ public class DatabaseManagerTest {
         DatabaseManager databaseManager = new DatabaseManager();
 
         //Add the user account
-        UserAccount user = new UserAccount("testuser", "debug");
+        UserAccount user = new UserAccount("testuser");
         databaseManager.writeUserAccount(user);
 
         //Read the user account
@@ -103,8 +103,8 @@ public class DatabaseManagerTest {
         DatabaseManager databaseManager = new DatabaseManager();
 
         //Create a review
-        UserAccount reviewer = new UserAccount("testuser", "debug");
-        UserAccount reviewed = new UserAccount("testuser2", "debug");
+        UserAccount reviewer = new UserAccount("testuser");
+        UserAccount reviewed = new UserAccount("testuser2");
         Review review = new Review(reviewer, reviewed, 5, "review1");
         databaseManager.writeReview(review);
 
@@ -120,7 +120,7 @@ public class DatabaseManagerTest {
         DatabaseManager databaseManager = new DatabaseManager();
 
         //Add a listing
-        UserAccount user1 = new UserAccount("testuser", "debug");
+        UserAccount user1 = new UserAccount("testuser");
         Book book = new Book("title", "author", "description","1234567890");
         BookListing listing = new BookListing(book);
         databaseManager.writeToAllBookListings(listing);
@@ -138,7 +138,7 @@ public class DatabaseManagerTest {
         DatabaseManager databaseManager = new DatabaseManager();
 
         //Add a listing
-        UserAccount user1 = new UserAccount("testuser", "debug");
+        UserAccount user1 = new UserAccount("testuser");
         Book book = new Book("title", "author", "description","1234567890");
         BookListing listing = new BookListing(book);
         listing.addRequest("testuser");

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".OwnedLibraryActivity">
+    tools:context=".OwnedLibraryFragment">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/bookLibrary"
@@ -49,7 +49,6 @@
         app:contentInsetEnd="0dp"
         app:contentInsetStart="0dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/spinner"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Spinner
@@ -57,16 +56,17 @@
         android:layout_width="0dp"
         android:layout_height="19dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
         android:layout_marginBottom="8dp"
-        android:background="@color/colorAccent"
+        android:background="@color/colorPrimary"
         android:entries="@array/status_array"
         android:prompt="@string/status_filter_prompt"
         android:spinnerMode="dropdown"
         app:layout_constraintBottom_toBottomOf="@+id/toolbar"
-        app:layout_constraintEnd_toEndOf="@+id/toolbar"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.523" />
 
     <TextView
         android:id="@+id/textView4"
@@ -76,12 +76,12 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
-        android:background="@color/colorAccent"
+        android:background="@color/colorPrimary"
         android:text="@string/status_filter_prompt"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
         app:layout_constraintBottom_toBottomOf="@+id/toolbar"
         app:layout_constraintEnd_toStartOf="@+id/spinner"
         app:layout_constraintTop_toTopOf="parent"
-        tools:background="@color/colorAccent" />
+        app:layout_constraintVertical_bias="0.523" />
 
 </android.support.constraint.ConstraintLayout>

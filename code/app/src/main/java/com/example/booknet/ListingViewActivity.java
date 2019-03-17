@@ -27,7 +27,7 @@ public class ListingViewActivity extends AppCompatActivity {
     private TextView statusLabel;
     private Button requestButton;
     private Button ownerProfileButton;
-    private DatabaseManager manager=DatabaseManager.getInstance();
+    private DatabaseManager manager = DatabaseManager.getInstance();
 
     //Activity Data
     private BookListing listing;
@@ -55,6 +55,9 @@ public class ListingViewActivity extends AppCompatActivity {
         statusLabel = findViewById(R.id.statusLabel);
         requestButton = findViewById(R.id.requestButton);
         ownerProfileButton = findViewById(R.id.ownerProfileButton);
+        bookTitleLabel.setSelected(true);//select so it scrolls
+        bookAuthorLabel.setSelected(true);
+
 
         //Get Intent
         Intent intent = getIntent();
@@ -76,7 +79,7 @@ public class ListingViewActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 sendRequest();
-                startActivity(new Intent(ListingViewActivity.this, BookSearchActivity.class));
+                startActivity(new Intent(ListingViewActivity.this, BookSearchFragment.class));
                 finish();
             }
         });
@@ -108,8 +111,10 @@ public class ListingViewActivity extends AppCompatActivity {
      * Starts an activity to view the profile of the user whoo owns this book.
      */
     private void viewOwnerProfile() {
-        Intent intent = new Intent(this, UserProfileViewActivity.class);
-        intent.putExtra("username", listing.getOwnerUsername());
+        Intent intent = new Intent(this, UserProfileViewFragment.class);
+        if (listing != null) {
+            intent.putExtra("username", listing.getOwnerUsername());
+        }
         startActivity(intent);
     }
 }

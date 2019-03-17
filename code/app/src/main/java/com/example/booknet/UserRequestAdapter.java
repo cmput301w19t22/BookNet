@@ -17,13 +17,17 @@ import java.util.ArrayList;
 public class UserRequestAdapter extends RecyclerView.Adapter<UserRequestAdapter.RequestViewHolder> {
 
     //The requesters to display
-    ArrayList<UserAccount> requesters;
+    private ArrayList<UserAccount> requesters = new ArrayList<>();
 
     //The listing the requests are for
-    BookListing listing;
+    private BookListing listing;
 
     //The activity this adapter was created from
     private AppCompatActivity sourceActivity;
+
+    //Image Drawables to use in this activity
+    private int starOn = android.R.drawable.star_on;//todo replace with custom images
+    private int starOff = android.R.drawable.star_off;
 
 
     /**
@@ -83,14 +87,19 @@ public class UserRequestAdapter extends RecyclerView.Adapter<UserRequestAdapter.
 
         //Fill the text fields with the object's data
         requestViewHolder.username.setText(username);
-        requestViewHolder.ratingText.setText(String.format("%1.1f", account.getRatingScore()));
-        //todo apply to stars
+        float score = account.getRatingScore();
+        requestViewHolder.ratingText.setText(String.format("%1.1f", score));
+        requestViewHolder.star1.setImageResource((score >= 1) ? starOn : starOff);
+        requestViewHolder.star2.setImageResource((score >= 2) ? starOn : starOff);
+        requestViewHolder.star3.setImageResource((score >= 3) ? starOn : starOff);
+        requestViewHolder.star4.setImageResource((score >= 4) ? starOn : starOff);
+        requestViewHolder.star5.setImageResource((score >= 5) ? starOn : starOff);
 
         //Set Click Listeners
         requestViewHolder.username.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                goToProfile();
+                goToProfile(username);
             }
         });
 
@@ -136,21 +145,24 @@ public class UserRequestAdapter extends RecyclerView.Adapter<UserRequestAdapter.
     /**
      * Action to view the profile of the clicked user.
      */
-    private void goToProfile() {
-        Intent intent = new Intent(sourceActivity, UserProfileViewActivity.class);
+    private void goToProfile(String username) {
+        Intent intent = new Intent(sourceActivity, UserProfileViewFragment.class);
+        if (username != null) {
+            intent.putExtra("username", username);
+        }
         sourceActivity.startActivity(intent);
     }
 
     /**
      * Accepts the request from the account. Called when the accept button is pressed.
      *
-     * @param account The user whose request will be accepted.
+     * @param username The user whose request will be accepted.
      */
-    private void acceptButton(String account) {
+    private void acceptButton(String username) {
         //todo accept the request in real db. I'll fixe this -matt
-        listing.acceptRequest(account);
+        listing.acceptRequest(username);
 //        MockDatabase.getInstance().acceptRequestForListing(listing, account);
-        Toast.makeText(sourceActivity, "Accepted " + account, Toast.LENGTH_LONG).show();
+        Toast.makeText(sourceActivity, "Accepted " + username, Toast.LENGTH_LONG).show();
         sourceActivity.finish();
     }
 

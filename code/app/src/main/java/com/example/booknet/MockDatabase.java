@@ -1,15 +1,5 @@
 package com.example.booknet;
 
-import android.util.Log;
-
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.ArrayList;
 
 /**
@@ -21,7 +11,7 @@ import java.util.ArrayList;
  */
 
 @Deprecated
-public class MockDatabase{
+public class MockDatabase {
 
     //Data
 //    ArrayList<BookListing> bookListings;
@@ -33,7 +23,7 @@ public class MockDatabase{
     private MockDatabase() {
     }
 
-    static public MockDatabase getInstance(){
+    static public MockDatabase getInstance() {
         return manager;
     }
 
@@ -202,9 +192,9 @@ public class MockDatabase{
 //                }
 //            }
 //        }
+
         return null;
     }
-
 
 
     public BookLibrary readUserOwnedLibrary(String username) {

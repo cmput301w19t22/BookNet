@@ -1,13 +1,14 @@
 package com.example.booknet;
 
-import android.media.AudioManager;
-import android.media.SoundPool;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.SearchView;
 
 import com.google.firebase.database.DataSnapshot;
@@ -21,16 +22,13 @@ import com.google.firebase.database.ValueEventListener;
  * @author Jamie
  * @version 1.0
  */
-public class BookSearchActivity extends AppCompatActivity {
+public class BookSearchFragment extends Fragment {
 
     //Layout Objects
     private RecyclerView searchResults;
+    private ProgressBar progressBar;
     private BookListingAdapter listingAdapter;
     private DatabaseManager manager = DatabaseManager.getInstance();
-
-//    private SoundPool mSoundPool;
-//    private final int MAX_STREAM = 10;
-//    private boolean soundLoaded = false;
 
     //App Data
     BookLibrary allBookListings;
@@ -42,14 +40,24 @@ public class BookSearchActivity extends AppCompatActivity {
 
 
 
+    public static BookSearchFragment newInstance() {
+        BookSearchFragment myFragment = new BookSearchFragment();
 
-    /**
-     * Called when the activity is created.
-     * Sets up the search results list.
-     */
+        Bundle args = new Bundle();
+//        args.putInt("someInt", someInt);
+        myFragment.setArguments(args);
+
+        return myFragment;
+    }
+
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.activity_book_search, container, false);
+        searchResults = view.findViewById(R.id.searchResults);
+        searchBar = view.findViewById(R.id.searchBar);
+
 
         allBookListings = manager.readAllBookListings();
         filteredLibrary.copyOneByOne(allBookListings);
@@ -60,14 +68,14 @@ public class BookSearchActivity extends AppCompatActivity {
                 // once the data is changed, we just change our corresponding static variable
 
                 //first empty it
-                if (searchBar != null){
+                if (searchBar != null) {
                     filteredLibrary.removeAllBooks();
 
                     // then fill it as it is in the database
                     for (DataSnapshot data : dataSnapshot.getChildren()) {
                         BookListing bookListing = data.getValue(BookListing.class);
                         if (bookListing != null) {
-                            if (bookListing.containKeyword(searchBar.getQuery().toString())){
+                            if (bookListing.containKeyword(searchBar.getQuery().toString())) {
                                 filteredLibrary.addBookListing(bookListing.clone());
                             }
 
@@ -91,22 +99,21 @@ public class BookSearchActivity extends AppCompatActivity {
 //        final int backgroundSoundId = mSoundPool.load(this, R.raw.nice_keyboard_sound, 0);
 
 //        player.prepareAsync();
-        setContentView(R.layout.activity_book_search);
 
 
 
         allBookListings = manager.readAllBookListings();
 
 
-        searchResults = findViewById(R.id.searchResults);
-        searchResults.setLayoutManager(new LinearLayoutManager(this));
-        listingAdapter = new BookListingAdapter(filteredLibrary, this);
+
+        searchResults.setLayoutManager(new LinearLayoutManager(getActivity()));
+        listingAdapter = new BookListingAdapter(filteredLibrary, getActivity());
         searchResults.setAdapter(listingAdapter);
 
-        SearchView searchBar = findViewById(R.id.searchBar);
         searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
+
 
                 return false;
             }
@@ -116,22 +123,28 @@ public class BookSearchActivity extends AppCompatActivity {
                 // async sound play needs to use the soundpool thing
 //                mSoundPool.play(backgroundSoundId, (float)1, (float)1, 1, 0, (float)1);
 
-
                 filteredLibrary.removeAllBooks();
-                for (BookListing listing: allBookListings){
-                    if (listing.containKeyword(s)){
+                for (BookListing listing : allBookListings) {
+                    if (listing.containKeyword(s)) {
                         filteredLibrary.addBookListing(listing.clone());
                     }
 
                 }
                 listingAdapter.notifyDataSetChanged();
-
-
-
                 return true;
             }
         });
+
+
+
+        return view;
+
+
     }
+
+
+
+
 
 
     public void onDestroy() {

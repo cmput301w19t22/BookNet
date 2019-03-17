@@ -7,7 +7,7 @@ import java.io.Serializable;
 /**
  * Data structure to store a user's profile info
  */
-public class UserProfile extends AppCompatActivity implements Serializable {
+public class UserProfile implements Serializable {
     //Attributes
     private String name;
     private String email;

@@ -272,11 +272,6 @@ public class DatabaseManager {
         progressDialog.show();
         new InitiationTask(context).execute();
 
-
-
-
-
-
     }
 
     public BookListing readUserOwnedBookListingWithISBN(String isbn) {

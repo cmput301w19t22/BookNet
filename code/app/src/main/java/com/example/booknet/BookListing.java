@@ -1,6 +1,7 @@
 package com.example.booknet;
 
 import android.util.Log;
+import android.graphics.Bitmap;
 
 import java.io.Serializable;
 import java.lang.reflect.Array;
@@ -10,36 +11,6 @@ import java.util.ArrayList;
  * Keeps track of a book that is listed on the app.
  */
 public class BookListing implements Serializable, Cloneable {
-
-    public boolean containKeyword(String keyword) {
-        return book.getTitle().contains(keyword) || book.getAuthor().contains(keyword) || getOwnerUsername().contains(keyword);
-    }
-
-    public String getISBN() {
-        return book.getIsbn();
-    }
-
-
-
-    public String getStatusString() {
-        if (status == Status.Borrowed){
-            return "Borrowed by " + borrowerName;
-        }
-        else if (status == Status.Requested){
-            String s = "";
-            for (String r: requests) s+=r+"\n                        ";
-
-
-
-            return "Requested by " + s.trim();
-        }
-        else if (status == Status.Accepted){
-            return "Accepted";
-        }
-        else {
-            return "Available";
-        }
-    }
 
     /**
      * Enum for the status of a BookListing, so the values are more easily tracked
@@ -223,6 +194,20 @@ public class BookListing implements Serializable, Cloneable {
         //todo: complete?
         status = Status.Available;
         borrowerName = "";
+    }
+
+    public boolean containKeyword(String keyword) {
+        return book.getTitle().contains(keyword) || book.getAuthor().contains(keyword) || getOwnerUsername().contains(keyword);
+    }
+
+    public String getISBN() {
+        return book.getIsbn();
+    }
+
+
+
+    public String getStatusString() {
+        return status.toString();
     }
 
     public BookListing clone(){

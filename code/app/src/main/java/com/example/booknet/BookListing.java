@@ -27,7 +27,7 @@ public class BookListing implements Serializable, Cloneable {
         }
         else if (status == Status.Requested){
             String s = "";
-            for (String r: requests) s+=r+" ";
+            for (String r: requests) s+=r+"\n                        ";
 
 
 

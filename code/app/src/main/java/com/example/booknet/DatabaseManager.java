@@ -1,5 +1,6 @@
 package com.example.booknet;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
@@ -84,22 +85,49 @@ public class DatabaseManager {
      */
 
     public void writeToAllBookListings(BookListing listing) {
-
-
-        allListingsRef.child(listing.getBook().getIsbn()+"-"+CurrentUser.getInstance().getUID()).setValue(listing);
+        int dupCount = getDupCount(listing, CurrentUser.getInstance().getUID());
+        String path = generateAllListingPath(listing, dupCount, CurrentUser.getInstance().getUID());
+        allListingsRef.child(path).setValue(listing);
 
     }
 
+    private String generateAllListingPath(BookListing listing, int dupCount, String uid) {
+        return listing.getBook().getIsbn()+"-"+String.valueOf(dupCount)+"-"+uid;
+    }
+
+    public int getDupCount(BookListing listing, String UID) {
+        int currentInd = 0;
+
+        for (BookListing l: allBookLibrary){
+            if (l.hasSameBook(listing) && doesBelong(l, UID)){
+                currentInd += 1;
+            }
+        }
+        return currentInd;
+
+    }
+
+    private boolean doesBelong(BookListing l, String uid) {
+        return getUIDFromName(l.getOwnerUsername()).equals(uid);
+    }
+
+
+    @SuppressLint("DefaultLocale")
+    private String generateUserListingPath(BookListing listing, int dupCount, String uid) {
+
+        return String.format("%s-%d", listing.getISBN(), dupCount);
+    }
 
 
     // write a book to the user owned book listings
     // also adds the listing to the app
     public void writeUserBookListing(BookListing listing){
 
+        int dupCount = getDupCount(listing, CurrentUser.getInstance().getUID());
 
-        userListingsRef.child(listing.getBook().getIsbn()).setValue(listing);
+        userListingsRef.child(generateUserListingPath(listing, dupCount, CurrentUser.getInstance().getUID())).setValue(listing);
 
-        allListingsRef.child(listing.getBook().getIsbn()+"-"+CurrentUser.getInstance().getUID()).setValue(listing);
+        allListingsRef.child(generateAllListingPath(listing, dupCount, CurrentUser.getInstance().getUID())).setValue(listing);
 
     }
 
@@ -369,8 +397,11 @@ public class DatabaseManager {
      */
     public boolean requestBookListing(BookListing listing) {
         if (isBookListingAvailableAndNotOwnBook(listing)){
-            allListingsRef.child(listing.getISBN()+"-"+getUIDFromName(listing.getOwnerUsername())).child("status").setValue(Requested);
-            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("UserBooks/"+ getUIDFromName(listing.getOwnerUsername())+"/"+listing.getISBN());
+
+            int dupCount = getDupCount(listing, getUIDFromName(listing.getOwnerUsername()) );
+
+            allListingsRef.child(generateAllListingPath(listing, 1, getUIDFromName(listing.getOwnerUsername()))).child("status").setValue(Requested);
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference(generateUserListingPath(listing,dupCount, getUIDFromName(listing.getOwnerUsername())));
             ref.child("status").setValue(Requested);
 
             ArrayList<String> requesters = null;

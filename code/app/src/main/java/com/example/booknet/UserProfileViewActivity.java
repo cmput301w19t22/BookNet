@@ -132,7 +132,8 @@ public class UserProfileViewActivity extends AppCompatActivity {
      * @return
      */
     private UserAccount fetchUser(String username) {
-        return CurrentUser.getInstance().getUserAccount();
+        DatabaseManager.getInstance().readUserAccount(username);
+        return CurrentUser.getInstance().getUserAccount();//todo get ANY user from db
     }
 
     /**

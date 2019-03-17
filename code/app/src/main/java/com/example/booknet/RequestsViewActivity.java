@@ -18,7 +18,7 @@ public class RequestsViewActivity extends AppCompatActivity {
 
     //App Data
     BookListing listing;
-    ArrayList<String> requests;
+    ArrayList<String> requests = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

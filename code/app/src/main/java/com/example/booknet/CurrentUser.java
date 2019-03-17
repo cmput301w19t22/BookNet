@@ -8,7 +8,7 @@ import com.google.firebase.auth.FirebaseUser;
 /**
  * A singleton data structure that contains the currently logged in user data.
  */
-public class CurrentUser{
+public class CurrentUser {
     //Create Singleton Pattern
     private static final CurrentUser instance = new CurrentUser();
 
@@ -24,7 +24,6 @@ public class CurrentUser{
 
     private CurrentUser() {
         //Create a default user account
-
         account = new UserAccount(null);
         account.setProfile(new UserProfile(null, "default_email", null));
 
@@ -36,12 +35,12 @@ public class CurrentUser{
 
     private FirebaseUser user;
 
-    public void setUser(FirebaseUser user){
+    public void setUser(FirebaseUser user) {
         this.user = user;
         account.setProfileEmail(user.getEmail());
     }
 
-    public String getUID(){
+    public String getUID() {
         return user.getUid();
     }
 
@@ -64,6 +63,16 @@ public class CurrentUser{
     }
 
     /**
+     * Checks whether the current user is the given username
+     *
+     * @param username The username to check for
+     * @return Whether the username matches
+     */
+    public boolean isMe(String username) {
+        return account.getUsername().equals(username);
+    }
+
+    /**
      * Creates a request to add a book for this user.
      *
      * @param book The book to add.
@@ -71,14 +80,11 @@ public class CurrentUser{
     public void requestAddBook(Book book) {
 
 
-
-
         //Create a listing for the new book
         BookListing newListing = new BookListing(book);
 
         // no more adding to memory, adding to database is enough
 //        account.addListingToOwned(newListing);
-
 
 
         //add the listing to the database
@@ -118,7 +124,7 @@ public class CurrentUser{
     /**
      * called after email and password are authenticated.
      * saves account info to CurrentUser singleton for future use
-     *
+     * <p>
      * makes username and phone blank. As later a database check will be performed to check username and phone
      * Username and phone info will be updated after the database check.
      *

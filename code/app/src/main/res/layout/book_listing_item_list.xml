@@ -24,21 +24,41 @@
 
     <TextView
         android:id="@+id/bookTitleLabel"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:ellipsize="marquee"
+        android:focusable="auto"
+        android:focusableInTouchMode="true"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:scrollHorizontally="true"
+        android:singleLine="false"
         android:text="[Book Title]"
         android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/bookThumbnail"
-        app:layout_constraintTop_toTopOf="@+id/bookThumbnail" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/bookAuthorLabel"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:ellipsize="marquee"
+        android:focusable="auto"
+        android:focusableInTouchMode="true"
+        android:gravity="fill_horizontal"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:scrollHorizontally="true"
+        android:singleLine="false"
         android:text="[Author]"
         android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/bookTitleLabel"
         app:layout_constraintTop_toBottomOf="@+id/bookTitleLabel" />
 
@@ -52,13 +72,23 @@
 
     <TextView
         android:id="@+id/ownerLabel"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:ellipsize="marquee"
+        android:focusable="auto"
+        android:focusableInTouchMode="true"
+        android:gravity="fill_horizontal"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:scrollHorizontally="true"
+        android:singleLine="true"
         android:text="[OwnerName]"
         android:textSize="14sp"
         app:layout_constraintBaseline_toBaselineOf="@+id/ownedLabel"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/statusLabel" />
 
     <TextView
@@ -67,9 +97,10 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
+        android:layout_marginBottom="16dp"
         android:text="[Status]"
         android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="@+id/bookThumbnail"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/bookThumbnail" />
 
     <TextView
@@ -78,7 +109,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
         android:text="Owned by: "
         app:layout_constraintBottom_toTopOf="@+id/statusLabel"
-        app:layout_constraintStart_toEndOf="@+id/bookThumbnail" />
+        app:layout_constraintStart_toEndOf="@+id/bookThumbnail"
+        app:layout_constraintTop_toBottomOf="@+id/isbnLabel" />
 </android.support.constraint.ConstraintLayout>

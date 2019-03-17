@@ -1,13 +1,11 @@
 package com.example.booknet;
 
-import android.media.AudioManager;
-import android.media.SoundPool;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-
+import android.widget.ProgressBar;
 import android.widget.SearchView;
 
 import com.google.firebase.database.DataSnapshot;
@@ -25,12 +23,9 @@ public class BookSearchActivity extends AppCompatActivity {
 
     //Layout Objects
     private RecyclerView searchResults;
+    private ProgressBar progressBar;
     private BookListingAdapter listingAdapter;
     private DatabaseManager manager = DatabaseManager.getInstance();
-
-//    private SoundPool mSoundPool;
-//    private final int MAX_STREAM = 10;
-//    private boolean soundLoaded = false;
 
     //App Data
     BookLibrary allBookListings;
@@ -39,8 +34,6 @@ public class BookSearchActivity extends AppCompatActivity {
     private ValueEventListener listener;
 
     SearchView searchBar;
-
-
 
 
     /**
@@ -60,14 +53,14 @@ public class BookSearchActivity extends AppCompatActivity {
                 // once the data is changed, we just change our corresponding static variable
 
                 //first empty it
-                if (searchBar != null){
+                if (searchBar != null) {
                     filteredLibrary.removeAllBooks();
 
                     // then fill it as it is in the database
                     for (DataSnapshot data : dataSnapshot.getChildren()) {
                         BookListing bookListing = data.getValue(BookListing.class);
                         if (bookListing != null) {
-                            if (bookListing.containKeyword(searchBar.getQuery().toString())){
+                            if (bookListing.containKeyword(searchBar.getQuery().toString())) {
                                 filteredLibrary.addBookListing(bookListing.clone());
                             }
 
@@ -93,8 +86,6 @@ public class BookSearchActivity extends AppCompatActivity {
 //        player.prepareAsync();
         setContentView(R.layout.activity_book_search);
 
-
-
         allBookListings = manager.readAllBookListings();
 
 
@@ -108,6 +99,7 @@ public class BookSearchActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(String s) {
 
+
                 return false;
             }
 
@@ -116,18 +108,14 @@ public class BookSearchActivity extends AppCompatActivity {
                 // async sound play needs to use the soundpool thing
 //                mSoundPool.play(backgroundSoundId, (float)1, (float)1, 1, 0, (float)1);
 
-
                 filteredLibrary.removeAllBooks();
-                for (BookListing listing: allBookListings){
-                    if (listing.containKeyword(s)){
+                for (BookListing listing : allBookListings) {
+                    if (listing.containKeyword(s)) {
                         filteredLibrary.addBookListing(listing.clone());
                     }
 
                 }
                 listingAdapter.notifyDataSetChanged();
-
-
-
                 return true;
             }
         });

@@ -27,7 +27,7 @@ public class ListingViewActivity extends AppCompatActivity {
     private TextView statusLabel;
     private Button requestButton;
     private Button ownerProfileButton;
-    private DatabaseManager manager=DatabaseManager.getInstance();
+    private DatabaseManager manager = DatabaseManager.getInstance();
 
     //Activity Data
     private BookListing listing;
@@ -55,6 +55,9 @@ public class ListingViewActivity extends AppCompatActivity {
         statusLabel = findViewById(R.id.statusLabel);
         requestButton = findViewById(R.id.requestButton);
         ownerProfileButton = findViewById(R.id.ownerProfileButton);
+        bookTitleLabel.setSelected(true);//select so it scrolls
+        bookAuthorLabel.setSelected(true);
+
 
         //Get Intent
         Intent intent = getIntent();
@@ -109,7 +112,9 @@ public class ListingViewActivity extends AppCompatActivity {
      */
     private void viewOwnerProfile() {
         Intent intent = new Intent(this, UserProfileViewActivity.class);
-        intent.putExtra("username", listing.getOwnerUsername());
+        if (listing != null) {
+            intent.putExtra("username", listing.getOwnerUsername());
+        }
         startActivity(intent);
     }
 }

@@ -4,13 +4,11 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -375,8 +373,12 @@ public class DatabaseManager {
      * @return whether the request goes through
      */
     public boolean requestBookListing(BookListing listing) {
-        if (isBookListingAvailable(listing)){
+        if (isBookListingAvailableAndNotOwnBook(listing)){
             allListingsRef.child(listing.getISBN()+"-"+CurrentUser.getInstance().getUID()).child("status").setValue(Requested);
+            allListingsRef.child(listing.getISBN()+"-"+CurrentUser.getInstance().getUID()).child("status").setValue(Requested);
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("UserBooks/"+CurrentUser.getInstance().getUID()+"/"+listing.getISBN());
+            ref.child("status").setValue(Requested);
+            ref.child("borrowerName").setValue(CurrentUser.getInstance().getUsername());
             allListingsRef.child(listing.getISBN()+"-"+CurrentUser.getInstance().getUID()).child("borrowerName").setValue(CurrentUser.getInstance().getUsername());
             return true;
         }
@@ -384,7 +386,12 @@ public class DatabaseManager {
 
     }
 
-    private boolean isBookListingAvailable(BookListing listing) {
+    private boolean isBookListingAvailableAndNotOwnBook(BookListing listing) {
+        for (BookListing l: userBookLibrary){
+            if (l.getISBN().equals(listing.getISBN())) return false;
+        }
+
+
         for (BookListing l: allBookLibrary){
             if (l.getOwnerUsername().equals(listing.getOwnerUsername()) && l.getISBN().equals(listing.getISBN())){
                 return listing.getStatus() == Available;

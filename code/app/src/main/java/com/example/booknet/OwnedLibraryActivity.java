@@ -33,8 +33,9 @@ public class OwnedLibraryActivity extends AppCompatActivity {
 
     //Activity Data
     private BookLibrary library;
-    private BookLibrary filteredLibrary = new BookLibrary();
+
     private ValueEventListener listener;
+    private BookLibrary filteredLibrary = new BookLibrary();
 
     DatabaseManager manager = DatabaseManager.getInstance();
     /**
@@ -47,7 +48,7 @@ public class OwnedLibraryActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_owned_library);
-
+        filteredLibrary = new BookLibrary();
         //Add Click Listener
         addButton = findViewById(R.id.addBookButton);
         addButton.setOnClickListener(new View.OnClickListener() {
@@ -76,7 +77,7 @@ public class OwnedLibraryActivity extends AppCompatActivity {
                         filteredLibrary.addBookListing(bookListing.clone());
                     }
                 }
-                Log.d("mattTag","shit, useless overhead");
+
                 listingAdapter.notifyDataSetChanged();
             }
 

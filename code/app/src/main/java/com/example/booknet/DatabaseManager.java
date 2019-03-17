@@ -368,18 +368,33 @@ public class DatabaseManager {
         nameLoaded = false;
     }
 
+    public String getUIDFromName(String name){
+        return usernames.get(name);
+    }
+
     /**
      * @param listing
      * @return whether the request goes through
      */
     public boolean requestBookListing(BookListing listing) {
         if (isBookListingAvailableAndNotOwnBook(listing)){
-            allListingsRef.child(listing.getISBN()+"-"+CurrentUser.getInstance().getUID()).child("status").setValue(Requested);
-            allListingsRef.child(listing.getISBN()+"-"+CurrentUser.getInstance().getUID()).child("status").setValue(Requested);
-            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("UserBooks/"+CurrentUser.getInstance().getUID()+"/"+listing.getISBN());
+            allListingsRef.child(listing.getISBN()+"-"+getUIDFromName(listing.getOwnerUsername())).child("status").setValue(Requested);
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("UserBooks/"+ getUIDFromName(listing.getOwnerUsername())+"/"+listing.getISBN());
             ref.child("status").setValue(Requested);
-            ref.child("borrowerName").setValue(CurrentUser.getInstance().getUsername());
-            allListingsRef.child(listing.getISBN()+"-"+CurrentUser.getInstance().getUID()).child("borrowerName").setValue(CurrentUser.getInstance().getUsername());
+
+            ArrayList<String> requesters = null;
+            for (BookListing l: allBookLibrary){
+                if (l.getOwnerUsername().equals(listing.getOwnerUsername()) && l.getISBN().equals(listing.getISBN())){
+                    requesters = l.getRequests();
+                }
+            }
+            if (requesters == null) return false;
+
+            requesters.add(CurrentUser.getInstance().getUsername());
+            ref.child("requests").setValue(requesters);
+            allListingsRef.child(listing.getISBN()+"-"+getUIDFromName(listing.getOwnerUsername())).child("requests").setValue(requesters);
+
+//            allListingsRef.child(listing.getISBN()+"-"+CurrentUser.getInstance().getUID()).child("borrowerName").setValue(CurrentUser.getInstance().getUsername());
             return true;
         }
         return false;
@@ -394,7 +409,7 @@ public class DatabaseManager {
 
         for (BookListing l: allBookLibrary){
             if (l.getOwnerUsername().equals(listing.getOwnerUsername()) && l.getISBN().equals(listing.getISBN())){
-                return listing.getStatus() == Available;
+                return listing.getStatus() == Available || listing.getStatus()== Requested;
             }
         }
         return false;

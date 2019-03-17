@@ -1,6 +1,9 @@
 package com.example.booknet;
 
+import android.util.Log;
+
 import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -16,15 +19,19 @@ public class BookListing implements Serializable, Cloneable {
         return book.getIsbn();
     }
 
+
+
     public String getStatusString() {
         if (status == Status.Borrowed){
             return "Borrowed by " + borrowerName;
         }
         else if (status == Status.Requested){
-            return "Requested by " + borrowerName;
-        }
-        else if (status == Status.Borrowed){
-            return "Borrowed by " + borrowerName;
+            String s = "";
+            for (String r: requests) s+=r+" ";
+
+
+
+            return "Requested by " + s.trim();
         }
         else if (status == Status.Accepted){
             return "Accepted";
@@ -69,6 +76,7 @@ public class BookListing implements Serializable, Cloneable {
     private String borrowerName;
     private UserLocation geoLocation;
 
+
     /**
      * Constructor that creates an empty listing
      */
@@ -79,6 +87,7 @@ public class BookListing implements Serializable, Cloneable {
         this.status = Status.Available;
         this.requests = new ArrayList<String>();
         this.geoLocation = new UserLocation();
+
     }
 
     /**
@@ -108,7 +117,7 @@ public class BookListing implements Serializable, Cloneable {
         return ownerUsername;
     }
 
-    public ArrayList<String> getRequesters() {
+    public ArrayList<String> getRequests() {
         return requests;
     }
 
@@ -223,7 +232,11 @@ public class BookListing implements Serializable, Cloneable {
         cloned.setBook(book);
         cloned.setBorrowerName(borrowerName);
         cloned.setStatus(status);
-        cloned.setRequests(requests);
+
+        ArrayList<String> nR = new ArrayList<>();
+        for (String s: requests) nR.add(s);
+
+        cloned.setRequests(nR);
         cloned.setGeoLocation(geoLocation);
         cloned.setOwnerUsername(ownerUsername);
 

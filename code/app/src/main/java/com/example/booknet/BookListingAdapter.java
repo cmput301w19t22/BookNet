@@ -78,7 +78,6 @@ public class BookListingAdapter extends RecyclerView.Adapter<BookListingAdapter.
         bookListingViewHolder.ownerLabel.setText(item.getOwnerUsername());
 
 
-
         bookListingViewHolder.statusLabel.setText(item.getStatusString());
         bookListingViewHolder.item = item;
 

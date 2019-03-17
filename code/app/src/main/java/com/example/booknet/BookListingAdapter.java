@@ -2,7 +2,7 @@ package com.example.booknet;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,18 +23,19 @@ public class BookListingAdapter extends RecyclerView.Adapter<BookListingAdapter.
 
     //The list of BookListings to display
     private BookLibrary data;
-
+    private LayoutInflater inflater;
 
     //The activity this adapter was created from
-    private AppCompatActivity sourceActivity;
+    private FragmentActivity sourceActivity;
+
 
     /**
      * Creates the adapter
-     *
      * @param data           The list of BookListings to use for the list display
      * @param sourceActivity The activity that created this adapter
+
      */
-    public BookListingAdapter(BookLibrary data, AppCompatActivity sourceActivity) {
+    public BookListingAdapter(BookLibrary data, FragmentActivity sourceActivity) {
         this.data = data;
         this.sourceActivity = sourceActivity;
     }
@@ -70,6 +71,7 @@ public class BookListingAdapter extends RecyclerView.Adapter<BookListingAdapter.
 
         //Fill the text fields with the object's data
         //bookListingViewHolder.bookThumbnail.//todo apply photo
+        bookListingViewHolder.bookThumbnail.setImageResource(R.mipmap.ic_launcher);
         bookListingViewHolder.bookTitleLabel.setText(item.getBook().getTitle());
         bookListingViewHolder.bookAuthorLabel.setText(item.getBook().getAuthor());
         bookListingViewHolder.isbnLabel.setText(item.getBook().getIsbn());

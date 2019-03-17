@@ -2,9 +2,12 @@ package com.example.booknet;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
 
@@ -19,7 +22,7 @@ import com.google.firebase.database.ValueEventListener;
  * @author Jamie
  * @version 1.0
  */
-public class BookSearchActivity extends AppCompatActivity {
+public class BookSearchFragment extends Fragment {
 
     //Layout Objects
     private RecyclerView searchResults;
@@ -36,13 +39,25 @@ public class BookSearchActivity extends AppCompatActivity {
     SearchView searchBar;
 
 
-    /**
-     * Called when the activity is created.
-     * Sets up the search results list.
-     */
+
+    public static BookSearchFragment newInstance() {
+        BookSearchFragment myFragment = new BookSearchFragment();
+
+        Bundle args = new Bundle();
+//        args.putInt("someInt", someInt);
+        myFragment.setArguments(args);
+
+        return myFragment;
+    }
+
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.activity_book_search, container, false);
+        searchResults = view.findViewById(R.id.searchResults);
+        searchBar = view.findViewById(R.id.searchBar);
+
 
         allBookListings = manager.readAllBookListings();
         filteredLibrary.copyOneByOne(allBookListings);
@@ -84,17 +99,17 @@ public class BookSearchActivity extends AppCompatActivity {
 //        final int backgroundSoundId = mSoundPool.load(this, R.raw.nice_keyboard_sound, 0);
 
 //        player.prepareAsync();
-        setContentView(R.layout.activity_book_search);
+
+
 
         allBookListings = manager.readAllBookListings();
 
 
-        searchResults = findViewById(R.id.searchResults);
-        searchResults.setLayoutManager(new LinearLayoutManager(this));
-        listingAdapter = new BookListingAdapter(filteredLibrary, this);
+
+        searchResults.setLayoutManager(new LinearLayoutManager(getActivity()));
+        listingAdapter = new BookListingAdapter(filteredLibrary, getActivity());
         searchResults.setAdapter(listingAdapter);
 
-        SearchView searchBar = findViewById(R.id.searchBar);
         searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
@@ -119,7 +134,17 @@ public class BookSearchActivity extends AppCompatActivity {
                 return true;
             }
         });
+
+
+
+        return view;
+
+
     }
+
+
+
+
 
 
     public void onDestroy() {

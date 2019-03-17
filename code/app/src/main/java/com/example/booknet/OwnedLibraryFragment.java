@@ -2,11 +2,13 @@ package com.example.booknet;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.Spinner;
@@ -22,7 +24,7 @@ import com.google.firebase.database.ValueEventListener;
  * @author Jamie
  * @version 1.0
  */
-public class OwnedLibraryActivity extends AppCompatActivity {
+public class OwnedLibraryFragment extends Fragment {
 
     //Layout Objects
     private RecyclerView libraryListView;
@@ -38,6 +40,18 @@ public class OwnedLibraryActivity extends AppCompatActivity {
 
     DatabaseManager manager = DatabaseManager.getInstance();
 
+    public static OwnedLibraryFragment newInstance() {
+        OwnedLibraryFragment myFragment = new OwnedLibraryFragment();
+
+        Bundle args = new Bundle();
+//        args.putInt("someInt", someInt);
+        myFragment.setArguments(args);
+
+        return myFragment;
+    }
+
+
+
     /**
      * Called when creating the activity.
      * Sets a click listener for the add button
@@ -45,12 +59,13 @@ public class OwnedLibraryActivity extends AppCompatActivity {
      * @param savedInstanceState
      */
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_owned_library);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.activity_owned_library, container, false);
+
         filteredLibrary = new BookLibrary();
         //Add Click Listener
-        addButton = findViewById(R.id.addBookButton);
+        addButton = view.findViewById(R.id.addBookButton);
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -93,12 +108,12 @@ public class OwnedLibraryActivity extends AppCompatActivity {
 
         Log.d("matt", "creating new adpator");
 
-        libraryListView = findViewById(R.id.bookLibrary);
-        libraryListView.setLayoutManager(new LinearLayoutManager(this));
-        listingAdapter = new OwnedListingAdapter(filteredLibrary, this);
+        libraryListView = view.findViewById(R.id.bookLibrary);
+        libraryListView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        listingAdapter = new OwnedListingAdapter(filteredLibrary, getActivity());
         libraryListView.setAdapter(listingAdapter);
 
-        Spinner filter = findViewById(R.id.spinner);
+        Spinner filter = view.findViewById(R.id.spinner);
 
         filter.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -124,7 +139,7 @@ public class OwnedLibraryActivity extends AppCompatActivity {
             }
         });
 
-
+    return view;
     }
 
     /**
@@ -132,7 +147,7 @@ public class OwnedLibraryActivity extends AppCompatActivity {
      * Tells the list's adapter to update.
      */
     @Override
-    protected void onStart() {
+    public void onStart() {
         super.onStart();
         Log.d("mattTag", "starting the activity, notifying");
         Log.d("mattTag", "when starting, the books are: " + filteredLibrary.toString());
@@ -155,7 +170,7 @@ public class OwnedLibraryActivity extends AppCompatActivity {
      * Starts the activity to add a new book
      */
     private void addBook() {
-        Intent intent = new Intent(this, NewBookActivity.class);
+        Intent intent = new Intent(getActivity(), NewBookActivity.class);
         startActivity(intent);
     }
 }

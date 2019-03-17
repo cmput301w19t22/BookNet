@@ -2,15 +2,14 @@ package com.example.booknet;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import com.google.firebase.auth.FirebaseAuth;
-
-import com.google.firebase.auth.FirebaseUser;
 
 import java.util.HashMap;
 
@@ -20,7 +19,7 @@ import java.util.HashMap;
  * @author Jamie
  * @version 1.0
  */
-public class UserProfileViewActivity extends AppCompatActivity {
+public class UserProfileViewFragment extends Fragment {
 
     //Layout Objects
     private TextView usernameLabel;
@@ -38,6 +37,18 @@ public class UserProfileViewActivity extends AppCompatActivity {
     private Button logoutButton;
     private DatabaseManager manager = DatabaseManager.getInstance();
 
+    public static UserProfileViewFragment newInstance() {
+        UserProfileViewFragment myFragment = new UserProfileViewFragment();
+
+        Bundle args = new Bundle();
+//        args.putInt("someInt", someInt);
+        myFragment.setArguments(args);
+
+        return myFragment;
+    }
+
+
+
     //Activity Data
     UserAccount userAccount;
     String username = "";
@@ -51,9 +62,11 @@ public class UserProfileViewActivity extends AppCompatActivity {
      * @param savedInstanceState
      */
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_user_profile_view);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.activity_user_profile_view, container, false);
+
+
 
 //        Intent i = getIntent();
 //        if (i.hasExtra("Email")){
@@ -64,19 +77,19 @@ public class UserProfileViewActivity extends AppCompatActivity {
         userProfile = manager.readUserProfile();
 
         //Obtain References To Layout Objects
-        usernameLabel = findViewById(R.id.userNameLabel);
-        phoneLabel = findViewById(R.id.phoneNumberLabel);
-        emailLabel = findViewById(R.id.emailLabel);
-        ratingLabel = findViewById(R.id.ratingTextLabel);
-        star1 = findViewById(R.id.ratingStar1);
-        star2 = findViewById(R.id.ratingStar2);
-        star3 = findViewById(R.id.ratingStar3);
-        star4 = findViewById(R.id.ratingStar4);
-        star5 = findViewById(R.id.ratingStar5);
-        reviewsButton = findViewById(R.id.reviewsButton);
-        booksButton = findViewById(R.id.libraryButton);
-        editButton = findViewById(R.id.editButton);
-        logoutButton = findViewById(R.id.logoutButton);
+        usernameLabel = view.findViewById(R.id.userNameLabel);
+        phoneLabel = view.findViewById(R.id.phoneNumberLabel);
+        emailLabel = view.findViewById(R.id.emailLabel);
+        ratingLabel = view.findViewById(R.id.ratingTextLabel);
+        star1 = view.findViewById(R.id.ratingStar1);
+        star2 = view.findViewById(R.id.ratingStar2);
+        star3 = view.findViewById(R.id.ratingStar3);
+        star4 = view.findViewById(R.id.ratingStar4);
+        star5 = view.findViewById(R.id.ratingStar5);
+        reviewsButton = view.findViewById(R.id.reviewsButton);
+        booksButton = view.findViewById(R.id.libraryButton);
+        editButton = view.findViewById(R.id.editButton);
+        logoutButton = view.findViewById(R.id.logoutButton);
 
 
 
@@ -101,11 +114,13 @@ public class UserProfileViewActivity extends AppCompatActivity {
 
                 CurrentUser.getInstance().logout();
 
-                startActivity(new Intent(getApplicationContext(), LoginPageActivity.class));
-                finish();
+                startActivity(new Intent(getContext(), LoginPageActivity.class));
+                getActivity().finish();
             }
         });
         //#endregion
+
+        return view;
     }
 
     /**
@@ -140,10 +155,10 @@ public class UserProfileViewActivity extends AppCompatActivity {
      * Starts the activity to edit the user profile
      */
     private void editProfile() {
-        Intent intent = new Intent(this, ProfileEditActivity.class);
+        Intent intent = new Intent(getActivity(), ProfileEditActivity.class);
         intent.putExtra("username", username);
         startActivity(intent);
-        finish();
+        getActivity().finish();
     }
 
     /**

@@ -20,14 +20,14 @@
         <activity android:name=".OwnListingViewActivity" />
         <activity android:name=".NewBookActivity" />
         <activity android:name=".EditBookActivity" />
-        <activity android:name=".BookSearchActivity">
+        <activity android:name=".BookSearchFragment">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
         </activity>
-        <activity android:name=".UserProfileViewActivity" />
+        <activity android:name=".UserProfileViewFragment" />
         <activity android:name=".ListingViewActivity" />
-        <activity android:name=".OwnedLibraryActivity" />
+        <activity android:name=".OwnedLibraryFragment" />
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name" />

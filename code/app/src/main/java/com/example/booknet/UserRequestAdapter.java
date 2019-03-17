@@ -34,7 +34,7 @@ public class UserRequestAdapter extends RecyclerView.Adapter<UserRequestAdapter.
      */
     public UserRequestAdapter(BookListing listing, AppCompatActivity sourceActivity) {
         this.listing = listing;
-        //this.requesters = listing.getRequesters();
+        //this.requesters = listing.getRequests();
         getUserAccounts();
         this.sourceActivity = sourceActivity;
     }
@@ -123,7 +123,7 @@ public class UserRequestAdapter extends RecyclerView.Adapter<UserRequestAdapter.
      */
     // todo: mockdatabase deprecated. I'll fix this - Matt
     private void getUserAccounts() {
-        for (String username : listing.getRequesters()) {
+        for (String username : listing.getRequests()) {
             //Obtain the user from the database
             UserAccount requester = MockDatabase.getInstance().readUserAccount(username);
             if (requester != null) {

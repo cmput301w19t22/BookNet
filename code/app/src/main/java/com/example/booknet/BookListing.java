@@ -3,13 +3,43 @@ package com.example.booknet;
 import android.util.Log;
 
 import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 /**
  * Keeps track of a book that is listed on the app.
  */
 public class BookListing implements Serializable, Cloneable {
+
+    public boolean containKeyword(String keyword) {
+        return book.getTitle().contains(keyword) || book.getAuthor().contains(keyword) || getOwnerUsername().contains(keyword);
+    }
+
+    public String getISBN() {
+        return book.getIsbn();
+    }
+
+
+
+    public String getStatusString() {
+        if (status == Status.Borrowed){
+            return "Borrowed by " + borrowerName;
+        }
+        else if (status == Status.Requested){
+            String s = "";
+            for (String r: requests) s+=r+"\n                        ";
+
+
+
+            return "Requested by " + s.trim();
+        }
+        else if (status == Status.Accepted){
+            return "Accepted";
+        }
+        else {
+            return "Available";
+        }
+    }
 
     /**
      * Enum for the status of a BookListing, so the values are more easily tracked
@@ -46,6 +76,7 @@ public class BookListing implements Serializable, Cloneable {
     private String borrowerName;
     private UserLocation geoLocation;
 
+
     /**
      * Constructor that creates an empty listing
      */
@@ -56,17 +87,17 @@ public class BookListing implements Serializable, Cloneable {
         this.status = Status.Available;
         this.requests = new ArrayList<String>();
         this.geoLocation = new UserLocation();
+
     }
 
     /**
      * Creates a BookListing for a book owned by a given user.
+     *  @param book  The book in the new listing
      *
-     * @param book  The book in the new listing
-     * @param owner The owner of this listing
      */
-    public BookListing(Book book, UserAccount owner) {
+    public BookListing(Book book) {
         this.book = book;
-        this.ownerUsername = owner.getUsername();
+        this.ownerUsername = CurrentUser.getInstance().getUsername();
         this.borrowerName = "";
         this.status = Status.Available;
         this.requests = new ArrayList<String>();
@@ -86,7 +117,7 @@ public class BookListing implements Serializable, Cloneable {
         return ownerUsername;
     }
 
-    public ArrayList<String> getRequesters() {
+    public ArrayList<String> getRequests() {
         return requests;
     }
 
@@ -201,10 +232,19 @@ public class BookListing implements Serializable, Cloneable {
         cloned.setBook(book);
         cloned.setBorrowerName(borrowerName);
         cloned.setStatus(status);
-        cloned.setRequests(requests);
+
+        ArrayList<String> nR = new ArrayList<>();
+        for (String s: requests) nR.add(s);
+
+        cloned.setRequests(nR);
         cloned.setGeoLocation(geoLocation);
+        cloned.setOwnerUsername(ownerUsername);
 
         return cloned;
+    }
+
+    private void setOwnerUsername(String ownerUsername) {
+        this.ownerUsername = ownerUsername;
     }
 
     private void setRequests(ArrayList<String> requests) {

@@ -124,7 +124,7 @@ public class UserAccount extends AppCompatActivity implements Serializable, Clon
      * @param book The book to add
      */
     public void addBookToOwned(Book book) {
-        ownedLibrary.addBookListing(new BookListing(book, this));
+        ownedLibrary.addBookListing(new BookListing(book));
     }
 
     /**

@@ -12,8 +12,8 @@ public class BookLibraryTest {
     @Test
     public void AddBook() {
         BookLibrary bookLibrary = new BookLibrary();
-        UserAccount owner = new UserAccount("user1", "password");
-        Book book1 = new Book("book1", "a1", "desc", "1234567890");
+        UserAccount owner = new UserAccount("test_username");
+        Book book1 = new Book("A Book", "An Author", "Description", "1234567890");
         BookListing listing = new BookListing(book1, owner);
 
         bookLibrary.addBookListing(listing);
@@ -25,9 +25,9 @@ public class BookLibraryTest {
     @Test
     public void RemoveBook() {
         BookLibrary bookLibrary = new BookLibrary();
-        UserAccount owner = new UserAccount("user1", "password");
-        Book book1 = new Book("book1", "a1", "desc", "1234567890");
-        BookListing listing = new BookListing(book1, owner);
+        UserAccount owner = new UserAccount("test_username");
+        Book test_book = new Book("A Book", "An Author", "Description", "1234567890");
+        BookListing listing = new BookListing(test_book, owner);
 
         bookLibrary.addBookListing(listing);
         bookLibrary.removeBookListing(listing);
@@ -41,8 +41,8 @@ public class BookLibraryTest {
     @Test
     public void ContainsListingForBook() {
         BookLibrary bookLibrary = new BookLibrary();
-        UserAccount owner = new UserAccount("user1", "password");
-        Book book1 = new Book("book1", "a1", "desc", "1234567890");
+        UserAccount owner = new UserAccount("test_username");
+        Book book1 = new Book("A Book", "An Author", "Description", "1234567890");
         BookListing listing = new BookListing(book1, owner);
 
         bookLibrary.addBookListing(listing);

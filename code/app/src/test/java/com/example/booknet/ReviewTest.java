@@ -5,8 +5,8 @@ public class ReviewTest {
 
     @Test
     public void Constructors(){
-        UserAccount reviewer = new UserAccount("1","pass1");
-        UserAccount reviewed = new UserAccount("2","pass2");
+        UserAccount reviewer = new UserAccount("test_username_1");
+        UserAccount reviewed = new UserAccount("test_username_2");
         Review review = new Review(reviewer,reviewed,5,"review1");
 
         //Basic
@@ -18,8 +18,8 @@ public class ReviewTest {
     }
     @Test
     public void Setters(){
-        UserAccount reviewer = new UserAccount("1","pass1");
-        UserAccount reviewed = new UserAccount("2","pass2");
+        UserAccount reviewer = new UserAccount("test_username_1");
+        UserAccount reviewed = new UserAccount("test_username_2");
         Review review = new Review(reviewer,reviewed,5,"review1");
 
         review.setMessage("newmessage");
@@ -31,8 +31,8 @@ public class ReviewTest {
 
     @Test
     public void ScoreRange(){
-        UserAccount reviewer = new UserAccount("1","pass1");
-        UserAccount reviewed = new UserAccount("2","pass2");
+        UserAccount reviewer = new UserAccount("test_username_1");
+        UserAccount reviewed = new UserAccount("test_username_2");
         Review review = new Review(reviewer,reviewed,5,"review1");
 
         //Negative
@@ -48,8 +48,8 @@ public class ReviewTest {
 
     @Test
     public void EditReview(){
-        UserAccount reviewer = new UserAccount("1","pass1");
-        UserAccount reviewed = new UserAccount("2","pass2");
+        UserAccount reviewer = new UserAccount("test_username_1");
+        UserAccount reviewed = new UserAccount("test_username_2");
         Review review = new Review(reviewer,reviewed,5,"message");
 
         review.editReview(reviewer,reviewed,3,"newmessage");

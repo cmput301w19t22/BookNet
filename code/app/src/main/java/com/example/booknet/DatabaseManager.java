@@ -15,8 +15,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.example.booknet.BookListing.Status.Available;
-import static com.example.booknet.BookListing.Status.Requested;
+import static com.example.booknet.BookListingStatus.Available;
+import static com.example.booknet.BookListingStatus.Requested;
 
 /**
  * Class that interfaces with the database
@@ -155,7 +155,7 @@ public class DatabaseManager {
     }
 
 
-    public void setBookListingStatus(BookListing bookListing, BookListing.Status status) {
+    public void setBookListingStatus(BookListing bookListing, BookListingStatus status) {
         //todo: implement
     }
 

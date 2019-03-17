@@ -3,7 +3,6 @@ package com.example.booknet;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -143,7 +142,7 @@ public class OwnedListingAdapter extends RecyclerView.Adapter<OwnedListingAdapte
             bookAuthorLabel = itemView.findViewById(R.id.bookAuthorLabel);
             isbnLabel = itemView.findViewById(R.id.isbnLabel);
             ownerLabel = itemView.findViewById(R.id.ownerLabel);
-            ownedLabel = itemView.findViewById(R.id.ownedLabel);
+            ownedLabel = itemView.findViewById(R.id.UserNotificationInfo);
             statusLabel = itemView.findViewById(R.id.statusLabel);
 
             bookTitleLabel.setSelected(true);//select to enable scrolling

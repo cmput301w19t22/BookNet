@@ -22,6 +22,8 @@ import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.lang.reflect.Field;
+
 public class LoginPageActivity extends AppCompatActivity implements View.OnClickListener, InitialUserProfileDialog.InitialUserProfileListener {
     private final String TAG = "FB_SIGNIN";
 
@@ -80,6 +82,42 @@ public class LoginPageActivity extends AppCompatActivity implements View.OnClick
         super.onStart();
         // TODO: add the AuthListener
         mAuth.addAuthStateListener(mAuthListener);
+
+        String debugger = null;
+        Log.d("mattTag", "fist");
+        try  {
+
+            Field debuggerField = Class.forName("com.example.booknet.Debugger").getDeclaredField("debuggerName");
+            debuggerField.setAccessible(true);
+
+            debugger = (String) debuggerField.get(null);
+
+        }  catch (ClassNotFoundException e) {
+            Log.d("mattTag", "nono");
+
+        } catch (NoSuchFieldException e) {
+            Log.d("mattTag", "noFF");
+        } catch (IllegalAccessException e) {
+            Log.d("mattTag", "ilililli");
+        }
+        Log.d("mattTag", "looo");
+
+        String email = null;
+        String password = null;
+
+        if (debugger != null){
+            String n = debugger.toLowerCase();
+            if (n.equals("matt") || n.equals("jamie") || n.equals("jace") || n.equals("sean") || n.equals("seth") || n.equals("calvin")){
+                email = n + "@debug.com";
+                password = "123456";
+            }
+        }
+        if (email != null){
+            signIn(email, password);
+        }
+
+
+
     }
 
     @Override
@@ -150,9 +188,19 @@ public class LoginPageActivity extends AppCompatActivity implements View.OnClick
 
         final String email = etEmail.getText().toString();
         String password = etPass.getText().toString();
+        signIn(email, password);
 
-        final Activity loginPageActivity = this;
 
+
+    }
+
+    /*private void signUserOut() {
+        // TODO: sign the user out
+        mAuth.signOut();
+        updateStatus();
+    }*/
+
+    private void signIn(String email, String password){
         mAuth.signInWithEmailAndPassword(email,password)
                 .addOnCompleteListener(this,
                         new OnCompleteListener<AuthResult>() {
@@ -173,22 +221,6 @@ public class LoginPageActivity extends AppCompatActivity implements View.OnClick
                                     //this method also takes care of following intents
                                     manager.connectToDatabase(LoginPageActivity.this);
 
-//                                    Log.d("mattTag",CurrentUser.getInstance().getUsername());
-//                                    if (CurrentUser.getInstance().getUsername() == null || CurrentUser.getInstance().getPhone() == null){
-//                                        DialogFragment dialog = new InitialUserProfileDialog();
-//                                        dialog.show(getSupportFragmentManager(), "InitialUserProfileDialog");
-//                                    }
-//
-//                                    else{
-//
-//                                        startActivity(new Intent(getApplicationContext(), MainActivity.class));
-//                                    }
-
-
-//                                    AlertDialog.Builder builder = new AlertDialog.Builder(loginPageActivity);
-//                                    builder.setMessage(R.string.usernameRequiredMessage)
-//                                            .setTitle(R.string.usernameRequiredTitle);
-//                                    AlertDialog dialog = builder.create();
 
 
 
@@ -218,13 +250,9 @@ public class LoginPageActivity extends AppCompatActivity implements View.OnClick
                         }
                     }
                 });
-    }
 
-    /*private void signUserOut() {
-        // TODO: sign the user out
-        mAuth.signOut();
-        updateStatus();
-    }*/
+
+    }
 
     private void createUserAccount() {
         if (!checkFormFields())

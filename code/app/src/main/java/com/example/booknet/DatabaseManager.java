@@ -113,7 +113,7 @@ public class DatabaseManager {
 
 
     @SuppressLint("DefaultLocale")
-    private String generateUserListingPath(BookListing listing, int dupCount, String uid) {
+    private String generateUserListingPath(BookListing listing, int dupCount) {
 
         return String.format("%s-%d", listing.getISBN(), dupCount);
     }
@@ -125,7 +125,7 @@ public class DatabaseManager {
 
         int dupCount = getDupCount(listing, CurrentUser.getInstance().getUID());
 
-        userListingsRef.child(generateUserListingPath(listing, dupCount, CurrentUser.getInstance().getUID())).setValue(listing);
+        userListingsRef.child(generateUserListingPath(listing, dupCount)).setValue(listing);
 
         allListingsRef.child(generateAllListingPath(listing, dupCount, CurrentUser.getInstance().getUID())).setValue(listing);
 
@@ -398,10 +398,11 @@ public class DatabaseManager {
     public boolean requestBookListing(BookListing listing) {
         if (isBookListingAvailableAndNotOwnBook(listing)){
 
-            int dupCount = getDupCount(listing, getUIDFromName(listing.getOwnerUsername()) );
+            int dupInd = listing.getDupInd();
 
-            allListingsRef.child(generateAllListingPath(listing, 1, getUIDFromName(listing.getOwnerUsername()))).child("status").setValue(Requested);
-            DatabaseReference ref = FirebaseDatabase.getInstance().getReference(generateUserListingPath(listing,dupCount, getUIDFromName(listing.getOwnerUsername())));
+            String allPath = generateAllListingPath(listing, dupInd, getUIDFromName(listing.getOwnerUsername()));
+            allListingsRef.child(allPath).child("status").setValue(Requested);
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("UserBooks/"+getUIDFromName(listing.getOwnerUsername())+"/"+generateUserListingPath(listing,dupInd));
             ref.child("status").setValue(Requested);
 
             ArrayList<String> requesters = null;
@@ -414,7 +415,7 @@ public class DatabaseManager {
 
             requesters.add(CurrentUser.getInstance().getUsername());
             ref.child("requests").setValue(requesters);
-            allListingsRef.child(listing.getISBN()+"-"+getUIDFromName(listing.getOwnerUsername())).child("requests").setValue(requesters);
+            allListingsRef.child(allPath).child("requests").setValue(requesters);
 
 //            allListingsRef.child(listing.getISBN()+"-"+CurrentUser.getInstance().getUID()).child("borrowerName").setValue(CurrentUser.getInstance().getUsername());
             return true;

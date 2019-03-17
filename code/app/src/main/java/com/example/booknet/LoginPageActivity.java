@@ -337,7 +337,9 @@ public class LoginPageActivity extends AppCompatActivity implements View.OnClick
 
     @Override
     public void onDialogNegativeClick(DialogFragment dialog) {
-        Log.d("mattTag", "yonkkk");
+        startActivity(new Intent(getApplicationContext(), LoginPageActivity.class));
+        CurrentUser.getInstance().logout();
+        finish();
     }
 
     public void goToMainPage() {

@@ -295,6 +295,7 @@ public class DatabaseManager {
     public void connectToDatabase(Activity context) {
 
         progressDialog = new ProgressDialog(context);
+        progressDialog.setCancelable(false);
         progressDialog.setMessage("connecting to database");
 
         progressDialog.show();

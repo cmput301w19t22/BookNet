@@ -8,6 +8,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import com.google.firebase.auth.FirebaseAuth;
+
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.HashMap;
 
@@ -76,6 +79,7 @@ public class UserProfileViewActivity extends AppCompatActivity {
         logoutButton = findViewById(R.id.logoutButton);
 
 
+
         fillLayout();
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,7 +98,11 @@ public class UserProfileViewActivity extends AppCompatActivity {
         logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                CurrentUser.getInstance().logout();
+
                 startActivity(new Intent(getApplicationContext(), LoginPageActivity.class));
+                finish();
             }
         });
         //#endregion
@@ -135,6 +143,7 @@ public class UserProfileViewActivity extends AppCompatActivity {
         Intent intent = new Intent(this, ProfileEditActivity.class);
         intent.putExtra("username", username);
         startActivity(intent);
+        finish();
     }
 
     /**

@@ -15,6 +15,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.example.booknet.BookListing.Status.Available;
+import static com.example.booknet.BookListing.Status.Requested;
+
 /**
  * Class that interfaces with the database
  */
@@ -350,6 +353,63 @@ public class DatabaseManager {
 
     }
 
+    public DatabaseReference getUserListingsRef() {
+        return userLisitngsRef;
+    }
+
+    public void onLogOut() {
+        resetAllRefs();
+        phoneLoaded = false;
+        nameLoaded = false;
+    }
+
+    public String getUIDFromName(String name){
+        return usernames.get(name);
+    }
+
+    /**
+     * @param listing
+     * @return whether the request goes through
+     */
+    public boolean requestBookListing(BookListing listing) {
+        if (isBookListingAvailableAndNotOwnBook(listing)){
+            allListingsRef.child(listing.getISBN()+"-"+getUIDFromName(listing.getOwnerUsername())).child("status").setValue(Requested);
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("UserBooks/"+ getUIDFromName(listing.getOwnerUsername())+"/"+listing.getISBN());
+            ref.child("status").setValue(Requested);
+
+            ArrayList<String> requesters = null;
+            for (BookListing l: allBookLibrary){
+                if (l.getOwnerUsername().equals(listing.getOwnerUsername()) && l.getISBN().equals(listing.getISBN())){
+                    requesters = l.getRequests();
+                }
+            }
+            if (requesters == null) return false;
+
+            requesters.add(CurrentUser.getInstance().getUsername());
+            ref.child("requests").setValue(requesters);
+            allListingsRef.child(listing.getISBN()+"-"+getUIDFromName(listing.getOwnerUsername())).child("requests").setValue(requesters);
+
+//            allListingsRef.child(listing.getISBN()+"-"+CurrentUser.getInstance().getUID()).child("borrowerName").setValue(CurrentUser.getInstance().getUsername());
+            return true;
+        }
+        return false;
+
+    }
+
+    private boolean isBookListingAvailableAndNotOwnBook(BookListing listing) {
+        for (BookListing l: userBookLibrary){
+            if (l.getISBN().equals(listing.getISBN())) return false;
+        }
+
+
+        for (BookListing l: allBookLibrary){
+            if (l.getOwnerUsername().equals(listing.getOwnerUsername()) && l.getISBN().equals(listing.getISBN())){
+                return listing.getStatus() == Available || listing.getStatus()== Requested;
+            }
+        }
+        return false;
+    }
+
 
     public class InitiationTask extends AsyncTask<Void, Void, Boolean> {
         Activity context;
@@ -397,8 +457,11 @@ public class DatabaseManager {
 
                     userProfile.clear();
                     HashMap<String, String> fetchedProfile = (HashMap<String, String>) dataSnapshot.getValue();
-                    Log.d("mattTag", "fetched" + String.valueOf(fetchedProfile.size()));
-                    userProfile.putAll(fetchedProfile);
+//                    Log.d("mattTag", "fetched" + String.valueOf(fetchedProfile.size()));
+                    if (fetchedProfile != null){
+                        userProfile.putAll(fetchedProfile);
+                    }
+
                 }
 
                 @Override

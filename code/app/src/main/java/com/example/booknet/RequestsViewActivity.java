@@ -49,7 +49,7 @@ public class RequestsViewActivity extends AppCompatActivity {
         if (listing == null) {
             Toast.makeText(this, "Listing Not Found", Toast.LENGTH_LONG).show();
         } else {
-            requests = listing.getRequesters();
+            requests = listing.getRequests();
         }
 
         //Setup RecyclerView

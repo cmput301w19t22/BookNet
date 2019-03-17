@@ -67,13 +67,20 @@ public class ListingViewActivity extends AppCompatActivity {
             String isbn = intent.getStringExtra("bookisbn");
             listing = manager.readBookListingWithUIDAndISBN(CurrentUser.getInstance().getUID(), isbn);
         }
-        fillLayout();//todo delete when using real db
+
+        bookTitleLabel.setText(listing.getBook().getTitle());
+        bookAuthorLabel.setText(listing.getBook().getAuthor());
+        isbnLabel.setText(listing.getBook().getIsbn());
+        ownerLabel.setText(listing.getOwnerUsername());
+        statusLabel.setText(listing.getStatusString());
 
         //#region Listeners
         requestButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 sendRequest();
+                startActivity(new Intent(ListingViewActivity.this, BookSearchActivity.class));
+                finish();
             }
         });
 
@@ -86,26 +93,18 @@ public class ListingViewActivity extends AppCompatActivity {
         //#endregion
     }
 
-    /**
-     * Fills the layout with the data in the listing
-     */
-    private void fillLayout() {
-        if (listing == null) {
-            Toast.makeText(this, "Listing Not Found", Toast.LENGTH_LONG).show();
-        } else {
-            bookTitleLabel.setText(listing.getBook().getTitle());
-            bookAuthorLabel.setText(listing.getBook().getAuthor());
-            isbnLabel.setText(listing.getBook().getIsbn());
-            ownerLabel.setText(listing.getOwnerUsername());
-            statusLabel.setText(listing.getStatus().toString());
-        }
-    }
 
     /**
      * Creates a request for this book listing from the current user.
      */
     private void sendRequest() {
-        manager.addRequestToListing(listing, CurrentUser.getInstance().getUserAccount().getUsername());
+        boolean res = manager.requestBookListing(listing);
+        if (res){
+            Toast.makeText(this, "book requested", Toast.LENGTH_SHORT).show();
+        }
+        else{
+            Toast.makeText(this, "failed", Toast.LENGTH_SHORT).show();
+        }
     }
 
     /**

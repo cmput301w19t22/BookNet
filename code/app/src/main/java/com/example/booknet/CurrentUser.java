@@ -1,5 +1,8 @@
 package com.example.booknet;
 
+import android.util.Log;
+
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 /**
@@ -49,12 +52,6 @@ public class CurrentUser {
 
     }
 
-    /**
-     * Method to call when loging out as a new user to update the structure.
-     */
-    public void onLogout() {
-
-    }
 
     /**
      * Returns the account for the current user.
@@ -84,7 +81,7 @@ public class CurrentUser {
 
 
         //Create a listing for the new book
-        BookListing newListing = new BookListing(book, account);
+        BookListing newListing = new BookListing(book);
 
         // no more adding to memory, adding to database is enough
 //        account.addListingToOwned(newListing);
@@ -107,6 +104,7 @@ public class CurrentUser {
     }
 
     public String getUsername() {
+        Log.d("mattTag", "the user name" + account.getUsername());
         return getUserAccount().getUsername();
     }
 
@@ -149,5 +147,15 @@ public class CurrentUser {
 
     public String getAccountPhone() {
         return account.getPhoneNumber();
+    }
+
+    public void logout() {
+        FirebaseAuth.getInstance().signOut();
+        manager.onLogOut();
+        account = new UserAccount(null);
+        account.setProfile(new UserProfile(null, "default_email", null));
+        user = null;
+
+
     }
 }

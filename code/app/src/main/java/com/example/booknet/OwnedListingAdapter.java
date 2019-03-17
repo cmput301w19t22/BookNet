@@ -79,7 +79,7 @@ public class OwnedListingAdapter extends RecyclerView.Adapter<OwnedListingAdapte
         ownedListingViewHolder.isbnLabel.setText(item.getBook().getIsbn());
         ownedListingViewHolder.ownerLabel.setVisibility(View.GONE);//Exclude this element
         ownedListingViewHolder.ownedLabel.setVisibility(View.GONE);//Exclude this element
-        ownedListingViewHolder.statusLabel.setText(item.getStatus().toString());
+        ownedListingViewHolder.statusLabel.setText(item.getStatusString());
 
 
         //Add the click listener to the item

@@ -17,7 +17,8 @@ public class BookListingTest {
     public void Constructor() {
         Book book = new Book("title", "author", "description", "1234567890");
         UserAccount owner = new UserAccount("owner");
-        BookListing listing = new BookListing(book, owner);
+        BookListing listing = new BookListing(book);
+
 
         assertEquals(book, listing.getBook());
         assertEquals("owner", listing.getOwnerUsername());
@@ -27,11 +28,11 @@ public class BookListingTest {
     public void AddRequest() {
         Book book = new Book("title", "author", "description", "1234567890");
         UserAccount owner = new UserAccount("owner");
-        BookListing listing = new BookListing(book, owner);
+        BookListing listing = new BookListing(book);
 
         listing.addRequest("requester1");
 
-        ArrayList<String> requestersList = listing.getRequesters();
+        ArrayList<String> requestersList = listing.getRequests();
 
         assertTrue("Request Added", requestersList.contains("requester1"));
 
@@ -41,15 +42,17 @@ public class BookListingTest {
     @Test
     public void AcceptRequest() {
         Book book = new Book("title", "author", "description", "1234567890");
+
         UserAccount owner = new UserAccount("owner");
-        BookListing listing = new BookListing(book, owner);
+        BookListing listing = new BookListing(book);
+
 
         listing.addRequest("requester1");
         listing.addRequest("requester2");
 
         listing.acceptRequest("requester1");
 
-        assertTrue(listing.getRequesters().size()==0);
+        assertTrue(listing.getRequests().size()==0);
         assertEquals("requester1", listing.getBorrowerName());
 
         assertEquals(BookListing.Status.Accepted, listing.getStatus());
@@ -59,7 +62,7 @@ public class BookListingTest {
     public void DenyRequest() {
         Book book = new Book("title", "author", "description", "1234567890");
         UserAccount owner = new UserAccount("owner");
-        BookListing listing = new BookListing(book, owner);
+        BookListing listing = new BookListing(book);
 
         listing.addRequest("requester1");
         listing.addRequest("requester2");
@@ -67,7 +70,7 @@ public class BookListingTest {
         listing.denyRequest("requester1");
 
         //Check removed from requesters
-        ArrayList<String> requesters = listing.getRequesters();
+        ArrayList<String> requesters = listing.getRequests();
         assertFalse("Request Denied", requesters.contains("requester1"));
 
         //Still one request left
@@ -83,7 +86,7 @@ public class BookListingTest {
     public void BookBorrowed() {
         Book book = new Book("title", "author", "description", "1234567890");
         UserAccount owner = new UserAccount("owner");
-        BookListing listing = new BookListing(book, owner);
+        BookListing listing = new BookListing(book);
 
         listing.addRequest("requester1");
         listing.addRequest("requester2");
@@ -92,7 +95,7 @@ public class BookListingTest {
         listing.bookBorrowed();
 
         assertEquals("requester1", listing.getBorrowerName());
-        assertTrue(listing.getRequesters().isEmpty());
+        assertTrue(listing.getRequests().isEmpty());
         assertEquals(BookListing.Status.Borrowed, listing.getStatus());
     }
 
@@ -100,7 +103,7 @@ public class BookListingTest {
     public void BookReturned() {
         Book book = new Book("title", "author", "description", "1234567890");
         UserAccount owner = new UserAccount("owner");
-        BookListing listing = new BookListing(book, owner);
+        BookListing listing = new BookListing(book);
 
         listing.addRequest("requester1");
         listing.addRequest("requester2");
@@ -117,7 +120,8 @@ public class BookListingTest {
     public void SetGeoLocation(){
         Book book = new Book("title", "author", "description", "1234567890");
         UserAccount owner = new UserAccount("owner");
-        BookListing listing = new BookListing(book, owner);
+        BookListing listing = new BookListing(book);
+
 
         //listing.setGeoLocation(new Location());
         //todo: how to get location?

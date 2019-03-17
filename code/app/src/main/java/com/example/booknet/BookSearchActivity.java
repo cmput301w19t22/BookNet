@@ -1,11 +1,16 @@
 package com.example.booknet;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.SearchView;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 
 /**
  * Activity to search the database for available books.
@@ -22,9 +27,13 @@ public class BookSearchActivity extends AppCompatActivity {
     private BookListingAdapter listingAdapter;
     private DatabaseManager manager = DatabaseManager.getInstance();
 
-
     //App Data
     BookLibrary allBookListings;
+
+    private BookLibrary filteredLibrary = new BookLibrary();
+    private ValueEventListener listener;
+
+    SearchView searchBar;
 
 
     /**
@@ -34,44 +43,89 @@ public class BookSearchActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        allBookListings = manager.readAllBookListings();
+        filteredLibrary.copyOneByOne(allBookListings);
+
+        listener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // once the data is changed, we just change our corresponding static variable
+
+                //first empty it
+                if (searchBar != null) {
+                    filteredLibrary.removeAllBooks();
+
+                    // then fill it as it is in the database
+                    for (DataSnapshot data : dataSnapshot.getChildren()) {
+                        BookListing bookListing = data.getValue(BookListing.class);
+                        if (bookListing != null) {
+                            if (bookListing.containKeyword(searchBar.getQuery().toString())) {
+                                filteredLibrary.addBookListing(bookListing.clone());
+                            }
+
+                        }
+                    }
+                    listingAdapter.notifyDataSetChanged();
+
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
+
+        manager.getAllLisitngsRef().addValueEventListener(listener);
+
+//        mSoundPool = new SoundPool(MAX_STREAM, AudioManager.STREAM_MUSIC, 0);
+//        final int backgroundSoundId = mSoundPool.load(this, R.raw.nice_keyboard_sound, 0);
+
+//        player.prepareAsync();
         setContentView(R.layout.activity_book_search);
-
-        progressBar = findViewById(R.id.progressBar);
-        progressBar.setVisibility(View.VISIBLE);
-
-        //todo get real search results
-
 
         allBookListings = manager.readAllBookListings();
 
+
         searchResults = findViewById(R.id.searchResults);
         searchResults.setLayoutManager(new LinearLayoutManager(this));
-        listingAdapter = new BookListingAdapter(allBookListings, this);
+        listingAdapter = new BookListingAdapter(filteredLibrary, this);
         searchResults.setAdapter(listingAdapter);
 
+        SearchView searchBar = findViewById(R.id.searchBar);
+        searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
 
-        //bookListings = MockDatabase.getInstance().readAllBookListings();
 
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                // async sound play needs to use the soundpool thing
+//                mSoundPool.play(backgroundSoundId, (float)1, (float)1, 1, 0, (float)1);
+
+                filteredLibrary.removeAllBooks();
+                for (BookListing listing : allBookListings) {
+                    if (listing.containKeyword(s)) {
+                        filteredLibrary.addBookListing(listing.clone());
+                    }
+
+                }
+                listingAdapter.notifyDataSetChanged();
+                return true;
+            }
+        });
     }
 
-    public void addListingToList(BookListing listing) {
-        allBookListings.addBookListing(listing);
-        listingAdapter.notifyDataSetChanged();
-        progressBar.setVisibility(View.GONE);
+
+    public void onDestroy() {
+        manager.getAllLisitngsRef().removeEventListener(listener);
+        super.onDestroy();
     }
 
-
-    /**
-     * Fills the recycler view list with the search data
-     */
-    private void fillLayout() {
-        //Setup RecyclerView
-        searchResults = findViewById(R.id.searchResults);
-        searchResults.setLayoutManager(new LinearLayoutManager(this));
-        listingAdapter = new BookListingAdapter(allBookListings, this);
-        searchResults.setAdapter(listingAdapter);
-        //Deactivate the progress bar
-
-    }
 
 }

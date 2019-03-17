@@ -70,17 +70,7 @@ public class OwnListingViewActivity extends AppCompatActivity {
             String isbn = intent.getStringExtra("bookisbn");
             listing = manager.readUserOwnedBookListingWithISBN(isbn);
 
-            bookTitleLabel.setText(listing.getBook().getTitle());
-            bookAuthorLabel.setText(listing.getBook().getAuthor());
-            isbnLabel.setText(listing.getBook().getIsbn());
-            ownerLabel.setText(listing.getOwnerUsername());
-            statusLabel.setText(listing.getStatus().toString());
-            int numRequests = listing.getRequesters().size();
-            if (numRequests > 0) {
-                requestCountLabel.setText(numRequests);
-            } else {
-                //requestCountLabel.setVisibility(View.INVISIBLE);//todo ???
-            }
+            fillLayout();
         }
 
         editButton.setOnClickListener(new View.OnClickListener() {
@@ -127,6 +117,33 @@ public class OwnListingViewActivity extends AppCompatActivity {
             }
         });
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        fillLayout();
+    }
+
+    /**
+     * Fills the activity layout from the listing.
+     */
+    private void fillLayout() {
+        if (listing != null) {
+            bookTitleLabel.setText(listing.getBook().getTitle());
+            bookAuthorLabel.setText(listing.getBook().getAuthor());
+            isbnLabel.setText(listing.getBook().getIsbn());
+            ownerLabel.setText(listing.getOwnerUsername());
+            statusLabel.setText(listing.getStatus().toString());
+            int numRequests = listing.getRequests().size();
+            if (numRequests > 0) {
+                requestCountLabel.setText(numRequests);
+            } else {
+                //requestCountLabel.setVisibility(View.INVISIBLE);//todo ???
+            }
+        }
+    }
+
 
     /**
      * Start an activity to edit the book for this listing.

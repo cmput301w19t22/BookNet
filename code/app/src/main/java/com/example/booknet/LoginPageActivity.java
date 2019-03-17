@@ -40,7 +40,7 @@ public class LoginPageActivity extends AppCompatActivity implements View.OnClick
 
 
         manager.setOnLoginPage(true);
-        manager.resetAllRefs();
+
         setContentView(R.layout.activity_log_in);
 
         findViewById(R.id.btnCreate).setOnClickListener(this);
@@ -136,6 +136,8 @@ public class LoginPageActivity extends AppCompatActivity implements View.OnClick
             tvStat.setText("Signed Out");
         }
     }
+
+
 
     private void updateStatus(String stat) {
         TextView tvStat = findViewById(R.id.tvSignInStatus);
@@ -281,6 +283,7 @@ public class LoginPageActivity extends AppCompatActivity implements View.OnClick
             CurrentUser.getInstance().setUsername(username);
             CurrentUser.getInstance().setAccountPhone(phonenumber);
             startActivity(new Intent(getApplicationContext(), MainActivity.class));
+            finish();
 
         }
 
@@ -311,6 +314,7 @@ public class LoginPageActivity extends AppCompatActivity implements View.OnClick
 
     public void goToMainPage() {
         startActivity(new Intent(getApplicationContext(), MainActivity.class));
+        finish();
     }
 }
 

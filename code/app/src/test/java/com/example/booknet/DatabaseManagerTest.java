@@ -28,7 +28,7 @@ public class DatabaseManagerTest {
 
         UserAccount user = new UserAccount("testuser");
         Book book = new Book("title", "author", "description", "1234567890");
-        BookListing listing = new BookListing(book, user);
+        BookListing listing = new BookListing(book);
 
         databaseManager.writeToAllBookListings(listing);
 
@@ -56,7 +56,7 @@ public class DatabaseManagerTest {
         UserAccount reviewer = new UserAccount("testuser");
         UserAccount reviewed= new UserAccount("testuser2");
         Book book = new Book("title", "author", "description", "1234567890");
-        BookListing listing = new BookListing(book, reviewed);
+        BookListing listing = new BookListing(book);
 
         Review review = new Review(reviewer, reviewed, 4, "test");
 
@@ -122,7 +122,7 @@ public class DatabaseManagerTest {
         //Add a listing
         UserAccount user1 = new UserAccount("testuser");
         Book book = new Book("title", "author", "description","1234567890");
-        BookListing listing = new BookListing(book, user1);
+        BookListing listing = new BookListing(book);
         databaseManager.writeToAllBookListings(listing);
 
         //Read the listing back
@@ -140,7 +140,7 @@ public class DatabaseManagerTest {
         //Add a listing
         UserAccount user1 = new UserAccount("testuser");
         Book book = new Book("title", "author", "description","1234567890");
-        BookListing listing = new BookListing(book, user1);
+        BookListing listing = new BookListing(book);
         listing.addRequest("testuser");
         databaseManager.writeToAllBookListings(listing);
 

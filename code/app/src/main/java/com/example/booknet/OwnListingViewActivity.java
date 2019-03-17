@@ -69,7 +69,7 @@ public class OwnListingViewActivity extends AppCompatActivity {
             bookAuthorLabel.setText(listing.getBook().getAuthor());
             isbnLabel.setText(listing.getBook().getIsbn());
             ownerLabel.setText(listing.getOwnerUsername());
-            statusLabel.setText(listing.getStatus().toString());
+            statusLabel.setText(listing.getStatusString());
 
         }
 

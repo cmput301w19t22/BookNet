@@ -377,6 +377,7 @@ public class DatabaseManager {
     public boolean requestBookListing(BookListing listing) {
         if (isBookListingAvailable(listing)){
             allListingsRef.child(listing.getISBN()+"-"+CurrentUser.getInstance().getUID()).child("status").setValue(Requested);
+            allListingsRef.child(listing.getISBN()+"-"+CurrentUser.getInstance().getUID()).child("borrowerName").setValue(CurrentUser.getInstance().getUsername());
             return true;
         }
         return false;

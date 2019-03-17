@@ -16,6 +16,24 @@ public class BookListing implements Serializable, Cloneable {
         return book.getIsbn();
     }
 
+    public String getStatusString() {
+        if (status == Status.Borrowed){
+            return "Borrowed by " + borrowerName;
+        }
+        else if (status == Status.Requested){
+            return "Requested by " + borrowerName;
+        }
+        else if (status == Status.Borrowed){
+            return "Borrowed by " + borrowerName;
+        }
+        else if (status == Status.Accepted){
+            return "Accepted";
+        }
+        else {
+            return "Available";
+        }
+    }
+
     /**
      * Enum for the status of a BookListing, so the values are more easily tracked
      */

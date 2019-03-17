@@ -2,9 +2,9 @@ package com.example.booknet;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,15 +26,13 @@ public class OwnedListingAdapter extends RecyclerView.Adapter<OwnedListingAdapte
     private BookLibrary library;
 
     //The activity this adapter was created from
-    private AppCompatActivity sourceActivity;
+    private FragmentActivity sourceActivity;
 
     /**
      * Creates the adapter
-     *
-     * @param library        The BookLibrary to use for the list display
-     * @param sourceActivity The activity that created this adapter
-     */
-    public OwnedListingAdapter(BookLibrary library, AppCompatActivity sourceActivity) {
+     *  @param library        The BookLibrary to use for the list display
+     * @param sourceActivity The activity that created this adapter*/
+    public OwnedListingAdapter(BookLibrary library, FragmentActivity sourceActivity) {
         this.library = library;
         this.sourceActivity = sourceActivity;
     }
@@ -74,6 +72,7 @@ public class OwnedListingAdapter extends RecyclerView.Adapter<OwnedListingAdapte
 
         //Fill the text fields with the object's library
         //ownedListingViewHolder.bookThumbnail.//todo listing photo
+        ownedListingViewHolder.bookThumbnail.setImageResource(R.mipmap.ic_launcher);
         ownedListingViewHolder.bookTitleLabel.setText(item.getBook().getTitle());
         ownedListingViewHolder.bookAuthorLabel.setText(item.getBook().getAuthor());
         ownedListingViewHolder.isbnLabel.setText(item.getBook().getIsbn());

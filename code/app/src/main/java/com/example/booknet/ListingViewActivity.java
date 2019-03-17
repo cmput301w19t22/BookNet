@@ -79,7 +79,7 @@ public class ListingViewActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 sendRequest();
-                startActivity(new Intent(ListingViewActivity.this, BookSearchActivity.class));
+                startActivity(new Intent(ListingViewActivity.this, BookSearchFragment.class));
                 finish();
             }
         });
@@ -111,7 +111,7 @@ public class ListingViewActivity extends AppCompatActivity {
      * Starts an activity to view the profile of the user whoo owns this book.
      */
     private void viewOwnerProfile() {
-        Intent intent = new Intent(this, UserProfileViewActivity.class);
+        Intent intent = new Intent(this, UserProfileViewFragment.class);
         if (listing != null) {
             intent.putExtra("username", listing.getOwnerUsername());
         }

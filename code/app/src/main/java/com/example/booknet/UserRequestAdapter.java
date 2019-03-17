@@ -146,7 +146,7 @@ public class UserRequestAdapter extends RecyclerView.Adapter<UserRequestAdapter.
      * Action to view the profile of the clicked user.
      */
     private void goToProfile(String username) {
-        Intent intent = new Intent(sourceActivity, UserProfileViewActivity.class);
+        Intent intent = new Intent(sourceActivity, UserProfileViewFragment.class);
         if (username != null) {
             intent.putExtra("username", username);
         }

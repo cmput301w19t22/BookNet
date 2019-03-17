@@ -35,13 +35,13 @@ public class DatabaseManager {
     private ProgressDialog progressDialog;
 
     private DatabaseReference allListingsRef;
-    private DatabaseReference userLisitngsRef;
+    private DatabaseReference userListingsRef;
     private DatabaseReference usernameRef;
     private DatabaseReference userPhoneRef;
     private DatabaseReference userProfileRef;
 
     private ValueEventListener allListingsListener;
-    private ValueEventListener userLstingsListener;
+    private ValueEventListener userListingsListener;
     private ValueEventListener usernameListener;
     private ValueEventListener userPhoneListener;
     private ValueEventListener userProfileListener;
@@ -61,8 +61,8 @@ public class DatabaseManager {
 
     }
 
-    public DatabaseReference getUserLisitngsRef(){
-        return userLisitngsRef;
+    public DatabaseReference getUserListingsRef(){
+        return userListingsRef;
     }
     public DatabaseReference getAllLisitngsRef(){
         return allListingsRef;
@@ -97,7 +97,7 @@ public class DatabaseManager {
     public void writeUserBookListing(BookListing listing){
 
 
-        userLisitngsRef.child(listing.getBook().getIsbn()).setValue(listing);
+        userListingsRef.child(listing.getBook().getIsbn()).setValue(listing);
 
         allListingsRef.child(listing.getBook().getIsbn()+"-"+CurrentUser.getInstance().getUID()).setValue(listing);
 
@@ -150,7 +150,7 @@ public class DatabaseManager {
      * @param bookListing The BookListing to delete
      */
     public void removeBookListing(BookListing bookListing) {
-        userLisitngsRef.child(bookListing.getBook().getIsbn()).removeValue();
+        userListingsRef.child(bookListing.getBook().getIsbn()).removeValue();
         allListingsRef.child(bookListing.getBook().getIsbn()+"-"+CurrentUser.getInstance().getUID()).removeValue();
     }
 
@@ -322,8 +322,8 @@ public class DatabaseManager {
         if (allListingsRef != null && allListingsListener != null) {
             allListingsRef.removeEventListener(allListingsListener);
         }
-        if (userLisitngsRef != null && userLstingsListener != null) {
-            userLisitngsRef.removeEventListener(userLstingsListener);
+        if (userListingsRef != null && userListingsListener != null) {
+            userListingsRef.removeEventListener(userListingsListener);
         }
         if (userPhoneRef!= null && userPhoneListener!= null) {
             userPhoneRef.removeEventListener(userPhoneListener);
@@ -356,10 +356,6 @@ public class DatabaseManager {
             return profile;
         }
 
-    }
-
-    public DatabaseReference getUserListingsRef() {
-        return userLisitngsRef;
     }
 
     public void onLogOut() {
@@ -483,8 +479,8 @@ public class DatabaseManager {
             String uid = CurrentUser.getInstance().getUID();
 
 
-            userLisitngsRef = FirebaseDatabase.getInstance().getReference("/UserBooks/"+uid);
-            userLstingsListener = new ValueEventListener() {
+            userListingsRef = FirebaseDatabase.getInstance().getReference("/UserBooks/"+uid);
+            userListingsListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     // once the data is changed, we just change our corresponding static variable
@@ -508,7 +504,7 @@ public class DatabaseManager {
             };
 
             // This listener should take care of database value change automatically
-            userLisitngsRef.addValueEventListener(userLstingsListener);
+            userListingsRef.addValueEventListener(userListingsListener);
 
 
             usernameRef = FirebaseDatabase.getInstance().getReference("Usernames");

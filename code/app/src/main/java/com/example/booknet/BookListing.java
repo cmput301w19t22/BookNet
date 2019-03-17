@@ -76,7 +76,6 @@ public class BookListing implements Serializable, Cloneable {
     private String borrowerName;
     private UserLocation geoLocation;
 
-
     /**
      * Constructor that creates an empty listing
      */

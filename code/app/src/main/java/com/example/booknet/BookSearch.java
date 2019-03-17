@@ -6,6 +6,7 @@ import java.util.ArrayList;
  * Utility class to search for books.
  * Currently unused.
  */
+@Deprecated
 public class BookSearch {
 
     //todo: attributes, if any

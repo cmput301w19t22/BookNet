@@ -29,7 +29,7 @@ public class DatabaseManagerTest {
 
         UserAccount user = new UserAccount("test_username");
         Book book = new Book("title", "author", "description", "1234567890");
-        BookListing listing = new BookListing(book, user);
+        BookListing listing = new BookListing(book);
 
         databaseManager.writeToAllBookListings(listing);
 
@@ -41,7 +41,7 @@ public class DatabaseManagerTest {
     public void WriteBookInfo() {
         DatabaseManager databaseManager = DatabaseManager.getInstance();
 
-        UserAccount user = new UserAccount("test_user");
+        UserAccount user = new UserAccount("test_username");
         Book book = new Book("title", "author", "description", "1234567890");
 
         databaseManager.writeBookInfo(book);
@@ -57,7 +57,7 @@ public class DatabaseManagerTest {
         UserAccount reviewer = new UserAccount("reviewer");
         UserAccount reviewed= new UserAccount("reviewed");
         Book book = new Book("title", "author", "description", "1234567890");
-        BookListing listing = new BookListing(book, reviewed);
+        BookListing listing = new BookListing(book);
 
         Review review = new Review(reviewer, reviewed, 4, "test");
 
@@ -124,7 +124,7 @@ public class DatabaseManagerTest {
         //Add a listing
         UserAccount user1 = new UserAccount("test_user");
         Book book = new Book("title", "author", "description","1234567890");
-        BookListing listing = new BookListing(book, user1);
+        BookListing listing = new BookListing(book);
         databaseManager.writeToAllBookListings(listing);
 
         //Read the listing back
@@ -142,7 +142,7 @@ public class DatabaseManagerTest {
         //Add a listing
         UserAccount user1 = new UserAccount("test_user");
         Book book = new Book("title", "author", "description","1234567890");
-        BookListing listing = new BookListing(book, user1);
+        BookListing listing = new BookListing(book);
         listing.addRequest("testuser");
         databaseManager.writeToAllBookListings(listing);
 

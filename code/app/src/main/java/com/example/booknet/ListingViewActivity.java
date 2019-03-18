@@ -27,7 +27,7 @@ public class ListingViewActivity extends AppCompatActivity {
     private TextView statusLabel;
     private Button requestButton;
     private Button ownerProfileButton;
-    private DatabaseManager manager=DatabaseManager.getInstance();
+    private DatabaseManager manager = DatabaseManager.getInstance();
 
     //Activity Data
     private BookListing listing;
@@ -55,6 +55,9 @@ public class ListingViewActivity extends AppCompatActivity {
         statusLabel = findViewById(R.id.statusLabel);
         requestButton = findViewById(R.id.requestButton);
         ownerProfileButton = findViewById(R.id.ownerProfileButton);
+        bookTitleLabel.setSelected(true);//select so it scrolls
+        bookAuthorLabel.setSelected(true);
+
 
         //Get Intent
         Intent intent = getIntent();
@@ -64,13 +67,20 @@ public class ListingViewActivity extends AppCompatActivity {
             String isbn = intent.getStringExtra("bookisbn");
             listing = manager.readBookListingWithUIDAndISBN(CurrentUser.getInstance().getUID(), isbn);
         }
-        fillLayout();//todo delete when using real db
+
+        bookTitleLabel.setText(listing.getBook().getTitle());
+        bookAuthorLabel.setText(listing.getBook().getAuthor());
+        isbnLabel.setText(listing.getBook().getIsbn());
+        ownerLabel.setText(listing.getOwnerUsername());
+        statusLabel.setText(listing.getStatusString());
 
         //#region Listeners
         requestButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 sendRequest();
+//                startActivity(new Intent(ListingViewActivity.this, MainActivity.class));
+                finish();
             }
         });
 
@@ -83,35 +93,28 @@ public class ListingViewActivity extends AppCompatActivity {
         //#endregion
     }
 
-    /**
-     * Fills the layout with the data in the listing
-     */
-    private void fillLayout() {
-        if (listing == null) {
-            Toast.makeText(this, "Listing Not Found", Toast.LENGTH_LONG).show();
-        } else {
-            bookTitleLabel.setText(listing.getBook().getTitle());
-            bookAuthorLabel.setText(listing.getBook().getAuthor());
-            isbnLabel.setText(listing.getBook().getIsbn());
-            ownerLabel.setText(listing.getOwnerUsername());
-            statusLabel.setText(listing.getStatus().toString());
-        }
-    }
 
     /**
      * Creates a request for this book listing from the current user.
      */
-    // todo: fix request, MockdataBase deprecated
     private void sendRequest() {
-//        MockDatabase.getInstance().addRequestToListing(listing, CurrentUser.getInstance().getUserAccount().getUsername());
+        boolean res = manager.requestBookListing(listing);
+        if (res){
+            Toast.makeText(this, "book requested", Toast.LENGTH_SHORT).show();
+        }
+        else{
+            Toast.makeText(this, "failed", Toast.LENGTH_SHORT).show();
+        }
     }
 
     /**
      * Starts an activity to view the profile of the user whoo owns this book.
      */
     private void viewOwnerProfile() {
-        Intent intent = new Intent(this, UserProfileViewActivity.class);
-        intent.putExtra("username", listing.getOwnerUsername());
+        Intent intent = new Intent(this, UserProfileViewFragment.class);
+        if (listing != null) {
+            intent.putExtra("username", listing.getOwnerUsername());
+        }
         startActivity(intent);
     }
 }

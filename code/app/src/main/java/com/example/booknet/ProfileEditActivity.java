@@ -111,7 +111,7 @@ public class ProfileEditActivity extends AppCompatActivity {
         String newEmail = emailField.getText().toString();
         String newPhone = phoneField.getText().toString();
         manager.writeUserProfile(newEmail, newPhone);
-        Intent i = new Intent(getApplicationContext(), UserProfileViewActivity.class);
+        Intent i = new Intent(getApplicationContext(), UserProfileViewFragment.class);
         startActivity(i);
         finish();
 //        MockDatabase.getInstance().writeUserAccount(user);

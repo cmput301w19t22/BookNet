@@ -32,8 +32,7 @@ public class UserAccount extends AppCompatActivity implements Serializable, Clon
     /**
      * Constructor to create a new account
      *
-     * @param username        The new account's username
-
+     * @param username The new account's username
      */
     public UserAccount(String username) {
         this.username = username;
@@ -47,6 +46,7 @@ public class UserAccount extends AppCompatActivity implements Serializable, Clon
 
     /**
      * Gets the username of the UserAccount
+     *
      * @return String of the username of this UserAccount
      */
     public String getUsername() {
@@ -55,6 +55,7 @@ public class UserAccount extends AppCompatActivity implements Serializable, Clon
 
     /**
      * Sets the username of the UserAccount to the passed in value.
+     *
      * @param username String - what the username of UserAccount is going to be set to.
      */
     public void setUsername(String username) {
@@ -70,6 +71,7 @@ public class UserAccount extends AppCompatActivity implements Serializable, Clon
     public void setAccountPassword(String accountPassword) {
 
     }
+
 
     public ArrayList<Review> getReviews() {
         return reviews;
@@ -95,7 +97,7 @@ public class UserAccount extends AppCompatActivity implements Serializable, Clon
         this.profile = profile;
     }
 
-    public void setProfileEmail(String email){
+    public void setProfileEmail(String email) {
         profile.setEmail(email);
     }
 
@@ -110,12 +112,21 @@ public class UserAccount extends AppCompatActivity implements Serializable, Clon
 
     /**
      * Gets the user's rating in 1 to 5 stars.
+     * Calculated as the average of the user's review ratings.
+     * If no reviews exist the function returns 0.
      *
      * @return A float of the user rating
      */
     public float getRatingScore() {
-        //todo implement
-        return 5;
+        if (reviews.size() > 0) {
+            float val = 0;
+            for (Review review : reviews) {
+                val += review.getScore();
+            }
+            return val / reviews.size();
+        } else {
+            return 0;
+        }
     }
 
     /**
@@ -124,7 +135,7 @@ public class UserAccount extends AppCompatActivity implements Serializable, Clon
      * @param book The book to add
      */
     public void addBookToOwned(Book book) {
-        ownedLibrary.addBookListing(new BookListing(book, this));
+        ownedLibrary.addBookListing(new BookListing(book));
     }
 
     /**

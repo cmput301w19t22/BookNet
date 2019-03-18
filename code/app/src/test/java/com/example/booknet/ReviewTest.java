@@ -37,10 +37,10 @@ public class ReviewTest {
 
         //Negative
         review.setScore(-1);
-        assertEquals(-1,review.getScore());
+        assertNotEquals(-1,review.getScore());
         //Over Range
         review.setScore(6);
-        assertEquals(6,review.getScore());
+        assertNotEquals(6,review.getScore());
         //Zero
         review.setScore(0);
         assertEquals(0,review.getScore());

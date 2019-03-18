@@ -1,5 +1,6 @@
 package com.example.booknet;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
@@ -9,12 +10,14 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.example.booknet.BookListing.Status.Available;
+import static com.example.booknet.BookListing.Status.Requested;
 
 /**
  * Class that interfaces with the database
@@ -33,13 +36,13 @@ public class DatabaseManager {
     private ProgressDialog progressDialog;
 
     private DatabaseReference allListingsRef;
-    private DatabaseReference userLisitngsRef;
+    private DatabaseReference userListingsRef;
     private DatabaseReference usernameRef;
     private DatabaseReference userPhoneRef;
     private DatabaseReference userProfileRef;
 
     private ValueEventListener allListingsListener;
-    private ValueEventListener userLstingsListener;
+    private ValueEventListener userListingsListener;
     private ValueEventListener usernameListener;
     private ValueEventListener userPhoneListener;
     private ValueEventListener userProfileListener;
@@ -59,8 +62,8 @@ public class DatabaseManager {
 
     }
 
-    public DatabaseReference getUserLisitngsRef(){
-        return userLisitngsRef;
+    public DatabaseReference getUserListingsRef(){
+        return userListingsRef;
     }
     public DatabaseReference getAllLisitngsRef(){
         return allListingsRef;
@@ -82,22 +85,49 @@ public class DatabaseManager {
      */
 
     public void writeToAllBookListings(BookListing listing) {
-
-
-        allListingsRef.child(listing.getBook().getIsbn()+"-"+CurrentUser.getInstance().getUID()).setValue(listing);
+        int dupCount = getDupCount(listing, CurrentUser.getInstance().getUID());
+        String path = generateAllListingPath(listing, dupCount, CurrentUser.getInstance().getUID());
+        allListingsRef.child(path).setValue(listing);
 
     }
 
+    private String generateAllListingPath(BookListing listing, int dupCount, String uid) {
+        return listing.getBook().getIsbn()+"-"+String.valueOf(dupCount)+"-"+uid;
+    }
+
+    public int getDupCount(BookListing listing, String UID) {
+        int currentInd = 0;
+
+        for (BookListing l: allBookLibrary){
+            if (l.hasSameBook(listing) && doesBelong(l, UID)){
+                currentInd += 1;
+            }
+        }
+        return currentInd;
+
+    }
+
+    private boolean doesBelong(BookListing l, String uid) {
+        return getUIDFromName(l.getOwnerUsername()).equals(uid);
+    }
+
+
+    @SuppressLint("DefaultLocale")
+    private String generateUserListingPath(BookListing listing, int dupCount) {
+
+        return String.format("%s-%d", listing.getISBN(), dupCount);
+    }
 
 
     // write a book to the user owned book listings
     // also adds the listing to the app
     public void writeUserBookListing(BookListing listing){
 
+        int dupCount = getDupCount(listing, CurrentUser.getInstance().getUID());
 
-        userLisitngsRef.child(listing.getBook().getIsbn()).setValue(listing);
+        userListingsRef.child(generateUserListingPath(listing, dupCount)).setValue(listing);
 
-        allListingsRef.child(listing.getBook().getIsbn()+"-"+CurrentUser.getInstance().getUID()).setValue(listing);
+        allListingsRef.child(generateAllListingPath(listing, dupCount, CurrentUser.getInstance().getUID())).setValue(listing);
 
     }
 
@@ -148,7 +178,7 @@ public class DatabaseManager {
      * @param bookListing The BookListing to delete
      */
     public void removeBookListing(BookListing bookListing) {
-        userLisitngsRef.child(bookListing.getBook().getIsbn()).removeValue();
+        userListingsRef.child(bookListing.getBook().getIsbn()).removeValue();
         allListingsRef.child(bookListing.getBook().getIsbn()+"-"+CurrentUser.getInstance().getUID()).removeValue();
     }
 
@@ -265,15 +295,11 @@ public class DatabaseManager {
     public void connectToDatabase(Activity context) {
 
         progressDialog = new ProgressDialog(context);
+        progressDialog.setCancelable(false);
         progressDialog.setMessage("connecting to database");
 
         progressDialog.show();
         new InitiationTask(context).execute();
-
-
-
-
-
 
     }
 
@@ -320,8 +346,8 @@ public class DatabaseManager {
         if (allListingsRef != null && allListingsListener != null) {
             allListingsRef.removeEventListener(allListingsListener);
         }
-        if (userLisitngsRef != null && userLstingsListener != null) {
-            userLisitngsRef.removeEventListener(userLstingsListener);
+        if (userListingsRef != null && userListingsListener != null) {
+            userListingsRef.removeEventListener(userListingsListener);
         }
         if (userPhoneRef!= null && userPhoneListener!= null) {
             userPhoneRef.removeEventListener(userPhoneListener);
@@ -356,14 +382,61 @@ public class DatabaseManager {
 
     }
 
-    public DatabaseReference getUserListingsRef() {
-        return userLisitngsRef;
-    }
-
     public void onLogOut() {
         resetAllRefs();
         phoneLoaded = false;
         nameLoaded = false;
+    }
+
+    public String getUIDFromName(String name){
+        return usernames.get(name);
+    }
+
+    /**
+     * @param listing
+     * @return whether the request goes through
+     */
+    public boolean requestBookListing(BookListing listing) {
+        if (isBookListingAvailableAndNotOwnBook(listing)){
+
+            int dupInd = listing.getDupInd();
+
+            String allPath = generateAllListingPath(listing, dupInd, getUIDFromName(listing.getOwnerUsername()));
+            allListingsRef.child(allPath).child("status").setValue(Requested);
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("UserBooks/"+getUIDFromName(listing.getOwnerUsername())+"/"+generateUserListingPath(listing,dupInd));
+            ref.child("status").setValue(Requested);
+
+            ArrayList<String> requesters = null;
+            for (BookListing l: allBookLibrary){
+                if (l.getOwnerUsername().equals(listing.getOwnerUsername()) && l.getISBN().equals(listing.getISBN())){
+                    requesters = l.getRequests();
+                }
+            }
+            if (requesters == null) return false;
+
+            requesters.add(CurrentUser.getInstance().getUsername());
+            ref.child("requests").setValue(requesters);
+            allListingsRef.child(allPath).child("requests").setValue(requesters);
+
+//            allListingsRef.child(listing.getISBN()+"-"+CurrentUser.getInstance().getUID()).child("borrowerName").setValue(CurrentUser.getInstance().getUsername());
+            return true;
+        }
+        return false;
+
+    }
+
+    private boolean isBookListingAvailableAndNotOwnBook(BookListing listing) {
+        for (BookListing l: userBookLibrary){
+            if (l.getISBN().equals(listing.getISBN())) return false;
+        }
+
+
+        for (BookListing l: allBookLibrary){
+            if (l.getOwnerUsername().equals(listing.getOwnerUsername()) && l.getISBN().equals(listing.getISBN())){
+                return listing.getStatus() == Available || listing.getStatus()== Requested;
+            }
+        }
+        return false;
     }
 
 
@@ -434,8 +507,8 @@ public class DatabaseManager {
             String uid = CurrentUser.getInstance().getUID();
 
 
-            userLisitngsRef = FirebaseDatabase.getInstance().getReference("/UserBooks/"+uid);
-            userLstingsListener = new ValueEventListener() {
+            userListingsRef = FirebaseDatabase.getInstance().getReference("/UserBooks/"+uid);
+            userListingsListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     // once the data is changed, we just change our corresponding static variable
@@ -459,7 +532,7 @@ public class DatabaseManager {
             };
 
             // This listener should take care of database value change automatically
-            userLisitngsRef.addValueEventListener(userLstingsListener);
+            userListingsRef.addValueEventListener(userListingsListener);
 
 
             usernameRef = FirebaseDatabase.getInstance().getReference("Usernames");

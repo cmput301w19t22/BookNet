@@ -40,6 +40,14 @@ public class Book implements Serializable {
     }
     //#endregion
 
+    public boolean isSameBook(Book book){
+        return title.equals(book.title) && author.equals(book.author) &&
+                isbn.equals(book.isbn);
+
+
+    }
+
+
     //#region Getters Setters
     public String getTitle() {
         return this.title;
@@ -77,5 +85,6 @@ public class Book implements Serializable {
     public String toString(){
         return "book titled: " + title;
     }
+
 
 }

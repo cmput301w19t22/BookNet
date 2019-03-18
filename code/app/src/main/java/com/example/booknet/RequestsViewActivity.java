@@ -18,7 +18,7 @@ public class RequestsViewActivity extends AppCompatActivity {
 
     //App Data
     BookListing listing;
-    ArrayList<String> requests;
+    ArrayList<String> requests = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +49,7 @@ public class RequestsViewActivity extends AppCompatActivity {
         if (listing == null) {
             Toast.makeText(this, "Listing Not Found", Toast.LENGTH_LONG).show();
         } else {
-            requests = listing.getRequesters();
+            requests = listing.getRequests();
         }
 
         //Setup RecyclerView

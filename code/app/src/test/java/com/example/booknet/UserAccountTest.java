@@ -50,7 +50,7 @@ public class UserAccountTest {
     public void AddBookToOwned() {
         UserAccount user = new UserAccount("test_username");
         Book book = new Book("title", "author", "description",  "1234567890");
-        BookListing listing = new BookListing(book, user);
+        BookListing listing = new BookListing(book);
 
         user.addListingToOwned(listing);
 
@@ -62,7 +62,7 @@ public class UserAccountTest {
     public void RemoveBookFromOwned() {
         UserAccount user = new UserAccount("test_username");
         Book book = new Book("title", "author", "description", "1234567890");
-        BookListing listing = new BookListing(book, user);
+        BookListing listing = new BookListing(book);
 
         user.addListingToOwned(listing);
         BookLibrary owned = user.getOwnedLibrary();
@@ -78,7 +78,7 @@ public class UserAccountTest {
         UserAccount user = new UserAccount("test_username_user");
         UserAccount owner = new UserAccount("test_username_owner");
         Book book = new Book("title", "author", "description", "1234567890");
-        BookListing listing = new BookListing(book, owner);
+        BookListing listing = new BookListing(book);
 
         user.addListingToRequested(listing);
 
@@ -91,7 +91,7 @@ public class UserAccountTest {
         UserAccount user = new UserAccount("test_username_user");
         UserAccount owner = new UserAccount("test_username_owner");
         Book book = new Book("title", "author", "description", "1234567890");
-        BookListing listing = new BookListing(book, owner);
+        BookListing listing = new BookListing(book);
 
         user.addListingToRequested(listing);
         BookLibrary requests = user.getRequestedBooks();

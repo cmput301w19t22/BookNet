@@ -59,6 +59,7 @@ public class InitialUserProfileDialog extends DialogFragment {
                         listener.onDialogNegativeClick(InitialUserProfileDialog.this);
                     }
                 });
+        setCancelable(false);
         return builder.create();
     }
 

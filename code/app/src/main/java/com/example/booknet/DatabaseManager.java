@@ -1,5 +1,6 @@
 package com.example.booknet;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
@@ -77,17 +78,49 @@ public class DatabaseManager {
      */
 
     public void writeToAllBookListings(BookListing listing) {
-
-        allListingsRef.child(listing.getBook().getIsbn()+"-"+CurrentUser.getInstance().getUID()).setValue(listing);
+        int dupCount = getDupCount(listing, CurrentUser.getInstance().getUID());
+        String path = generateAllListingPath(listing, dupCount, CurrentUser.getInstance().getUID());
+        allListingsRef.child(path).setValue(listing);```````````````````
     }
+
+    private String generateAllListingPath(BookListing listing, int dupCount, String uid) {
+        return listing.getBook().getIsbn()+"-"+String.valueOf(dupCount)+"-"+uid;
+    }
+
+    public int getDupCount(BookListing listing, String UID) {
+        int currentInd = 0;
+
+        for (BookListing l: allBookLibrary){
+            if (l.hasSameBook(listing) && doesBelong(l, UID)){
+                currentInd += 1;
+            }
+        }
+        return currentInd;
+
+    }
+
+    private boolean doesBelong(BookListing l, String uid) {
+        return getUIDFromName(l.getOwnerUsername()).equals(uid);
+    }
+
+
+    @SuppressLint("DefaultLocale")
+    private String generateUserListingPath(BookListing listing, int dupCount) {
+
+        return String.format("%s-%d", listing.getISBN(), dupCount);
+    }
+
 
     // write a book to the user owned book listings
     // also adds the listing to the app
-    public void writeUserBookListing(BookListing listing) {
+    public void writeUserBookListing(BookListing listing){
 
-        userListingsRef.child(listing.getBook().getIsbn()).setValue(listing);
-        allListingsRef.child(listing.getBook().getIsbn()+"-"+CurrentUser.getInstance().getUID()).setValue(listing);
-    }
+        int dupCount = getDupCount(listing, CurrentUser.getInstance().getUID());
+
+        userListingsRef.child(generateUserListingPath(listing, dupCount)).setValue(listing);
+
+        allListingsRef.child(generateAllListingPath(listing, dupCount, CurrentUser.getInstance().getUID())).setValue(listing);
+	}
 
     public void writeNotification(Notification notification) {
         Log.d("seanTag", "write notification");
@@ -249,6 +282,7 @@ public class DatabaseManager {
     public void connectToDatabase(Activity context) {
 
         progressDialog = new ProgressDialog(context);
+        progressDialog.setCancelable(false);
         progressDialog.setMessage("connecting to database");
 
         progressDialog.show();
@@ -349,8 +383,12 @@ public class DatabaseManager {
      */
     public boolean requestBookListing(BookListing listing, String requester) {
         if (isBookListingAvailableAndNotOwnBook(listing)){
-            allListingsRef.child(listing.getISBN()+"-"+getUIDFromName(listing.getOwnerUsername())).child("status").setValue(Requested);
-            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("UserBooks/"+ getUIDFromName(listing.getOwnerUsername())+"/"+listing.getISBN());
+
+            int dupInd = listing.getDupInd();
+
+            String allPath = generateAllListingPath(listing, dupInd, getUIDFromName(listing.getOwnerUsername()));
+            allListingsRef.child(allPath).child("status").setValue(Requested);
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("UserBooks/"+getUIDFromName(listing.getOwnerUsername())+"/"+generateUserListingPath(listing,dupInd));
             ref.child("status").setValue(Requested);
 
             ArrayList<String> requesters = null;
@@ -363,7 +401,7 @@ public class DatabaseManager {
 
             requesters.add(CurrentUser.getInstance().getUsername());
             ref.child("requests").setValue(requesters);
-            allListingsRef.child(listing.getISBN()+"-"+getUIDFromName(listing.getOwnerUsername())).child("requests").setValue(requesters);
+            allListingsRef.child(allPath).child("requests").setValue(requesters);
 
             writeNotification(new Notification(listing, listing.getOwnerUsername(), requester));
 
@@ -442,6 +480,9 @@ public class DatabaseManager {
             // This listener should take care of database value change automatically
             //allListingsRef.addValueEventListener(allListingsListener);
 
+            String uid = CurrentUser.getInstance().getUID();
+
+            userListingsRef = FirebaseDatabase.getInstance().getReference("/UserBooks/"+uid);
             userListingsListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -464,8 +505,11 @@ public class DatabaseManager {
                     System.out.println("The read failed: " + databaseError.getCode());
                 }
             };
-            userListingsRef = FirebaseDatabase.getInstance().getReference("/UserBooks/"+uid);
+
+            // This listener should take care of database value change automatically
             userListingsRef.addValueEventListener(userListingsListener);
+
+            usernameRef = FirebaseDatabase.getInstance().getReference("Usernames");
 
             // This listener should take care of database value change automatically
             usernameListener = new ValueEventListener() {
@@ -591,7 +635,4 @@ public class DatabaseManager {
     public void allowReadWrite(){
         readwritePermission = true;
     }
-
-
-
 }

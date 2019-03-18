@@ -1,6 +1,8 @@
 package com.example.booknet;
 
-
+import android.provider.ContactsContract;
+import android.util.Log;
+import android.graphics.Bitmap;
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -9,6 +11,10 @@ import java.util.ArrayList;
  */
 public class BookListing implements Serializable, Cloneable {
 
+    public boolean hasSameBook(BookListing listing) {
+        return book.isSameBook(listing.book);
+    }
+
     //Attributes
     private Book book;
     private BookListingStatus status;
@@ -16,6 +22,8 @@ public class BookListing implements Serializable, Cloneable {
     private ArrayList<String> requests;
     private String borrowerName;
     private UserLocation geoLocation;
+    private int dupInd;
+    private DatabaseManager manager = DatabaseManager.getInstance();
 
     /**
      * Constructor that creates an empty listing
@@ -27,7 +35,16 @@ public class BookListing implements Serializable, Cloneable {
         this.status = BookListingStatus.Available;
         this.requests = new ArrayList<String>();
         this.geoLocation = new UserLocation();
+        dupInd = 0;
 
+    }
+
+    public int getDupInd() {
+        return dupInd;
+    }
+
+    public void setDupInd(int ind){
+        dupInd = ind;
     }
 
     /**
@@ -42,6 +59,7 @@ public class BookListing implements Serializable, Cloneable {
         this.status = BookListingStatus.Available;
         this.requests = new ArrayList<String>();
         this.geoLocation = new UserLocation();
+        dupInd = manager.getDupCount(this, CurrentUser.getInstance().getUID());
     }
 
     //#region Getters Setters
@@ -192,8 +210,11 @@ public class BookListing implements Serializable, Cloneable {
         cloned.setGeoLocation(geoLocation);
         cloned.setOwnerUsername(ownerUsername);
 
+
         return cloned;
     }
+
+
 
     private void setOwnerUsername(String ownerUsername) {
         this.ownerUsername = ownerUsername;
@@ -222,6 +243,7 @@ public class BookListing implements Serializable, Cloneable {
         s += book.toString() + " " + borrowerName + " " + status.toString() + " " + requests.toString();
         return s;
     }
+
 
     //#endregion
 

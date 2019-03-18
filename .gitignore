@@ -64,3 +64,8 @@ fastlane/screenshots
 fastlane/test_output
 fastlane/readme.md
 code/.gradle/4.10.1/fileHashes/fileHashes.bin
+
+#debugger setting
+code/app/src/main/java/com/example/booknet/Debugger.java
+
+

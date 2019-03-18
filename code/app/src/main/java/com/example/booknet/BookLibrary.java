@@ -108,7 +108,7 @@ public class BookLibrary implements Serializable, Iterable<BookListing> {
     }
 
 
-    public void filterByStatus(BookLibrary library, BookListing.Status status) {
+    public void filterByStatus(BookLibrary library, BookListingStatus status) {
         books.clear();
         for (BookListing bookListing: library){
 

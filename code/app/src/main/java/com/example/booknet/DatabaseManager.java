@@ -30,6 +30,7 @@ public class DatabaseManager {
     private BookLibrary allBookLibrary = new BookLibrary();
     private Map<String, String> usernames = new HashMap<>();
     private Map<String, String> userProfile = new HashMap<>();
+    private Notifications notifications = new Notifications();
 
     //used to freeze user interaction when connecting
     private ProgressDialog progressDialog;
@@ -39,12 +40,14 @@ public class DatabaseManager {
     private DatabaseReference usernameRef;
     private DatabaseReference userPhoneRef;
     private DatabaseReference userProfileRef;
+    private DatabaseReference notificationRef;
 
     private ValueEventListener allListingsListener;
     private ValueEventListener userListingsListener;
     private ValueEventListener usernameListener;
     private ValueEventListener userPhoneListener;
     private ValueEventListener userProfileListener;
+    private ValueEventListener notificationListener;
 
     private Boolean phoneLoaded = false;
     private Boolean nameLoaded = false;
@@ -53,29 +56,19 @@ public class DatabaseManager {
     //not in effect
     private boolean readwritePermission = false;
 
-
-
-
-
     private DatabaseManager(){
-
     }
 
     public DatabaseReference getUserListingsRef(){
         return userListingsRef;
     }
-    public DatabaseReference getAllLisitngsRef(){
+    public DatabaseReference getAllListingsRef(){
         return allListingsRef;
     }
-
-
 
     public static DatabaseManager getInstance(){
         return manager;
     }
-
-
-
 
     /**
      * Writes a BookListing to the database
@@ -85,22 +78,20 @@ public class DatabaseManager {
 
     public void writeToAllBookListings(BookListing listing) {
 
-
         allListingsRef.child(listing.getBook().getIsbn()+"-"+CurrentUser.getInstance().getUID()).setValue(listing);
-
     }
-
-
 
     // write a book to the user owned book listings
     // also adds the listing to the app
-    public void writeUserBookListing(BookListing listing){
-
+    public void writeUserBookListing(BookListing listing) {
 
         userListingsRef.child(listing.getBook().getIsbn()).setValue(listing);
-
         allListingsRef.child(listing.getBook().getIsbn()+"-"+CurrentUser.getInstance().getUID()).setValue(listing);
+    }
 
+    public void writeNotification(Notification notification) {
+        Log.d("seanTag", notification.getUserReceivingNotification());
+        notificationRef.child(notification.getUserReceivingNotification()).setValue(notification);
     }
 
     /**
@@ -120,17 +111,6 @@ public class DatabaseManager {
     public void writeReview(Review review) {
         //todo: implement
     }
-
-
-    //replaced by writeUserBookListing
-
-//    /**
-//     * Writes the user's library of owned books to the database
-//     *
-//     * @param bookLibrary
-//     */
-//    public void writeOwnedLibrary(BookLibrary bookLibrary) {
-//    }
 
 
     /**
@@ -228,9 +208,7 @@ public class DatabaseManager {
      * @return A list of BookListings from the database if any are found
      */
     public BookLibrary readAllBookListings() {
-
         return allBookLibrary;
-
     }
 
     /**
@@ -329,7 +307,6 @@ public class DatabaseManager {
         if (userProfileRef != null && userProfileListener != null){
             userProfileRef.removeEventListener(userProfileListener);
         }
-
     }
 
     public void writeUserProfile(String newEmail, String newPhone) {
@@ -350,7 +327,6 @@ public class DatabaseManager {
             profile.put("Phone", CurrentUser.getInstance().getAccountPhone());
             return profile;
         }
-
     }
 
     public void onLogOut() {
@@ -367,7 +343,7 @@ public class DatabaseManager {
      * @param listing
      * @return whether the request goes through
      */
-    public boolean requestBookListing(BookListing listing) {
+    public boolean requestBookListing(BookListing listing, String requester) {
         if (isBookListingAvailableAndNotOwnBook(listing)){
             allListingsRef.child(listing.getISBN()+"-"+getUIDFromName(listing.getOwnerUsername())).child("status").setValue(Requested);
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference("UserBooks/"+ getUIDFromName(listing.getOwnerUsername())+"/"+listing.getISBN());
@@ -385,18 +361,17 @@ public class DatabaseManager {
             ref.child("requests").setValue(requesters);
             allListingsRef.child(listing.getISBN()+"-"+getUIDFromName(listing.getOwnerUsername())).child("requests").setValue(requesters);
 
-//            allListingsRef.child(listing.getISBN()+"-"+CurrentUser.getInstance().getUID()).child("borrowerName").setValue(CurrentUser.getInstance().getUsername());
+            writeNotification(new Notification(listing, listing.getOwnerUsername(), requester));
+
             return true;
         }
         return false;
-
     }
 
     private boolean isBookListingAvailableAndNotOwnBook(BookListing listing) {
         for (BookListing l: userBookLibrary){
             if (l.getISBN().equals(listing.getISBN())) return false;
         }
-
 
         for (BookListing l: allBookLibrary){
             if (l.getOwnerUsername().equals(listing.getOwnerUsername()) && l.getISBN().equals(listing.getISBN())){
@@ -406,15 +381,13 @@ public class DatabaseManager {
         return false;
     }
 
-
     public class InitiationTask extends AsyncTask<Void, Void, Boolean> {
         Activity context;
-
+        String uid = CurrentUser.getInstance().getUID();
 
         InitiationTask(Activity context) {
             this.context = context;
         }
-
 
         @Override
         protected Boolean doInBackground(Void... params) {
@@ -423,8 +396,6 @@ public class DatabaseManager {
             allListingsListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-
-
                     allBookLibrary.removeAllBooks();
                     for (DataSnapshot data : dataSnapshot.getChildren()) {
                         BookListing bookListing = data.getValue(BookListing.class);
@@ -445,19 +416,15 @@ public class DatabaseManager {
             // This listener should take care of database value change automatically
             allListingsRef.addValueEventListener(allListingsListener);
 
-
             userProfileListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-
-
                     userProfile.clear();
                     HashMap<String, String> fetchedProfile = (HashMap<String, String>) dataSnapshot.getValue();
 //                    Log.d("mattTag", "fetched" + String.valueOf(fetchedProfile.size()));
                     if (fetchedProfile != null){
                         userProfile.putAll(fetchedProfile);
                     }
-
                 }
 
                 @Override
@@ -469,12 +436,8 @@ public class DatabaseManager {
             userProfileRef.addValueEventListener(userProfileListener);
 
             // This listener should take care of database value change automatically
-            allListingsRef.addValueEventListener(allListingsListener);
+            //allListingsRef.addValueEventListener(allListingsListener);
 
-            String uid = CurrentUser.getInstance().getUID();
-
-
-            userListingsRef = FirebaseDatabase.getInstance().getReference("/UserBooks/"+uid);
             userListingsListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -497,12 +460,8 @@ public class DatabaseManager {
                     System.out.println("The read failed: " + databaseError.getCode());
                 }
             };
-
-            // This listener should take care of database value change automatically
+            userListingsRef = FirebaseDatabase.getInstance().getReference("/UserBooks/"+uid);
             userListingsRef.addValueEventListener(userListingsListener);
-
-
-            usernameRef = FirebaseDatabase.getInstance().getReference("Usernames");
 
             // This listener should take care of database value change automatically
             usernameListener = new ValueEventListener() {
@@ -512,7 +471,6 @@ public class DatabaseManager {
 
                     usernames.clear();
 
-
                     // then fill it as it is in the database
                     for (DataSnapshot data : dataSnapshot.getChildren()) {
                         String name = data.getKey();
@@ -521,7 +479,6 @@ public class DatabaseManager {
                         if (uid.equals(CurrentUser.getInstance().getUID())){
                             CurrentUser.getInstance().setUsername(name);
                         }
-
                     }
 
                     nameLoaded = true;
@@ -540,11 +497,8 @@ public class DatabaseManager {
                             else{
                                 loginPageActivity.goToMainPage();
                             }
-
                         }
-
                     }
-
                 }
 
                 @Override
@@ -552,17 +506,13 @@ public class DatabaseManager {
                     System.out.println("The read failed: " + databaseError.getCode());
                 }
             };
-
+            usernameRef = FirebaseDatabase.getInstance().getReference("Usernames");
             usernameRef.addValueEventListener(usernameListener);
-
-
 
             userPhoneListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     // once the data is changed, we just change our corresponding static variable
-
-
 
                     // then fill it as it is in the database
                     for (DataSnapshot data : dataSnapshot.getChildren()) {
@@ -572,7 +522,6 @@ public class DatabaseManager {
                         if (uid.equals(CurrentUser.getInstance().getUID())){
                             CurrentUser.getInstance().setAccountPhone(phone);
                         }
-
                     }
                     phoneLoaded = true;
                     Log.d("mattTag", "phoneLoaded");
@@ -585,16 +534,13 @@ public class DatabaseManager {
                             progressDialog.dismiss();
                             progressDialog = null;
 
-
                             if (CurrentUser.getInstance().getUsername() == null || CurrentUser.getInstance().getAccountPhone() == null){
                                 loginPageActivity.promptInitialProfile();
                             }
                             else{
                                 loginPageActivity.goToMainPage();
                             }
-
                         }
-
                     }
                 }
 
@@ -603,12 +549,25 @@ public class DatabaseManager {
                     System.out.println("The read failed: " + databaseError.getCode());
                 }
             };
-
             userPhoneRef = FirebaseDatabase.getInstance().getReference("UserPhones");
-
-            // This listener should take care of database value change automatically
             userPhoneRef.addValueEventListener(userPhoneListener);
 
+            notificationListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    for (DataSnapshot data : dataSnapshot.getChildren()) {
+                        //Notification notification = data.getValue(Notification.class);
+                        //notifications.addNotification(notification);
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    System.out.println("The read failed: " + databaseError.getCode());
+                }
+            };
+            notificationRef = FirebaseDatabase.getInstance().getReference("Notifications");
+            notificationRef.addValueEventListener(notificationListener);
 
             return true;
         }
@@ -621,8 +580,6 @@ public class DatabaseManager {
         }
 
     }
-
-
 
     // temporarily not in effect: database read/write permission is always allowed even if connection failed
     // to make this work, handler of failing read/write cases should be added.

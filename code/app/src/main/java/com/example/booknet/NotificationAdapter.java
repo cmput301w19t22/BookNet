@@ -25,7 +25,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
     @NonNull
     @Override
-    public NotificationAdapter.NotificationViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+    public NotificationViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         //Create a new view
         View view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.notification_item_list, viewGroup, false);
@@ -36,19 +36,16 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     @Override
     public void onBindViewHolder(@NonNull NotificationViewHolder notificationViewHolder, int position) {
         //Get the data at the provided position
-        final BookListing item = data.getBookAtPosition(position);
+        final Notification item = data.getNotificationAtPosition(position);
         //Index to pass to the edit activity
         final int index = notificationViewHolder.getAdapterPosition();
 
         //Fill the text fields with the object's data
         //bookListingViewHolder.bookThumbnail.//todo apply photo
-        notificationViewHolder.bookTitleLabel.setText(item.getBook().getTitle());
-        notificationViewHolder.bookAuthorLabel.setText(item.getBook().getAuthor());
-        notificationViewHolder.isbnLabel.setText(item.getBook().getIsbn());
-        notificationViewHolder.ownerLabel.setText(item.getOwnerUsername());
+        notificationViewHolder.bookTitleLabel.setText(item.getRequestedBookListing().getBook().getTitle());
+        notificationViewHolder.userNotificationInfo.setText(item.getUserReceivingNotification().toString());
 
-
-        notificationViewHolder.statusLabel.setText(item.getStatusString());
+        notificationViewHolder.notificationStatus.setText(item.getRequestedBookListing().getStatusString());
         notificationViewHolder.item = item;
 
         //Add the click listener to the item
@@ -63,12 +60,22 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         });
     }
 
-    private void clickedItem(BookListing item) {
+    private void clickedItem(Notification item) {
         //Start View/Edit Activity with Clicked Item
         Intent intent = new Intent(sourceActivity, ListingViewActivity.class);
-        intent.putExtra("username", item.getOwnerUsername());
-        intent.putExtra("bookisbn", item.getBook().getIsbn());
+        intent.putExtra("username", item.getRequestedBookListing().getOwnerUsername());
+        intent.putExtra("bookisbn", item.getRequestedBookListing().getBook().getIsbn());
         sourceActivity.startActivity(intent);
+    }
+
+    /**
+     * Override to get the number of items in the dataset
+     *
+     * @return
+     */
+    @Override
+    public int getItemCount() {
+        return data.size();
     }
 
     public static class NotificationViewHolder extends RecyclerView.ViewHolder {
@@ -76,11 +83,9 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         //Layout Objects
         private ImageView bookThumbnail;
         private TextView bookTitleLabel;
-        private TextView bookAuthorLabel;
-        private TextView isbnLabel;
-        private TextView ownerLabel;
-        private TextView statusLabel;
-        private BookListing item;
+        private TextView userNotificationInfo;
+        private TextView notificationStatus;
+        private Notification item;
 
         /**
          * Creates the BookListingViewHolder
@@ -93,10 +98,8 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             //Obtain Layout Object References
             bookThumbnail = itemView.findViewById(R.id.bookThumbnail);
             bookTitleLabel = itemView.findViewById(R.id.bookTitleLabel);
-            bookAuthorLabel = itemView.findViewById(R.id.bookAuthorLabel);
-            isbnLabel = itemView.findViewById(R.id.isbnLabel);
-            ownerLabel = itemView.findViewById(R.id.ownerLabel);
-            statusLabel = itemView.findViewById(R.id.statusLabel);
+            userNotificationInfo = itemView.findViewById(R.id.UserNotificationInfo);
+            notificationStatus = itemView.findViewById(R.id.NotificationStatus);
         }
     }
 }

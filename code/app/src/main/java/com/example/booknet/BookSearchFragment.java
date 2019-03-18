@@ -93,7 +93,7 @@ public class BookSearchFragment extends Fragment {
             }
         };
 
-        manager.getAllLisitngsRef().addValueEventListener(listener);
+        manager.getAllListingsRef().addValueEventListener(listener);
 
 //        mSoundPool = new SoundPool(MAX_STREAM, AudioManager.STREAM_MUSIC, 0);
 //        final int backgroundSoundId = mSoundPool.load(this, R.raw.nice_keyboard_sound, 0);
@@ -148,7 +148,7 @@ public class BookSearchFragment extends Fragment {
 
 
     public void onDestroy() {
-        manager.getAllLisitngsRef().removeEventListener(listener);
+        manager.getAllListingsRef().removeEventListener(listener);
         super.onDestroy();
     }
 

@@ -79,7 +79,7 @@ public class ListingViewActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 sendRequest();
-                startActivity(new Intent(ListingViewActivity.this, BookSearchFragment.class));
+                //startActivity(new Intent(ListingViewActivity.this, BookSearchFragment.class));
                 finish();
             }
         });
@@ -98,7 +98,7 @@ public class ListingViewActivity extends AppCompatActivity {
      * Creates a request for this book listing from the current user.
      */
     private void sendRequest() {
-        boolean res = manager.requestBookListing(listing);
+        boolean res = manager.requestBookListing(listing, CurrentUser.getInstance().getUserAccount().getUsername());
         if (res){
             Toast.makeText(this, "book requested", Toast.LENGTH_SHORT).show();
         }

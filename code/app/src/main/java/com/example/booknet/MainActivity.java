@@ -30,22 +30,23 @@ public class MainActivity extends FragmentActivity {
 
         @Override
         public int getCount() {
-            return 3;
+            return 4;
         }
 
         @Override
         public Fragment getItem(int position) {
             Log.d("mattTag", "position "+String.valueOf(position));
-            if (position == 0){
-
+            if (position == 0) {
                 return BookSearchFragment.newInstance();
             }
-
-            if (position == 1){
+            else if (position == 1) {
                 return OwnedLibraryFragment.newInstance();
             }
-            else if (position == 2){
+            else if (position == 2) {
                 return UserProfileViewFragment.newInstance();
+            }
+            else if (position == 3) {
+                return NotificationFragment.newInstance();
             }
 
             return BookSearchFragment.newInstance();
@@ -57,9 +58,6 @@ public class MainActivity extends FragmentActivity {
     private SearchView searchBar;
     MyAdapter mAdapter;
     ViewPager mPager;
-
-
-
 
     //Set Click Listener for Navigation Bar
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -78,7 +76,8 @@ public class MainActivity extends FragmentActivity {
                     myAccountClicked();
                     return true;
                 case R.id.navigation_notifications:
-                    mTextMessage.setText(R.string.title_notifications);
+                    myNotificationsClicked();
+                    //mTextMessage.setText(R.string.title_notifications);
                     return true;
             }
             return false;
@@ -89,7 +88,6 @@ public class MainActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
         setContentView(R.layout.activity_main);
 
         mAdapter = new MyAdapter(getSupportFragmentManager());
@@ -97,13 +95,9 @@ public class MainActivity extends FragmentActivity {
         mPager = (ViewPager)findViewById(R.id.pager);
         mPager.setAdapter(mAdapter);
 
-
-
-
-        mTextMessage = (TextView) findViewById(R.id.message);
         final BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-        mPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        /*mPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int i, float v, int i1) {
 
@@ -111,19 +105,18 @@ public class MainActivity extends FragmentActivity {
 
             @Override
             public void onPageSelected(int i) {
-                if (i == 0){
-
+                if (i == 0) {
                     navigation.setSelectedItemId(R.id.navigation_search);
                 }
-
-                if (i == 1){
+                else if (i == 1) {
                     navigation.setSelectedItemId(R.id.navigation_mybooks);
                 }
-                else if (i == 2){
+                else if (i == 2) {
                     navigation.setSelectedItemId(R.id.navigation_myaccount);
                 }
-
-
+                else if (i == 3) {
+                    navigation.setSelectedItemId(R.id.navigation_notifications);
+                }
             }
 
             @Override
@@ -131,27 +124,18 @@ public class MainActivity extends FragmentActivity {
 
             }
         });
-        searchBar = findViewById(R.id.mainSearch);
+        searchBar = findViewById(R.id.mainSearch);*/
 
         Log.d("mattTag", "leaving main activity onCreate");
     }
 
+    private void onSearchClicked() { mPager.setCurrentItem(0); }
 
-    private void myBooksClicked() {
-        mPager.setCurrentItem(1);
-    }
+    private void myBooksClicked() { mPager.setCurrentItem(1); }
 
-    private void myAccountClicked() {
-        mPager.setCurrentItem(2);
+    private void myAccountClicked() { mPager.setCurrentItem(2); }
 
-    }
-
-    private void onSearchClicked() {
-        mPager.setCurrentItem(0);
-//        Intent intent = new Intent(this, BookSearchFragment.class);
-//        startActivity(intent);
-
-    }
+    private void myNotificationsClicked() { mPager.setCurrentItem(3); }
 
     @Override
     public void onBackPressed() {

@@ -78,20 +78,10 @@ public class CurrentUser {
      * @param book The book to add.
      */
     public void requestAddBook(Book book) {
-
-
         //Create a listing for the new book
         BookListing newListing = new BookListing(book);
-
-        // no more adding to memory, adding to database is enough
-//        account.addListingToOwned(newListing);
-
-
         //add the listing to the database
-
-
         manager.writeUserBookListing(newListing);
-
     }
 
     /**

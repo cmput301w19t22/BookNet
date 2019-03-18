@@ -50,8 +50,6 @@ public class OwnedLibraryFragment extends Fragment {
         return myFragment;
     }
 
-
-
     /**
      * Called when creating the activity.
      * Sets a click listener for the add button
@@ -126,7 +124,7 @@ public class OwnedLibraryFragment extends Fragment {
                     Log.d("mattTag", "after copying: " + filteredLibrary.toString());
                 } else {
                     Log.d("mattTag", "yi");
-                    filteredLibrary.filterByStatus(library, BookListing.Status.valueOf(selectedItem));
+                    filteredLibrary.filterByStatus(library, BookListingStatus.valueOf(selectedItem));
                 }
 
                 listingAdapter.notifyDataSetChanged();

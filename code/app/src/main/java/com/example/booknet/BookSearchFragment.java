@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -144,8 +145,15 @@ public class BookSearchFragment extends Fragment {
 
 
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        //listingAdapter.notifyDataSetChanged();
+    }
 
-
+    public void notifyDataSetChanged() {
+        //listingAdapter.notifyDataSetChanged();
+    }
 
     public void onDestroy() {
         manager.getAllListingsRef().removeEventListener(listener);

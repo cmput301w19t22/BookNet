@@ -2,6 +2,7 @@ package com.example.booknet;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -16,9 +17,9 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     private Notifications data;
 
     //The activity this adapter was created from
-    private AppCompatActivity sourceActivity;
+    private FragmentActivity sourceActivity;
 
-    public NotificationAdapter(Notifications data, AppCompatActivity sourceActivity) {
+    public NotificationAdapter(Notifications data, FragmentActivity sourceActivity) {
         this.data = data;
         this.sourceActivity = sourceActivity;
     }

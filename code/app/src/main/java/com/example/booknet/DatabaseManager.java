@@ -90,7 +90,7 @@ public class DatabaseManager {
     }
 
     public void writeNotification(Notification notification) {
-        Log.d("seanTag", notification.getUserReceivingNotification());
+        Log.d("seanTag", "write notification");
         notificationRef.child(notification.getUserReceivingNotification()).setValue(notification);
     }
 
@@ -209,6 +209,10 @@ public class DatabaseManager {
      */
     public BookLibrary readAllBookListings() {
         return allBookLibrary;
+    }
+
+    public Notifications readAllNotifications() {
+        return notifications;
     }
 
     /**
@@ -556,9 +560,10 @@ public class DatabaseManager {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     for (DataSnapshot data : dataSnapshot.getChildren()) {
-                        //Notification notification = data.getValue(Notification.class);
-                        //notifications.addNotification(notification);
+                        Notification notification = data.getValue(Notification.class);
+                        notifications.addNotification(notification);
                     }
+                    Log.d("seanTag", "read notification");
                 }
 
                 @Override
@@ -566,7 +571,7 @@ public class DatabaseManager {
                     System.out.println("The read failed: " + databaseError.getCode());
                 }
             };
-            notificationRef = FirebaseDatabase.getInstance().getReference("Notifications");
+            notificationRef = FirebaseDatabase.getInstance().getReference("Notifications"+CurrentUser.getInstance().getUsername());
             notificationRef.addValueEventListener(notificationListener);
 
             return true;

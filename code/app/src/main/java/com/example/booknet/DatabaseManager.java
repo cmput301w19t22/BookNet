@@ -42,6 +42,8 @@ public class DatabaseManager {
     private DatabaseReference userPhoneRef;
     private DatabaseReference userProfileRef;
     private DatabaseReference notificationRef;
+    private DatabaseReference notificationRefOther;
+    private DatabaseReference notificationRefSelf;
 
     private ValueEventListener allListingsListener;
     private ValueEventListener userListingsListener;
@@ -124,7 +126,10 @@ public class DatabaseManager {
 
     public void writeNotification(Notification notification) {
         Log.d("seanTag", "write notification");
-        notificationRef.child(notification.getUserReceivingNotification()).push().setValue(notification);
+        notificationRef.child(notification.getUserReceivingNotification()
+                + "-" + notification.getUserMakingNotification()
+                + "-" + notification.getRequestedBookListing().getISBN()
+                + "-" + notification.getRequestedBookListing().getDupInd()).setValue(notification);
     }
 
     /**
@@ -605,8 +610,10 @@ public class DatabaseManager {
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     for (DataSnapshot data : dataSnapshot.getChildren()) {
                         Notification notification = data.getValue(Notification.class);
-                        Log.d("seanTag",  notification.getRequestedBookListing().getBook().getTitle());
-                        notifications.addNotification(notification);
+                        Log.d("seanTag", "check user "+notification.getUserReceivingNotification());
+                        if (notification.getUserReceivingNotification().equals(CurrentUser.getInstance().getUsername())) {
+                            notifications.addNotification(notification);
+                        }
                     }
                     Log.d("seanTag", "read notification " +CurrentUser.getInstance().getUsername());
                 }
@@ -616,7 +623,7 @@ public class DatabaseManager {
                     System.out.println("The read failed: " + databaseError.getCode());
                 }
             };
-            notificationRef = FirebaseDatabase.getInstance().getReference("/Notifications/"+CurrentUser.getInstance().getUsername());
+            notificationRef = FirebaseDatabase.getInstance().getReference("Notifications");
             notificationRef.addValueEventListener(notificationListener);
 
             return true;

@@ -33,7 +33,9 @@ public class NotificationFragment extends Fragment {
 
         notifications = manager.getAllNotifications();
 
-        Log.d("seanTag", "notifications size: "+notifications.size());
+        for (Notification notification : notifications) {
+            Log.d("seanTag", notification.getRequestedBookListing().getBook().getTitle());
+        }
 
         notificationsListView = view.findViewById(R.id.notifications);
         notificationsListView.setLayoutManager(new LinearLayoutManager(getActivity()));

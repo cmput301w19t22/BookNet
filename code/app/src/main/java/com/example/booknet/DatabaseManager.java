@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.example.booknet.BookListingStatus.Accepted;
 import static com.example.booknet.BookListingStatus.Available;
 import static com.example.booknet.BookListingStatus.Requested;
 
@@ -199,7 +200,23 @@ public class DatabaseManager {
      * @param requester   The user whose request is accepted
      */
     public void acceptRequestForListing(BookListing bookListing, String requester) {
-        //todo:implement
+        DatabaseReference allRef = allListingsRef.child(generateAllListingPath(bookListing, bookListing.getDupInd(), getUIDFromName(bookListing.getOwnerUsername())));
+        allRef.child("status").setValue(Accepted);
+        allRef.child("requests").removeValue();
+        allRef.child("borrowerName").setValue(requester);
+
+        DatabaseReference userRef = userListingsRef.child(generateUserListingPath(bookListing, bookListing.getDupInd()));
+        userRef.child("status").setValue(Accepted);
+        userRef.child("requests").removeValue();
+        userRef.child("borrowerName").setValue(requester);
+
+    }
+
+
+
+    private void changeStatusToAcceptedAndSetBorrowerName(BookListing bookListing) {
+
+
     }
 
     /**
@@ -291,7 +308,7 @@ public class DatabaseManager {
 
     }
 
-    public BookListing readUserOwnedBookListingWithISBN(String isbn) {
+    public BookListing readUserOwnedBookListing(String isbn, int dupID) {
         for (BookListing listing: userBookLibrary){
             if (listing.getBook().getIsbn().equals(isbn)){
                 return listing;

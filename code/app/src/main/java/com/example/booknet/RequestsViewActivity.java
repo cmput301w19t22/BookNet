@@ -59,5 +59,7 @@ public class RequestsViewActivity extends AppCompatActivity {
         requestsList.setLayoutManager(new LinearLayoutManager(this));
         requestAdapter = new UserRequestAdapter(listing, this);
         requestsList.setAdapter(requestAdapter);
+
+        requestAdapter.notifyDataSetChanged();
     }
 }

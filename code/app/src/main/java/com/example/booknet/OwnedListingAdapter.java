@@ -97,8 +97,8 @@ public class OwnedListingAdapter extends RecyclerView.Adapter<OwnedListingAdapte
         //Start View/Edit Activity with Clicked Item
         Intent intent = new Intent(sourceActivity, OwnListingViewActivity.class);
         if (item != null) {
-            intent.putExtra("username", item.getOwnerUsername());
-            intent.putExtra("bookisbn", item.getBook().getIsbn());
+            intent.putExtra("isbn", item.getBook().getIsbn());
+            intent.putExtra("dupID", item.getDupInd());
         }
         sourceActivity.startActivity(intent);
     }

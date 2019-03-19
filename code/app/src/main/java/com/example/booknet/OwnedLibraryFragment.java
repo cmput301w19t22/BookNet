@@ -120,11 +120,8 @@ public class OwnedLibraryFragment extends Fragment {
                 if (selectedView != null){
                     String selectedItem = selectedView.getText().toString();
                     if (selectedItem.equals("All")) {
-                        Log.d("mattTag", "copying one by one");
                         filteredLibrary.copyOneByOne(library);
-                        Log.d("mattTag", "after copying: " + filteredLibrary.toString());
                     } else {
-                        Log.d("mattTag", "yi");
                         filteredLibrary.filterByStatus(library, BookListingStatus.valueOf(selectedItem));
                     }
 
@@ -152,8 +149,6 @@ public class OwnedLibraryFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        Log.d("mattTag", "starting the activity, notifying");
-        Log.d("mattTag", "when starting, the books are: " + filteredLibrary.toString());
         //Update List Data
         listingAdapter.notifyDataSetChanged();
     }

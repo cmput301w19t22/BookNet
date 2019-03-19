@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -56,6 +57,7 @@ public class OwnListingViewActivity extends AppCompatActivity {
         ownerLabel = findViewById(R.id.ownerLabel);
         statusLabel = findViewById(R.id.statusLabel);
         requestCountLabel = findViewById(R.id.requestCountLabel);
+//        Log.d("mattTag", "yeah");
         requestButton = findViewById(R.id.requestButton);
         viewRequestsButton = findViewById(R.id.viewRequestsButton);
         deleteButton = findViewById(R.id.deleteButton);
@@ -66,10 +68,11 @@ public class OwnListingViewActivity extends AppCompatActivity {
         //Get Intent
         Intent intent = getIntent();
         //Check if given info to fetch listing
-        if (intent.hasExtra("bookisbn")) {
-            // todo: fix this for book listings duplicate isbn
-            String isbn = intent.getStringExtra("bookisbn");
-            listing = manager.readUserOwnedBookListingWithISBN(isbn);
+        if (intent.hasExtra("isbn")) {
+            String isbn = intent.getStringExtra("isbn");
+            int dupID = intent.getIntExtra("dupID", 0);
+
+            listing = manager.readUserOwnedBookListing(isbn, dupID);
 
             fillLayout();
         }
@@ -138,7 +141,7 @@ public class OwnListingViewActivity extends AppCompatActivity {
             statusLabel.setText(listing.getStatus().toString());
             int numRequests = listing.getRequests().size();
             if (numRequests > 0) {
-                requestCountLabel.setText(numRequests);
+                requestCountLabel.setText(String.valueOf(numRequests));
             } else {
                 //requestCountLabel.setVisibility(View.INVISIBLE);//todo ???
             }
@@ -154,8 +157,8 @@ public class OwnListingViewActivity extends AppCompatActivity {
     private void editBook(BookListing item) {
         if (item != null) {
             Intent intent = new Intent(this, EditBookActivity.class);
-            intent.putExtra("username", item.getOwnerUsername());
-            intent.putExtra("bookisbn", item.getBook().getIsbn());
+            intent.putExtra("dupInd", item.getDupInd());
+            intent.putExtra("isbn", item.getBook().getIsbn());
             startActivity(intent);
         }
     }

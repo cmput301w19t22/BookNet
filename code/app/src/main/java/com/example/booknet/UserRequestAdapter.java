@@ -14,6 +14,11 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+
+/**
+ * Adapter for displaying a request in a recycler view list with accept and decline buttons.
+ * @author Jamie
+ */
 public class UserRequestAdapter extends RecyclerView.Adapter<UserRequestAdapter.RequestViewHolder> {
 
     //The requester usernames

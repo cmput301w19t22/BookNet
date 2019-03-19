@@ -144,6 +144,7 @@ public class OwnListingViewActivity extends AppCompatActivity {
                 requestCountLabel.setText(String.valueOf(numRequests));
             } else {
                 //requestCountLabel.setVisibility(View.INVISIBLE);//todo ???
+                viewRequestsButton.setVisibility(View.GONE);
             }
         }
     }

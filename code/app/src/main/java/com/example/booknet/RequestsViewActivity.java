@@ -9,6 +9,12 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+
+/**
+ * An activity for viewing which users have requested a listing and
+ * allow the owner to acccept or deny each of these requests.
+ * @author Jamie
+ */
 public class RequestsViewActivity extends AppCompatActivity {
 
     //Layout Objects

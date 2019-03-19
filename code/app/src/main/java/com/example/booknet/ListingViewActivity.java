@@ -79,6 +79,7 @@ public class ListingViewActivity extends AppCompatActivity {
         requestButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //todo toggle between send and cancel depending on whether currently requested
                 sendRequest();
 //                startActivity(new Intent(ListingViewActivity.this, MainActivity.class));
                 finish();

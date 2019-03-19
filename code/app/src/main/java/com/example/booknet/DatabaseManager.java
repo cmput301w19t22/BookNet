@@ -29,6 +29,7 @@ public class DatabaseManager {
     private static final DatabaseManager manager = new DatabaseManager();
 
     private BookLibrary userBookLibrary = new BookLibrary();
+    private BookLibrary userRequestLibrary = new BookLibrary();
     private BookLibrary allBookLibrary = new BookLibrary();
     private Map<String, String> usernames = new HashMap<>();
     private Map<String, String> userProfile = new HashMap<>();
@@ -60,17 +61,18 @@ public class DatabaseManager {
     //not in effect
     private boolean readwritePermission = false;
 
-    private DatabaseManager(){
+    private DatabaseManager() {
     }
 
-    public DatabaseReference getUserListingsRef(){
+    public DatabaseReference getUserListingsRef() {
         return userListingsRef;
     }
-    public DatabaseReference getAllListingsRef(){
+
+    public DatabaseReference getAllListingsRef() {
         return allListingsRef;
     }
 
-    public static DatabaseManager getInstance(){
+    public static DatabaseManager getInstance() {
         return manager;
     }
 
@@ -87,14 +89,14 @@ public class DatabaseManager {
     }
 
     private String generateAllListingPath(BookListing listing, int dupCount, String uid) {
-        return listing.getBook().getIsbn()+"-"+String.valueOf(dupCount)+"-"+uid;
+        return listing.getBook().getIsbn() + "-" + String.valueOf(dupCount) + "-" + uid;
     }
 
     public int getDupCount(BookListing listing, String UID) {
         int currentInd = 0;
 
-        for (BookListing l: allBookLibrary){
-            if (l.hasSameBook(listing) && doesBelong(l, UID)){
+        for (BookListing l : allBookLibrary) {
+            if (l.hasSameBook(listing) && doesBelong(l, UID)) {
                 currentInd += 1;
             }
         }
@@ -116,14 +118,14 @@ public class DatabaseManager {
 
     // write a book to the user owned book listings
     // also adds the listing to the app
-    public void writeUserBookListing(BookListing listing){
+    public void writeUserBookListing(BookListing listing) {
 
         int dupCount = getDupCount(listing, CurrentUser.getInstance().getUID());
 
         userListingsRef.child(generateUserListingPath(listing, dupCount)).setValue(listing);
 
         allListingsRef.child(generateAllListingPath(listing, dupCount, CurrentUser.getInstance().getUID())).setValue(listing);
-	}
+    }
 
     public void writeNotification(Notification notification) {
         Log.d("seanTag", "write notification");
@@ -170,7 +172,7 @@ public class DatabaseManager {
      */
     public void removeBookListing(BookListing bookListing) {
         userListingsRef.child(bookListing.getBook().getIsbn()).removeValue();
-        allListingsRef.child(bookListing.getBook().getIsbn()+"-"+CurrentUser.getInstance().getUID()).removeValue();
+        allListingsRef.child(bookListing.getBook().getIsbn() + "-" + CurrentUser.getInstance().getUID()).removeValue();
     }
 
 
@@ -216,7 +218,6 @@ public class DatabaseManager {
         userRef.child("borrowerName").setValue(requester);
 
     }
-
 
 
     private void changeStatusToAcceptedAndSetBorrowerName(BookListing bookListing) {
@@ -283,7 +284,7 @@ public class DatabaseManager {
     }
 
     /**
-     * Reads the user's library of owned books from the database.
+     * Reads the current user's library of owned books from the database.
      *
      * @return A BookLibrary for the given user
      */
@@ -292,14 +293,12 @@ public class DatabaseManager {
     }
 
     /**
-     * Reads the user's library of requested books from the database.
+     * Reads the current user's library of requested books from the database.
      *
-     * @param username The user whose books to read.
      * @return A BookLibrary for the given user
      */
-    public BookLibrary readUserRequests(String username) {
-        //todo: implement
-        return null;
+    public BookLibrary readUserRequestLibrary() {
+        return userRequestLibrary;
     }
 
     public void connectToDatabase(Activity context) {
@@ -314,8 +313,8 @@ public class DatabaseManager {
     }
 
     public BookListing readUserOwnedBookListing(String isbn, int dupID) {
-        for (BookListing listing: userBookLibrary){
-            if (listing.getBook().getIsbn().equals(isbn)){
+        for (BookListing listing : userBookLibrary) {
+            if (listing.getBook().getIsbn().equals(isbn)) {
                 return listing;
             }
         }
@@ -332,11 +331,11 @@ public class DatabaseManager {
      *
      * @param username the username to write to the database
      */
-    public void writeUsername(String username){
+    public void writeUsername(String username) {
         usernameRef.child(username).setValue(CurrentUser.getInstance().getUID());
     }
 
-    public void writeUserPhone(String phone){
+    public void writeUserPhone(String phone) {
         userPhoneRef.child(CurrentUser.getInstance().getUID()).setValue(phone);
     }
 
@@ -351,13 +350,13 @@ public class DatabaseManager {
         if (userListingsRef != null && userListingsListener != null) {
             userListingsRef.removeEventListener(userListingsListener);
         }
-        if (userPhoneRef!= null && userPhoneListener!= null) {
+        if (userPhoneRef != null && userPhoneListener != null) {
             userPhoneRef.removeEventListener(userPhoneListener);
         }
-        if (usernameRef!= null && usernameListener!= null) {
+        if (usernameRef != null && usernameListener != null) {
             usernameRef.removeEventListener(usernameListener);
         }
-        if (userProfileRef != null && userProfileListener != null){
+        if (userProfileRef != null && userProfileListener != null) {
             userProfileRef.removeEventListener(userProfileListener);
         }
     }
@@ -367,12 +366,11 @@ public class DatabaseManager {
         userProfileRef.child("Phone").setValue(newPhone);
     }
 
-    public HashMap<String, String> readUserProfile(){
+    public HashMap<String, String> readUserProfile() {
 
-        if (userProfile.size() == 2){
+        if (userProfile.size() == 2) {
             return (HashMap<String, String>) userProfile;
-        }
-        else{
+        } else {
             Log.d("mattTag", "nahnah");
             Log.d("mattTag", String.valueOf(userProfile.size()));
             HashMap<String, String> profile = new HashMap<String, String>();
@@ -388,7 +386,7 @@ public class DatabaseManager {
         nameLoaded = false;
     }
 
-    public String getUIDFromName(String name){
+    public String getUIDFromName(String name) {
         return usernames.get(name);
     }
 
@@ -397,18 +395,18 @@ public class DatabaseManager {
      * @return whether the request goes through
      */
     public boolean requestBookListing(BookListing listing, String requester) {
-        if (isBookListingAvailableAndNotOwnBook(listing)){
+        if (isBookListingAvailableAndNotOwnBook(listing)) {
 
             int dupInd = listing.getDupInd();
 
             String allPath = generateAllListingPath(listing, dupInd, getUIDFromName(listing.getOwnerUsername()));
             allListingsRef.child(allPath).child("status").setValue(Requested);
-            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("UserBooks/"+getUIDFromName(listing.getOwnerUsername())+"/"+generateUserListingPath(listing,dupInd));
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("UserBooks/" + getUIDFromName(listing.getOwnerUsername()) + "/" + generateUserListingPath(listing, dupInd));
             ref.child("status").setValue(Requested);
 
             ArrayList<String> requesters = null;
-            for (BookListing l: allBookLibrary){
-                if (l.getOwnerUsername().equals(listing.getOwnerUsername()) && l.getISBN().equals(listing.getISBN())){
+            for (BookListing l : allBookLibrary) {
+                if (l.getOwnerUsername().equals(listing.getOwnerUsername()) && l.getISBN().equals(listing.getISBN())) {
                     requesters = l.getRequests();
                 }
             }
@@ -426,13 +424,13 @@ public class DatabaseManager {
     }
 
     private boolean isBookListingAvailableAndNotOwnBook(BookListing listing) {
-        for (BookListing l: userBookLibrary){
+        for (BookListing l : userBookLibrary) {
             if (l.getISBN().equals(listing.getISBN())) return false;
         }
 
-        for (BookListing l: allBookLibrary){
-            if (l.getOwnerUsername().equals(listing.getOwnerUsername()) && l.getISBN().equals(listing.getISBN())){
-                return listing.getStatus() == Available || listing.getStatus()== Requested;
+        for (BookListing l : allBookLibrary) {
+            if (l.getOwnerUsername().equals(listing.getOwnerUsername()) && l.getISBN().equals(listing.getISBN())) {
+                return listing.getStatus() == Available || listing.getStatus() == Requested;
             }
         }
         return false;
@@ -442,13 +440,13 @@ public class DatabaseManager {
      * read a bookListing from database
      *
      * @param username: the book listing's owner
-     * @param isbn: the isbn of the book
-     * @param dupID: the dupID of the book (saved as a field in the BookListing class)
+     * @param isbn:     the isbn of the book
+     * @param dupID:    the dupID of the book (saved as a field in the BookListing class)
      * @return
      */
     public BookListing readBookListingOfUsername(String username, String isbn, int dupID) {
-        for (BookListing l: allBookLibrary){
-            if (l.getOwnerUsername().equals(username) && l.getISBN().equals(isbn) && l.getDupInd() == dupID){
+        for (BookListing l : allBookLibrary) {
+            if (l.getOwnerUsername().equals(username) && l.getISBN().equals(isbn) && l.getDupInd() == dupID) {
                 return l;
             }
         }
@@ -496,7 +494,7 @@ public class DatabaseManager {
                     userProfile.clear();
                     HashMap<String, String> fetchedProfile = (HashMap<String, String>) dataSnapshot.getValue();
 //                    Log.d("mattTag", "fetched" + String.valueOf(fetchedProfile.size()));
-                    if (fetchedProfile != null){
+                    if (fetchedProfile != null) {
                         userProfile.putAll(fetchedProfile);
                     }
                 }
@@ -506,7 +504,7 @@ public class DatabaseManager {
                     System.out.println("The read failed: " + databaseError.getCode());
                 }
             };
-            userProfileRef = FirebaseDatabase.getInstance().getReference("/UserProfiles/"+CurrentUser.getInstance().getUID());
+            userProfileRef = FirebaseDatabase.getInstance().getReference("/UserProfiles/" + CurrentUser.getInstance().getUID());
             userProfileRef.addValueEventListener(userProfileListener);
 
             // This listener should take care of database value change automatically
@@ -536,7 +534,7 @@ public class DatabaseManager {
                     System.out.println("The read failed: " + databaseError.getCode());
                 }
             };
-            userListingsRef = FirebaseDatabase.getInstance().getReference("/UserBooks/"+uid);
+            userListingsRef = FirebaseDatabase.getInstance().getReference("/UserBooks/" + uid);
             // This listener should take care of database value change automatically
             userListingsRef.addValueEventListener(userListingsListener);
 
@@ -555,25 +553,24 @@ public class DatabaseManager {
                         String name = data.getKey();
                         String uid = data.getValue(String.class);
                         usernames.put(name, uid);
-                        if (uid.equals(CurrentUser.getInstance().getUID())){
+                        if (uid.equals(CurrentUser.getInstance().getUID())) {
                             CurrentUser.getInstance().setUsername(name);
                         }
                     }
 
                     nameLoaded = true;
                     Log.d("mattTag", "nameLoaded");
-                    if (phoneLoaded && progressDialog != null){
+                    if (phoneLoaded && progressDialog != null) {
                         Log.d("mattTag", "checking from name");
-                        if (onLoginPage){
+                        if (onLoginPage) {
                             LoginPageActivity loginPageActivity = (LoginPageActivity) context;
                             progressDialog.dismiss();
                             progressDialog = null;
                             Log.d("mattTag", "dismissed from name");
 
-                            if (CurrentUser.getInstance().getUsername() == null || CurrentUser.getInstance().getAccountPhone() == null){
+                            if (CurrentUser.getInstance().getUsername() == null || CurrentUser.getInstance().getAccountPhone() == null) {
                                 loginPageActivity.promptInitialProfile();
-                            }
-                            else{
+                            } else {
                                 loginPageActivity.goToMainPage();
                             }
                         }
@@ -598,25 +595,24 @@ public class DatabaseManager {
                         String uid = data.getKey();
                         String phone = data.getValue(String.class);
 
-                        if (uid.equals(CurrentUser.getInstance().getUID())){
+                        if (uid.equals(CurrentUser.getInstance().getUID())) {
                             CurrentUser.getInstance().setAccountPhone(phone);
                         }
                     }
                     phoneLoaded = true;
                     Log.d("mattTag", "phoneLoaded");
-                    if (nameLoaded && progressDialog != null){
+                    if (nameLoaded && progressDialog != null) {
                         Log.d("mattTag", "checking from phone");
                         Log.d("mattTag", onLoginPage.toString());
-                        if (onLoginPage){
+                        if (onLoginPage) {
 
                             LoginPageActivity loginPageActivity = (LoginPageActivity) context;
                             progressDialog.dismiss();
                             progressDialog = null;
 
-                            if (CurrentUser.getInstance().getUsername() == null || CurrentUser.getInstance().getAccountPhone() == null){
+                            if (CurrentUser.getInstance().getUsername() == null || CurrentUser.getInstance().getAccountPhone() == null) {
                                 loginPageActivity.promptInitialProfile();
-                            }
-                            else{
+                            } else {
                                 loginPageActivity.goToMainPage();
                             }
                         }
@@ -636,12 +632,12 @@ public class DatabaseManager {
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     for (DataSnapshot data : dataSnapshot.getChildren()) {
                         Notification notification = data.getValue(Notification.class);
-                        Log.d("seanTag", "check user "+notification.getUserReceivingNotification());
+                        Log.d("seanTag", "check user " + notification.getUserReceivingNotification());
                         if (notification.getUserReceivingNotification().equals(CurrentUser.getInstance().getUsername())) {
                             notifications.addNotification(notification);
                         }
                     }
-                    Log.d("seanTag", "read notification " +CurrentUser.getInstance().getUsername());
+                    Log.d("seanTag", "read notification " + CurrentUser.getInstance().getUsername());
                 }
 
                 @Override
@@ -666,7 +662,7 @@ public class DatabaseManager {
 
     // temporarily not in effect: database read/write permission is always allowed even if connection failed
     // to make this work, handler of failing read/write cases should be added.
-    public void allowReadWrite(){
+    public void allowReadWrite() {
         readwritePermission = true;
     }
 }

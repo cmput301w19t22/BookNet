@@ -105,7 +105,7 @@ public class OwnedLibraryFragment extends Fragment {
 
 
         Log.d("matt", "creating new adpator");
-
+        //Apply Adapter to RecyclerView
         libraryListView = view.findViewById(R.id.bookLibrary);
         libraryListView.setLayoutManager(new LinearLayoutManager(getActivity()));
         listingAdapter = new OwnedListingAdapter(filteredLibrary, getActivity());

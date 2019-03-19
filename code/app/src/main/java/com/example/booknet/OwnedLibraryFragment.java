@@ -117,10 +117,8 @@ public class OwnedLibraryFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 TextView selectedView = (TextView) view;
-                String selectedItem = "";
-                if (selectedView != null) {
-                    selectedItem = selectedView.getText().toString();
-
+                if (selectedView != null){
+                    String selectedItem = selectedView.getText().toString();
                     if (selectedItem.equals("All")) {
                         Log.d("mattTag", "copying one by one");
                         filteredLibrary.copyOneByOne(library);
@@ -129,9 +127,10 @@ public class OwnedLibraryFragment extends Fragment {
                         Log.d("mattTag", "yi");
                         filteredLibrary.filterByStatus(library, BookListingStatus.valueOf(selectedItem));
                     }
+
+                    listingAdapter.notifyDataSetChanged();
                 }
 
-                listingAdapter.notifyDataSetChanged();
 
             }
 

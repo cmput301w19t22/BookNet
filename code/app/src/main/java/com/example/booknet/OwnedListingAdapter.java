@@ -142,7 +142,7 @@ public class OwnedListingAdapter extends RecyclerView.Adapter<OwnedListingAdapte
             bookAuthorLabel = itemView.findViewById(R.id.bookAuthorLabel);
             isbnLabel = itemView.findViewById(R.id.isbnLabel);
             ownerLabel = itemView.findViewById(R.id.ownerLabel);
-            ownedLabel = itemView.findViewById(R.id.UserNotificationInfo);
+            ownedLabel = itemView.findViewById(R.id.ownedBy);
             statusLabel = itemView.findViewById(R.id.statusLabel);
 
             bookTitleLabel.setSelected(true);//select to enable scrolling

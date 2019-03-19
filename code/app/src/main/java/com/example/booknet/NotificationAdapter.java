@@ -1,10 +1,9 @@
 package com.example.booknet;
 
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,13 +13,14 @@ import android.widget.TextView;
 public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapter.NotificationViewHolder> {
 
     //The list of BookListings to display
-    private Notifications data;
+    private Notifications notifications;
 
     //The activity this adapter was created from
     private FragmentActivity sourceActivity;
 
-    public NotificationAdapter(Notifications data, FragmentActivity sourceActivity) {
-        this.data = data;
+    public NotificationAdapter(Notifications notifications, FragmentActivity sourceActivity) {
+        Log.d("seanTag", "Construct adaptor");
+        this.notifications = notifications;
         this.sourceActivity = sourceActivity;
     }
 
@@ -31,20 +31,25 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         View view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.notification_item_list, viewGroup, false);
         NotificationAdapter.NotificationViewHolder newNotificationViewHolder = new NotificationAdapter.NotificationViewHolder(view);
+
+        Log.d("seanTag", "Create");
+
         return newNotificationViewHolder;
     }
 
     @Override
     public void onBindViewHolder(@NonNull NotificationViewHolder notificationViewHolder, int position) {
-        //Get the data at the provided position
-        final Notification item = data.getNotificationAtPosition(position);
+        //Get the notifications at the provided position
+        final Notification item = notifications.getNotificationAtPosition(position);
         //Index to pass to the edit activity
         final int index = notificationViewHolder.getAdapterPosition();
 
-        //Fill the text fields with the object's data
+        //Fill the text fields with the object's notifications
         //bookListingViewHolder.bookThumbnail.//todo apply photo
-        notificationViewHolder.bookTitleLabel.setText(item.getRequestedBookListing().getBook().getTitle());
-        notificationViewHolder.userNotificationInfo.setText(item.getUserReceivingNotification().toString());
+        notificationViewHolder.notificationBookTitle.setText(item.getRequestedBookListing().getBook().getTitle());
+        notificationViewHolder.notificationUsername.setText(item.getUserMakingNotification());
+
+        Log.d("seanTag", item.getRequestedBookListing().getBook().getTitle());
 
         notificationViewHolder.notificationStatus.setText(item.getRequestedBookListing().getStatusString());
         notificationViewHolder.item = item;
@@ -63,10 +68,10 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
     private void clickedItem(Notification item) {
         //Start View/Edit Activity with Clicked Item
-        Intent intent = new Intent(sourceActivity, ListingViewActivity.class);
-        intent.putExtra("username", item.getRequestedBookListing().getOwnerUsername());
-        intent.putExtra("bookisbn", item.getRequestedBookListing().getBook().getIsbn());
-        sourceActivity.startActivity(intent);
+        //Intent intent = new Intent(sourceActivity, ListingViewActivity.class);
+        //intent.putExtra("username", item.getRequestedBookListing().getOwnerUsername());
+        //intent.putExtra("bookisbn", item.getRequestedBookListing().getBook().getIsbn());
+        //sourceActivity.startActivity(intent);
     }
 
     /**
@@ -76,31 +81,33 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
      */
     @Override
     public int getItemCount() {
-        return data.size();
+        return notifications.size();
     }
 
     public static class NotificationViewHolder extends RecyclerView.ViewHolder {
 
         //Layout Objects
-        private ImageView bookThumbnail;
-        private TextView bookTitleLabel;
-        private TextView userNotificationInfo;
+        private ImageView notificationBookThumbnail;
+        private TextView notificationBookTitle;
+        private TextView notificationUserInfo;
+        private TextView notificationUsername;
         private TextView notificationStatus;
         private Notification item;
 
         /**
          * Creates the BookListingViewHolder
          *
-         * @param itemView The view for this item
+         * @param notificationView The view for this item
          */
-        public NotificationViewHolder(@NonNull View itemView) {
-            super(itemView);
+        public NotificationViewHolder(@NonNull View notificationView) {
+            super(notificationView);
 
             //Obtain Layout Object References
-            bookThumbnail = itemView.findViewById(R.id.bookThumbnail);
-            bookTitleLabel = itemView.findViewById(R.id.bookTitleLabel);
-            userNotificationInfo = itemView.findViewById(R.id.UserNotificationInfo);
-            notificationStatus = itemView.findViewById(R.id.NotificationStatus);
+            notificationBookThumbnail = notificationView.findViewById(R.id.notificationBookThumbnail);
+            notificationBookTitle = notificationView.findViewById(R.id.notificationBookTitle);
+            notificationUserInfo = notificationView.findViewById(R.id.notificationUserInfo);
+            notificationUsername = notificationView.findViewById(R.id.notificationUsername);
+            notificationStatus = notificationView.findViewById(R.id.notificationStatus);
         }
     }
 }

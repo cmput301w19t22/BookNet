@@ -80,7 +80,7 @@ public class DatabaseManager {
     public void writeToAllBookListings(BookListing listing) {
         int dupCount = getDupCount(listing, CurrentUser.getInstance().getUID());
         String path = generateAllListingPath(listing, dupCount, CurrentUser.getInstance().getUID());
-        allListingsRef.child(path).setValue(listing);```````````````````
+        allListingsRef.child(path).setValue(listing);
     }
 
     private String generateAllListingPath(BookListing listing, int dupCount, String uid) {
@@ -124,7 +124,7 @@ public class DatabaseManager {
 
     public void writeNotification(Notification notification) {
         Log.d("seanTag", "write notification");
-        notificationRef.child(notification.getUserReceivingNotification()).setValue(notification);
+        notificationRef.child(notification.getUserReceivingNotification()).push().setValue(notification);
     }
 
     /**
@@ -244,7 +244,8 @@ public class DatabaseManager {
         return allBookLibrary;
     }
 
-    public Notifications readAllNotifications() {
+    public Notifications getAllNotifications() {
+        Log.d("seanTag", "Get Notifications");
         return notifications;
     }
 
@@ -482,7 +483,6 @@ public class DatabaseManager {
 
             String uid = CurrentUser.getInstance().getUID();
 
-            userListingsRef = FirebaseDatabase.getInstance().getReference("/UserBooks/"+uid);
             userListingsListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -505,11 +505,11 @@ public class DatabaseManager {
                     System.out.println("The read failed: " + databaseError.getCode());
                 }
             };
-
+            userListingsRef = FirebaseDatabase.getInstance().getReference("/UserBooks/"+uid);
             // This listener should take care of database value change automatically
             userListingsRef.addValueEventListener(userListingsListener);
 
-            usernameRef = FirebaseDatabase.getInstance().getReference("Usernames");
+            //usernameRef = FirebaseDatabase.getInstance().getReference("Usernames");
 
             // This listener should take care of database value change automatically
             usernameListener = new ValueEventListener() {
@@ -605,9 +605,10 @@ public class DatabaseManager {
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     for (DataSnapshot data : dataSnapshot.getChildren()) {
                         Notification notification = data.getValue(Notification.class);
+                        Log.d("seanTag",  notification.getRequestedBookListing().getBook().getTitle());
                         notifications.addNotification(notification);
                     }
-                    Log.d("seanTag", "read notification");
+                    Log.d("seanTag", "read notification " +CurrentUser.getInstance().getUsername());
                 }
 
                 @Override
@@ -615,7 +616,7 @@ public class DatabaseManager {
                     System.out.println("The read failed: " + databaseError.getCode());
                 }
             };
-            notificationRef = FirebaseDatabase.getInstance().getReference("Notifications"+CurrentUser.getInstance().getUsername());
+            notificationRef = FirebaseDatabase.getInstance().getReference("/Notifications/"+CurrentUser.getInstance().getUsername());
             notificationRef.addValueEventListener(notificationListener);
 
             return true;

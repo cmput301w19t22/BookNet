@@ -47,7 +47,7 @@ public class ListingViewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_listing_view);
 
         //Get References to Layout Objects
-        bookTitleLabel = findViewById(R.id.bookTitleLabel);
+        bookTitleLabel = findViewById(R.id.BookTitleLabel);
         bookAuthorLabel = findViewById(R.id.bookAuthorLabel);
         bookDescriptionLabel = findViewById(R.id.bookDescriptionLabel);
         isbnLabel = findViewById(R.id.isbnLabel);

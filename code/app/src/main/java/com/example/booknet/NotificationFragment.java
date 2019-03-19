@@ -4,10 +4,10 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 
 public class NotificationFragment extends Fragment {
 
@@ -31,7 +31,9 @@ public class NotificationFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_notifications, container, false);
 
-        notifications = manager.readAllNotifications();
+        notifications = manager.getAllNotifications();
+
+        Log.d("seanTag", "notifications size: "+notifications.size());
 
         notificationsListView = view.findViewById(R.id.notifications);
         notificationsListView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -41,8 +43,22 @@ public class NotificationFragment extends Fragment {
         return view;
     }
 
+    /**
+     * Called when the activity starts
+     * Tells the list's adapter to update.
+     */
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.d("seanTag", "onStart notifications");
+        notificationAdapter.notifyDataSetChanged();
+    }
+
     public void onDestroy() {
         super.onDestroy();
     }
 
+    public void notifyDataSetChanged() {
+        notificationAdapter.notifyDataSetChanged();
+    }
 }

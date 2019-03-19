@@ -137,7 +137,7 @@ public class OwnedLibraryFragment extends Fragment {
             }
         });
 
-    return view;
+        return view;
     }
 
     /**

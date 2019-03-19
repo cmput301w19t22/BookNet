@@ -39,8 +39,6 @@ public class BookSearchFragment extends Fragment {
 
     SearchView searchBar;
 
-
-
     public static BookSearchFragment newInstance() {
         BookSearchFragment myFragment = new BookSearchFragment();
 
@@ -51,14 +49,12 @@ public class BookSearchFragment extends Fragment {
         return myFragment;
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_book_search, container, false);
         searchResults = view.findViewById(R.id.searchResults);
         searchBar = view.findViewById(R.id.searchBar);
-
 
         allBookListings = manager.readAllBookListings();
         filteredLibrary.copyOneByOne(allBookListings);
@@ -83,7 +79,6 @@ public class BookSearchFragment extends Fragment {
                         }
                     }
                     listingAdapter.notifyDataSetChanged();
-
                 }
 
             }
@@ -101,11 +96,7 @@ public class BookSearchFragment extends Fragment {
 
 //        player.prepareAsync();
 
-
-
         allBookListings = manager.readAllBookListings();
-
-
 
         searchResults.setLayoutManager(new LinearLayoutManager(getActivity()));
         listingAdapter = new BookListingAdapter(filteredLibrary, getActivity());
@@ -136,14 +127,8 @@ public class BookSearchFragment extends Fragment {
             }
         });
 
-
-
         return view;
-
-
     }
-
-
 
     @Override
     public void onStart() {
@@ -159,6 +144,4 @@ public class BookSearchFragment extends Fragment {
         manager.getAllListingsRef().removeEventListener(listener);
         super.onDestroy();
     }
-
-
 }

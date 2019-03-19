@@ -6,6 +6,8 @@ import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.example.booknet.Constants.BookListingStatus;
+import com.example.booknet.Constants.NotificationType;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -16,8 +18,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.example.booknet.BookListingStatus.Available;
-import static com.example.booknet.BookListingStatus.Requested;
+import static com.example.booknet.Constants.BookListingStatus.Available;
+import static com.example.booknet.Constants.BookListingStatus.Requested;
 
 /**
  * Class that interfaces with the database
@@ -409,7 +411,7 @@ public class DatabaseManager {
             ref.child("requests").setValue(requesters);
             allListingsRef.child(allPath).child("requests").setValue(requesters);
 
-            writeNotification(new Notification(listing, listing.getOwnerUsername(), requester));
+            writeNotification(new Notification(listing, listing.getOwnerUsername(), requester, NotificationType.hasRequested));
 
             return true;
         }

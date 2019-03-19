@@ -1,4 +1,4 @@
-package com.example.booknet;
+package com.example.booknet.Constants;
 
 /**
  * Enum for the status of a BookListing, so the values are more easily tracked

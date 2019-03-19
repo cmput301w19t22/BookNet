@@ -46,8 +46,10 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
         //Fill the text fields with the object's notifications
         //bookListingViewHolder.bookThumbnail.//todo apply photo
+        notificationViewHolder.notificationBookThumbnail.setImageResource(R.mipmap.ic_launcher);
         notificationViewHolder.notificationBookTitle.setText(item.getRequestedBookListing().getBook().getTitle());
         notificationViewHolder.notificationUsername.setText(item.getUserMakingNotification());
+        notificationViewHolder.notificationUserInfo.setText(item.getNotificationType().toString());
 
         Log.d("seanTag", item.getRequestedBookListing().getBook().getTitle());
 

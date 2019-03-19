@@ -1,8 +1,7 @@
 package com.example.booknet;
 
-import android.provider.ContactsContract;
-import android.util.Log;
-import android.graphics.Bitmap;
+import com.example.booknet.Constants.BookListingStatus;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 

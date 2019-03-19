@@ -102,6 +102,7 @@ public class BookListingAdapter extends RecyclerView.Adapter<BookListingAdapter.
         if (item != null) {
             intent.putExtra("username", item.getOwnerUsername());
             intent.putExtra("bookisbn", item.getBook().getIsbn());
+            intent.putExtra("dupID", item.getDupInd());
         }
         sourceActivity.startActivity(intent);
     }

@@ -300,14 +300,6 @@ public class DatabaseManager {
         return null;
     }
 
-    public BookListing readBookListingWithUIDAndISBN(String UID, String isbn) {
-        for (BookListing listing: allBookLibrary){
-            if (listing.getBook().getIsbn().equals(isbn)){
-                return listing;
-            }
-        }
-        return null;
-    }
 
     public boolean isUsernameTaken(String username) {
         return usernames.containsKey(username);
@@ -422,6 +414,23 @@ public class DatabaseManager {
             }
         }
         return false;
+    }
+
+    /**
+     * read a bookListing from database
+     *
+     * @param username: the book listing's owner
+     * @param isbn: the isbn of the book
+     * @param dupID: the dupID of the book (saved as a field in the BookListing class)
+     * @return
+     */
+    public BookListing readBookListingOfUsername(String username, String isbn, int dupID) {
+        for (BookListing l: allBookLibrary){
+            if (l.getOwnerUsername().equals(username) && l.getISBN().equals(isbn) && l.getDupInd() == dupID){
+                return l;
+            }
+        }
+        return null;
     }
 
     public class InitiationTask extends AsyncTask<Void, Void, Boolean> {

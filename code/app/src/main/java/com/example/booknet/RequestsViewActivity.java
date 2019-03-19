@@ -32,10 +32,12 @@ public class RequestsViewActivity extends AppCompatActivity {
             //listing = (BookListing) intent.getSerializableExtra("listing");
         }
         //Check if given info to fetch listing
-        if (intent.hasExtra("username") && intent.hasExtra("bookisbn")) {
+        if (intent.hasExtra("username") && intent.hasExtra("bookisbn") && intent.hasExtra("dupID")) {
             String username = intent.getStringExtra("username");
             String isbn = intent.getStringExtra("bookisbn");
-            listing = manager.readBookListingWithUIDAndISBN(CurrentUser.getInstance().getUID(), isbn);
+            int  dupID = intent.getIntExtra("dupID", 0);
+
+            listing = manager.readBookListingOfUsername(username, isbn, dupID);
 
         }
         fillLayout();

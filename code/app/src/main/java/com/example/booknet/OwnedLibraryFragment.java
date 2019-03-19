@@ -133,7 +133,6 @@ public class OwnedLibraryFragment extends Fragment {
 
                 }
 
-
             }
 
             @Override
@@ -141,6 +140,7 @@ public class OwnedLibraryFragment extends Fragment {
 
             }
         });
+
 
         return view;
     }

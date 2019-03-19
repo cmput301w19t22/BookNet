@@ -67,6 +67,7 @@ public class OwnListingViewActivity extends AppCompatActivity {
         Intent intent = getIntent();
         //Check if given info to fetch listing
         if (intent.hasExtra("bookisbn")) {
+            // todo: fix this for book listings duplicate isbn
             String isbn = intent.getStringExtra("bookisbn");
             listing = manager.readUserOwnedBookListingWithISBN(isbn);
 
@@ -170,6 +171,8 @@ public class OwnListingViewActivity extends AppCompatActivity {
         if (item != null) {
             intent.putExtra("username", item.getOwnerUsername());
             intent.putExtra("bookisbn", item.getBook().getIsbn());
+            intent.putExtra("dupID", item.getDupInd());
+
             startActivity(intent);
         }
     }

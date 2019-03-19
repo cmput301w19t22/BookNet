@@ -65,7 +65,7 @@ public class ListingViewActivity extends AppCompatActivity {
         if (intent.hasExtra("username") && intent.hasExtra("bookisbn")) {
             String username = intent.getStringExtra("username");
             String isbn = intent.getStringExtra("bookisbn");
-            listing = manager.readBookListingWithUIDAndISBN(CurrentUser.getInstance().getUID(), isbn);
+            listing = manager.readBookListingWithUIDAndISBN(CurrentUser.getInstance().getUID(), isbn, );
         }
 
         bookTitleLabel.setText(listing.getBook().getTitle());

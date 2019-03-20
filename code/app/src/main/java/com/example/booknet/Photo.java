@@ -9,5 +9,11 @@ public class Photo {
 
     private Bitmap imageData;
 
+    public Photo(Bitmap imageBitmap) {
+        this.imageData = imageBitmap;
+    }
+
+
+
     //todo complete
 }

@@ -416,8 +416,8 @@ public class DatabaseManager {
 
             String allPath = generateAllListingPath(listing, dupInd, getUIDFromName(listing.getOwnerUsername()));
             allListingsRef.child(allPath).child("status").setValue(Requested);
-            //DatabaseReference ref = FirebaseDatabase.getInstance().getReference("UserBooks/" + getUIDFromName(listing.getOwnerUsername()) + "/" + generateUserListingPath(listing, dupInd));
-            //ref.child("status").setValue(Requested);
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("UserBooks/" + getUIDFromName(listing.getOwnerUsername()) + "/" + generateUserListingPath(listing, dupInd));
+            ref.child("status").setValue(Requested);
 
             ArrayList<String> requesters = null;
             for (BookListing l : allBookLibrary) {
@@ -428,7 +428,7 @@ public class DatabaseManager {
             if (requesters == null) return false;
 
             requesters.add(CurrentUser.getInstance().getUsername());
-            //ref.child("requests").setValue(requesters);
+            ref.child("requests").setValue(requesters);
             allListingsRef.child(allPath).child("requests").setValue(requesters);
 
             writeNotification(new Notification(listing, listing.getOwnerUsername(), requester, NotificationType.hasRequested));
@@ -579,6 +579,7 @@ public class DatabaseManager {
                     for (DataSnapshot data : dataSnapshot.getChildren()) {
                         BookListing bookListing = data.getValue(BookListing.class);
                         if (bookListing != null) {
+                            Log.d("mattTag", "at its root: " +  bookListing.toString());
                             userBookLibrary.addBookListing(bookListing);
                         }
                     }

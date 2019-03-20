@@ -75,7 +75,7 @@ public class ListingViewActivity extends AppCompatActivity {
         bookAuthorLabel.setText(listing.getBook().getAuthor());
         isbnLabel.setText(listing.getBook().getIsbn());
         ownerLabel.setText(listing.getOwnerUsername());
-        statusLabel.setText(listing.getStatusString());
+        statusLabel.setText(listing.getStatus().toString());
 
         if (manager.checkIfListingAlreadyRequested(listing)) {
             requestButton.setText("Cancel Request");

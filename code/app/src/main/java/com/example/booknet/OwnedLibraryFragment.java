@@ -87,7 +87,9 @@ public class OwnedLibraryFragment extends Fragment {
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
                     BookListing bookListing = data.getValue(BookListing.class);
                     if (bookListing != null) {
+
                         filteredLibrary.addBookListing(bookListing.clone());
+                        Log.d("mattTag", "lo: " + bookListing.toString());
                     }
                 }
 
@@ -104,7 +106,6 @@ public class OwnedLibraryFragment extends Fragment {
 
         filteredLibrary = library.clone();
 
-        Log.d("matt", "creating new adpator");
         //Apply Adapter to RecyclerView
         libraryListView = view.findViewById(R.id.bookLibrary);
         libraryListView.setLayoutManager(new LinearLayoutManager(getActivity()));

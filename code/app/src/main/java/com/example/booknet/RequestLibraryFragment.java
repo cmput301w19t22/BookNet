@@ -84,7 +84,7 @@ public class RequestLibraryFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 TextView selectedView = (TextView) view;
-                if (selectedView != null){
+                if (selectedView != null) {
                     String selectedItem = selectedView.getText().toString();
                     if (selectedItem.equals("All")) {
                         filteredLibrary.copyOneByOne(library);

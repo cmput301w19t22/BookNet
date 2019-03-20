@@ -1,6 +1,7 @@
 package com.example.booknet;
 
 import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -9,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -38,15 +40,13 @@ public class UserProfileViewFragment extends Fragment {
     private ImageView star5;
     private Button reviewsButton;
     private Button booksButton;
-    private Button editButton;
+    private ImageButton editButton;
     private Button logoutButton;
     private int starOff = R.drawable.ic_star_border_24dp;
     private int starOn = R.drawable.ic_star_24dp;
 
     private DatabaseManager manager = DatabaseManager.getInstance();
     private ValueEventListener listener;
-
-
 
     private static final String tag = "own_profile_view_fragment";
 
@@ -77,7 +77,7 @@ public class UserProfileViewFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_user_profile_view, container, false);
 
-
+        Log.d("seanTag", "onCreateView Profile");
 
 //        Intent i = getIntent();
 //        if (i.hasExtra("Email")){
@@ -121,8 +121,6 @@ public class UserProfileViewFragment extends Fragment {
         booksButton = view.findViewById(R.id.libraryButton);
         editButton = view.findViewById(R.id.editButton);
         logoutButton = view.findViewById(R.id.logoutButton);
-
-
 
         fillLayout();
         editButton.setOnClickListener(new View.OnClickListener() {

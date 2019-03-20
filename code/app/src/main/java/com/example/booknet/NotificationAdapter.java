@@ -34,7 +34,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                 .inflate(R.layout.notification_item_list, viewGroup, false);
         NotificationAdapter.NotificationViewHolder newNotificationViewHolder = new NotificationAdapter.NotificationViewHolder(view);
 
-        Log.d("seanTag", "Create");
+        //Log.d("seanTag", "notifications onCreateView");
 
         return newNotificationViewHolder;
     }
@@ -48,7 +48,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
         //Fill the text fields with the object's notifications
         //bookListingViewHolder.bookThumbnail.//todo apply photo
-        notificationViewHolder.notificationBookThumbnail.setImageResource(R.mipmap.ic_launcher);
+        //notificationViewHolder.notificationBookThumbnail.setImageResource(R.mipmap.ic_launcher);
         notificationViewHolder.notificationBookTitle.setText(item.getRequestedBookListing().getBook().getTitle());
         notificationViewHolder.notificationUsername.setText(item.getUserMakingNotification());
         notificationViewHolder.notificationUserInfo.setText(item.getNotificationType().toString());
@@ -62,13 +62,13 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         /**
          * Click Listener for individual list items. Starts view activity for the clicked item.
          */
-        notificationViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+        /*notificationViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 removeNotification(item);
                 notifyDataSetChanged();
             }
-        });
+        });*/
     }
 
     private void removeNotification(Notification notification) {

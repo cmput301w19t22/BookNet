@@ -19,7 +19,7 @@ import java.util.ArrayList;
  * Adapter for displaying a request in a recycler view list with accept and decline buttons.
  * @author Jamie
  */
-public class UserRequestAdapter extends RecyclerView.Adapter<UserRequestAdapter.RequestViewHolder> {
+public class RequestViewAdapter extends RecyclerView.Adapter<RequestViewAdapter.RequestViewHolder> {
 
     //The requester usernames
     private ArrayList<String> requesters = new ArrayList<>();
@@ -42,7 +42,7 @@ public class UserRequestAdapter extends RecyclerView.Adapter<UserRequestAdapter.
      * @param listing        The UserAccounts to use for the list display
      * @param sourceActivity The activity that created this adapter
      */
-    public UserRequestAdapter(BookListing listing, AppCompatActivity sourceActivity) {
+    public RequestViewAdapter(BookListing listing, AppCompatActivity sourceActivity) {
         this.listing = listing;
         this.requesters = listing.getRequests();
 

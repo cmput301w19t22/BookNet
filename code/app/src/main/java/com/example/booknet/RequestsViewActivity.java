@@ -19,7 +19,7 @@ public class RequestsViewActivity extends AppCompatActivity {
 
     //Layout Objects
     private RecyclerView requestsList;
-    private UserRequestAdapter requestAdapter;
+    private RequestViewAdapter requestAdapter;
     private DatabaseManager manager = DatabaseManager.getInstance();
 
     //App Data
@@ -63,7 +63,7 @@ public class RequestsViewActivity extends AppCompatActivity {
         //Setup RecyclerView
         requestsList = findViewById(R.id.requestList);
         requestsList.setLayoutManager(new LinearLayoutManager(this));
-        requestAdapter = new UserRequestAdapter(listing, this);
+        requestAdapter = new RequestViewAdapter(listing, this);
         requestsList.setAdapter(requestAdapter);
 
         requestAdapter.notifyDataSetChanged();

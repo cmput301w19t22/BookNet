@@ -219,6 +219,7 @@ public class DatabaseManager {
         userRef.child("requests").removeValue();
         userRef.child("borrowerName").setValue(requester);
 
+        writeNotification(new Notification(bookListing, requester, bookListing.getOwnerUsername(), NotificationType.hasAccepted));
     }
 
 
@@ -671,6 +672,9 @@ public class DatabaseManager {
             notificationListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
+
+                    notifications.removeAllNotificiations();
+
                     for (DataSnapshot data : dataSnapshot.getChildren()) {
                         Notification notification = data.getValue(Notification.class);
                         Log.d("seanTag", "check user " + notification.getUserReceivingNotification());

@@ -27,7 +27,7 @@ public class BookSearchFragment extends Fragment {
     //Layout Objects
     private RecyclerView searchResults;
     private ProgressBar progressBar;
-    private BookListingAdapter listingAdapter;
+    private BookSearchAdapter listingAdapter;
     private DatabaseManager manager = DatabaseManager.getInstance();
 
     //App Data
@@ -37,8 +37,6 @@ public class BookSearchFragment extends Fragment {
     private ValueEventListener listener;
 
     SearchView searchBar;
-
-
 
     public static BookSearchFragment newInstance() {
         BookSearchFragment myFragment = new BookSearchFragment();
@@ -50,14 +48,12 @@ public class BookSearchFragment extends Fragment {
         return myFragment;
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_book_search, container, false);
         searchResults = view.findViewById(R.id.searchResults);
         searchBar = view.findViewById(R.id.searchBar);
-
 
         allBookListings = manager.readAllBookListings();
         filteredLibrary.copyOneByOne(allBookListings);
@@ -82,7 +78,6 @@ public class BookSearchFragment extends Fragment {
                         }
                     }
                     listingAdapter.notifyDataSetChanged();
-
                 }
 
             }
@@ -93,21 +88,17 @@ public class BookSearchFragment extends Fragment {
             }
         };
 
-        manager.getAllLisitngsRef().addValueEventListener(listener);
+        manager.getAllListingsRef().addValueEventListener(listener);
 
 //        mSoundPool = new SoundPool(MAX_STREAM, AudioManager.STREAM_MUSIC, 0);
 //        final int backgroundSoundId = mSoundPool.load(this, R.raw.nice_keyboard_sound, 0);
 
 //        player.prepareAsync();
 
-
-
         allBookListings = manager.readAllBookListings();
 
-
-
         searchResults.setLayoutManager(new LinearLayoutManager(getActivity()));
-        listingAdapter = new BookListingAdapter(filteredLibrary, getActivity());
+        listingAdapter = new BookSearchAdapter(filteredLibrary, getActivity());
         searchResults.setAdapter(listingAdapter);
 
         searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -135,22 +126,21 @@ public class BookSearchFragment extends Fragment {
             }
         });
 
-
-
         return view;
-
-
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        //listingAdapter.notifyDataSetChanged();
+    }
 
-
-
-
+    public void notifyDataSetChanged() {
+        //listingAdapter.notifyDataSetChanged();
+    }
 
     public void onDestroy() {
-        manager.getAllLisitngsRef().removeEventListener(listener);
+        manager.getAllListingsRef().removeEventListener(listener);
         super.onDestroy();
     }
-
-
 }

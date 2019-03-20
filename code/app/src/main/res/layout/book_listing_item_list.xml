@@ -87,7 +87,7 @@
         android:singleLine="true"
         android:text="[OwnerName]"
         android:textSize="14sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/ownedLabel"
+        app:layout_constraintBaseline_toBaselineOf="@+id/ownedBy"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/statusLabel" />
 
@@ -104,7 +104,7 @@
         app:layout_constraintStart_toEndOf="@+id/bookThumbnail" />
 
     <TextView
-        android:id="@+id/ownedLabel"
+        android:id="@+id/ownedBy"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"

@@ -19,7 +19,7 @@ import android.widget.TextView;
  * @author Jamie
  * @version 1.0
  */
-public class BookListingAdapter extends RecyclerView.Adapter<BookListingAdapter.BookListingViewHolder> {
+public class BookSearchAdapter extends RecyclerView.Adapter<BookSearchAdapter.BookListingViewHolder> {
 
     //The list of BookListings to display
     private BookLibrary data;
@@ -35,7 +35,7 @@ public class BookListingAdapter extends RecyclerView.Adapter<BookListingAdapter.
      * @param sourceActivity The activity that created this adapter
 
      */
-    public BookListingAdapter(BookLibrary data, FragmentActivity sourceActivity) {
+    public BookSearchAdapter(BookLibrary data, FragmentActivity sourceActivity) {
         this.data = data;
         this.sourceActivity = sourceActivity;
     }
@@ -102,6 +102,7 @@ public class BookListingAdapter extends RecyclerView.Adapter<BookListingAdapter.
         if (item != null) {
             intent.putExtra("username", item.getOwnerUsername());
             intent.putExtra("bookisbn", item.getBook().getIsbn());
+            intent.putExtra("dupID", item.getDupInd());
         }
         sourceActivity.startActivity(intent);
     }

@@ -40,7 +40,7 @@
             app:srcCompat="@android:drawable/ic_menu_edit" />
 
         <TextView
-            android:id="@+id/bookTitleLabel"
+            android:id="@+id/BookTitleLabel"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
@@ -76,15 +76,15 @@
             android:text="[Author]"
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/bookTitleLabel"
-            app:layout_constraintTop_toBottomOf="@+id/bookTitleLabel" />
+            app:layout_constraintStart_toStartOf="@+id/BookTitleLabel"
+            app:layout_constraintTop_toBottomOf="@+id/BookTitleLabel" />
 
         <TextView
             android:id="@+id/isbnLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="[ISBN]"
-            app:layout_constraintStart_toStartOf="@+id/bookTitleLabel"
+            app:layout_constraintStart_toStartOf="@+id/BookTitleLabel"
             app:layout_constraintTop_toBottomOf="@+id/bookAuthorLabel" />
 
         <Space
@@ -175,11 +175,14 @@
             android:id="@+id/requestCountLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
+            android:layout_marginBottom="8dp"
             android:text="[No Requests]"
-            app:layout_constraintBaseline_toBaselineOf="@+id/viewRequestsButton"
-            app:layout_constraintEnd_toStartOf="@+id/viewRequestsButton" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/viewRequestsButton"
+            app:layout_constraintTop_toTopOf="parent" />
     </android.support.constraint.ConstraintLayout>
 
     <View

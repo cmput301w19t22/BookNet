@@ -47,8 +47,6 @@ public class UserProfileViewFragment extends Fragment {
         return myFragment;
     }
 
-
-
     //Activity Data
     UserAccount userAccount;
     String username = "";

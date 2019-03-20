@@ -32,6 +32,8 @@ public class ListingViewActivity extends AppCompatActivity {
     //Activity Data
     private BookListing listing;
 
+    private boolean alreadyRequested;
+
     /**
      * Called when creating the activity.
      * Performs the following tasks:
@@ -47,7 +49,7 @@ public class ListingViewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_listing_view);
 
         //Get References to Layout Objects
-        bookTitleLabel = findViewById(R.id.bookTitleLabel);
+        bookTitleLabel = findViewById(R.id.BookTitleLabel);
         bookAuthorLabel = findViewById(R.id.bookAuthorLabel);
         bookDescriptionLabel = findViewById(R.id.bookDescriptionLabel);
         isbnLabel = findViewById(R.id.isbnLabel);
@@ -65,7 +67,8 @@ public class ListingViewActivity extends AppCompatActivity {
         if (intent.hasExtra("username") && intent.hasExtra("bookisbn")) {
             String username = intent.getStringExtra("username");
             String isbn = intent.getStringExtra("bookisbn");
-            listing = manager.readBookListingWithUIDAndISBN(CurrentUser.getInstance().getUID(), isbn);
+            int dupID = intent.getIntExtra("dupID", 0);
+            listing = manager.readBookListingOfUsername(username, isbn, dupID);
         }
 
         bookTitleLabel.setText(listing.getBook().getTitle());
@@ -74,12 +77,27 @@ public class ListingViewActivity extends AppCompatActivity {
         ownerLabel.setText(listing.getOwnerUsername());
         statusLabel.setText(listing.getStatusString());
 
+        if (manager.checkIfListingAlreadyRequested(listing)) {
+            requestButton.setText("Cancel Request");
+            alreadyRequested = true;
+        }
+        else
+        {
+            requestButton.setText("Request");
+            alreadyRequested = false;
+        }
+
         //#region Listeners
         requestButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendRequest();
-//                startActivity(new Intent(ListingViewActivity.this, MainActivity.class));
+                //todo toggle between send and cancel depending on whether currently requested
+
+                if (alreadyRequested)
+                    sendRemoveRequest();
+                else
+                    sendAddRequest();
+
                 finish();
             }
         });
@@ -97,10 +115,23 @@ public class ListingViewActivity extends AppCompatActivity {
     /**
      * Creates a request for this book listing from the current user.
      */
-    private void sendRequest() {
-        boolean res = manager.requestBookListing(listing);
+    private void sendAddRequest() {
+        boolean res = manager.requestBookListing(listing, CurrentUser.getInstance().getUserAccount().getUsername());
         if (res){
             Toast.makeText(this, "book requested", Toast.LENGTH_SHORT).show();
+        }
+        else{
+            Toast.makeText(this, "failed", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
+     * Creates a request for this book listing from the current user.
+     */
+    private void sendRemoveRequest() {
+        boolean res = manager.requestBookListingRemoval(listing);
+        if (res){
+            Toast.makeText(this, "book request removed", Toast.LENGTH_SHORT).show();
         }
         else{
             Toast.makeText(this, "failed", Toast.LENGTH_SHORT).show();

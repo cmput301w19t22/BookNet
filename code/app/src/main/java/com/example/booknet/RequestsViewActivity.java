@@ -9,6 +9,12 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+
+/**
+ * An activity for viewing which users have requested a listing and
+ * allow the owner to acccept or deny each of these requests.
+ * @author Jamie
+ */
 public class RequestsViewActivity extends AppCompatActivity {
 
     //Layout Objects
@@ -32,10 +38,12 @@ public class RequestsViewActivity extends AppCompatActivity {
             //listing = (BookListing) intent.getSerializableExtra("listing");
         }
         //Check if given info to fetch listing
-        if (intent.hasExtra("username") && intent.hasExtra("bookisbn")) {
+        if (intent.hasExtra("username") && intent.hasExtra("bookisbn") && intent.hasExtra("dupID")) {
             String username = intent.getStringExtra("username");
             String isbn = intent.getStringExtra("bookisbn");
-            listing = manager.readBookListingWithUIDAndISBN(CurrentUser.getInstance().getUID(), isbn);
+            int  dupID = intent.getIntExtra("dupID", 0);
+
+            listing = manager.readBookListingOfUsername(username, isbn, dupID);
 
         }
         fillLayout();
@@ -57,5 +65,7 @@ public class RequestsViewActivity extends AppCompatActivity {
         requestsList.setLayoutManager(new LinearLayoutManager(this));
         requestAdapter = new UserRequestAdapter(listing, this);
         requestsList.setAdapter(requestAdapter);
+
+        requestAdapter.notifyDataSetChanged();
     }
 }

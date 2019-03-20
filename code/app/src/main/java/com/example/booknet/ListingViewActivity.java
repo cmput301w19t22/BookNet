@@ -65,7 +65,8 @@ public class ListingViewActivity extends AppCompatActivity {
         if (intent.hasExtra("username") && intent.hasExtra("bookisbn")) {
             String username = intent.getStringExtra("username");
             String isbn = intent.getStringExtra("bookisbn");
-            listing = manager.readBookListingWithUIDAndISBN(CurrentUser.getInstance().getUID(), isbn);
+            int dupID = intent.getIntExtra("dupID", 0);
+            listing = manager.readBookListingOfUsername(username, isbn, dupID);
         }
 
         bookTitleLabel.setText(listing.getBook().getTitle());
@@ -78,6 +79,7 @@ public class ListingViewActivity extends AppCompatActivity {
         requestButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //todo toggle between send and cancel depending on whether currently requested
                 sendRequest();
                 finish();
             }

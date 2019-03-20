@@ -4,7 +4,6 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -30,22 +29,21 @@ public class MainActivity extends FragmentActivity {
 
         @Override
         public int getCount() {
-            return 4;
+            return 5;
         }
 
         @Override
         public Fragment getItem(int position) {
-            Log.d("mattTag", "position "+String.valueOf(position));
+            Log.d("mattTag", "position " + String.valueOf(position));
             if (position == 0) {
                 return BookSearchFragment.newInstance();
-            }
-            else if (position == 1) {
+            } else if (position == 1) {
                 return OwnedLibraryFragment.newInstance();
-            }
-            else if (position == 2) {
+            } else if (position == 2) {
+                return RequestLibraryFragment.newInstance();
+            } else if (position == 3) {
                 return UserProfileViewFragment.newInstance();
-            }
-            else if (position == 3) {
+            } else if (position == 4) {
                 return NotificationFragment.newInstance();
             }
 
@@ -72,6 +70,9 @@ public class MainActivity extends FragmentActivity {
                 case R.id.navigation_mybooks:
                     myBooksClicked();
                     return true;
+                case R.id.navigation_myrequests:
+                    myRequestsClicked();
+                    return true;
                 case R.id.navigation_myaccount:
                     myAccountClicked();
                     return true;
@@ -92,7 +93,7 @@ public class MainActivity extends FragmentActivity {
 
         mAdapter = new MyAdapter(getSupportFragmentManager());
 
-        mPager = (ViewPager)findViewById(R.id.pager);
+        mPager = (ViewPager) findViewById(R.id.pager);
         mPager.setAdapter(mAdapter);
 
         final BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
@@ -129,13 +130,25 @@ public class MainActivity extends FragmentActivity {
         Log.d("mattTag", "leaving main activity onCreate");
     }
 
-    private void onSearchClicked() { mPager.setCurrentItem(0); }
+    private void onSearchClicked() {
+        mPager.setCurrentItem(0);
+    }
 
-    private void myBooksClicked() { mPager.setCurrentItem(1); }
+    private void myBooksClicked() {
+        mPager.setCurrentItem(1);
+    }
 
-    private void myAccountClicked() { mPager.setCurrentItem(2); }
+    private void myRequestsClicked() {
+        mPager.setCurrentItem(2);
+    }
 
-    private void myNotificationsClicked() { mPager.setCurrentItem(3); }
+    private void myAccountClicked() {
+        mPager.setCurrentItem(3);
+    }
+
+    private void myNotificationsClicked() {
+        mPager.setCurrentItem(4);
+    }
 
     @Override
     public void onBackPressed() {
@@ -143,8 +156,7 @@ public class MainActivity extends FragmentActivity {
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle("Are you sure?")
                 .setMessage("Log out?")
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener()
-                {
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         CurrentUser.getInstance().logout();

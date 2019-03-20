@@ -105,7 +105,7 @@ public class OwnedLibraryFragment extends Fragment {
         filteredLibrary = library.clone();
 
         Log.d("matt", "creating new adpator");
-
+        //Apply Adapter to RecyclerView
         libraryListView = view.findViewById(R.id.bookLibrary);
         libraryListView.setLayoutManager(new LinearLayoutManager(getActivity()));
         listingAdapter = new OwnedLibraryAdapter(filteredLibrary, getActivity());
@@ -120,17 +120,13 @@ public class OwnedLibraryFragment extends Fragment {
                 if (selectedView != null){
                     String selectedItem = selectedView.getText().toString();
                     if (selectedItem.equals("All")) {
-                        Log.d("mattTag", "copying one by one");
                         filteredLibrary.copyOneByOne(library);
-                        Log.d("mattTag", "after copying: " + filteredLibrary.toString());
                     } else {
-                        Log.d("mattTag", "yi");
                         filteredLibrary.filterByStatus(library, BookListingStatus.valueOf(selectedItem));
                     }
 
                     listingAdapter.notifyDataSetChanged();
                 }
-
 
             }
 
@@ -139,6 +135,7 @@ public class OwnedLibraryFragment extends Fragment {
 
             }
         });
+
 
         return view;
     }
@@ -150,8 +147,6 @@ public class OwnedLibraryFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        Log.d("mattTag", "starting the activity, notifying");
-        Log.d("mattTag", "when starting, the books are: " + filteredLibrary.toString());
         //Update List Data
         listingAdapter.notifyDataSetChanged();
     }

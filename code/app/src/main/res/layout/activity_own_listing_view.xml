@@ -175,11 +175,14 @@
             android:id="@+id/requestCountLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
+            android:layout_marginBottom="8dp"
             android:text="[No Requests]"
-            app:layout_constraintBaseline_toBaselineOf="@+id/viewRequestsButton"
-            app:layout_constraintEnd_toStartOf="@+id/viewRequestsButton" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/viewRequestsButton"
+            app:layout_constraintTop_toTopOf="parent" />
     </android.support.constraint.ConstraintLayout>
 
     <View

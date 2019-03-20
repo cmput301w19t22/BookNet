@@ -181,7 +181,7 @@ public class MockDatabase {
 //        if (library == 0) {
 //            bookLibrary = readUserOwnedLibrary(username);
 //        } else if (library == 1) {
-//            bookLibrary = readUserRequests(username);
+//            bookLibrary = readUserRequestLibrary(username);
 //        }
 //        if (bookLibrary != null) {
 //            //Search library for the book

@@ -57,6 +57,7 @@ public class OwnListingViewActivity extends AppCompatActivity {
         ownerLabel = findViewById(R.id.ownerLabel);
         statusLabel = findViewById(R.id.statusLabel);
         requestCountLabel = findViewById(R.id.requestCountLabel);
+//        Log.d("mattTag", "yeah");
         requestButton = findViewById(R.id.requestButton);
         viewRequestsButton = findViewById(R.id.viewRequestsButton);
         deleteButton = findViewById(R.id.deleteButton);
@@ -76,11 +77,13 @@ public class OwnListingViewActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         //Check if given info to fetch listing
-        if (intent.hasExtra("username") && intent.hasExtra("bookisbn")) {
-            //String username = intent.getStringExtra("username");
-            String isbn = intent.getStringExtra("bookisbn");
-            listing = manager.readUserOwnedBookListingWithISBN(isbn);
-        }
+
+        if (intent.hasExtra("isbn")) {
+            String isbn = intent.getStringExtra("isbn");
+            int dupID = intent.getIntExtra("dupID", 0);
+
+            listing = manager.readUserOwnedBookListing(isbn, dupID);
+		}
 
         bookTitleLabel.setText(listing.getBook().getTitle());
         bookAuthorLabel.setText(listing.getBook().getAuthor());
@@ -152,8 +155,8 @@ public class OwnListingViewActivity extends AppCompatActivity {
     private void editBook(BookListing item) {
         if (item != null) {
             Intent intent = new Intent(this, EditBookActivity.class);
-            intent.putExtra("username", item.getOwnerUsername());
-            intent.putExtra("bookisbn", item.getBook().getIsbn());
+            intent.putExtra("dupInd", item.getDupInd());
+            intent.putExtra("isbn", item.getBook().getIsbn());
             startActivity(intent);
         }
     }
@@ -169,6 +172,8 @@ public class OwnListingViewActivity extends AppCompatActivity {
         if (item != null) {
             intent.putExtra("username", item.getOwnerUsername());
             intent.putExtra("bookisbn", item.getBook().getIsbn());
+            intent.putExtra("dupID", item.getDupInd());
+
             startActivity(intent);
         }
     }

@@ -397,13 +397,13 @@ public class DatabaseManager {
      * @return whether the request goes through
      */
     public boolean requestBookListing(BookListing listing, String requester) {
-        if (isBookListingAvailableAndNotOwnBook(listing, requester)){
+        if (isBookListingAvailableAndNotOwnBook(listing)){
             int dupInd = listing.getDupInd();
 
             String allPath = generateAllListingPath(listing, dupInd, getUIDFromName(listing.getOwnerUsername()));
             allListingsRef.child(allPath).child("status").setValue(Requested);
-            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("UserBooks/" + getUIDFromName(listing.getOwnerUsername()) + "/" + generateUserListingPath(listing, dupInd));
-            ref.child("status").setValue(Requested);
+            //DatabaseReference ref = FirebaseDatabase.getInstance().getReference("UserBooks/" + getUIDFromName(listing.getOwnerUsername()) + "/" + generateUserListingPath(listing, dupInd));
+            //ref.child("status").setValue(Requested);
 
             ArrayList<String> requesters = null;
             for (BookListing l : allBookLibrary) {
@@ -411,10 +411,10 @@ public class DatabaseManager {
                     requesters = l.getRequests();
                 }
             }
-            if (requesters == null || requesters.contains(requester)) return false;
+            if (requesters == null) return false;
 
             requesters.add(CurrentUser.getInstance().getUsername());
-            ref.child("requests").setValue(requesters);
+            //ref.child("requests").setValue(requesters);
             allListingsRef.child(allPath).child("requests").setValue(requesters);
 
             writeNotification(new Notification(listing, listing.getOwnerUsername(), requester, NotificationType.hasRequested));
@@ -422,6 +422,46 @@ public class DatabaseManager {
             return true;
         }
         return false;
+    }
+
+    public boolean requestBookListingRemoval(BookListing listing) {
+        if (isBookListingAvailableAndNotOwnBook(listing)){
+            int dupInd = listing.getDupInd();
+
+            String allPath = generateAllListingPath(listing, dupInd, getUIDFromName(listing.getOwnerUsername()));
+            allListingsRef.child(allPath).child("status").setValue(Requested);
+
+            ArrayList<String> requesters = null;
+            for (BookListing l : allBookLibrary) {
+                if (l.getOwnerUsername().equals(listing.getOwnerUsername()) && l.getISBN().equals(listing.getISBN())) {
+                    requesters = l.getRequests();
+                }
+            }
+            if (requesters == null) return false;
+
+            requesters.remove(CurrentUser.getInstance().getUsername());
+            allListingsRef.child(allPath).child("requests").setValue(requesters);
+
+            return true;
+        }
+        return false;
+    }
+
+    public boolean checkIfListingAlreadyRequested(BookListing listing) {
+        Boolean alreadyRequested = true;
+
+        ArrayList<String> requesters = null;
+        for (BookListing l : allBookLibrary) {
+            if (l.getOwnerUsername().equals(listing.getOwnerUsername()) && l.getISBN().equals(listing.getISBN())) {
+                requesters = l.getRequests();
+            }
+        }
+        if (requesters.contains(CurrentUser.getInstance().getUsername()))
+            alreadyRequested = true;
+        else
+            alreadyRequested = false;
+
+        return alreadyRequested;
     }
 
     private boolean isBookListingAvailableAndNotOwnBook(BookListing listing) {
@@ -433,8 +473,8 @@ public class DatabaseManager {
             if (l.getOwnerUsername().equals(listing.getOwnerUsername()) && l.getISBN().equals(listing.getISBN())) {
                 return listing.getStatus() == Available || listing.getStatus() == Requested;
             }
-
         }
+        return false;
     }
 
     /**

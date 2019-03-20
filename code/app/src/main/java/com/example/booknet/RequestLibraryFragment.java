@@ -12,6 +12,8 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.example.booknet.Constants.BookListingStatus;
+
 /**
  * An activity to display the requested library of a user. (ie. the books that user has requested)
  *
@@ -22,7 +24,7 @@ public class RequestLibraryFragment extends Fragment {
 
     //Layout Objects
     private RecyclerView libraryListView;
-    private OwnedListingAdapter listingAdapter;
+    private OwnedLibraryAdapter listingAdapter;
     private Button addButton;
 
     //Activity Data
@@ -72,7 +74,7 @@ public class RequestLibraryFragment extends Fragment {
         //Setup RecyclerView
         libraryListView = view.findViewById(R.id.bookLibrary);
         libraryListView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        listingAdapter = new OwnedListingAdapter(library, getActivity());
+        listingAdapter = new OwnedLibraryAdapter(library, getActivity());
         libraryListView.setAdapter(listingAdapter);
 
         //Setup Filter Menu todo

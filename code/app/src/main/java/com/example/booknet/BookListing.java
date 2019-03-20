@@ -238,7 +238,7 @@ public class BookListing implements Serializable, Cloneable {
     @Override
     public String toString() {
         String s = "";
-        s += book.toString() + " " + borrowerName + " " + status.toString() + " " + requests.toString();
+        s += book.toString() + " with  status:" + status.toString() + " with ISBN: "+ book.getIsbn();
         return s;
     }
 

@@ -87,7 +87,9 @@ public class OwnedLibraryFragment extends Fragment {
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
                     BookListing bookListing = data.getValue(BookListing.class);
                     if (bookListing != null) {
+
                         filteredLibrary.addBookListing(bookListing.clone());
+                        Log.d("mattTag", "lo: " + bookListing.toString());
                     }
                 }
 

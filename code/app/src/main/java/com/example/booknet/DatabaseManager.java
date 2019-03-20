@@ -662,10 +662,11 @@ public class DatabaseManager {
                         usernames.put(name, uid);
                         if (uid.equals(CurrentUser.getInstance().getUID())) {
                             CurrentUser.getInstance().setUsername(name);
+                            nameLoaded = true;
                         }
                     }
 
-                    nameLoaded = true;
+
                     Log.d("mattTag", "nameLoaded");
                     if (phoneLoaded && progressDialog != null) {
                         Log.d("mattTag", "checking from name");
@@ -710,9 +711,10 @@ public class DatabaseManager {
 
                         if (uid.equals(CurrentUser.getInstance().getUID())) {
                             CurrentUser.getInstance().setAccountPhone(phone);
+                            phoneLoaded = true;
                         }
                     }
-                    phoneLoaded = true;
+
                     Log.d("mattTag", "phoneLoaded");
                     if (nameLoaded && progressDialog != null) {
                         Log.d("mattTag", "checking from phone");

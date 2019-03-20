@@ -44,7 +44,7 @@ public class Notifications implements Serializable, Iterable<Notification>  {
         }
     }
 
-    public void removeNotificiation(){
+    public void removeAllNotificiations(){
         notifications.clear();
     }
 

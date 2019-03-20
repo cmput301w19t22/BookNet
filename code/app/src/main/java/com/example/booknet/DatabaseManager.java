@@ -34,7 +34,7 @@ public class DatabaseManager {
     private BookLibrary userRequestLibrary = new BookLibrary();
     private BookLibrary allBookLibrary = new BookLibrary();
     private Map<String, String> usernames = new HashMap<>();
-    private Map<String, String> userProfile = new HashMap<>();
+    private Map<String, HashMap<String, String>> allUserProfile = new HashMap<>();
     private Notifications notifications = new Notifications();
 
     //used to freeze user interaction when connecting
@@ -44,7 +44,7 @@ public class DatabaseManager {
     private DatabaseReference userListingsRef;
     private DatabaseReference usernameRef;
     private DatabaseReference userPhoneRef;
-    private DatabaseReference userProfileRef;
+    private DatabaseReference allUserProfileRef;
     private DatabaseReference notificationRef;
     private DatabaseReference notificationRefOther;
     private DatabaseReference notificationRefSelf;
@@ -53,8 +53,9 @@ public class DatabaseManager {
     private ValueEventListener userListingsListener;
     private ValueEventListener usernameListener;
     private ValueEventListener userPhoneListener;
-    private ValueEventListener userProfileListener;
+    private ValueEventListener allUserProfileListener;
     private ValueEventListener notificationListener;
+
 
     private Boolean phoneLoaded = false;
     private Boolean nameLoaded = false;
@@ -173,10 +174,16 @@ public class DatabaseManager {
      * @param bookListing The BookListing to delete
      */
     public void removeBookListing(BookListing bookListing) {
-        userListingsRef.child(bookListing.getBook().getIsbn()).removeValue();
-        allListingsRef.child(bookListing.getBook().getIsbn() + "-" + CurrentUser.getInstance().getUID()).removeValue();
+        userListingsRef.child(generateUserListingPath(bookListing, bookListing.getDupInd())).removeValue();
+        allListingsRef.child(generateAllListingPath(bookListing, bookListing.getDupInd(), getUIDFromName(bookListing.getOwnerUsername()))).removeValue();
     }
 
+    public void removeNotification(Notification notification) {
+        notificationRef.child(notification.getUserReceivingNotification()
+                + "-" + notification.getUserMakingNotification()
+                + "-" + notification.getRequestedBookListing().getISBN()
+                + "-" + notification.getRequestedBookListing().getDupInd()).removeValue();
+    }
 
     public void setBookListingStatus(BookListing bookListing, BookListingStatus status) {
         //todo: implement
@@ -219,8 +226,8 @@ public class DatabaseManager {
         userRef.child("requests").removeValue();
         userRef.child("borrowerName").setValue(requester);
 
+        writeNotification(new Notification(bookListing, requester, bookListing.getOwnerUsername(), NotificationType.hasAccepted));
     }
-
 
     private void changeStatusToAcceptedAndSetBorrowerName(BookListing bookListing) {
 
@@ -234,9 +241,24 @@ public class DatabaseManager {
      * @param requester   The user whose request is declined
      */
     public void declineRequestForListing(BookListing bookListing, String requester) {
-        //todo:implement
-    }
+        int dupInd = bookListing.getDupInd();
 
+        String allPath = generateAllListingPath(bookListing, dupInd, getUIDFromName(bookListing.getOwnerUsername()));
+        allListingsRef.child(allPath).child("status").setValue(Requested);
+
+        ArrayList<String> requesters = null;
+        for (BookListing l : allBookLibrary) {
+            if (l.getOwnerUsername().equals(bookListing.getOwnerUsername()) && l.getISBN().equals(bookListing.getISBN())) {
+                requesters = l.getRequests();
+            }
+        }
+        if (requesters == null) return;
+
+        requesters.remove(requester);
+        allListingsRef.child(allPath).child("requests").setValue(requesters);
+
+        writeNotification(new Notification(bookListing, requester, bookListing.getOwnerUsername(), NotificationType.hasDeclined));
+    }
 
     /**
      * Reads a user account from the database.
@@ -270,7 +292,7 @@ public class DatabaseManager {
     }
 
     public Notifications getAllNotifications() {
-        Log.d("seanTag", "Get Notifications");
+        //Log.d("seanTag", "Get Notifications");
         return notifications;
     }
 
@@ -358,28 +380,32 @@ public class DatabaseManager {
         if (usernameRef != null && usernameListener != null) {
             usernameRef.removeEventListener(usernameListener);
         }
-        if (userProfileRef != null && userProfileListener != null) {
-            userProfileRef.removeEventListener(userProfileListener);
+        if (allUserProfileRef != null && allUserProfileListener != null) {
+            allUserProfileRef.removeEventListener(allUserProfileListener);
         }
     }
 
     public void writeUserProfile(String newEmail, String newPhone) {
-        userProfileRef.child("Email").setValue(newEmail);
-        userProfileRef.child("Phone").setValue(newPhone);
+        allUserProfileRef.child(CurrentUser.getInstance().getUID()).child("Email").setValue(newEmail);
+        allUserProfileRef.child(CurrentUser.getInstance().getUID()).child("Phone").setValue(newPhone);
     }
 
-    public HashMap<String, String> readUserProfile() {
+    public HashMap<String, String> readCurrentUserProfile() {
+        HashMap<String, String> currentUserProfile = new HashMap<String, String>();
+        if (allUserProfile.containsKey(CurrentUser.getInstance().getUID())){
+            HashMap<String ,String> p = allUserProfile.get(CurrentUser.getInstance().getUID());
+            currentUserProfile.putAll(p);
+        }
 
-        if (userProfile.size() == 2) {
-            return (HashMap<String, String>) userProfile;
-        } else {
-            Log.d("mattTag", "nahnah");
-            Log.d("mattTag", String.valueOf(userProfile.size()));
+        else {
+
             HashMap<String, String> profile = new HashMap<String, String>();
             profile.put("Email", CurrentUser.getInstance().getDefaultEmail());
             profile.put("Phone", CurrentUser.getInstance().getAccountPhone());
             return profile;
         }
+        return currentUserProfile;
+
     }
 
     public void onLogOut() {
@@ -402,8 +428,8 @@ public class DatabaseManager {
 
             String allPath = generateAllListingPath(listing, dupInd, getUIDFromName(listing.getOwnerUsername()));
             allListingsRef.child(allPath).child("status").setValue(Requested);
-            //DatabaseReference ref = FirebaseDatabase.getInstance().getReference("UserBooks/" + getUIDFromName(listing.getOwnerUsername()) + "/" + generateUserListingPath(listing, dupInd));
-            //ref.child("status").setValue(Requested);
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("UserBooks/" + getUIDFromName(listing.getOwnerUsername()) + "/" + generateUserListingPath(listing, dupInd));
+            ref.child("status").setValue(Requested);
 
             ArrayList<String> requesters = null;
             for (BookListing l : allBookLibrary) {
@@ -414,7 +440,7 @@ public class DatabaseManager {
             if (requesters == null) return false;
 
             requesters.add(CurrentUser.getInstance().getUsername());
-            //ref.child("requests").setValue(requesters);
+            ref.child("requests").setValue(requesters);
             allListingsRef.child(allPath).child("requests").setValue(requesters);
 
             writeNotification(new Notification(listing, listing.getOwnerUsername(), requester, NotificationType.hasRequested));
@@ -494,6 +520,38 @@ public class DatabaseManager {
         return null;
     }
 
+    public String getPhoneFromUsername(String ownerUsername) {
+        String res = null;
+        if (allUserProfile.containsKey(getUIDFromName(ownerUsername))){
+            res = allUserProfile.get(getUIDFromName(ownerUsername)).get("Phone");
+        }
+
+        return res;
+    };
+
+    public HashMap<String, String> readOtherUserProfile(String username){
+        HashMap<String, String> res = new HashMap<>();
+        if (allUserProfile.containsKey(getUIDFromName(username))){
+            res.putAll(allUserProfile.get(getUIDFromName(username)));
+        }
+        return res;
+
+    }
+
+    public String getEmailFromUsername(String ownerUsername) {
+        String uid = getUIDFromName(ownerUsername);
+        if (allUserProfile.containsKey(uid)){
+            return allUserProfile.get(uid).get("Email");
+        }
+        return null;
+
+    }
+
+    public DatabaseReference getAllProfileRef() {
+        return allUserProfileRef;
+    }
+
+
     public class InitiationTask extends AsyncTask<Void, Void, Boolean> {
         Activity context;
         String uid = CurrentUser.getInstance().getUID();
@@ -529,14 +587,19 @@ public class DatabaseManager {
             // This listener should take care of database value change automatically
             allListingsRef.addValueEventListener(allListingsListener);
 
-            userProfileListener = new ValueEventListener() {
+            allUserProfileListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    userProfile.clear();
-                    HashMap<String, String> fetchedProfile = (HashMap<String, String>) dataSnapshot.getValue();
+                    allUserProfile.clear();
+                    HashMap<String, HashMap<String, String>> fetchedProfile = (HashMap<String, HashMap<String, String>>) dataSnapshot.getValue();
 //                    Log.d("mattTag", "fetched" + String.valueOf(fetchedProfile.size()));
                     if (fetchedProfile != null) {
-                        userProfile.putAll(fetchedProfile);
+                        allUserProfile.putAll(fetchedProfile);
+                    }
+                    HashMap<String, String> currentUserProfile = fetchedProfile.get(CurrentUser.getInstance().getUID());
+                    if (currentUserProfile != null){
+
+                        CurrentUser.getInstance().setProfile(currentUserProfile);
                     }
                 }
 
@@ -545,8 +608,8 @@ public class DatabaseManager {
                     System.out.println("The read failed: " + databaseError.getCode());
                 }
             };
-            userProfileRef = FirebaseDatabase.getInstance().getReference("/UserProfiles/" + CurrentUser.getInstance().getUID());
-            userProfileRef.addValueEventListener(userProfileListener);
+            allUserProfileRef = FirebaseDatabase.getInstance().getReference("UserProfiles");
+            allUserProfileRef.addValueEventListener(allUserProfileListener);
 
             // This listener should take care of database value change automatically
             //allListingsRef.addValueEventListener(allListingsListener);
@@ -565,6 +628,7 @@ public class DatabaseManager {
                     for (DataSnapshot data : dataSnapshot.getChildren()) {
                         BookListing bookListing = data.getValue(BookListing.class);
                         if (bookListing != null) {
+                            Log.d("mattTag", "at its root: " +  bookListing.toString());
                             userBookLibrary.addBookListing(bookListing);
                         }
                     }
@@ -596,10 +660,11 @@ public class DatabaseManager {
                         usernames.put(name, uid);
                         if (uid.equals(CurrentUser.getInstance().getUID())) {
                             CurrentUser.getInstance().setUsername(name);
+                            nameLoaded = true;
                         }
                     }
 
-                    nameLoaded = true;
+
                     Log.d("mattTag", "nameLoaded");
                     if (phoneLoaded && progressDialog != null) {
                         Log.d("mattTag", "checking from name");
@@ -612,6 +677,11 @@ public class DatabaseManager {
                             if (CurrentUser.getInstance().getUsername() == null || CurrentUser.getInstance().getAccountPhone() == null) {
                                 loginPageActivity.promptInitialProfile();
                             } else {
+                                // old users may not have UserProfile entries, in that case, use account email and account phone as their profile
+                                if (! allUserProfile.containsKey(CurrentUser.getInstance().getUID())){
+                                    writeUserProfile(CurrentUser.getInstance().getDefaultEmail(), CurrentUser.getInstance().getAccountPhone());
+                                }
+
                                 loginPageActivity.goToMainPage();
                             }
                         }
@@ -638,9 +708,10 @@ public class DatabaseManager {
 
                         if (uid.equals(CurrentUser.getInstance().getUID())) {
                             CurrentUser.getInstance().setAccountPhone(phone);
+                            phoneLoaded = true;
                         }
                     }
-                    phoneLoaded = true;
+
                     Log.d("mattTag", "phoneLoaded");
                     if (nameLoaded && progressDialog != null) {
                         Log.d("mattTag", "checking from phone");
@@ -654,6 +725,10 @@ public class DatabaseManager {
                             if (CurrentUser.getInstance().getUsername() == null || CurrentUser.getInstance().getAccountPhone() == null) {
                                 loginPageActivity.promptInitialProfile();
                             } else {
+                                // old users may not have UserProfile entries, in that case, use account email and account phone as their profile
+                                if (! allUserProfile.containsKey(CurrentUser.getInstance().getUID())){
+                                    writeUserProfile(CurrentUser.getInstance().getDefaultEmail(), CurrentUser.getInstance().getAccountPhone());
+                                }
                                 loginPageActivity.goToMainPage();
                             }
                         }
@@ -671,14 +746,19 @@ public class DatabaseManager {
             notificationListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
+
+                    notifications.removeAllNotificiations();
+
+                    Log.d("seanTag", "start noti read for "+CurrentUser.getInstance().getUsername());
+
                     for (DataSnapshot data : dataSnapshot.getChildren()) {
                         Notification notification = data.getValue(Notification.class);
-                        Log.d("seanTag", "check user " + notification.getUserReceivingNotification());
                         if (notification.getUserReceivingNotification().equals(CurrentUser.getInstance().getUsername())) {
+                            Log.d("seanTag", "new noti " + notification.getRequestedBookListing().getISBN());
                             notifications.addNotification(notification);
                         }
                     }
-                    Log.d("seanTag", "read notification " + CurrentUser.getInstance().getUsername());
+                    //Log.d("seanTag", "read notification " + CurrentUser.getInstance().getUsername());
                 }
 
                 @Override

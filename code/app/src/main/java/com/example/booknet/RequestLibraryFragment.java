@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,6 +57,8 @@ public class RequestLibraryFragment extends Fragment {
         //(Currently reusing the ui from the owned library layout) todo? use it's own layout?
         View view = inflater.inflate(R.layout.activity_owned_library, container, false);
 
+        Log.d("seanTag", "onCreateView Request");
+
         //Add Click Listener
         addButton = view.findViewById(R.id.addBookButton);
         addButton.setVisibility(View.GONE);//Dont use this button
@@ -84,7 +87,7 @@ public class RequestLibraryFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 TextView selectedView = (TextView) view;
-                if (selectedView != null){
+                if (selectedView != null) {
                     String selectedItem = selectedView.getText().toString();
                     if (selectedItem.equals("All")) {
                         filteredLibrary.copyOneByOne(library);

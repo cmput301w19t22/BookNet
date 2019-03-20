@@ -46,7 +46,6 @@ public class MainActivity extends FragmentActivity {
             } else if (position == 4) {
                 return NotificationFragment.newInstance();
             }
-
             return BookSearchFragment.newInstance();
         }
     }
@@ -78,7 +77,6 @@ public class MainActivity extends FragmentActivity {
                     return true;
                 case R.id.navigation_notifications:
                     myNotificationsClicked();
-                    //mTextMessage.setText(R.string.title_notifications);
                     return true;
             }
             return false;
@@ -98,9 +96,10 @@ public class MainActivity extends FragmentActivity {
 
         final BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-        /*mPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+
+        mPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
-            public void onPageScrolled(int i, float v, int i1) {
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
             }
 
@@ -113,21 +112,21 @@ public class MainActivity extends FragmentActivity {
                     navigation.setSelectedItemId(R.id.navigation_mybooks);
                 }
                 else if (i == 2) {
-                    navigation.setSelectedItemId(R.id.navigation_myaccount);
+                    navigation.setSelectedItemId(R.id.navigation_myrequests);
                 }
                 else if (i == 3) {
+                    navigation.setSelectedItemId(R.id.navigation_myaccount);
+                }
+                else if (i == 4) {
                     navigation.setSelectedItemId(R.id.navigation_notifications);
                 }
             }
 
             @Override
-            public void onPageScrollStateChanged(int i) {
+            public void onPageScrollStateChanged(int state) {
 
             }
         });
-        searchBar = findViewById(R.id.mainSearch);*/
-
-        Log.d("mattTag", "leaving main activity onCreate");
     }
 
     private void onSearchClicked() {

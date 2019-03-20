@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -71,13 +72,14 @@ public class OwnedLibraryAdapter extends RecyclerView.Adapter<OwnedLibraryAdapte
 
         //Fill the text fields with the object's library
         //ownedListingViewHolder.bookThumbnail.//todo listing photo
-        ownedListingViewHolder.bookThumbnail.setImageResource(R.mipmap.ic_launcher);
+        ownedListingViewHolder.bookThumbnail.setImageResource(R.drawable.ic_photo_lightgray_24dp);
         ownedListingViewHolder.bookTitleLabel.setText(item.getBook().getTitle());
         ownedListingViewHolder.bookAuthorLabel.setText(item.getBook().getAuthor());
         ownedListingViewHolder.isbnLabel.setText(item.getBook().getIsbn());
         ownedListingViewHolder.ownerLabel.setVisibility(View.GONE);//Exclude this element
         ownedListingViewHolder.ownedLabel.setVisibility(View.GONE);//Exclude this element
-        ownedListingViewHolder.statusLabel.setText(item.getStatusString());
+        ownedListingViewHolder.statusLabel.setText(item.getStatus().toString());
+        Log.d("mattTag", "really? "+ item.getBook().toString() + " " + item.getStatus());
 
 
         //Add the click listener to the item

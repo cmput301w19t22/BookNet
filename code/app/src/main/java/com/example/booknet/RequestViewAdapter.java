@@ -19,7 +19,7 @@ import java.util.ArrayList;
  * Adapter for displaying a request in a recycler view list with accept and decline buttons.
  * @author Jamie
  */
-public class UserRequestAdapter extends RecyclerView.Adapter<UserRequestAdapter.RequestViewHolder> {
+public class RequestViewAdapter extends RecyclerView.Adapter<RequestViewAdapter.RequestViewHolder> {
 
     //The requester usernames
     private ArrayList<String> requesters = new ArrayList<>();
@@ -32,8 +32,8 @@ public class UserRequestAdapter extends RecyclerView.Adapter<UserRequestAdapter.
     private DatabaseManager manager = DatabaseManager.getInstance();
 
     //Image Drawables to use in this activity
-    private int starOn = android.R.drawable.star_on;//todo replace with custom images
-    private int starOff = android.R.drawable.star_off;
+    private int starOn = R.drawable.ic_star_24dp;//todo replace with custom images
+    private int starOff = R.drawable.ic_star_border_24dp;
 
 
     /**
@@ -42,7 +42,7 @@ public class UserRequestAdapter extends RecyclerView.Adapter<UserRequestAdapter.
      * @param listing        The UserAccounts to use for the list display
      * @param sourceActivity The activity that created this adapter
      */
-    public UserRequestAdapter(BookListing listing, AppCompatActivity sourceActivity) {
+    public RequestViewAdapter(BookListing listing, AppCompatActivity sourceActivity) {
         this.listing = listing;
         this.requesters = listing.getRequests();
 
@@ -140,8 +140,6 @@ public class UserRequestAdapter extends RecyclerView.Adapter<UserRequestAdapter.
      * @param username The user whose request will be accepted.
      */
     private void acceptButton(String username) {
-
-//        MockDatabase.getInstance().acceptRequestForListing(listing, account);
         manager.acceptRequestForListing(listing, username);
         Toast.makeText(sourceActivity, "Accepted " + username, Toast.LENGTH_LONG).show();
         sourceActivity.finish();
@@ -152,11 +150,10 @@ public class UserRequestAdapter extends RecyclerView.Adapter<UserRequestAdapter.
      *
      * @param account The user whose request will be declined.
      */
-    private void declineButton(String account) {
-        //todo deny the request in real db, I'll fix this - matt
-        listing.denyRequest(account);
-//        MockDatabase.getInstance().declineRequestForListing(listing, account);
-        Toast.makeText(sourceActivity, "Declined " + account, Toast.LENGTH_LONG).show();
+    private void declineButton(String username) {
+        //listing.denyRequest(account);
+        manager.declineRequestForListing(listing, username);
+        Toast.makeText(sourceActivity, "Declined " + username, Toast.LENGTH_LONG).show();
     }
 
     /**

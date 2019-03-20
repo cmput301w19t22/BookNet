@@ -3,6 +3,7 @@ package com.example.booknet;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -11,6 +12,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.booknet.Constants.BookListingStatus;
 
 /**
  * Activity to view a listing that the current user owns.
@@ -34,6 +37,10 @@ public class OwnListingViewActivity extends AppCompatActivity {
     private Button deleteButton;
     private Button editButton;
     private ImageButton editPhotoButton;
+    private ConstraintLayout geoLocationBlock;
+    private Button setLocationButton;
+    private ImageView viewLocationButton;
+    private TextView geolocationLabel;
     private DatabaseManager manager = DatabaseManager.getInstance();
 
     //Activity Data
@@ -52,7 +59,7 @@ public class OwnListingViewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_own_listing_view);
 
-        //Get References to Layout Objects
+        //#region Get References to Layout Objects
         photoThumbnail = findViewById(R.id.bookThumbnail);
         bookTitleLabel = findViewById(R.id.BookTitleLabel);
         bookAuthorLabel = findViewById(R.id.bookAuthorLabel);
@@ -61,35 +68,31 @@ public class OwnListingViewActivity extends AppCompatActivity {
         ownerLabel = findViewById(R.id.ownerLabel);
         statusLabel = findViewById(R.id.statusLabel);
         requestCountLabel = findViewById(R.id.requestCountLabel);
-//        Log.d("mattTag", "yeah");
         requestButton = findViewById(R.id.requestButton);
         viewRequestsButton = findViewById(R.id.viewRequestsButton);
         deleteButton = findViewById(R.id.deleteButton);
         editButton = findViewById(R.id.editButton);
         editPhotoButton = findViewById(R.id.editPhotoButton);
+        geoLocationBlock = findViewById(R.id.geoLocationBlock);
+        setLocationButton = findViewById(R.id.setLocationButton);
+        viewLocationButton = findViewById(R.id.viewLocationButton);
+        geolocationLabel = findViewById(R.id.geolocationLabel);
         bookTitleLabel.setSelected(true);//select to enable scrolling
         bookAuthorLabel.setSelected(true);
+        //geoLocationBlock.setVisibility(View.GONE);//Deactivate this section unless accepted
+        //#endregion
 
-        //Get Intent
-        //Intent intent = getIntent();
-        //Check if given info to fetch listing
-        //if (intent.hasExtra("bookisbn")) {
-        //    String isbn = intent.getStringExtra("bookisbn");
-        //    listing = manager.readUserOwnedBookListingWithISBN(isbn);
-
-        //    fillLayout();
-        //}
 
         Intent intent = getIntent();
         //Check if given info to fetch listing
-
         if (intent.hasExtra("isbn")) {
             String isbn = intent.getStringExtra("isbn");
             int dupID = intent.getIntExtra("dupID", 0);
 
             listing = manager.readUserOwnedBookListing(isbn, dupID);
-		}
+        }
 
+        //Fill Layout
         bookTitleLabel.setText(listing.getBook().getTitle());
         bookAuthorLabel.setText(listing.getBook().getAuthor());
         isbnLabel.setText(listing.getBook().getIsbn());
@@ -101,6 +104,10 @@ public class OwnListingViewActivity extends AppCompatActivity {
         } else {
             requestCountLabel.setVisibility(View.INVISIBLE);//todo ???
         }
+        if (listing.getStatus() == BookListingStatus.Accepted) {
+            geoLocationBlock.setVisibility(View.VISIBLE);
+        }
+
 
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,7 +116,15 @@ public class OwnListingViewActivity extends AppCompatActivity {
             }
         });
 
+        //Set Listener for ViewRequests Button
+        viewRequestsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                viewRequests(listing);
+            }
+        });
 
+        //#region Photos
         View.OnClickListener editPhotoListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -120,13 +135,6 @@ public class OwnListingViewActivity extends AppCompatActivity {
         photoThumbnail.setOnClickListener(editPhotoListener);
         editPhotoButton.setOnClickListener(editPhotoListener);
 
-        //Set Listener for ViewRequests Button
-        viewRequestsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                viewRequests(listing);
-            }
-        });
 
         //Copied from Jamie's assignment 1
         //Create the dialog for the Delete button
@@ -156,6 +164,23 @@ public class OwnListingViewActivity extends AppCompatActivity {
                 alertBuilder.create().show();
             }
         });
+        //endregion
+
+        //#region GeoLocation
+        setLocationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setGeoLocation();
+            }
+        });
+
+        viewLocationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                viewGeoLocation();
+            }
+        });
+        //#endregion
     }
 
     @Override
@@ -203,4 +228,19 @@ public class OwnListingViewActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Starts a dialog to select a geolocation.
+     */
+    private void setGeoLocation(){
+        Toast.makeText(getApplicationContext(), "Select a Location\nTO BE IMPLEMENTED", Toast.LENGTH_SHORT).show();
+        //todo implement
+    }
+
+    /**
+     * Starts a dialog to view the geolocation
+     */
+    private void viewGeoLocation(){
+        Toast.makeText(getApplicationContext(), "View GeoLocation Not Implemented", Toast.LENGTH_SHORT).show();
+        //todo implement
+    }
 }

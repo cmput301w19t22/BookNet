@@ -1,9 +1,11 @@
 package com.example.booknet;
 
 import com.example.booknet.Constants.BookListingStatus;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import com.google.firebase.auth.UserInfo;
 
 /**
  * Keeps track of a book that is listed on the app.
@@ -66,7 +68,6 @@ public class BookListing implements Serializable, Cloneable {
         return book;
     }
 
-    public BookListingStatus getStatus() { return status; }
 
     public String getOwnerUsername() {
         return ownerUsername;
@@ -191,8 +192,8 @@ public class BookListing implements Serializable, Cloneable {
 
 
 
-    public String getStatusString() {
-        return status.toString();
+    public BookListingStatus getStatus() {
+        return status;
     }
 
     public BookListing clone(){
@@ -239,8 +240,18 @@ public class BookListing implements Serializable, Cloneable {
     @Override
     public String toString() {
         String s = "";
-        s += book.toString() + " " + borrowerName + " " + status.toString() + " " + requests.toString();
+        s += book.toString() + " with  status:" + status.toString() + " with ISBN: "+ book.getIsbn();
         return s;
+    }
+
+    public String getOwnerPhone() {
+        return manager.getPhoneFromUsername(ownerUsername);
+
+    }
+
+    public String getOwnerEmail() {
+        return manager.getEmailFromUsername(ownerUsername);
+
     }
 
 

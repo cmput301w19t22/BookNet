@@ -38,20 +38,4 @@ public class Notification implements Serializable {
         this.userMakingNotification = userMakingNotification;
         this.notificationType = notificationType;
     }
-
-    public void notifyOwnerOfRequest() {
-
-    }
-
-    public void notifyRequesterOfAcceptance() {
-
-    }
-
-    public void notifyRequesterOfDecline() {
-
-    }
-
-    public void notifyAllRequestersOfDecline() {
-
-    }
 }

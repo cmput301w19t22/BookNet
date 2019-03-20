@@ -6,6 +6,8 @@ import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.example.booknet.Constants.BookListingStatus;
+import com.example.booknet.Constants.NotificationType;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -16,9 +18,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.example.booknet.BookListingStatus.Accepted;
-import static com.example.booknet.BookListingStatus.Available;
-import static com.example.booknet.BookListingStatus.Requested;
+import static com.example.booknet.Constants.BookListingStatus.Available;
+import static com.example.booknet.Constants.BookListingStatus.Requested;
+import static com.example.booknet.Constants.BookListingStatus.Accepted;
 
 /**
  * Class that interfaces with the database
@@ -395,14 +397,13 @@ public class DatabaseManager {
      * @return whether the request goes through
      */
     public boolean requestBookListing(BookListing listing, String requester) {
-        if (isBookListingAvailableAndNotOwnBook(listing)) {
-
+        if (isBookListingAvailableAndNotOwnBook(listing)){
             int dupInd = listing.getDupInd();
 
             String allPath = generateAllListingPath(listing, dupInd, getUIDFromName(listing.getOwnerUsername()));
             allListingsRef.child(allPath).child("status").setValue(Requested);
-            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("UserBooks/" + getUIDFromName(listing.getOwnerUsername()) + "/" + generateUserListingPath(listing, dupInd));
-            ref.child("status").setValue(Requested);
+            //DatabaseReference ref = FirebaseDatabase.getInstance().getReference("UserBooks/" + getUIDFromName(listing.getOwnerUsername()) + "/" + generateUserListingPath(listing, dupInd));
+            //ref.child("status").setValue(Requested);
 
             ArrayList<String> requesters = null;
             for (BookListing l : allBookLibrary) {
@@ -413,14 +414,54 @@ public class DatabaseManager {
             if (requesters == null) return false;
 
             requesters.add(CurrentUser.getInstance().getUsername());
-            ref.child("requests").setValue(requesters);
+            //ref.child("requests").setValue(requesters);
             allListingsRef.child(allPath).child("requests").setValue(requesters);
 
-            writeNotification(new Notification(listing, listing.getOwnerUsername(), requester));
+            writeNotification(new Notification(listing, listing.getOwnerUsername(), requester, NotificationType.hasRequested));
 
             return true;
         }
         return false;
+    }
+
+    public boolean requestBookListingRemoval(BookListing listing) {
+        if (isBookListingAvailableAndNotOwnBook(listing)){
+            int dupInd = listing.getDupInd();
+
+            String allPath = generateAllListingPath(listing, dupInd, getUIDFromName(listing.getOwnerUsername()));
+            allListingsRef.child(allPath).child("status").setValue(Requested);
+
+            ArrayList<String> requesters = null;
+            for (BookListing l : allBookLibrary) {
+                if (l.getOwnerUsername().equals(listing.getOwnerUsername()) && l.getISBN().equals(listing.getISBN())) {
+                    requesters = l.getRequests();
+                }
+            }
+            if (requesters == null) return false;
+
+            requesters.remove(CurrentUser.getInstance().getUsername());
+            allListingsRef.child(allPath).child("requests").setValue(requesters);
+
+            return true;
+        }
+        return false;
+    }
+
+    public boolean checkIfListingAlreadyRequested(BookListing listing) {
+        Boolean alreadyRequested = true;
+
+        ArrayList<String> requesters = null;
+        for (BookListing l : allBookLibrary) {
+            if (l.getOwnerUsername().equals(listing.getOwnerUsername()) && l.getISBN().equals(listing.getISBN())) {
+                requesters = l.getRequests();
+            }
+        }
+        if (requesters.contains(CurrentUser.getInstance().getUsername()))
+            alreadyRequested = true;
+        else
+            alreadyRequested = false;
+
+        return alreadyRequested;
     }
 
     private boolean isBookListingAvailableAndNotOwnBook(BookListing listing) {

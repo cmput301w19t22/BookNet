@@ -1,8 +1,7 @@
 package com.example.booknet;
 
-import android.provider.ContactsContract;
-import android.util.Log;
-import android.graphics.Bitmap;
+import com.example.booknet.Constants.BookListingStatus;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -36,8 +35,7 @@ public class BookListing implements Serializable, Cloneable {
         this.status = BookListingStatus.Available;
         this.requests = new ArrayList<String>();
         this.geoLocation = new UserLocation();
-        dupInd = 0;
-
+        this.dupInd = 0;
     }
 
     public int getDupInd() {

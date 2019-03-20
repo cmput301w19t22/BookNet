@@ -32,6 +32,8 @@ public class ListingViewActivity extends AppCompatActivity {
     //Activity Data
     private BookListing listing;
 
+    private boolean alreadyRequested;
+
     /**
      * Called when creating the activity.
      * Performs the following tasks:
@@ -75,13 +77,27 @@ public class ListingViewActivity extends AppCompatActivity {
         ownerLabel.setText(listing.getOwnerUsername());
         statusLabel.setText(listing.getStatusString());
 
+        if (manager.checkIfListingAlreadyRequested(listing)) {
+            requestButton.setText("Cancel Request");
+            alreadyRequested = true;
+        }
+        else
+        {
+            requestButton.setText("Request");
+            alreadyRequested = false;
+        }
+
         //#region Listeners
         requestButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //todo toggle between send and cancel depending on whether currently requested
-                sendRequest();
-//                startActivity(new Intent(ListingViewActivity.this, MainActivity.class));
+
+                if (alreadyRequested)
+                    sendRemoveRequest();
+                else
+                    sendAddRequest();
+
                 finish();
             }
         });
@@ -99,10 +115,23 @@ public class ListingViewActivity extends AppCompatActivity {
     /**
      * Creates a request for this book listing from the current user.
      */
-    private void sendRequest() {
+    private void sendAddRequest() {
         boolean res = manager.requestBookListing(listing, CurrentUser.getInstance().getUserAccount().getUsername());
         if (res){
             Toast.makeText(this, "book requested", Toast.LENGTH_SHORT).show();
+        }
+        else{
+            Toast.makeText(this, "failed", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
+     * Creates a request for this book listing from the current user.
+     */
+    private void sendRemoveRequest() {
+        boolean res = manager.requestBookListingRemoval(listing);
+        if (res){
+            Toast.makeText(this, "book request removed", Toast.LENGTH_SHORT).show();
         }
         else{
             Toast.makeText(this, "failed", Toast.LENGTH_SHORT).show();

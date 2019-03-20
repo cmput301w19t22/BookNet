@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.example.booknet.Constants.BookListingStatus;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -28,7 +29,7 @@ public class OwnedLibraryFragment extends Fragment {
 
     //Layout Objects
     private RecyclerView libraryListView;
-    private OwnedListingAdapter listingAdapter;
+    private OwnedLibraryAdapter listingAdapter;
     private Button addButton;
     private ValueEventListener valueEventListener = null;
 
@@ -103,12 +104,11 @@ public class OwnedLibraryFragment extends Fragment {
 
         filteredLibrary = library.clone();
 
-
         Log.d("matt", "creating new adpator");
         //Apply Adapter to RecyclerView
         libraryListView = view.findViewById(R.id.bookLibrary);
         libraryListView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        listingAdapter = new OwnedListingAdapter(filteredLibrary, getActivity());
+        listingAdapter = new OwnedLibraryAdapter(filteredLibrary, getActivity());
         libraryListView.setAdapter(listingAdapter);
 
         Spinner filter = view.findViewById(R.id.spinner);
@@ -126,8 +126,6 @@ public class OwnedLibraryFragment extends Fragment {
                     }
 
                     listingAdapter.notifyDataSetChanged();
-
-
                 }
 
             }

@@ -71,15 +71,35 @@ public class OwnListingViewActivity extends AppCompatActivity {
         bookAuthorLabel.setSelected(true);
 
         //Get Intent
+        //Intent intent = getIntent();
+        //Check if given info to fetch listing
+        //if (intent.hasExtra("bookisbn")) {
+        //    String isbn = intent.getStringExtra("bookisbn");
+        //    listing = manager.readUserOwnedBookListingWithISBN(isbn);
+
+        //    fillLayout();
+        //}
+
         Intent intent = getIntent();
         //Check if given info to fetch listing
+
         if (intent.hasExtra("isbn")) {
             String isbn = intent.getStringExtra("isbn");
             int dupID = intent.getIntExtra("dupID", 0);
 
             listing = manager.readUserOwnedBookListing(isbn, dupID);
+		}
 
-            fillLayout();
+        bookTitleLabel.setText(listing.getBook().getTitle());
+        bookAuthorLabel.setText(listing.getBook().getAuthor());
+        isbnLabel.setText(listing.getBook().getIsbn());
+        ownerLabel.setText(listing.getOwnerUsername());
+        statusLabel.setText(listing.getStatus().toString());
+        int numRequests = listing.getRequests().size();
+        if (numRequests > 0) {
+            requestCountLabel.setText("Number of Requests: " + Integer.toString(numRequests));
+        } else {
+            requestCountLabel.setVisibility(View.INVISIBLE);//todo ???
         }
 
         editButton.setOnClickListener(new View.OnClickListener() {
@@ -141,30 +161,7 @@ public class OwnListingViewActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
-        fillLayout();
     }
-
-    /**
-     * Fills the activity layout from the listing.
-     */
-    private void fillLayout() {
-        if (listing != null) {
-            bookTitleLabel.setText(listing.getBook().getTitle());
-            bookAuthorLabel.setText(listing.getBook().getAuthor());
-            isbnLabel.setText(listing.getBook().getIsbn());
-            ownerLabel.setText(listing.getOwnerUsername());
-            statusLabel.setText(listing.getStatus().toString());
-            int numRequests = listing.getRequests().size();
-            if (numRequests > 0) {
-                requestCountLabel.setText(String.valueOf(numRequests));
-            } else {
-                //requestCountLabel.setVisibility(View.INVISIBLE);//todo ???
-                viewRequestsButton.setVisibility(View.GONE);
-            }
-        }
-    }
-
 
     /**
      * Start an activity to edit the book for this listing.

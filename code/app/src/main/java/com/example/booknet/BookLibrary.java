@@ -1,9 +1,8 @@
 package com.example.booknet;
 
-import android.util.Log;
+import com.example.booknet.Constants.BookListingStatus;
 
 import java.io.Serializable;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Iterator;
 

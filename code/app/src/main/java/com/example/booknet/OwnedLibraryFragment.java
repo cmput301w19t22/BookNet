@@ -75,6 +75,8 @@ public class OwnedLibraryFragment extends Fragment {
         //Get Data From the Database, library will get auto updated (it's magic babe)
         library = manager.readUserOwnedLibrary();
 
+        Log.d("seanTag", "onCreateView Owned");
+
         listener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

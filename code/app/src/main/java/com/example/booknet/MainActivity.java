@@ -42,13 +42,10 @@ public class MainActivity extends FragmentActivity {
             } else if (position == 2) {
                 return RequestLibraryFragment.newInstance();
             } else if (position == 3) {
-
                 return UserProfileViewFragment.newInstance();
-
             } else if (position == 4) {
                 return NotificationFragment.newInstance();
             }
-
             return BookSearchFragment.newInstance();
         }
     }
@@ -80,7 +77,6 @@ public class MainActivity extends FragmentActivity {
                     return true;
                 case R.id.navigation_notifications:
                     myNotificationsClicked();
-                    //mTextMessage.setText(R.string.title_notifications);
                     return true;
             }
             return false;
@@ -101,6 +97,36 @@ public class MainActivity extends FragmentActivity {
         final BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
+        mPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int i) {
+                if (i == 0) {
+                    navigation.setSelectedItemId(R.id.navigation_search);
+                }
+                else if (i == 1) {
+                    navigation.setSelectedItemId(R.id.navigation_mybooks);
+                }
+                else if (i == 2) {
+                    navigation.setSelectedItemId(R.id.navigation_myrequests);
+                }
+                else if (i == 3) {
+                    navigation.setSelectedItemId(R.id.navigation_myaccount);
+                }
+                else if (i == 4) {
+                    navigation.setSelectedItemId(R.id.navigation_notifications);
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
 
     private void onSearchClicked() {

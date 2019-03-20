@@ -292,7 +292,7 @@ public class DatabaseManager {
     }
 
     public Notifications getAllNotifications() {
-        Log.d("seanTag", "Get Notifications");
+        //Log.d("seanTag", "Get Notifications");
         return notifications;
     }
 
@@ -601,8 +601,6 @@ public class DatabaseManager {
 
                         CurrentUser.getInstance().setProfile(currentUserProfile);
                     }
-
-
                 }
 
                 @Override
@@ -610,7 +608,7 @@ public class DatabaseManager {
                     System.out.println("The read failed: " + databaseError.getCode());
                 }
             };
-            allUserProfileRef = FirebaseDatabase.getInstance().getReference("/UserProfiles/");
+            allUserProfileRef = FirebaseDatabase.getInstance().getReference("UserProfiles");
             allUserProfileRef.addValueEventListener(allUserProfileListener);
 
             // This listener should take care of database value change automatically
@@ -678,7 +676,6 @@ public class DatabaseManager {
                             if (CurrentUser.getInstance().getUsername() == null || CurrentUser.getInstance().getAccountPhone() == null) {
                                 loginPageActivity.promptInitialProfile();
                             } else {
-
                                 // old users may not have UserProfile entries, in that case, use account email and account phone as their profile
                                 if (! allUserProfile.containsKey(CurrentUser.getInstance().getUID())){
                                     writeUserProfile(CurrentUser.getInstance().getDefaultEmail(), CurrentUser.getInstance().getAccountPhone());
@@ -730,8 +727,6 @@ public class DatabaseManager {
                                 if (! allUserProfile.containsKey(CurrentUser.getInstance().getUID())){
                                     writeUserProfile(CurrentUser.getInstance().getDefaultEmail(), CurrentUser.getInstance().getAccountPhone());
                                 }
-
-
                                 loginPageActivity.goToMainPage();
                             }
                         }
@@ -752,10 +747,12 @@ public class DatabaseManager {
 
                     notifications.removeAllNotificiations();
 
+                    Log.d("seanTag", "start noti read for "+CurrentUser.getInstance().getUsername());
+
                     for (DataSnapshot data : dataSnapshot.getChildren()) {
                         Notification notification = data.getValue(Notification.class);
-                        //Log.d("seanTag", "check user " + notification.getUserReceivingNotification());
                         if (notification.getUserReceivingNotification().equals(CurrentUser.getInstance().getUsername())) {
+                            Log.d("seanTag", "new noti " + notification.getRequestedBookListing().getISBN());
                             notifications.addNotification(notification);
                         }
                     }

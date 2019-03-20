@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,6 +56,8 @@ public class RequestLibraryFragment extends Fragment {
         //Create the view
         //(Currently reusing the ui from the owned library layout) todo? use it's own layout?
         View view = inflater.inflate(R.layout.activity_owned_library, container, false);
+
+        Log.d("seanTag", "onCreateView Request");
 
         //Add Click Listener
         addButton = view.findViewById(R.id.addBookButton);

@@ -33,12 +33,6 @@ public class NotificationFragment extends Fragment {
 
         notifications = manager.getAllNotifications();
 
-        //Log.d("seanTag", "num noti: "+notifications.size());
-        //for (Notification notification : notifications) {
-        //    Log.d("seanTag", "Titles "+notification.getRequestedBookListing().getBook().getTitle());
-        //}
-
-
         notificationsListView = view.findViewById(R.id.notifications);
         notificationsListView.setLayoutManager(new LinearLayoutManager(getActivity()));
         notificationAdapter = new NotificationAdapter(notifications, getActivity());
@@ -54,7 +48,7 @@ public class NotificationFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        Log.d("seanTag", "onStart notifications");
+        //Log.d("seanTag", "onStart notifications");
         notificationAdapter.notifyDataSetChanged();
     }
 

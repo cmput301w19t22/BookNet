@@ -177,6 +177,13 @@ public class DatabaseManager {
         allListingsRef.child(generateAllListingPath(bookListing, bookListing.getDupInd(), getUIDFromName(bookListing.getOwnerUsername()))).removeValue();
     }
 
+    public void removeNotification(Notification notification) {
+        notificationRef.child(notification.getUserReceivingNotification()
+                + "-" + notification.getUserMakingNotification()
+                + "-" + notification.getRequestedBookListing().getISBN()
+                + "-" + notification.getRequestedBookListing().getDupInd()).removeValue();
+    }
+
     public void setBookListingStatus(BookListing bookListing, BookListingStatus status) {
         //todo: implement
     }

@@ -18,6 +18,8 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     //The activity this adapter was created from
     private FragmentActivity sourceActivity;
 
+    DatabaseManager manager = DatabaseManager.getInstance();
+
     public NotificationAdapter(Notifications notifications, FragmentActivity sourceActivity) {
         Log.d("seanTag", "Construct adaptor");
         this.notifications = notifications;
@@ -51,7 +53,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         notificationViewHolder.notificationUsername.setText(item.getUserMakingNotification());
         notificationViewHolder.notificationUserInfo.setText(item.getNotificationType().toString());
 
-        Log.d("seanTag", item.getRequestedBookListing().getBook().getTitle());
+        Log.d("seanTag", "onbindviewholder "+item.getRequestedBookListing().getBook().getTitle());
 
         notificationViewHolder.notificationStatus.setText(item.getRequestedBookListing().getStatus().toString());
         notificationViewHolder.item = item;
@@ -63,17 +65,14 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         notificationViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                clickedItem(item);
+                removeNotification(item);
+                notifyDataSetChanged();
             }
         });
     }
 
-    private void clickedItem(Notification item) {
-        //Start View/Edit Activity with Clicked Item
-        //Intent intent = new Intent(sourceActivity, ListingViewActivity.class);
-        //intent.putExtra("username", item.getRequestedBookListing().getOwnerUsername());
-        //intent.putExtra("bookisbn", item.getRequestedBookListing().getBook().getIsbn());
-        //sourceActivity.startActivity(intent);
+    private void removeNotification(Notification notification) {
+        manager.removeNotification(notification);
     }
 
     /**

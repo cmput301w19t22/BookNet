@@ -4,22 +4,22 @@
 
     <item
         android:id="@+id/navigation_search"
-        android:icon="@android:drawable/ic_menu_search"
+        android:icon="@drawable/ic_search_black_24dp"
         android:title="Search" />
 
     <item
         android:id="@+id/navigation_mybooks"
-        android:icon="@drawable/ic_dashboard_black_24dp"
+        android:icon="@drawable/ic_local_library_black_24dp"
         android:title="My Books" />
 
     <item
         android:id="@+id/navigation_myrequests"
-        android:icon="@drawable/ic_dashboard_black_24dp"
+        android:icon="@drawable/ic_library_books_black_24dp"
         android:title="Borrowing"
         app:showAsAction="withText" />
     <item
         android:id="@+id/navigation_myaccount"
-        android:icon="@android:drawable/ic_dialog_info"
+        android:icon="@drawable/ic_person_black_24dp"
         android:title="Profile"
         app:showAsAction="always|withText" />
     <item

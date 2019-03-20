@@ -32,8 +32,8 @@ public class RequestViewAdapter extends RecyclerView.Adapter<RequestViewAdapter.
     private DatabaseManager manager = DatabaseManager.getInstance();
 
     //Image Drawables to use in this activity
-    private int starOn = android.R.drawable.star_on;//todo replace with custom images
-    private int starOff = android.R.drawable.star_off;
+    private int starOn = R.drawable.ic_star_24dp;//todo replace with custom images
+    private int starOff = R.drawable.ic_star_border_24dp;
 
 
     /**

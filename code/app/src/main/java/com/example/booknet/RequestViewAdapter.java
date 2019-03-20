@@ -140,8 +140,6 @@ public class RequestViewAdapter extends RecyclerView.Adapter<RequestViewAdapter.
      * @param username The user whose request will be accepted.
      */
     private void acceptButton(String username) {
-
-//        MockDatabase.getInstance().acceptRequestForListing(listing, account);
         manager.acceptRequestForListing(listing, username);
         Toast.makeText(sourceActivity, "Accepted " + username, Toast.LENGTH_LONG).show();
         sourceActivity.finish();
@@ -152,11 +150,10 @@ public class RequestViewAdapter extends RecyclerView.Adapter<RequestViewAdapter.
      *
      * @param account The user whose request will be declined.
      */
-    private void declineButton(String account) {
-        //todo deny the request in real db, I'll fix this - matt
-        listing.denyRequest(account);
-//        MockDatabase.getInstance().declineRequestForListing(listing, account);
-        Toast.makeText(sourceActivity, "Declined " + account, Toast.LENGTH_LONG).show();
+    private void declineButton(String username) {
+        //listing.denyRequest(account);
+        manager.declineRequestForListing(listing, username);
+        Toast.makeText(sourceActivity, "Declined " + username, Toast.LENGTH_LONG).show();
     }
 
     /**

@@ -173,10 +173,9 @@ public class DatabaseManager {
      * @param bookListing The BookListing to delete
      */
     public void removeBookListing(BookListing bookListing) {
-        userListingsRef.child(bookListing.getBook().getIsbn()).removeValue();
-        allListingsRef.child(bookListing.getBook().getIsbn() + "-" + CurrentUser.getInstance().getUID()).removeValue();
+        userListingsRef.child(generateUserListingPath(bookListing, bookListing.getDupInd())).removeValue();
+        allListingsRef.child(generateAllListingPath(bookListing, bookListing.getDupInd(), getUIDFromName(bookListing.getOwnerUsername()))).removeValue();
     }
-
 
     public void setBookListingStatus(BookListing bookListing, BookListingStatus status) {
         //todo: implement
@@ -222,7 +221,6 @@ public class DatabaseManager {
         writeNotification(new Notification(bookListing, requester, bookListing.getOwnerUsername(), NotificationType.hasAccepted));
     }
 
-
     private void changeStatusToAcceptedAndSetBorrowerName(BookListing bookListing) {
 
 
@@ -235,9 +233,24 @@ public class DatabaseManager {
      * @param requester   The user whose request is declined
      */
     public void declineRequestForListing(BookListing bookListing, String requester) {
-        //todo:implement
-    }
+        int dupInd = bookListing.getDupInd();
 
+        String allPath = generateAllListingPath(bookListing, dupInd, getUIDFromName(bookListing.getOwnerUsername()));
+        allListingsRef.child(allPath).child("status").setValue(Requested);
+
+        ArrayList<String> requesters = null;
+        for (BookListing l : allBookLibrary) {
+            if (l.getOwnerUsername().equals(bookListing.getOwnerUsername()) && l.getISBN().equals(bookListing.getISBN())) {
+                requesters = l.getRequests();
+            }
+        }
+        if (requesters == null) return;
+
+        requesters.remove(requester);
+        allListingsRef.child(allPath).child("requests").setValue(requesters);
+
+        writeNotification(new Notification(bookListing, requester, bookListing.getOwnerUsername(), NotificationType.hasDeclined));
+    }
 
     /**
      * Reads a user account from the database.
@@ -677,12 +690,12 @@ public class DatabaseManager {
 
                     for (DataSnapshot data : dataSnapshot.getChildren()) {
                         Notification notification = data.getValue(Notification.class);
-                        Log.d("seanTag", "check user " + notification.getUserReceivingNotification());
+                        //Log.d("seanTag", "check user " + notification.getUserReceivingNotification());
                         if (notification.getUserReceivingNotification().equals(CurrentUser.getInstance().getUsername())) {
                             notifications.addNotification(notification);
                         }
                     }
-                    Log.d("seanTag", "read notification " + CurrentUser.getInstance().getUsername());
+                    //Log.d("seanTag", "read notification " + CurrentUser.getInstance().getUsername());
                 }
 
                 @Override

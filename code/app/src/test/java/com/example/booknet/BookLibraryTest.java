@@ -14,7 +14,7 @@ public class BookLibraryTest {
         BookLibrary bookLibrary = new BookLibrary();
         UserAccount owner = new UserAccount("test_username");
         Book book1 = new Book("A Book", "An Author", "Description", "1234567890");
-        BookListing listing = new BookListing(book1, owner);
+        BookListing listing = new BookListing(book1);
 
         bookLibrary.addBookListing(listing);
 
@@ -27,7 +27,7 @@ public class BookLibraryTest {
         BookLibrary bookLibrary = new BookLibrary();
         UserAccount owner = new UserAccount("test_username");
         Book test_book = new Book("A Book", "An Author", "Description", "1234567890");
-        BookListing listing = new BookListing(test_book, owner);
+        BookListing listing = new BookListing(test_book);
 
         bookLibrary.addBookListing(listing);
         bookLibrary.removeBookListing(listing);
@@ -43,7 +43,7 @@ public class BookLibraryTest {
         BookLibrary bookLibrary = new BookLibrary();
         UserAccount owner = new UserAccount("test_username");
         Book book1 = new Book("A Book", "An Author", "Description", "1234567890");
-        BookListing listing = new BookListing(book1, owner);
+        BookListing listing = new BookListing(book1);
 
         bookLibrary.addBookListing(listing);
         assertTrue("Contains Added Book", bookLibrary.containsListingFor(book1));

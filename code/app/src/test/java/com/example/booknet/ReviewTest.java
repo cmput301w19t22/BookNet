@@ -52,7 +52,8 @@ public class ReviewTest {
         UserAccount reviewed = new UserAccount("test_username_2");
         Review review = new Review(reviewer,reviewed,5,"message");
 
-        review.editReview(reviewer,reviewed,3,"newmessage");
+        //review.editReview(reviewer,reviewed,3,"newmessage");
+        //todo: implement editing review?
 
         assertEquals(3,review.getScore());
         assertEquals("newmessage",review.getMessage());

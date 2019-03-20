@@ -2,6 +2,7 @@ package com.example.booknet;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,6 +11,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
 
@@ -39,6 +44,11 @@ public class UserProfileViewFragment extends Fragment {
     private int starOn = R.drawable.ic_star_24dp;
 
     private DatabaseManager manager = DatabaseManager.getInstance();
+    private ValueEventListener listener;
+
+
+
+    private static final String tag = "own_profile_view_fragment";
 
     public static UserProfileViewFragment newInstance() {
         UserProfileViewFragment myFragment = new UserProfileViewFragment();
@@ -75,7 +85,27 @@ public class UserProfileViewFragment extends Fragment {
 //            userProfile.put("Email", i.getStringExtra("Email"));
 //        }
 
-        userProfile = manager.readUserProfile();
+        userProfile = manager.readCurrentUserProfile();
+        listener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                userProfile.clear();
+                HashMap<String, HashMap<String, String>> all = (HashMap<String, HashMap<String, String>>) dataSnapshot.getValue();
+                HashMap<String, String> p = all.get(CurrentUser.getInstance().getUID());
+                if (all != null && p != null){
+                    userProfile.putAll(all.get(CurrentUser.getInstance().getUID()));
+                    notifyProfileChange();
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
+
+        manager.getAllProfileRef().addValueEventListener(listener);
 
         //Obtain References To Layout Objects
         usernameLabel = view.findViewById(R.id.userNameLabel);
@@ -159,7 +189,7 @@ public class UserProfileViewFragment extends Fragment {
         Intent intent = new Intent(getActivity(), ProfileEditActivity.class);
         intent.putExtra("username", username);
         startActivity(intent);
-        getActivity().finish();
+
     }
 
     /**
@@ -178,4 +208,18 @@ public class UserProfileViewFragment extends Fragment {
     public TextView getEmailLabel() {
         return emailLabel;
     }
+
+    public void notifyProfileChange() {
+
+        phoneLabel.setText(userProfile.get("Phone"));
+        emailLabel.setText(userProfile.get("Email"));
+    }
+
+
+    public void onDestroy() {
+        manager.getAllProfileRef().removeEventListener(listener);
+        super.onDestroy();
+
+    }
+
 }

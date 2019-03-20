@@ -15,7 +15,7 @@ public class InitialUserProfileDialog extends DialogFragment {
 
 
     public interface InitialUserProfileListener {
-        public void onDialogPositiveClick(DialogFragment dialog, String phone, String username);
+        public void onDialogPositiveClick(DialogFragment dialog,String email, String phone, String username);
         public void onDialogNegativeClick(DialogFragment dialog);
     }
 
@@ -36,6 +36,9 @@ public class InitialUserProfileDialog extends DialogFragment {
         // Get the layout inflater
         final LayoutInflater inflater = requireActivity().getLayoutInflater();
         final View dialogView = inflater.inflate(R.layout.dialog_initial_profile, null);
+        EditText emailEditText = dialogView.findViewById(R.id.initial_profile_email);
+        emailEditText.setText(CurrentUser.getInstance().getDefaultEmail());
+
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
         builder.setView(dialogView)
@@ -44,14 +47,16 @@ public class InitialUserProfileDialog extends DialogFragment {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
 
+                        EditText emailEditText = dialogView.findViewById(R.id.initial_profile_email);
                         EditText phoneEditText = dialogView.findViewById(R.id.phonenumber);
                         EditText usernameEditText = dialogView.findViewById(R.id.username);
 
 
                         String phonenumber = phoneEditText.getText().toString();
                         String username = usernameEditText.getText().toString();
+                        String email = emailEditText.getText().toString();
 
-                        listener.onDialogPositiveClick(InitialUserProfileDialog.this, phonenumber, username);
+                        listener.onDialogPositiveClick(InitialUserProfileDialog.this, email, phonenumber, username);
                     }
                 })
                 .setNegativeButton("nope", new DialogInterface.OnClickListener() {

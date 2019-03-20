@@ -34,7 +34,7 @@ public class DatabaseManager {
     private BookLibrary userRequestLibrary = new BookLibrary();
     private BookLibrary allBookLibrary = new BookLibrary();
     private Map<String, String> usernames = new HashMap<>();
-    private Map<String, HashMap<String, String>> allUserProfile = new HashMap<>();
+    private Map<String, String> userProfile = new HashMap<>();
     private Notifications notifications = new Notifications();
 
     //used to freeze user interaction when connecting
@@ -44,7 +44,7 @@ public class DatabaseManager {
     private DatabaseReference userListingsRef;
     private DatabaseReference usernameRef;
     private DatabaseReference userPhoneRef;
-    private DatabaseReference allUserProfileRef;
+    private DatabaseReference userProfileRef;
     private DatabaseReference notificationRef;
     private DatabaseReference notificationRefOther;
     private DatabaseReference notificationRefSelf;
@@ -53,9 +53,8 @@ public class DatabaseManager {
     private ValueEventListener userListingsListener;
     private ValueEventListener usernameListener;
     private ValueEventListener userPhoneListener;
-    private ValueEventListener allUserProfileListener;
+    private ValueEventListener userProfileListener;
     private ValueEventListener notificationListener;
-
 
     private Boolean phoneLoaded = false;
     private Boolean nameLoaded = false;
@@ -380,32 +379,28 @@ public class DatabaseManager {
         if (usernameRef != null && usernameListener != null) {
             usernameRef.removeEventListener(usernameListener);
         }
-        if (allUserProfileRef != null && allUserProfileListener != null) {
-            allUserProfileRef.removeEventListener(allUserProfileListener);
+        if (userProfileRef != null && userProfileListener != null) {
+            userProfileRef.removeEventListener(userProfileListener);
         }
     }
 
     public void writeUserProfile(String newEmail, String newPhone) {
-        allUserProfileRef.child(CurrentUser.getInstance().getUID()).child("Email").setValue(newEmail);
-        allUserProfileRef.child(CurrentUser.getInstance().getUID()).child("Phone").setValue(newPhone);
+        userProfileRef.child("Email").setValue(newEmail);
+        userProfileRef.child("Phone").setValue(newPhone);
     }
 
-    public HashMap<String, String> readCurrentUserProfile() {
-        HashMap<String, String> currentUserProfile = new HashMap<String, String>();
-        if (allUserProfile.containsKey(CurrentUser.getInstance().getUID())){
-            HashMap<String ,String> p = allUserProfile.get(CurrentUser.getInstance().getUID());
-            currentUserProfile.putAll(p);
-        }
+    public HashMap<String, String> readUserProfile() {
 
-        else {
-
+        if (userProfile.size() == 2) {
+            return (HashMap<String, String>) userProfile;
+        } else {
+            Log.d("mattTag", "nahnah");
+            Log.d("mattTag", String.valueOf(userProfile.size()));
             HashMap<String, String> profile = new HashMap<String, String>();
             profile.put("Email", CurrentUser.getInstance().getDefaultEmail());
             profile.put("Phone", CurrentUser.getInstance().getAccountPhone());
             return profile;
         }
-        return currentUserProfile;
-
     }
 
     public void onLogOut() {
@@ -520,38 +515,6 @@ public class DatabaseManager {
         return null;
     }
 
-    public String getPhoneFromUsername(String ownerUsername) {
-        String res = null;
-        if (allUserProfile.containsKey(getUIDFromName(ownerUsername))){
-            res = allUserProfile.get(getUIDFromName(ownerUsername)).get("Phone");
-        }
-
-        return res;
-    };
-
-    public HashMap<String, String> readOtherUserProfile(String username){
-        HashMap<String, String> res = new HashMap<>();
-        if (allUserProfile.containsKey(getUIDFromName(username))){
-            res.putAll(allUserProfile.get(getUIDFromName(username)));
-        }
-        return res;
-
-    }
-
-    public String getEmailFromUsername(String ownerUsername) {
-        String uid = getUIDFromName(ownerUsername);
-        if (allUserProfile.containsKey(uid)){
-            return allUserProfile.get(uid).get("Email");
-        }
-        return null;
-
-    }
-
-    public DatabaseReference getAllProfileRef() {
-        return allUserProfileRef;
-    }
-
-
     public class InitiationTask extends AsyncTask<Void, Void, Boolean> {
         Activity context;
         String uid = CurrentUser.getInstance().getUID();
@@ -587,22 +550,15 @@ public class DatabaseManager {
             // This listener should take care of database value change automatically
             allListingsRef.addValueEventListener(allListingsListener);
 
-            allUserProfileListener = new ValueEventListener() {
+            userProfileListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    allUserProfile.clear();
-                    HashMap<String, HashMap<String, String>> fetchedProfile = (HashMap<String, HashMap<String, String>>) dataSnapshot.getValue();
+                    userProfile.clear();
+                    HashMap<String, String> fetchedProfile = (HashMap<String, String>) dataSnapshot.getValue();
 //                    Log.d("mattTag", "fetched" + String.valueOf(fetchedProfile.size()));
                     if (fetchedProfile != null) {
-                        allUserProfile.putAll(fetchedProfile);
+                        userProfile.putAll(fetchedProfile);
                     }
-                    HashMap<String, String> currentUserProfile = fetchedProfile.get(CurrentUser.getInstance().getUID());
-                    if (currentUserProfile != null){
-
-                        CurrentUser.getInstance().setProfile(currentUserProfile);
-                    }
-
-
                 }
 
                 @Override
@@ -610,8 +566,8 @@ public class DatabaseManager {
                     System.out.println("The read failed: " + databaseError.getCode());
                 }
             };
-            allUserProfileRef = FirebaseDatabase.getInstance().getReference("/UserProfiles/");
-            allUserProfileRef.addValueEventListener(allUserProfileListener);
+            userProfileRef = FirebaseDatabase.getInstance().getReference("/UserProfiles/" + CurrentUser.getInstance().getUID());
+            userProfileRef.addValueEventListener(userProfileListener);
 
             // This listener should take care of database value change automatically
             //allListingsRef.addValueEventListener(allListingsListener);
@@ -678,12 +634,6 @@ public class DatabaseManager {
                             if (CurrentUser.getInstance().getUsername() == null || CurrentUser.getInstance().getAccountPhone() == null) {
                                 loginPageActivity.promptInitialProfile();
                             } else {
-
-                                // old users may not have UserProfile entries, in that case, use account email and account phone as their profile
-                                if (! allUserProfile.containsKey(CurrentUser.getInstance().getUID())){
-                                    writeUserProfile(CurrentUser.getInstance().getDefaultEmail(), CurrentUser.getInstance().getAccountPhone());
-                                }
-
                                 loginPageActivity.goToMainPage();
                             }
                         }
@@ -726,12 +676,6 @@ public class DatabaseManager {
                             if (CurrentUser.getInstance().getUsername() == null || CurrentUser.getInstance().getAccountPhone() == null) {
                                 loginPageActivity.promptInitialProfile();
                             } else {
-                                // old users may not have UserProfile entries, in that case, use account email and account phone as their profile
-                                if (! allUserProfile.containsKey(CurrentUser.getInstance().getUID())){
-                                    writeUserProfile(CurrentUser.getInstance().getDefaultEmail(), CurrentUser.getInstance().getAccountPhone());
-                                }
-
-
                                 loginPageActivity.goToMainPage();
                             }
                         }

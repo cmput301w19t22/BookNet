@@ -113,7 +113,6 @@ public class LoginPageActivity extends AppCompatActivity implements View.OnClick
             }
         }
         if (email != null){
-
             signIn(email, password);
         }
 
@@ -292,8 +291,8 @@ public class LoginPageActivity extends AppCompatActivity implements View.OnClick
     }
 
     @Override
-    public void onDialogPositiveClick(DialogFragment dialog, String email ,String phonenumber, String username) {
-
+    public void onDialogPositiveClick(DialogFragment dialog, String phonenumber, String username) {
+        Log.d("mattTag", "yonk");
 
 
         //todo: validate phonenumber
@@ -307,7 +306,6 @@ public class LoginPageActivity extends AppCompatActivity implements View.OnClick
         else{
 
             Log.d("mattTag", "yeas");
-            manager.writeUserProfile(email, phonenumber);
             manager.writeUsername(username);
             manager.writeUserPhone(phonenumber);
             CurrentUser.getInstance().setUsername(username);

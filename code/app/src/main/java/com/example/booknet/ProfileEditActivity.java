@@ -25,6 +25,7 @@ public class ProfileEditActivity extends AppCompatActivity {
     private Button cancelButton;
 
     //Activity Data
+    private UserAccount user;
     private String username;
     private DatabaseManager manager = DatabaseManager.getInstance();
     /**
@@ -45,8 +46,18 @@ public class ProfileEditActivity extends AppCompatActivity {
         applyButton = findViewById(R.id.applyButton);
         cancelButton = findViewById(R.id.cancelButton);
 
-
-
+        //Get Intent
+        Intent intent = getIntent();
+        //Check that we have a username to check
+        if (!intent.hasExtra("username")) {
+            Toast.makeText(this, "View Not Passed With Username", Toast.LENGTH_LONG).show();
+            //finish();
+        } else {
+            //Obtain the UserAccount for the username
+            username = intent.getStringExtra("username");
+            user = fetchUser(username);
+            fillLayout();
+        }
 
         //Set Listeners
         applyButton.setOnClickListener(new View.OnClickListener() {
@@ -64,12 +75,33 @@ public class ProfileEditActivity extends AppCompatActivity {
             }
         });
 
-        usernameLabel.setText(CurrentUser.getInstance().getUsername());
-        phoneField.setText(CurrentUser.getInstance().getProfilePhone());
-        emailField.setText(CurrentUser.getInstance().getProfileEmail());
-
     }
 
+
+    /**
+     * Fills the layout with info from the user account
+     */
+    private void fillLayout() {
+        if (user == null) {
+            Toast.makeText(this, "User Not Found: " + username, Toast.LENGTH_LONG).show();
+            //finish();
+        } else {
+            //Fill Layout With Info
+            usernameLabel.setText(user.getUsername());
+            phoneField.setText(user.getProfile().getPhoneNumber());
+            emailField.setText(user.getProfile().getEmail());
+        }
+    }
+
+    /**
+     * Obtains the UserAccount from the database
+     *
+     * @param username The username to fetch
+     * @return
+     */
+    private UserAccount fetchUser(String username) {
+        return CurrentUser.getInstance().getUserAccount();
+    }
 
     /**
      * Updates the user profile
@@ -79,7 +111,9 @@ public class ProfileEditActivity extends AppCompatActivity {
         String newEmail = emailField.getText().toString();
         String newPhone = phoneField.getText().toString();
         manager.writeUserProfile(newEmail, newPhone);
+        Intent i = new Intent(getApplicationContext(), UserProfileViewFragment.class);
+        startActivity(i);
         finish();
-
+//        MockDatabase.getInstance().writeUserAccount(user);
     }
 }

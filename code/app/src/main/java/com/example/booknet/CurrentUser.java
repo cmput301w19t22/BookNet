@@ -5,8 +5,6 @@ import android.util.Log;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import java.util.HashMap;
-
 /**
  * A singleton data structure that contains the currently logged in user data.
  */
@@ -100,6 +98,9 @@ public class CurrentUser {
         return getUserAccount().getUsername();
     }
 
+    public String getPhone() {
+        return getUserAccount().getProfile().getPhoneNumber();
+    }
 
     public void setUsername(String username) {
         account.setUsername(username);
@@ -146,18 +147,5 @@ public class CurrentUser {
         user = null;
 
 
-    }
-
-    public String getProfileEmail() {
-        return account.getProfile().getEmail();
-    }
-
-    public String getProfilePhone() {
-        return account.getProfile().getPhoneNumber();
-    }
-
-    public void setProfile(HashMap<String, String> currentUserProfile) {
-        account.getProfile().setPhoneNumber(currentUserProfile.get("Phone"));
-        account.getProfile().setEmail(currentUserProfile.get("Email"));
     }
 }

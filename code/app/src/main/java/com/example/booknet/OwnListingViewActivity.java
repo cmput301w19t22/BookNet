@@ -5,9 +5,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,6 +21,7 @@ import android.widget.Toast;
 public class OwnListingViewActivity extends AppCompatActivity {
 
     //Layout Objects
+    private ImageView photoThumbnail;
     private TextView bookTitleLabel;
     private TextView bookAuthorLabel;
     private TextView bookDescriptionLabel;
@@ -31,6 +33,7 @@ public class OwnListingViewActivity extends AppCompatActivity {
     private Button viewRequestsButton;
     private Button deleteButton;
     private Button editButton;
+    private ImageButton editPhotoButton;
     private DatabaseManager manager = DatabaseManager.getInstance();
 
     //Activity Data
@@ -50,6 +53,7 @@ public class OwnListingViewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_own_listing_view);
 
         //Get References to Layout Objects
+        photoThumbnail = findViewById(R.id.bookThumbnail);
         bookTitleLabel = findViewById(R.id.BookTitleLabel);
         bookAuthorLabel = findViewById(R.id.bookAuthorLabel);
         bookDescriptionLabel = findViewById(R.id.bookDescriptionLabel);
@@ -62,6 +66,7 @@ public class OwnListingViewActivity extends AppCompatActivity {
         viewRequestsButton = findViewById(R.id.viewRequestsButton);
         deleteButton = findViewById(R.id.deleteButton);
         editButton = findViewById(R.id.editButton);
+        editPhotoButton = findViewById(R.id.editPhotoButton);
         bookTitleLabel.setSelected(true);//select to enable scrolling
         bookAuthorLabel.setSelected(true);
 
@@ -103,6 +108,17 @@ public class OwnListingViewActivity extends AppCompatActivity {
                 editBook(listing);
             }
         });
+
+
+        View.OnClickListener editPhotoListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editPhoto();
+            }
+        };
+
+        photoThumbnail.setOnClickListener(editPhotoListener);
+        editPhotoButton.setOnClickListener(editPhotoListener);
 
         //Set Listener for ViewRequests Button
         viewRequestsButton.setOnClickListener(new View.OnClickListener() {
@@ -159,6 +175,15 @@ public class OwnListingViewActivity extends AppCompatActivity {
             intent.putExtra("isbn", item.getBook().getIsbn());
             startActivity(intent);
         }
+    }
+
+    /**
+     * Start an activity for editing the photo for this listing.
+     */
+    private void editPhoto() {
+        Intent intent = new Intent(this, PhotoEditActivity.class);
+        //todo extras?
+        startActivity(intent);
     }
 
 

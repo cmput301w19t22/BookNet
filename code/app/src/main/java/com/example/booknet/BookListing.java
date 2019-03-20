@@ -22,6 +22,7 @@ public class BookListing implements Serializable, Cloneable {
     private String borrowerName;
     private UserLocation geoLocation;
     private int dupInd;
+
     private DatabaseManager manager = DatabaseManager.getInstance();
 
     /**

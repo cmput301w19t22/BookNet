@@ -390,7 +390,7 @@ public class DatabaseManager {
      * @return whether the request goes through
      */
     public boolean requestBookListing(BookListing listing, String requester) {
-        if (isBookListingAvailableAndNotOwnBook(listing)){
+        if (isBookListingAvailableAndNotOwnBook(listing, requester)){
 
             int dupInd = listing.getDupInd();
 
@@ -405,7 +405,7 @@ public class DatabaseManager {
                     requesters = l.getRequests();
                 }
             }
-            if (requesters == null) return false;
+            if (requesters == null || requesters.contains(requester)) return false;
 
             requesters.add(CurrentUser.getInstance().getUsername());
             ref.child("requests").setValue(requesters);
@@ -418,7 +418,7 @@ public class DatabaseManager {
         return false;
     }
 
-    private boolean isBookListingAvailableAndNotOwnBook(BookListing listing) {
+    private boolean isBookListingAvailableAndNotOwnBook(BookListing listing, String requester) {
         for (BookListing l: userBookLibrary){
             if (l.getISBN().equals(listing.getISBN())) return false;
         }
@@ -427,8 +427,8 @@ public class DatabaseManager {
             if (l.getOwnerUsername().equals(listing.getOwnerUsername()) && l.getISBN().equals(listing.getISBN())){
                 return listing.getStatus() == Available || listing.getStatus()== Requested;
             }
+
         }
-        return false;
     }
 
     public class InitiationTask extends AsyncTask<Void, Void, Boolean> {

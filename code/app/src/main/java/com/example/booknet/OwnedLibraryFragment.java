@@ -29,7 +29,7 @@ public class OwnedLibraryFragment extends Fragment {
 
     //Layout Objects
     private RecyclerView libraryListView;
-    private OwnedListingAdapter listingAdapter;
+    private OwnedLibraryAdapter listingAdapter;
     private Button addButton;
     private ValueEventListener valueEventListener = null;
 
@@ -104,12 +104,11 @@ public class OwnedLibraryFragment extends Fragment {
 
         filteredLibrary = library.clone();
 
-
         Log.d("matt", "creating new adpator");
 
         libraryListView = view.findViewById(R.id.bookLibrary);
         libraryListView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        listingAdapter = new OwnedListingAdapter(filteredLibrary, getActivity());
+        listingAdapter = new OwnedLibraryAdapter(filteredLibrary, getActivity());
         libraryListView.setAdapter(listingAdapter);
 
         Spinner filter = view.findViewById(R.id.spinner);

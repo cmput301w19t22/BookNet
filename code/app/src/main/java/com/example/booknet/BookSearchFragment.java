@@ -5,7 +5,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +27,7 @@ public class BookSearchFragment extends Fragment {
     //Layout Objects
     private RecyclerView searchResults;
     private ProgressBar progressBar;
-    private BookListingAdapter listingAdapter;
+    private BookSearchAdapter listingAdapter;
     private DatabaseManager manager = DatabaseManager.getInstance();
 
     //App Data
@@ -99,7 +98,7 @@ public class BookSearchFragment extends Fragment {
         allBookListings = manager.readAllBookListings();
 
         searchResults.setLayoutManager(new LinearLayoutManager(getActivity()));
-        listingAdapter = new BookListingAdapter(filteredLibrary, getActivity());
+        listingAdapter = new BookSearchAdapter(filteredLibrary, getActivity());
         searchResults.setAdapter(listingAdapter);
 
         searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {

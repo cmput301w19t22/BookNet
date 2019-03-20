@@ -79,7 +79,6 @@ public class ListingViewActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 sendRequest();
-//                startActivity(new Intent(ListingViewActivity.this, MainActivity.class));
                 finish();
             }
         });

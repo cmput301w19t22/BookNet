@@ -19,7 +19,7 @@ import android.widget.TextView;
  * @author Jamie
  * @version 1.0
  */
-public class OwnedListingAdapter extends RecyclerView.Adapter<OwnedListingAdapter.OwnedListingViewHolder> {
+public class OwnedLibraryAdapter extends RecyclerView.Adapter<OwnedLibraryAdapter.OwnedListingViewHolder> {
 
     //The BookLibrary to display
     private BookLibrary library;
@@ -31,7 +31,7 @@ public class OwnedListingAdapter extends RecyclerView.Adapter<OwnedListingAdapte
      * Creates the adapter
      *  @param library        The BookLibrary to use for the list display
      * @param sourceActivity The activity that created this adapter*/
-    public OwnedListingAdapter(BookLibrary library, FragmentActivity sourceActivity) {
+    public OwnedLibraryAdapter(BookLibrary library, FragmentActivity sourceActivity) {
         this.library = library;
         this.sourceActivity = sourceActivity;
     }
@@ -99,6 +99,7 @@ public class OwnedListingAdapter extends RecyclerView.Adapter<OwnedListingAdapte
         if (item != null) {
             intent.putExtra("username", item.getOwnerUsername());
             intent.putExtra("bookisbn", item.getBook().getIsbn());
+            intent.putExtra("dupInd", item.getBook().getIsbn());
         }
         sourceActivity.startActivity(intent);
     }

@@ -17,7 +17,7 @@ public class RequestLibraryActivity extends AppCompatActivity {
 
     //Layout Objects
     private RecyclerView libraryListView;
-    private OwnedListingAdapter listingAdapter;
+    private OwnedLibraryAdapter listingAdapter;
     private Button addButton;
 
     //Activity Data
@@ -65,7 +65,7 @@ public class RequestLibraryActivity extends AppCompatActivity {
         //Setup RecyclerView
         libraryListView = findViewById(R.id.bookLibrary);
         libraryListView.setLayoutManager(new LinearLayoutManager(this));
-        listingAdapter = new OwnedListingAdapter(library, this);
+        listingAdapter = new OwnedLibraryAdapter(library, this);
         libraryListView.setAdapter(listingAdapter);
     }
 }

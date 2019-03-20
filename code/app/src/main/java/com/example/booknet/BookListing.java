@@ -34,8 +34,7 @@ public class BookListing implements Serializable, Cloneable {
         this.status = BookListingStatus.Available;
         this.requests = new ArrayList<String>();
         this.geoLocation = new UserLocation();
-        dupInd = 0;
-
+        this.dupInd = 0;
     }
 
     public int getDupInd() {

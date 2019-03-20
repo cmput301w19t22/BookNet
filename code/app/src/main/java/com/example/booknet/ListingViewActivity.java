@@ -2,7 +2,7 @@ package com.example.booknet;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.constraint.ConstraintLayout;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -174,11 +174,8 @@ public class ListingViewActivity extends AppCompatActivity {
      * Starts an activity to view the profile of the user whoo owns this book.
      */
     private void viewOwnerProfile() {
-        Intent intent = new Intent(this, UserProfileViewFragment.class);
-        if (listing != null) {
-            intent.putExtra("username", listing.getOwnerUsername());
-        }
-        startActivity(intent);
+        OthersProfileViewCard profileCard = OthersProfileViewCard.newInstance(listing);
+        profileCard.show(getSupportFragmentManager(), "othersProfileDialog");
     }
 
     /**

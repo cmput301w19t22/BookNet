@@ -72,7 +72,7 @@ public class UserProfileViewFragment extends Fragment {
 //            userProfile.put("Email", i.getStringExtra("Email"));
 //        }
 
-        userProfile = manager.readUserProfile();
+        userProfile = manager.readCurrentUserProfile();
 
         //Obtain References To Layout Objects
         usernameLabel = view.findViewById(R.id.userNameLabel);

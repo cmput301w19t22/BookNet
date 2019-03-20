@@ -34,7 +34,7 @@ public class DatabaseManager {
     private BookLibrary userRequestLibrary = new BookLibrary();
     private BookLibrary allBookLibrary = new BookLibrary();
     private Map<String, String> usernames = new HashMap<>();
-    private Map<String, String> userProfile = new HashMap<>();
+    private Map<String, HashMap<String, String>> allUserProfile = new HashMap<>();
     private Notifications notifications = new Notifications();
 
     //used to freeze user interaction when connecting
@@ -44,7 +44,7 @@ public class DatabaseManager {
     private DatabaseReference userListingsRef;
     private DatabaseReference usernameRef;
     private DatabaseReference userPhoneRef;
-    private DatabaseReference userProfileRef;
+    private DatabaseReference allUserProfileRef;
     private DatabaseReference notificationRef;
     private DatabaseReference notificationRefOther;
     private DatabaseReference notificationRefSelf;
@@ -53,8 +53,9 @@ public class DatabaseManager {
     private ValueEventListener userListingsListener;
     private ValueEventListener usernameListener;
     private ValueEventListener userPhoneListener;
-    private ValueEventListener userProfileListener;
+    private ValueEventListener allUserProfileListener;
     private ValueEventListener notificationListener;
+
 
     private Boolean phoneLoaded = false;
     private Boolean nameLoaded = false;
@@ -358,28 +359,32 @@ public class DatabaseManager {
         if (usernameRef != null && usernameListener != null) {
             usernameRef.removeEventListener(usernameListener);
         }
-        if (userProfileRef != null && userProfileListener != null) {
-            userProfileRef.removeEventListener(userProfileListener);
+        if (allUserProfileRef != null && allUserProfileListener != null) {
+            allUserProfileRef.removeEventListener(allUserProfileListener);
         }
     }
 
     public void writeUserProfile(String newEmail, String newPhone) {
-        userProfileRef.child("Email").setValue(newEmail);
-        userProfileRef.child("Phone").setValue(newPhone);
+        allUserProfileRef.child(CurrentUser.getInstance().getUID()).child("Email").setValue(newEmail);
+        allUserProfileRef.child(CurrentUser.getInstance().getUID()).child("Phone").setValue(newPhone);
     }
 
-    public HashMap<String, String> readUserProfile() {
+    public HashMap<String, String> readCurrentUserProfile() {
+        HashMap<String, String> currentUserProfile = new HashMap<String, String>();
+        if (allUserProfile.containsKey(CurrentUser.getInstance().getUID())){
+            HashMap<String ,String> p = allUserProfile.get(CurrentUser.getInstance().getUID());
+            currentUserProfile.putAll(p);
+        }
 
-        if (userProfile.size() == 2) {
-            return (HashMap<String, String>) userProfile;
-        } else {
-            Log.d("mattTag", "nahnah");
-            Log.d("mattTag", String.valueOf(userProfile.size()));
+        else {
+
             HashMap<String, String> profile = new HashMap<String, String>();
             profile.put("Email", CurrentUser.getInstance().getDefaultEmail());
             profile.put("Phone", CurrentUser.getInstance().getAccountPhone());
             return profile;
         }
+        return currentUserProfile;
+
     }
 
     public void onLogOut() {
@@ -494,6 +499,34 @@ public class DatabaseManager {
         return null;
     }
 
+    public String getPhoneFromUsername(String ownerUsername) {
+        String res = null;
+        if (allUserProfile.containsKey(getUIDFromName(ownerUsername))){
+            res = allUserProfile.get(getUIDFromName(ownerUsername)).get("Phone");
+        }
+
+        return res;
+    };
+
+    public HashMap<String, String> readOtherUserProfile(String username){
+        HashMap<String, String> res = new HashMap<>();
+        if (allUserProfile.containsKey(getUIDFromName(username))){
+            res.putAll(allUserProfile.get(getUIDFromName(username)));
+        }
+        return res;
+
+    }
+
+    public String getEmailFromUsername(String ownerUsername) {
+        String uid = getUIDFromName(ownerUsername);
+        if (allUserProfile.containsKey(uid)){
+            return allUserProfile.get(uid).get("Email");
+        }
+        return null;
+
+    }
+
+
     public class InitiationTask extends AsyncTask<Void, Void, Boolean> {
         Activity context;
         String uid = CurrentUser.getInstance().getUID();
@@ -529,14 +562,14 @@ public class DatabaseManager {
             // This listener should take care of database value change automatically
             allListingsRef.addValueEventListener(allListingsListener);
 
-            userProfileListener = new ValueEventListener() {
+            allUserProfileListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    userProfile.clear();
-                    HashMap<String, String> fetchedProfile = (HashMap<String, String>) dataSnapshot.getValue();
+                    allUserProfile.clear();
+                    HashMap<String, HashMap<String, String>> fetchedProfile = (HashMap<String, HashMap<String, String>>) dataSnapshot.getValue();
 //                    Log.d("mattTag", "fetched" + String.valueOf(fetchedProfile.size()));
                     if (fetchedProfile != null) {
-                        userProfile.putAll(fetchedProfile);
+                        allUserProfile.putAll(fetchedProfile);
                     }
                 }
 
@@ -545,8 +578,8 @@ public class DatabaseManager {
                     System.out.println("The read failed: " + databaseError.getCode());
                 }
             };
-            userProfileRef = FirebaseDatabase.getInstance().getReference("/UserProfiles/" + CurrentUser.getInstance().getUID());
-            userProfileRef.addValueEventListener(userProfileListener);
+            allUserProfileRef = FirebaseDatabase.getInstance().getReference("/UserProfiles/");
+            allUserProfileRef.addValueEventListener(allUserProfileListener);
 
             // This listener should take care of database value change automatically
             //allListingsRef.addValueEventListener(allListingsListener);

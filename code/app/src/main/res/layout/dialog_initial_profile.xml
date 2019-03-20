@@ -10,19 +10,26 @@
         android:layout_height="64dp"
         android:scaleType="center"
         android:background="#FFFFBB33"
-        android:text="Initial Unique Username and phone number required"
+        android:text="@string/initial_profile_prompt"
         android:contentDescription="@string/app_name" />
+
     <EditText
-        android:id="@+id/username"
-        android:inputType="textEmailAddress"
+        android:id="@+id/initial_profile_email"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:ems="10"
+        android:inputType="textEmailAddress" />
+
+    <EditText
+        android:id="@+id/username"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="4dp"
+        android:layout_marginTop="16dp"
         android:layout_marginRight="4dp"
         android:layout_marginBottom="4dp"
         android:hint="username"
-        />
+        android:inputType="text" />
 
     <EditText
         android:id="@+id/phonenumber"

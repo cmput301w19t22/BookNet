@@ -7,7 +7,19 @@
     tools:context=".UserProfileViewFragment">
 
     <TextView
-        android:id="@+id/userNameLabel"
+        android:id="@+id/other_profile_email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:text="[Email]"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="@+id/userNameLabel"
+        app:layout_constraintTop_toBottomOf="@+id/phoneNumberLabel" />
+
+    <TextView
+        android:id="@+id/others_username"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
@@ -19,28 +31,14 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/phoneNumberLabel"
+        android:id="@+id/others_phonenumber"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="12dp"
         android:text="[Phone Number]"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="@+id/userNameLabel"
         app:layout_constraintTop_toBottomOf="@+id/userNameLabel" />
-
-    <TextView
-        android:id="@+id/emailLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:text="[Email]"
-        android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="@+id/userNameLabel"
-        app:layout_constraintTop_toBottomOf="@+id/phoneNumberLabel" />
 
     <android.support.constraint.Guideline
         android:id="@+id/guideline"
@@ -48,11 +46,11 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="120dp"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="129dp"
+        app:layout_constraintGuide_begin="148dp"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/ratingTextLabel"
+        android:id="@+id/others_rating"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
@@ -126,7 +124,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="170dp" />
+        app:layout_constraintGuide_begin="199dp" />
 
     <Button
         android:id="@+id/libraryButton"
@@ -151,4 +149,5 @@
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline2" />
+
 </android.support.constraint.ConstraintLayout>

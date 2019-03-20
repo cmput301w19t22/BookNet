@@ -71,7 +71,7 @@ public class BookSearchAdapter extends RecyclerView.Adapter<BookSearchAdapter.Bo
 
         //Fill the text fields with the object's data
         //bookListingViewHolder.bookThumbnail.//todo apply photo
-        bookListingViewHolder.bookThumbnail.setImageResource(R.mipmap.ic_launcher);
+        bookListingViewHolder.bookThumbnail.setImageResource(R.drawable.ic_photo_lightgray_24dp);
         bookListingViewHolder.bookTitleLabel.setText(item.getBook().getTitle());
         bookListingViewHolder.bookAuthorLabel.setText(item.getBook().getAuthor());
         bookListingViewHolder.isbnLabel.setText(item.getBook().getIsbn());

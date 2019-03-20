@@ -35,6 +35,9 @@ public class UserProfileViewFragment extends Fragment {
     private Button booksButton;
     private Button editButton;
     private Button logoutButton;
+    private int starOff = R.drawable.ic_star_border_24dp;
+    private int starOn = R.drawable.ic_star_24dp;
+
     private DatabaseManager manager = DatabaseManager.getInstance();
 
     public static UserProfileViewFragment newInstance() {

@@ -40,7 +40,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/ratingTextLabel"
         app:layout_constraintStart_toEndOf="@+id/ratingTextLabel"
         app:layout_constraintTop_toTopOf="@+id/ratingTextLabel"
-        app:srcCompat="@android:drawable/star_off" />
+        app:srcCompat="@drawable/ic_star_border_24dp" />
 
     <ImageView
         android:id="@+id/ratingStar2"
@@ -49,7 +49,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/ratingTextLabel"
         app:layout_constraintStart_toEndOf="@+id/ratingStar1"
         app:layout_constraintTop_toTopOf="@+id/ratingTextLabel"
-        app:srcCompat="@android:drawable/star_off" />
+        app:srcCompat="@drawable/ic_star_border_24dp" />
 
     <ImageView
         android:id="@+id/ratingStar3"
@@ -58,7 +58,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/ratingTextLabel"
         app:layout_constraintStart_toEndOf="@+id/ratingStar2"
         app:layout_constraintTop_toTopOf="@+id/ratingTextLabel"
-        app:srcCompat="@android:drawable/star_off" />
+        app:srcCompat="@drawable/ic_star_border_24dp" />
 
     <ImageView
         android:id="@+id/ratingStar4"
@@ -67,7 +67,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/ratingTextLabel"
         app:layout_constraintStart_toEndOf="@+id/ratingStar3"
         app:layout_constraintTop_toTopOf="@+id/ratingTextLabel"
-        app:srcCompat="@android:drawable/star_off" />
+        app:srcCompat="@drawable/ic_star_border_24dp" />
 
     <ImageView
         android:id="@+id/ratingStar5"
@@ -76,7 +76,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/ratingTextLabel"
         app:layout_constraintStart_toEndOf="@+id/ratingStar4"
         app:layout_constraintTop_toTopOf="@+id/ratingTextLabel"
-        app:srcCompat="@android:drawable/star_off" />
+        app:srcCompat="@drawable/ic_star_border_24dp" />
 
     <android.support.constraint.Guideline
         android:id="@+id/guideline4"

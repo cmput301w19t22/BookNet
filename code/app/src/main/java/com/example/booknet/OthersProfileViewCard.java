@@ -13,6 +13,8 @@ import android.widget.EditText;
 // https://developer.android.com/guide/topics/ui/dialogs#java
 public class OthersProfileViewCard extends DialogFragment {
 
+    private int starOff = R.drawable.ic_star_border_24dp;
+    private int starOn = R.drawable.ic_star_24dp;
 
     public interface InitialUserProfileListener {
         public void onDialogPositiveClick(DialogFragment dialog, String phone, String username);

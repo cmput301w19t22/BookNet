@@ -10,13 +10,12 @@
         android:id="@+id/other_profile_email"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
         android:text="[Email]"
         android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="@+id/userNameLabel"
-        app:layout_constraintTop_toBottomOf="@+id/phoneNumberLabel" />
+        app:layout_constraintEnd_toEndOf="@+id/others_phonenumber"
+        app:layout_constraintStart_toStartOf="@+id/others_phonenumber"
+        app:layout_constraintTop_toBottomOf="@+id/others_phonenumber" />
 
     <TextView
         android:id="@+id/others_username"
@@ -34,11 +33,12 @@
         android:id="@+id/others_phonenumber"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="8dp"
         android:text="[Phone Number]"
         android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="@+id/userNameLabel"
-        app:layout_constraintTop_toBottomOf="@+id/userNameLabel" />
+        app:layout_constraintEnd_toEndOf="@+id/others_username"
+        app:layout_constraintStart_toStartOf="@+id/others_username"
+        app:layout_constraintTop_toBottomOf="@+id/others_username" />
 
     <android.support.constraint.Guideline
         android:id="@+id/guideline"
@@ -67,45 +67,45 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        app:layout_constraintBottom_toBottomOf="@+id/ratingTextLabel"
-        app:layout_constraintStart_toEndOf="@+id/ratingTextLabel"
-        app:layout_constraintTop_toTopOf="@+id/ratingTextLabel"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toEndOf="@+id/others_rating"
+        app:layout_constraintTop_toTopOf="@+id/guideline"
         app:srcCompat="@android:drawable/star_off" />
 
     <ImageView
         android:id="@+id/ratingStar2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@+id/ratingTextLabel"
+        android:layout_marginTop="8dp"
         app:layout_constraintStart_toEndOf="@+id/ratingStar1"
-        app:layout_constraintTop_toTopOf="@+id/ratingTextLabel"
+        app:layout_constraintTop_toTopOf="@+id/guideline"
         app:srcCompat="@android:drawable/star_off" />
 
     <ImageView
         android:id="@+id/ratingStar3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@+id/ratingTextLabel"
+        android:layout_marginTop="8dp"
         app:layout_constraintStart_toEndOf="@+id/ratingStar2"
-        app:layout_constraintTop_toTopOf="@+id/ratingTextLabel"
+        app:layout_constraintTop_toTopOf="@+id/guideline"
         app:srcCompat="@android:drawable/star_off" />
 
     <ImageView
         android:id="@+id/ratingStar4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@+id/ratingTextLabel"
+        android:layout_marginTop="8dp"
         app:layout_constraintStart_toEndOf="@+id/ratingStar3"
-        app:layout_constraintTop_toTopOf="@+id/ratingTextLabel"
+        app:layout_constraintTop_toTopOf="@+id/guideline"
         app:srcCompat="@android:drawable/star_off" />
 
     <ImageView
         android:id="@+id/ratingStar5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@+id/ratingTextLabel"
+        android:layout_marginTop="8dp"
         app:layout_constraintStart_toEndOf="@+id/ratingStar4"
-        app:layout_constraintTop_toTopOf="@+id/ratingTextLabel"
+        app:layout_constraintTop_toTopOf="@+id/guideline"
         app:srcCompat="@android:drawable/star_off" />
 
     <Button

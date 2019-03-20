@@ -18,6 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
+        android:hint="@string/initial_email_hint"
         android:inputType="textEmailAddress" />
 
     <EditText
@@ -40,7 +41,7 @@
         android:layout_marginRight="4dp"
         android:layout_marginBottom="16dp"
         android:fontFamily="sans-serif"
-        android:hint="phone number"
+        android:hint="@string/account_phonenumber_hint"
         android:inputType="phone" />
 </LinearLayout>
 

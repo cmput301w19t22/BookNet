@@ -113,6 +113,7 @@ public class LoginPageActivity extends AppCompatActivity implements View.OnClick
             }
         }
         if (email != null){
+
             signIn(email, password);
         }
 

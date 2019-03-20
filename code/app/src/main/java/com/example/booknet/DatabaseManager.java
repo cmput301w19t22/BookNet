@@ -526,6 +526,10 @@ public class DatabaseManager {
 
     }
 
+    public DatabaseReference getAllProfileRef() {
+        return allUserProfileRef;
+    }
+
 
     public class InitiationTask extends AsyncTask<Void, Void, Boolean> {
         Activity context;
@@ -571,6 +575,13 @@ public class DatabaseManager {
                     if (fetchedProfile != null) {
                         allUserProfile.putAll(fetchedProfile);
                     }
+                    HashMap<String, String> currentUserProfile = fetchedProfile.get(CurrentUser.getInstance().getUID());
+                    if (currentUserProfile != null){
+
+                        CurrentUser.getInstance().setProfile(currentUserProfile);
+                    }
+
+
                 }
 
                 @Override
@@ -646,6 +657,12 @@ public class DatabaseManager {
                             if (CurrentUser.getInstance().getUsername() == null || CurrentUser.getInstance().getAccountPhone() == null) {
                                 loginPageActivity.promptInitialProfile();
                             } else {
+
+                                // old users may not have UserProfile entries, in that case, use account email and account phone as their profile
+                                if (! allUserProfile.containsKey(CurrentUser.getInstance().getUID())){
+                                    writeUserProfile(CurrentUser.getInstance().getDefaultEmail(), CurrentUser.getInstance().getAccountPhone());
+                                }
+
                                 loginPageActivity.goToMainPage();
                             }
                         }
@@ -688,6 +705,12 @@ public class DatabaseManager {
                             if (CurrentUser.getInstance().getUsername() == null || CurrentUser.getInstance().getAccountPhone() == null) {
                                 loginPageActivity.promptInitialProfile();
                             } else {
+                                // old users may not have UserProfile entries, in that case, use account email and account phone as their profile
+                                if (! allUserProfile.containsKey(CurrentUser.getInstance().getUID())){
+                                    writeUserProfile(CurrentUser.getInstance().getDefaultEmail(), CurrentUser.getInstance().getAccountPhone());
+                                }
+
+
                                 loginPageActivity.goToMainPage();
                             }
                         }

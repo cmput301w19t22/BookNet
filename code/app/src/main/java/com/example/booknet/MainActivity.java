@@ -42,7 +42,9 @@ public class MainActivity extends FragmentActivity {
             } else if (position == 2) {
                 return RequestLibraryFragment.newInstance();
             } else if (position == 3) {
+
                 return UserProfileViewFragment.newInstance();
+
             } else if (position == 4) {
                 return NotificationFragment.newInstance();
             }
@@ -98,36 +100,7 @@ public class MainActivity extends FragmentActivity {
 
         final BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-        /*mPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int i, float v, int i1) {
 
-            }
-
-            @Override
-            public void onPageSelected(int i) {
-                if (i == 0) {
-                    navigation.setSelectedItemId(R.id.navigation_search);
-                }
-                else if (i == 1) {
-                    navigation.setSelectedItemId(R.id.navigation_mybooks);
-                }
-                else if (i == 2) {
-                    navigation.setSelectedItemId(R.id.navigation_myaccount);
-                }
-                else if (i == 3) {
-                    navigation.setSelectedItemId(R.id.navigation_notifications);
-                }
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int i) {
-
-            }
-        });
-        searchBar = findViewById(R.id.mainSearch);*/
-
-        Log.d("mattTag", "leaving main activity onCreate");
     }
 
     private void onSearchClicked() {

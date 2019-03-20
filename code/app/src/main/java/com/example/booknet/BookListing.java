@@ -66,7 +66,6 @@ public class BookListing implements Serializable, Cloneable {
         return book;
     }
 
-    public BookListingStatus getStatus() { return status; }
 
     public String getOwnerUsername() {
         return ownerUsername;
@@ -191,8 +190,8 @@ public class BookListing implements Serializable, Cloneable {
 
 
 
-    public String getStatusString() {
-        return status.toString();
+    public BookListingStatus getStatus() {
+        return status;
     }
 
     public BookListing clone(){

@@ -53,7 +53,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
         Log.d("seanTag", item.getRequestedBookListing().getBook().getTitle());
 
-        notificationViewHolder.notificationStatus.setText(item.getRequestedBookListing().getStatusString());
+        notificationViewHolder.notificationStatus.setText(item.getRequestedBookListing().getStatus().toString());
         notificationViewHolder.item = item;
 
         //Add the click listener to the item

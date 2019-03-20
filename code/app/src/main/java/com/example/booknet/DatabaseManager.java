@@ -173,8 +173,8 @@ public class DatabaseManager {
      * @param bookListing The BookListing to delete
      */
     public void removeBookListing(BookListing bookListing) {
-        userListingsRef.child(bookListing.getBook().getIsbn()).removeValue();
-        allListingsRef.child(bookListing.getBook().getIsbn() + "-" + CurrentUser.getInstance().getUID()).removeValue();
+        userListingsRef.child(generateUserListingPath(bookListing, bookListing.getDupInd())).removeValue();
+        allListingsRef.child(generateAllListingPath(bookListing, bookListing.getDupInd(), getUIDFromName(bookListing.getOwnerUsername()))).removeValue();
     }
 
 

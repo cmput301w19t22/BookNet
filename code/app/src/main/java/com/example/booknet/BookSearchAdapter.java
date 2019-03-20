@@ -76,7 +76,7 @@ public class BookSearchAdapter extends RecyclerView.Adapter<BookSearchAdapter.Bo
         bookListingViewHolder.bookAuthorLabel.setText(item.getBook().getAuthor());
         bookListingViewHolder.isbnLabel.setText(item.getBook().getIsbn());
         bookListingViewHolder.ownerLabel.setText(item.getOwnerUsername());
-        bookListingViewHolder.statusLabel.setText(item.getStatusString());
+        bookListingViewHolder.statusLabel.setText(item.getStatus().toString());
         bookListingViewHolder.item = item;
 
         //Add the click listener to the item

@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".UserProfileViewFragment">
+
+    <TextView
+        android:id="@+id/userNameLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginTop="16dp"
+        android:text="[UserName]"
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/phoneNumberLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:text="[Phone Number]"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="@+id/userNameLabel"
+        app:layout_constraintTop_toBottomOf="@+id/userNameLabel" />
+
+    <TextView
+        android:id="@+id/emailLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:text="[Email]"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="@+id/userNameLabel"
+        app:layout_constraintTop_toBottomOf="@+id/phoneNumberLabel" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="120dp"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="129dp"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/ratingTextLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginTop="8dp"
+        android:text="1.0"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline" />
+
+    <ImageView
+        android:id="@+id/ratingStar1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/ratingTextLabel"
+        app:layout_constraintStart_toEndOf="@+id/ratingTextLabel"
+        app:layout_constraintTop_toTopOf="@+id/ratingTextLabel"
+        app:srcCompat="@android:drawable/star_off" />
+
+    <ImageView
+        android:id="@+id/ratingStar2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/ratingTextLabel"
+        app:layout_constraintStart_toEndOf="@+id/ratingStar1"
+        app:layout_constraintTop_toTopOf="@+id/ratingTextLabel"
+        app:srcCompat="@android:drawable/star_off" />
+
+    <ImageView
+        android:id="@+id/ratingStar3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/ratingTextLabel"
+        app:layout_constraintStart_toEndOf="@+id/ratingStar2"
+        app:layout_constraintTop_toTopOf="@+id/ratingTextLabel"
+        app:srcCompat="@android:drawable/star_off" />
+
+    <ImageView
+        android:id="@+id/ratingStar4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/ratingTextLabel"
+        app:layout_constraintStart_toEndOf="@+id/ratingStar3"
+        app:layout_constraintTop_toTopOf="@+id/ratingTextLabel"
+        app:srcCompat="@android:drawable/star_off" />
+
+    <ImageView
+        android:id="@+id/ratingStar5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/ratingTextLabel"
+        app:layout_constraintStart_toEndOf="@+id/ratingStar4"
+        app:layout_constraintTop_toTopOf="@+id/ratingTextLabel"
+        app:srcCompat="@android:drawable/star_off" />
+
+    <Button
+        android:id="@+id/reviewsButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:text="Reviews"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline2" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="170dp" />
+
+    <Button
+        android:id="@+id/libraryButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:text="Books"
+        android:visibility="visible"
+        app:layout_constraintStart_toEndOf="@+id/reviewsButton"
+        app:layout_constraintTop_toTopOf="@+id/guideline2" />
+
+    <Button
+        android:id="@+id/leave_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:text="Leave"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline2" />
+</android.support.constraint.ConstraintLayout>

@@ -34,8 +34,8 @@ public class OwnListingViewActivity extends AppCompatActivity {
     private TextView requestCountLabel;
     private Button requestButton;
     private Button viewRequestsButton;
-    private Button deleteButton;
-    private Button editButton;
+    private ImageButton deleteButton;
+    private ImageButton editButton;
     private ImageButton editPhotoButton;
     private ConstraintLayout geoLocationBlock;
     private Button setLocationButton;

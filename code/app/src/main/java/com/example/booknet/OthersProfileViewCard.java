@@ -3,6 +3,7 @@ package com.example.booknet;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
@@ -10,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 // https://developer.android.com/guide/topics/ui/dialogs#java
@@ -105,11 +107,29 @@ public class OthersProfileViewCard extends DialogFragment {
 
             // Inflate and set the layout for the dialog
             // Pass null as the parent view because its going in the dialog layout
-            Button leaveButton = dialogView.findViewById(R.id.leave_button);
+            ImageButton leaveButton = dialogView.findViewById(R.id.leave_button);
             leaveButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     dismiss();
+                }
+            });
+
+            Button reviewsButton = dialogView.findViewById(R.id.reviewsButton);
+            reviewsButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivity(new Intent(getContext(),ReviewListViewActivity.class));
+                }
+            });
+
+
+            ImageButton addReviewButton = dialogView.findViewById(R.id.addReviewButton);
+            addReviewButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ReviewCreateDialog reviewCreateDialog = ReviewCreateDialog.newInstance(CurrentUser.getInstance().getUsername(),username);
+                    reviewCreateDialog.show(getActivity().getSupportFragmentManager(),"Create Review");
                 }
             });
 

@@ -28,8 +28,8 @@ public class PhotoEditActivity extends AppCompatActivity {
     //Layout Objects
     private ImageView photoView;
     private ImageButton cameraButton;
-    private Button selectFileButton;
-    private Button deleteButton;
+    private ImageButton selectFileButton;
+    private ImageButton deleteButton;
 
     /**
      * @param savedInstanceState

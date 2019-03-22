@@ -32,7 +32,7 @@ public class RequestViewAdapter extends RecyclerView.Adapter<RequestViewAdapter.
     private DatabaseManager manager = DatabaseManager.getInstance();
 
     //Image Drawables to use in this activity
-    private int starOn = R.drawable.ic_star_24dp;//todo replace with custom images
+    private int starOn = R.drawable.ic_star_24dp;
     private int starOff = R.drawable.ic_star_border_24dp;
 
 
@@ -61,8 +61,8 @@ public class RequestViewAdapter extends RecyclerView.Adapter<RequestViewAdapter.
         //Create a new view
         View view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.user_request_item_list, viewGroup, false);
-        RequestViewHolder newMeasurementViewHolder = new RequestViewHolder(view);
-        return newMeasurementViewHolder;
+        RequestViewHolder requestViewHolder = new RequestViewHolder(view);
+        return requestViewHolder;
     }
 
     /**
@@ -148,7 +148,7 @@ public class RequestViewAdapter extends RecyclerView.Adapter<RequestViewAdapter.
     /**
      * Declines the request from the account. Called when the decline button is pressed.
      *
-     * @param account The user whose request will be declined.
+     * @param username The user whose request will be declined.
      */
     private void declineButton(String username) {
         //listing.denyRequest(account);

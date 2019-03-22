@@ -76,7 +76,6 @@ public class UserProfileViewFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_user_profile_view, container, false);
-
         Log.d("seanTag", "onCreateView Profile");
 
 //        Intent i = getIntent();
@@ -123,6 +122,7 @@ public class UserProfileViewFragment extends Fragment {
         logoutButton = view.findViewById(R.id.logoutButton);
 
         fillLayout();
+        //#region Set Listeners
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -134,6 +134,13 @@ public class UserProfileViewFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 viewUserBooks(userAccount);
+            }
+        });
+
+        reviewsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getContext(),ReviewListViewActivity.class));
             }
         });
 
@@ -156,7 +163,6 @@ public class UserProfileViewFragment extends Fragment {
      * Fills the layout with info from the user account
      */
     private void fillLayout() {
-
         usernameLabel.setText(CurrentUser.getInstance().getUsername());
         Log.d("mattTag", "lmao");
 //        Log.d("mattTag", userProfile.get("Phone"));
@@ -165,7 +171,7 @@ public class UserProfileViewFragment extends Fragment {
 
         // todo: fix rating score
 //        ratingLabel.setText(String.format("%1.1f", userAccount.getRatingScore()));
-        ratingLabel.setText("0.0" );
+        ratingLabel.setText("0.0");
 
     }
 

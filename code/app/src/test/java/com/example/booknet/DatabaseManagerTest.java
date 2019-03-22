@@ -53,8 +53,8 @@ public class DatabaseManagerTest {
     public void WriteReview() {
         DatabaseManager databaseManager = new DatabaseManager();
 
-        UserAccount reviewer = new UserAccount("testuser");
-        UserAccount reviewed= new UserAccount("testuser2");
+        String reviewer = new UserAccount("testuser");
+        String reviewed= new UserAccount("testuser2");
         Book book = new Book("title", "author", "description", "1234567890");
         BookListing listing = new BookListing(book);
 
@@ -103,8 +103,8 @@ public class DatabaseManagerTest {
         DatabaseManager databaseManager = new DatabaseManager();
 
         //Create a review
-        UserAccount reviewer = new UserAccount("testuser");
-        UserAccount reviewed = new UserAccount("testuser2");
+        String reviewer = new UserAccount("testuser");
+        String reviewed = new UserAccount("testuser2");
         Review review = new Review(reviewer, reviewed, 5, "review1");
         databaseManager.writeReview(review);
 

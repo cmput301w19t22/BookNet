@@ -1,15 +1,9 @@
 package com.example.booknet;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
-
-import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
 
 /**
  * Activity to create a new book. Can create the book by scanning
@@ -18,13 +12,13 @@ import com.google.zxing.integration.android.IntentResult;
  * @author Jamie
  * @version 1.0
  */
-public class NewBookActivity extends AppCompatActivity {
+public class NewBookActivity extends ISBNScannerActivity {
 
     //Layout Objects
-    private  EditText titleField;
-    private  EditText authorField;
-    private  EditText isbnField;
-    private   EditText descriptionField;
+    private EditText titleField;
+    private EditText authorField;
+    private EditText isbnField;
+    private EditText descriptionField;
     private Button addButton;
     private Button cancelButton;
     private Button scanButton;
@@ -105,12 +99,20 @@ public class NewBookActivity extends AppCompatActivity {
         CurrentUser.getInstance().requestAddBook(book);
     }
 
+    @Override
+    protected void onScanResults(String isbn) {
+        //super.onScanResults(isbn);
+        if (ISBNScannerActivity.isValidISBNFormat(isbn)) {
+            isbnField.setText(isbn);
+        }
+    }
+
     // ISBN Scanner
     /**
      * Handles the retrieval of the Data from the ISBN scanner
      * @author Andi Aspin - https://www.youtube.com/watch?v=PRIVHoEyeL0&t=41s
      */
-    @Override
+    /*@Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode,resultCode,data);
         if (result != null) {
@@ -120,17 +122,17 @@ public class NewBookActivity extends AppCompatActivity {
                 isbnField.setText(result.getContents());
             }
         }
-    }
+    }*/
     /**
      * Runs the code needed for the use of the ISBN scanner
      * @author Andi Aspin - https://www.youtube.com/watch?v=PRIVHoEyeL0&t=41s
      */
-    private void scanNow() {
+    /*private void scanNow() {
         IntentIntegrator integrator = new IntentIntegrator(this);
         integrator.setCaptureActivity(Portrait.class);
         integrator.setOrientationLocked(false);
         integrator.setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES);
         integrator.setPrompt("Scan Your Barcode");
         integrator.initiateScan();
-    }
+    }*/
 }

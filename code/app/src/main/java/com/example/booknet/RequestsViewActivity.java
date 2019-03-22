@@ -22,7 +22,7 @@ public class RequestsViewActivity extends AppCompatActivity {
     private RequestViewAdapter requestAdapter;
     private DatabaseManager manager = DatabaseManager.getInstance();
 
-    //App Data
+    //Activity Data
     BookListing listing;
     ArrayList<String> requests = new ArrayList<>();
 

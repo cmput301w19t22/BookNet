@@ -52,8 +52,8 @@ public class BookSearchAdapter extends RecyclerView.Adapter<BookSearchAdapter.Bo
         //Create a new view
         View view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.book_listing_item_list, viewGroup, false);
-        BookListingViewHolder newMeasurementViewHolder = new BookListingViewHolder(view);
-        return newMeasurementViewHolder;
+        BookListingViewHolder bookListingViewHolder = new BookListingViewHolder(view);
+        return bookListingViewHolder;
     }
 
     /**

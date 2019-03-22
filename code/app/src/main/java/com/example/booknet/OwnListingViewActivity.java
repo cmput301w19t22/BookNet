@@ -100,12 +100,13 @@ public class OwnListingViewActivity extends AppCompatActivity {
         statusLabel.setText(listing.getStatus().toString());
         int numRequests = listing.getRequests().size();
         if (numRequests > 0) {
-            requestCountLabel.setText("Number of Requests: " + Integer.toString(numRequests));
+            requestCountLabel.setText("Requests: " + Integer.toString(numRequests));
         } else {
-            requestCountLabel.setVisibility(View.INVISIBLE);//todo ???
+            requestCountLabel.setVisibility(View.INVISIBLE);
         }
         if (listing.getStatus() == BookListingStatus.Accepted) {
             geoLocationBlock.setVisibility(View.VISIBLE);
+
         }
 
 

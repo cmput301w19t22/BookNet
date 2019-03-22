@@ -5,21 +5,21 @@ public class ReviewTest {
 
     @Test
     public void Constructors(){
-        UserAccount reviewer = new UserAccount("1");
-        UserAccount reviewed = new UserAccount("2");
+        String reviewer = new UserAccount("1");
+        String reviewed = new UserAccount("2");
         Review review = new Review(reviewer,reviewed,5,"review1");
 
         //Basic
-        assertEquals(reviewer,review.getReviewerAccount());
-        assertEquals(reviewed,review.getReviewedAccount());
+        assertEquals(reviewer,review.getReviewerUsername());
+        assertEquals(reviewed,review.getReviewedUsername());
         assertEquals(5,review.getScore());
         assertEquals("review1",review.getMessage());
 
     }
     @Test
     public void Setters(){
-        UserAccount reviewer = new UserAccount("1");
-        UserAccount reviewed = new UserAccount("2");
+        String reviewer = new UserAccount("1");
+        String reviewed = new UserAccount("2");
         Review review = new Review(reviewer,reviewed,5,"review1");
 
         review.setMessage("newmessage");
@@ -31,8 +31,8 @@ public class ReviewTest {
 
     @Test
     public void ScoreRange(){
-        UserAccount reviewer = new UserAccount("1");
-        UserAccount reviewed = new UserAccount("2");
+        String reviewer = new UserAccount("1");
+        String reviewed = new UserAccount("2");
         Review review = new Review(reviewer,reviewed,5,"review1");
 
         //Negative

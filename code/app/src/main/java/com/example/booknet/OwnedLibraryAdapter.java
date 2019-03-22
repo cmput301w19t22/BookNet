@@ -53,8 +53,8 @@ public class OwnedLibraryAdapter extends RecyclerView.Adapter<OwnedLibraryAdapte
         //Create a new view
         View view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.book_listing_item_list, viewGroup, false);
-        OwnedListingViewHolder newMeasurementViewHolder = new OwnedListingViewHolder(view);
-        return newMeasurementViewHolder;
+        OwnedListingViewHolder ownedListingViewHolder = new OwnedListingViewHolder(view);
+        return ownedListingViewHolder;
     }
 
     /**

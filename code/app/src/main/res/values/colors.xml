@@ -3,4 +3,6 @@
     <color name="colorPrimary">#00A392</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
+    <color name="starFill">#E2D132</color>
+    <color name="lightDarkerTint" >#09000000</color>
 </resources>

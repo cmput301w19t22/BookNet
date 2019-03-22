@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,6 +52,8 @@ public class BookSearchFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+
         View view = inflater.inflate(R.layout.activity_book_search, container, false);
         searchResults = view.findViewById(R.id.searchResults);
         searchBar = view.findViewById(R.id.searchBar);
@@ -88,7 +91,20 @@ public class BookSearchFragment extends Fragment {
             }
         };
 
-        manager.getAllListingsRef().addValueEventListener(listener);
+        if (manager == null){
+            Log.d("mattTag", "how?");
+        }
+        else if (listener == null){
+            Log.d("mattTag", "no way");
+        }
+        else if (manager.getAllListingsRef() == null){
+            Log.d("mattTag", "this is ridicoulous");
+        }
+        else{
+            manager.getAllListingsRef().addValueEventListener(listener);
+        }
+
+
 
 //        mSoundPool = new SoundPool(MAX_STREAM, AudioManager.STREAM_MUSIC, 0);
 //        final int backgroundSoundId = mSoundPool.load(this, R.raw.nice_keyboard_sound, 0);

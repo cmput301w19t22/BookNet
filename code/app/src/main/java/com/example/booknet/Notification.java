@@ -38,4 +38,11 @@ public class Notification implements Serializable {
         this.userMakingNotification = userMakingNotification;
         this.notificationType = notificationType;
     }
+    public Notification clone(){
+        return new Notification(requestedBookListing.clone(), userReceivingNotification, userMakingNotification, notificationType);
+
+
+    }
+
+
 }

@@ -60,7 +60,6 @@ public class Notifications implements Serializable, Iterable<Notification>  {
     /**
      * Checks whether a listing exists for a certain book in this library.
      *
-     * @param notification The book to check for
      * @return True if a notification is found for the notification, false otherwise
      */
     /*public boolean containsNotificationFor(Notification notification) {
@@ -81,6 +80,11 @@ public class Notifications implements Serializable, Iterable<Notification>  {
         return notifications.iterator();
     }
 
+    public Notifications clone(){
+        Notifications cloned = new Notifications();
+        for (Notification n: this) cloned.addNotification(n.clone());
+        return cloned;
+    }
 
 
     public Notification getNotificationAtPosition(int position) {

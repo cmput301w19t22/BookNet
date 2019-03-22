@@ -3,8 +3,8 @@ package com.example.booknet;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -91,12 +91,12 @@ public class ListingViewActivity extends AppCompatActivity {
         ownerLabel.setText(listing.getOwnerUsername());
         statusLabel.setText(listing.getStatus().toString());
 
-        if (manager.checkIfListingAlreadyRequested(listing)) {
+        if (manager.ifListingRequestedByCurrentUser(listing)) {
             requestButton.setText("Cancel Request");
-            alreadyRequested = true;
+
         } else {
             requestButton.setText("Request");
-            alreadyRequested = false;
+
         }
 
         geoLocationBlock.setVisibility(View.GONE);
@@ -111,11 +111,26 @@ public class ListingViewActivity extends AppCompatActivity {
         requestButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (alreadyRequested)
-                    sendRemoveRequest();
-                else
-                    sendAddRequest();
+                if (manager.ifListingRequestedByCurrentUser(listing)) {
+                    try {
+                        sendRemoveRequest();
+                        Toast.makeText(getApplicationContext(), "Your request is cancelled", Toast.LENGTH_SHORT).show();
+                    } catch (DatabaseManager.DatabaseException e) {
+                        Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+                else {
+                    try {
+                        sendAddRequest();
+                        Log.d("mattTag", "outta there");
+                        Toast.makeText(getApplicationContext(), "Requested", Toast.LENGTH_SHORT).show();
+                        Log.d("mattTag", "toast works good");
+                    } catch (DatabaseManager.DatabaseException e) {
+                        Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
 
+//                Log.d("mattTag", "finishing");
                 finish();
             }
         });
@@ -150,25 +165,15 @@ public class ListingViewActivity extends AppCompatActivity {
     /**
      * Creates a request for this book listing from the current user.
      */
-    private void sendAddRequest() {
-        boolean res = manager.requestBookListing(listing, CurrentUser.getInstance().getUserAccount().getUsername());
-        if (res) {
-            Toast.makeText(this, "book requested", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(this, "failed", Toast.LENGTH_SHORT).show();
-        }
+    private void sendAddRequest() throws DatabaseManager.DatabaseException {
+        manager.requestBookListing(listing);
     }
 
     /**
      * Creates a request for this book listing from the current user.
      */
-    private void sendRemoveRequest() {
-        boolean res = manager.requestBookListingRemoval(listing);
-        if (res) {
-            Toast.makeText(this, "book request removed", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(this, "failed", Toast.LENGTH_SHORT).show();
-        }
+    private void sendRemoveRequest() throws DatabaseManager.DatabaseException {
+        manager.requestBookListingRemoval(listing);
     }
 
     /**

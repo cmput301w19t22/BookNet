@@ -17,6 +17,8 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+
 
 import static com.example.booknet.Constants.BookListingStatus.Available;
 import static com.example.booknet.Constants.BookListingStatus.Requested;
@@ -61,6 +63,27 @@ public class DatabaseManager {
     private Boolean nameLoaded = false;
     private Boolean onLoginPage = true;
 
+    // synchronizes stuff. It ensures:
+    // 1. write will be carried on one by one. new writes will be hold at writeLock.lock() util the last write finishes at writeLock.unlock()
+    // 2. can't read while writing, read will be hold at readLock.lock(), which will only proceed after writeLock.unlock()
+
+    //only three of them are getting locks because these can be edited by multiple ends.
+
+    // read lock should be used when relevant local containers are accessed, write lock should be used when relevant local containers are editted
+    private ReentrantReadWriteLock l1 = new ReentrantReadWriteLock();
+    private ReentrantReadWriteLock.ReadLock allListingReadLock = l1.readLock();
+    private ReentrantReadWriteLock.WriteLock allListingWriteLock = l1.writeLock();
+
+    private ReentrantReadWriteLock l2 = new ReentrantReadWriteLock();
+    private ReentrantReadWriteLock.ReadLock userListingReadLock = l2.readLock();
+    private ReentrantReadWriteLock.WriteLock userListingWriteLock = l2.writeLock();
+
+    private ReentrantReadWriteLock l3 = new ReentrantReadWriteLock();
+    private ReentrantReadWriteLock.ReadLock notificationReadLock = l3.readLock();
+    private ReentrantReadWriteLock.WriteLock notificationWriteLock = l3.writeLock();
+
+
+
     //not in effect
     private boolean readwritePermission = false;
 
@@ -98,11 +121,13 @@ public class DatabaseManager {
     public int getDupCount(BookListing listing, String UID) {
         int currentInd = 0;
 
+        allListingReadLock.lock();
         for (BookListing l : allBookLibrary) {
             if (l.hasSameBook(listing) && doesBelong(l, UID)) {
                 currentInd += 1;
             }
         }
+        allListingReadLock.unlock();
         return currentInd;
 
     }
@@ -247,11 +272,15 @@ public class DatabaseManager {
         allListingsRef.child(allPath).child("status").setValue(Requested);
 
         ArrayList<String> requesters = null;
+
+        allListingReadLock.lock();
         for (BookListing l : allBookLibrary) {
             if (l.getOwnerUsername().equals(bookListing.getOwnerUsername()) && l.getISBN().equals(bookListing.getISBN())) {
                 requesters = l.getRequests();
             }
         }
+        allListingReadLock.unlock();
+
         if (requesters == null) return;
 
         requesters.remove(requester);
@@ -288,12 +317,23 @@ public class DatabaseManager {
      * @return A list of BookListings from the database if any are found
      */
     public BookLibrary readAllBookListings() {
-        return allBookLibrary;
+        BookLibrary libClone = new BookLibrary();
+
+        allListingReadLock.lock();
+        libClone = allBookLibrary.clone();
+        allListingReadLock.unlock();
+        return libClone;
     }
 
     public Notifications getAllNotifications() {
         //Log.d("seanTag", "Get Notifications");
-        return notifications;
+
+        Notifications cloned;
+        notificationReadLock.lock();
+        cloned = notifications.clone();
+        notificationReadLock.unlock();
+
+        return cloned;
     }
 
     /**
@@ -313,7 +353,11 @@ public class DatabaseManager {
      * @return A BookLibrary for the given user
      */
     public BookLibrary readUserOwnedLibrary() {
-        return userBookLibrary;
+        BookLibrary libClone;
+        userListingReadLock.lock();
+        libClone = userBookLibrary.clone();
+        userListingReadLock.unlock();
+        return libClone;
     }
 
     /**
@@ -337,12 +381,16 @@ public class DatabaseManager {
     }
 
     public BookListing readUserOwnedBookListing(String isbn, int dupID) {
+        BookListing res = null;
+
+        userListingReadLock.lock();
         for (BookListing listing : userBookLibrary) {
             if (listing.getBook().getIsbn().equals(isbn)) {
-                return listing;
+                res = listing.clone();
             }
         }
-        return null;
+        userListingReadLock.unlock();
+        return res;
     }
 
 
@@ -420,68 +468,136 @@ public class DatabaseManager {
 
     /**
      * @param listing
-     * @return whether the request goes through
      */
-    public boolean requestBookListing(BookListing listing, String requester) {
-        if (isBookListingAvailableAndNotOwnBook(listing)){
-            int dupInd = listing.getDupInd();
-
-            String allPath = generateAllListingPath(listing, dupInd, getUIDFromName(listing.getOwnerUsername()));
-            allListingsRef.child(allPath).child("status").setValue(Requested);
-            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("UserBooks/" + getUIDFromName(listing.getOwnerUsername()) + "/" + generateUserListingPath(listing, dupInd));
-            ref.child("status").setValue(Requested);
-
-            ArrayList<String> requesters = null;
-            for (BookListing l : allBookLibrary) {
-                if (l.getOwnerUsername().equals(listing.getOwnerUsername()) && l.getISBN().equals(listing.getISBN())) {
-                    requesters = l.getRequests();
-                }
-            }
-            if (requesters == null) return false;
-
-            requesters.add(CurrentUser.getInstance().getUsername());
-            ref.child("requests").setValue(requesters);
-            allListingsRef.child(allPath).child("requests").setValue(requesters);
-
-            writeNotification(new Notification(listing, listing.getOwnerUsername(), requester, NotificationType.hasRequested));
-
-            return true;
+    public void requestBookListing(BookListing listing) throws DatabaseException {
+        if (! isBookListingRequestableAndNotOwnBook(listing)) {
+            throw new DatabaseException("You can't request this book");
         }
-        return false;
+
+
+        ArrayList<String> newRequests = new ArrayList<String>();
+        allListingReadLock.lock();
+        for (BookListing l : allBookLibrary) {
+            if (l.isSameListing(listing)) {
+                for (String request : l.getRequests()) {
+                    newRequests.add(request);
+                }
+                newRequests.add(CurrentUser.getInstance().getUsername());
+
+                changeListingRequestsTo(listing, newRequests);
+                changeListingStatusTo(listing, Requested);
+                break;
+            }
+        }
+        allListingReadLock.unlock();
+
+        if (newRequests.size() == 0) {
+            throw new DatabaseException("The requested booklisting is not found");
+        }
+
+        Log.d("mattTag", "wrting notif");
+        writeNotification(new Notification(listing, listing.getOwnerUsername(), CurrentUser.getInstance().getUsername(), NotificationType.hasRequested));
+        Log.d("mattTag", "finished wring noi");
     }
 
-    public boolean requestBookListingRemoval(BookListing listing) {
-        if (isBookListingAvailableAndNotOwnBook(listing)){
-            int dupInd = listing.getDupInd();
 
-            String allPath = generateAllListingPath(listing, dupInd, getUIDFromName(listing.getOwnerUsername()));
-            allListingsRef.child(allPath).child("status").setValue(Requested);
+    public void requestBookListingRemoval(BookListing listing) throws DatabaseException {
 
-            ArrayList<String> requesters = null;
+        if (doesBelong(listing, CurrentUser.getInstance().getUID()))
+            throw new DatabaseException("One cannot cancel request on his own book");
+
+        try{
+            allListingReadLock.lock();
             for (BookListing l : allBookLibrary) {
-                if (l.getOwnerUsername().equals(listing.getOwnerUsername()) && l.getISBN().equals(listing.getISBN())) {
-                    requesters = l.getRequests();
+                if (l.isSameListing(listing)) {
+
+
+
+                    ArrayList<String> newRequests = new ArrayList<String>();
+                    boolean isRequester = false;
+                    String requesterName = CurrentUser.getInstance().getUsername();
+                    for (String request: l.getRequests()){
+                        if (! request.equals(requesterName)) newRequests.add(request);
+                        else isRequester = true;
+                    }
+
+
+                    if (! isRequester){
+                        throw new DatabaseException("The database doesn't recognize current user as one of the booklisting's requesters");
+                    }else{
+                        if (newRequests.size() == 0){
+                            changeListingStatusTo(listing, Available);
+                        }
+                        changeListingRequestsTo(listing, newRequests);
+                    }
+                    break;
+
                 }
             }
-            if (requesters == null) return false;
 
-            requesters.remove(CurrentUser.getInstance().getUsername());
-            allListingsRef.child(allPath).child("requests").setValue(requesters);
-
-            return true;
+        }finally { // finally is here to ensure that when the above exception occurs, read lock will still be released and dead-lock situation won't happen (a dead lock prevents all future allListing writes)
+            allListingReadLock.unlock();
         }
-        return false;
+
+
+
     }
 
-    public boolean checkIfListingAlreadyRequested(BookListing listing) {
+    /**
+     *
+     * convenient method to change a listing's status both in AllListings and in corresponding UserListings
+     * so that no more annoying path needs to deal with
+     *
+     * makes changes in the database
+     *
+     * should only be used internally as declared private
+     *
+     * @param l
+     * @param s
+     */
+    private void changeListingStatusTo(BookListing l, BookListingStatus s){
+        String allPath = generateAllListingPath(l, l.getDupInd(), getUIDFromName(l.getOwnerUsername()));
+        DatabaseReference allRef = allListingsRef.child(allPath).child("status");
+        allRef.setValue(s);
+
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("UserBooks/" + getUIDFromName(l.getOwnerUsername()) + "/" + generateUserListingPath(l, l.getDupInd())).child("status");
+        userRef.setValue(s);
+    }
+
+
+    /**
+     * convenient method to change a listing's requests both in AllListings and in corresponding UserListings
+     * so that no more annoying path needs to deal with
+     *
+     * makes changes in the database
+     *
+     * should only be used internally as declared private
+     *
+     * @param l
+     * @param newRequests
+     */
+    private void changeListingRequestsTo(BookListing l, ArrayList<String> newRequests){
+        String allPath = generateAllListingPath(l, l.getDupInd(), getUIDFromName(l.getOwnerUsername()));
+        DatabaseReference allRef = allListingsRef.child(allPath).child("requests");
+        allRef.setValue(newRequests);
+
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("UserBooks/" + getUIDFromName(l.getOwnerUsername()) + "/" + generateUserListingPath(l, l.getDupInd())).child("requests");
+        userRef.setValue(newRequests);
+    }
+
+    public boolean ifListingRequestedByCurrentUser(BookListing listing) {
         Boolean alreadyRequested = true;
 
         ArrayList<String> requesters = null;
+
+        allListingReadLock.lock();
         for (BookListing l : allBookLibrary) {
             if (l.getOwnerUsername().equals(listing.getOwnerUsername()) && l.getISBN().equals(listing.getISBN())) {
                 requesters = l.getRequests();
             }
         }
+        allListingReadLock.unlock();
+
         if (requesters.contains(CurrentUser.getInstance().getUsername()))
             alreadyRequested = true;
         else
@@ -490,17 +606,29 @@ public class DatabaseManager {
         return alreadyRequested;
     }
 
-    private boolean isBookListingAvailableAndNotOwnBook(BookListing listing) {
+    private boolean isBookListingRequestableAndNotOwnBook(BookListing listing) {
+        boolean res=true;
+        userListingReadLock.lock();
         for (BookListing l : userBookLibrary) {
-            if (l.getISBN().equals(listing.getISBN())) return false;
-        }
-
-        for (BookListing l : allBookLibrary) {
-            if (l.getOwnerUsername().equals(listing.getOwnerUsername()) && l.getISBN().equals(listing.getISBN())) {
-                return listing.getStatus() == Available || listing.getStatus() == Requested;
+            if (l.isSameListing(listing)) {
+                res = false;
+                break;
             }
         }
-        return false;
+        userListingReadLock.unlock();
+
+
+        allListingReadLock.lock();
+        for (BookListing l : allBookLibrary) {
+            if (l.isSameListing(listing)) {
+                res = listing.getStatus() == Available || listing.getStatus() == Requested;
+                break;
+            }
+        }
+        allListingReadLock.unlock();
+
+
+        return res;
     }
 
     /**
@@ -512,12 +640,17 @@ public class DatabaseManager {
      * @return
      */
     public BookListing readBookListingOfUsername(String username, String isbn, int dupID) {
+        BookListing res = null;
+
+        allListingReadLock.lock();
         for (BookListing l : allBookLibrary) {
             if (l.getOwnerUsername().equals(username) && l.getISBN().equals(isbn) && l.getDupInd() == dupID) {
-                return l;
+                res = l.clone();
             }
         }
-        return null;
+        allListingReadLock.unlock();
+
+        return res;
     }
 
     public String getPhoneFromUsername(String ownerUsername) {
@@ -552,6 +685,8 @@ public class DatabaseManager {
     }
 
 
+
+
     public class InitiationTask extends AsyncTask<Void, Void, Boolean> {
         Activity context;
         String uid = CurrentUser.getInstance().getUID();
@@ -567,6 +702,9 @@ public class DatabaseManager {
             allListingsListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
+
+                    allListingWriteLock.lock();
+
                     allBookLibrary.removeAllBooks();
                     for (DataSnapshot data : dataSnapshot.getChildren()) {
                         BookListing bookListing = data.getValue(BookListing.class);
@@ -576,6 +714,8 @@ public class DatabaseManager {
                             allBookLibrary.addBookListing(bookListing);
                         }
                     }
+
+                    allListingWriteLock.unlock();
                 }
 
                 @Override
@@ -590,9 +730,11 @@ public class DatabaseManager {
             allUserProfileListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
+
                     allUserProfile.clear();
                     HashMap<String, HashMap<String, String>> fetchedProfile = (HashMap<String, HashMap<String, String>>) dataSnapshot.getValue();
 //                    Log.d("mattTag", "fetched" + String.valueOf(fetchedProfile.size()));
+
                     if (fetchedProfile != null) {
                         allUserProfile.putAll(fetchedProfile);
                     }
@@ -622,6 +764,7 @@ public class DatabaseManager {
                     // once the data is changed, we just change our corresponding static variable
 
                     //first empty it
+                    userListingWriteLock.lock();
                     userBookLibrary.removeAllBooks();
 
                     // then fill it as it is in the database
@@ -632,6 +775,7 @@ public class DatabaseManager {
                             userBookLibrary.addBookListing(bookListing);
                         }
                     }
+                    userListingWriteLock.unlock();
                 }
 
                 @Override
@@ -749,6 +893,7 @@ public class DatabaseManager {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
 
+                    notificationWriteLock.lock();
                     notifications.removeAllNotificiations();
 
                     Log.d("seanTag", "start noti read for "+CurrentUser.getInstance().getUsername());
@@ -760,8 +905,10 @@ public class DatabaseManager {
                             notifications.addNotification(notification);
                         }
                     }
+                    notificationWriteLock.lock();
                     //Log.d("seanTag", "read notification " + CurrentUser.getInstance().getUsername());
                 }
+
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
@@ -787,5 +934,13 @@ public class DatabaseManager {
     // to make this work, handler of failing read/write cases should be added.
     public void allowReadWrite() {
         readwritePermission = true;
+    }
+
+
+
+    public class DatabaseException extends Exception{
+        public DatabaseException(String message){
+            super(message);
+        }
     }
 }

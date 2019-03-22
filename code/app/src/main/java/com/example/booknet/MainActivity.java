@@ -87,6 +87,8 @@ public class MainActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        Log.d("mattTag", "freaking on Main");
+
         setContentView(R.layout.activity_main);
 
         mAdapter = new MyAdapter(getSupportFragmentManager());

@@ -254,6 +254,12 @@ public class BookListing implements Serializable, Cloneable {
 
     }
 
+    public boolean isSameListing(BookListing listing) {
+        return getISBN() == listing.getISBN() && dupInd == listing.getDupInd() && ownerUsername == listing.getOwnerUsername();
+
+    }
+
+
 
     //#endregion
 

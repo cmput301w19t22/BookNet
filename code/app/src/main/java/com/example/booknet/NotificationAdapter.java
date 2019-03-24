@@ -1,12 +1,14 @@
 package com.example.booknet;
 
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -40,7 +42,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     }
 
     @Override
-    public void onBindViewHolder(@NonNull NotificationViewHolder notificationViewHolder, int position) {
+    public void onBindViewHolder(@NonNull final NotificationViewHolder notificationViewHolder, int position) {
         //Get the notifications at the provided position
         final Notification item = notifications.getNotificationAtPosition(position);
         //Index to pass to the edit activity
@@ -59,16 +61,35 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         notificationViewHolder.item = item;
 
         //Add the click listener to the item
-        /**
-         * Click Listener for individual list items. Starts view activity for the clicked item.
-         */
-        /*notificationViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+        notificationViewHolder.notificationBody.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                removeNotification(item);
-                notifyDataSetChanged();
+                //Expand Buttons
+                notificationViewHolder.expandButtons.setVisibility(View.VISIBLE);
             }
-        });*/
+        });
+        notificationViewHolder.notificationBody.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(!hasFocus){
+                    Log.d("jamie","notification lost focus");
+                    notificationViewHolder.expandButtons.setVisibility(View.GONE);
+                }
+            }
+        });
+        notificationViewHolder.dismissButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //todo dismiss notification
+            }
+        });
+
+        notificationViewHolder.gotoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //todo go to the source activity
+            }
+        });
     }
 
     private void removeNotification(Notification notification) {
@@ -88,11 +109,15 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     public static class NotificationViewHolder extends RecyclerView.ViewHolder {
 
         //Layout Objects
+        private ConstraintLayout notificationBody;
         private ImageView notificationBookThumbnail;
         private TextView notificationBookTitle;
         private TextView notificationUserInfo;
         private TextView notificationUsername;
         private TextView notificationStatus;
+        private ConstraintLayout expandButtons;
+        private Button dismissButton;
+        private Button gotoButton;
         private Notification item;
 
         /**
@@ -104,11 +129,15 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             super(notificationView);
 
             //Obtain Layout Object References
+            notificationBody = notificationView.findViewById(R.id.notificationBody);
             notificationBookThumbnail = notificationView.findViewById(R.id.notificationBookThumbnail);
             notificationBookTitle = notificationView.findViewById(R.id.notificationBookTitle);
             notificationUserInfo = notificationView.findViewById(R.id.notificationUserInfo);
             notificationUsername = notificationView.findViewById(R.id.notificationUsername);
             notificationStatus = notificationView.findViewById(R.id.notificationStatus);
+            expandButtons = notificationView.findViewById(R.id.expandButtons);
+            dismissButton = notificationView.findViewById(R.id.dismissButton);
+            gotoButton = notificationView.findViewById(R.id.gotoButton);
         }
     }
 }

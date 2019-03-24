@@ -39,9 +39,8 @@ public class UserProfileViewFragment extends Fragment {
     private ImageView star4;
     private ImageView star5;
     private Button reviewsButton;
-    private Button booksButton;
     private ImageButton editButton;
-    private Button logoutButton;
+    private ImageButton logoutButton;
     private int starOff = R.drawable.ic_star_border_24dp;
     private int starOn = R.drawable.ic_star_24dp;
 
@@ -117,7 +116,7 @@ public class UserProfileViewFragment extends Fragment {
         star4 = view.findViewById(R.id.ratingStar4);
         star5 = view.findViewById(R.id.ratingStar5);
         reviewsButton = view.findViewById(R.id.reviewsButton);
-        booksButton = view.findViewById(R.id.libraryButton);
+
         editButton = view.findViewById(R.id.editButton);
         logoutButton = view.findViewById(R.id.logoutButton);
 
@@ -130,12 +129,6 @@ public class UserProfileViewFragment extends Fragment {
             }
         });
 
-        booksButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                viewUserBooks(userAccount);
-            }
-        });
 
         reviewsButton.setOnClickListener(new View.OnClickListener() {
             @Override

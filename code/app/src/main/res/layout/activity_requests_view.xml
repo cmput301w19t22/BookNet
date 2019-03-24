@@ -21,7 +21,7 @@
         tools:listitem="@layout/user_request_item_list" />
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/passordLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Requests"

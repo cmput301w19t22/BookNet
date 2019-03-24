@@ -9,22 +9,86 @@
 
 
     <android.support.constraint.ConstraintLayout
-        android:id="@+id/profile"
+        android:id="@+id/toolbar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
+            android:id="@+id/titleCard"
+            style="@style/BookNet.Toolbar.Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:text="Profile"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageButton
+            android:id="@+id/editButton"
+            style="@style/BookNet.Toolbar.ImageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:contentDescription="Edit Profile"
+            android:src="@drawable/ic_edit_black_24dp"
+            android:tooltipText="Edit Profile"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/logoutButton"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageButton
+            android:id="@+id/logoutButton"
+            style="@style/BookNet.Toolbar.ImageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="8dp"
+            android:src="@drawable/ic_exit_to_app_black_24dp"
+            android:tooltipText="Log Out"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/profile"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar">
+
+        <TextView
             android:id="@+id/userNameLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
             android:text="[UserName]"
-            android:textSize="24sp"
-            app:layout_constraintStart_toStartOf="parent"
+            android:textSize="18sp"
+            app:layout_constraintStart_toEndOf="@+id/userIcon"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
@@ -32,12 +96,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
             android:text="[Phone Number]"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="@+id/phoneIcon"
             app:layout_constraintStart_toEndOf="@+id/phoneIcon"
-            app:layout_constraintTop_toBottomOf="@+id/userNameLabel" />
+            app:layout_constraintTop_toTopOf="@+id/phoneIcon" />
 
         <TextView
             android:id="@+id/emailLabel"
@@ -56,9 +119,11 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
             android:src="@drawable/ic_phone_black_24dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/userNameLabel"
+            app:layout_constraintTop_toBottomOf="@+id/emailIcon"
             app:srcCompat="@drawable/ic_phone_black_24dp" />
 
         <ImageView
@@ -67,24 +132,23 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
-            android:layout_marginBottom="16dp"
             android:src="@drawable/ic_email_black_24dp"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/phoneIcon"
+            app:layout_constraintTop_toBottomOf="@+id/userIcon"
             app:srcCompat="@drawable/ic_email_black_24dp"
             tools:srcCompat="@drawable/ic_email_black_24dp" />
 
-        <ImageButton
-            android:id="@+id/editButton"
+        <ImageView
+            android:id="@+id/userIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="8dp"
-            android:contentDescription="Edit Profile"
-            android:src="@drawable/ic_edit_black_24dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:src="@drawable/ic_phone_black_24dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_person_black_24dp" />
+
     </android.support.constraint.ConstraintLayout>
 
     <android.support.constraint.ConstraintLayout
@@ -155,10 +219,12 @@
 
         <Button
             android:id="@+id/reviewsButton"
+            style="@style/BookNet.Button.Blue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:text="Reviews"
+            android:tooltipText="User Reviews"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -181,33 +247,6 @@
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ratings">
-
-        <Button
-            android:id="@+id/logoutButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="8dp"
-            android:text="Logout"
-            android:visibility="visible"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <Button
-            android:id="@+id/libraryButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:text="Books"
-            android:visibility="visible"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-    </android.support.constraint.ConstraintLayout>
+        app:layout_constraintTop_toBottomOf="@+id/ratings" />
 
 </android.support.constraint.ConstraintLayout>

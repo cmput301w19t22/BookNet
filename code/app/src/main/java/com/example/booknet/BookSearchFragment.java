@@ -9,8 +9,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
+import android.widget.Spinner;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -29,6 +31,8 @@ public class BookSearchFragment extends Fragment {
     private RecyclerView searchResults;
     private ProgressBar progressBar;
     private BookSearchAdapter listingAdapter;
+    private SearchView searchBar;
+    private Spinner filter;
     private DatabaseManager manager = DatabaseManager.getInstance();
 
     //App Data
@@ -37,7 +41,6 @@ public class BookSearchFragment extends Fragment {
     private BookLibrary filteredLibrary = new BookLibrary();
     private ValueEventListener listener;
 
-    SearchView searchBar;
 
     public static BookSearchFragment newInstance() {
         BookSearchFragment myFragment = new BookSearchFragment();
@@ -53,10 +56,12 @@ public class BookSearchFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-
         View view = inflater.inflate(R.layout.activity_book_search, container, false);
+
+        //Get Layout Objects
         searchResults = view.findViewById(R.id.searchResults);
         searchBar = view.findViewById(R.id.searchBar);
+        filter = view.findViewById(R.id.searchFilter);
 
         allBookListings = manager.readAllBookListings();
         filteredLibrary.copyOneByOne(allBookListings);
@@ -142,7 +147,26 @@ public class BookSearchFragment extends Fragment {
             }
         });
 
+        filter.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                //todo filter results
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        //Reset the filter
+        filter.setSelection(0);
     }
 
     @Override

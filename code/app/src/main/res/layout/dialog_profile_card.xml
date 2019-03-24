@@ -67,12 +67,32 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
             android:text="[UserName]"
             android:textSize="24sp"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
+            android:src="@drawable/ic_person_black_24dp"
+            app:layout_constraintBottom_toBottomOf="@+id/others_username"
+            app:layout_constraintEnd_toStartOf="@+id/others_username"
+            app:layout_constraintTop_toTopOf="@+id/others_username" />
+
+        <View
+            android:id="@+id/divider5"
+            android:layout_width="0dp"
+            android:layout_height="2dp"
+            android:background="?android:attr/listDivider"
+            app:layout_constraintEnd_toEndOf="@+id/others_username"
+            app:layout_constraintStart_toStartOf="@+id/others_username"
+            app:layout_constraintTop_toBottomOf="@+id/others_username" />
     </android.support.constraint.ConstraintLayout>
 
     <android.support.constraint.ConstraintLayout
@@ -85,11 +105,12 @@
 
         <Button
             android:id="@+id/reviewsButton"
+            style="@style/BookNet.Button.Blue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
             android:text="Reviews"
+            android:tooltipText="Reviews"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -166,10 +187,12 @@
 
         <ImageButton
             android:id="@+id/addReviewButton"
+            style="@style/BookNet.Button.Blue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:src="@drawable/ic_add_black_24dp"
+            android:tooltipText="Review User"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/reviewsButton"
             app:layout_constraintTop_toTopOf="parent" />
@@ -183,13 +206,14 @@
 
         <Button
             android:id="@+id/libraryButton"
+            style="@style/BookNet.Button.Blue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:text="Books"
+            android:tooltipText="View User Library"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -198,10 +222,12 @@
 
     <ImageButton
         android:id="@+id/leave_button"
+        style="@style/BookNet.Button.Red"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="Leave"
-        android:src="@drawable/ic_cancel_black_24dp"
+        android:src="@drawable/ic_close_black_24dp"
+        android:tooltipText="Back"
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

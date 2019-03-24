@@ -86,26 +86,28 @@
 
     <Button
         android:id="@+id/acceptButton"
+        style="@style/BookNet.Button.Blue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
         android:text="Accept"
+        android:tooltipText="Accept Request"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/declineButton"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/declineButton"
+        style="@style/BookNet.Button.Blue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
         android:text="Decline"
+        android:tooltipText="Decline Request"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

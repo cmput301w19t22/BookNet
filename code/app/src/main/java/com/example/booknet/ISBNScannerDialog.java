@@ -1,7 +1,7 @@
 package com.example.booknet;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.DialogFragment;
 import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -13,30 +13,34 @@ import com.google.zxing.integration.android.IntentResult;
  * @author Jamie
  * @version 1.0
  */
-public abstract class ISBNScannerActivity extends AppCompatActivity {
+public abstract class ISBNScannerDialog extends DialogFragment {
 
     // ISBN Scanner
+
     /**
      * Handles the retrieval of the Data from the ISBN scanner
+     *
      * @author Andi Aspin - https://www.youtube.com/watch?v=PRIVHoEyeL0&t=41s
      */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        IntentResult result = IntentIntegrator.parseActivityResult(requestCode,resultCode,data);
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if (result != null) {
             if (result.getContents() == null) {
-                Toast.makeText(this,"Result Not Found", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Result Not Found", Toast.LENGTH_SHORT).show();
             } else {
                 onScanResults(result.getContents());
             }
         }
     }
+
     /**
      * Runs the code needed for the use of the ISBN scanner
+     *
      * @author Andi Aspin - https://www.youtube.com/watch?v=PRIVHoEyeL0&t=41s
      */
     protected final void scanNow() {
-        IntentIntegrator integrator = new IntentIntegrator(this);
+        IntentIntegrator integrator = new IntentIntegrator(getActivity());
         integrator.setCaptureActivity(Portrait.class);
         integrator.setOrientationLocked(false);
         integrator.setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES);
@@ -47,10 +51,10 @@ public abstract class ISBNScannerActivity extends AppCompatActivity {
     /**
      * Called when the isbn is scanned with the scanned isbn as an argument.
      * Meant to be overridden to provide specific functions per activity
-     * @param isbn
+     *
+     * @param isbn The value that was scanned. Is not validated.
      */
-    protected void onScanResults(String isbn){
-        //throw new NoSuchMethodException("Must Override this method");
+    protected void onScanResults(String isbn) {
     }
 
 
@@ -62,9 +66,9 @@ public abstract class ISBNScannerActivity extends AppCompatActivity {
      * @return True if a valid format, False if not.
      */
     public static boolean isValidISBNFormat(String value) {
-        //todo implement correct method, part 5 task
+        //todo implement correct method
         //temp fake check
-        if (value.length() <= 13) {
+        if (value.length() <= 13 && value.length() > 0) {
             return true;
         } else {
             return false;

@@ -4,8 +4,21 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+    <ImageButton
+        android:id="@+id/leave_button"
+        style="@style/BookNet.Button.Red"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="Leave"
+        android:elevation="4dp"
+        android:src="@drawable/ic_close_black_24dp"
+        android:tooltipText="Back"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <android.support.constraint.ConstraintLayout
-        android:id="@+id/constraintLayout"
+        android:id="@+id/photoContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@color/common_google_signin_btn_text_dark_focused"
@@ -18,13 +31,12 @@
             android:layout_width="0dp"
             android:layout_height="256dp"
             android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
             android:layout_marginBottom="8dp"
             android:contentDescription="My Photo"
-            android:src="@drawable/ic_photo_lightgray_24dp"
+            android:src="@drawable/ic_book_default"
+            android:tooltipText="Current Photo"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -36,54 +48,53 @@
         android:id="@+id/controls"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
+        android:background="@color/colorPrimary"
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout">
+        app:layout_constraintTop_toBottomOf="@+id/photoContainer">
 
         <ImageButton
             android:id="@+id/cameraButton"
+            style="@style/BookNet.Button.Blue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:contentDescription="Take Photo"
             android:src="@drawable/ic_photo_camera_black_24dp"
+            android:tooltipText="Take Photo"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageButton
             android:id="@+id/selectFileButton"
+            style="@style/BookNet.Button.Blue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:contentDescription="Select From File"
             android:src="@drawable/ic_photo_library_black_24dp"
+            android:tooltipText="Select Photo From File"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/cameraButton"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageButton
             android:id="@+id/deleteButton"
+            style="@style/BookNet.Button.Blue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
             android:layout_marginBottom="8dp"
-            android:contentDescription="Delete"
+            android:contentDescription="Delete Photo"
             android:src="@drawable/ic_delete_black_24dp"
+            android:tooltipText="Delete Photo"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

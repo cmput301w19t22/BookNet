@@ -29,9 +29,8 @@ public class OwnListingViewActivity extends AppCompatActivity {
     private TextView bookAuthorLabel;
     private TextView bookDescriptionLabel;
     private TextView isbnLabel;
-    private TextView ownerLabel;
     private TextView statusLabel;
-    private TextView requestCountLabel;
+    private TextView requestsCountCircle;
     private Button requestButton;
     private Button viewRequestsButton;
     private ImageButton deleteButton;
@@ -41,6 +40,7 @@ public class OwnListingViewActivity extends AppCompatActivity {
     private Button setLocationButton;
     private ImageView viewLocationButton;
     private TextView geolocationLabel;
+    private ImageButton backButton;
     private DatabaseManager manager = DatabaseManager.getInstance();
 
     //Activity Data
@@ -65,9 +65,9 @@ public class OwnListingViewActivity extends AppCompatActivity {
         bookAuthorLabel = findViewById(R.id.bookAuthorLabel);
         bookDescriptionLabel = findViewById(R.id.bookDescriptionLabel);
         isbnLabel = findViewById(R.id.isbnLabel);
-        ownerLabel = findViewById(R.id.ownerLabel);
-        statusLabel = findViewById(R.id.statusLabel);
-        requestCountLabel = findViewById(R.id.requestCountLabel);
+                statusLabel = findViewById(R.id.statusLabel);
+
+        requestsCountCircle = findViewById(R.id.requestsNum);
         requestButton = findViewById(R.id.requestButton);
         viewRequestsButton = findViewById(R.id.viewRequestsButton);
         deleteButton = findViewById(R.id.deleteButton);
@@ -77,6 +77,7 @@ public class OwnListingViewActivity extends AppCompatActivity {
         setLocationButton = findViewById(R.id.setLocationButton);
         viewLocationButton = findViewById(R.id.viewLocationButton);
         geolocationLabel = findViewById(R.id.geolocationLabel);
+        backButton=findViewById(R.id.backButton);
         bookTitleLabel.setSelected(true);//select to enable scrolling
         bookAuthorLabel.setSelected(true);
         //geoLocationBlock.setVisibility(View.GONE);//Deactivate this section unless accepted
@@ -96,13 +97,20 @@ public class OwnListingViewActivity extends AppCompatActivity {
         bookTitleLabel.setText(listing.getBook().getTitle());
         bookAuthorLabel.setText(listing.getBook().getAuthor());
         isbnLabel.setText(listing.getBook().getIsbn());
-        ownerLabel.setText(listing.getOwnerUsername());
         statusLabel.setText(listing.getStatus().toString());
         int numRequests = listing.getRequests().size();
         if (numRequests > 0) {
-            requestCountLabel.setText("Requests: " + Integer.toString(numRequests));
+            if (numRequests > R.integer.notificationCircleMax) {
+                //Limit the value that can appear on the circle
+                requestsCountCircle.setText(R.integer.notificationCircleMax + "+");
+            } else {
+                requestsCountCircle.setText(Integer.toString(numRequests));
+            }
+            requestsCountCircle.setVisibility(View.VISIBLE);
         } else {
-            requestCountLabel.setVisibility(View.INVISIBLE);
+
+            requestsCountCircle.setVisibility(View.GONE);
+            viewRequestsButton.setEnabled(false);
         }
         if (listing.getStatus() == BookListingStatus.Accepted) {
             geoLocationBlock.setVisibility(View.VISIBLE);
@@ -165,6 +173,13 @@ public class OwnListingViewActivity extends AppCompatActivity {
                 alertBuilder.create().show();
             }
         });
+
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
         //endregion
 
         //#region GeoLocation
@@ -196,10 +211,12 @@ public class OwnListingViewActivity extends AppCompatActivity {
      */
     private void editBook(BookListing item) {
         if (item != null) {
-            Intent intent = new Intent(this, EditBookActivity.class);
+            /*Intent intent = new Intent(this, EditBookDialog.class);
             intent.putExtra("dupInd", item.getDupInd());
             intent.putExtra("isbn", item.getBook().getIsbn());
-            startActivity(intent);
+            startActivity(intent);*/
+            EditBookDialog editBookDialog = EditBookDialog.newInstance(item);
+            editBookDialog.show(getSupportFragmentManager(), "Edit Book");
         }
     }
 
@@ -207,9 +224,8 @@ public class OwnListingViewActivity extends AppCompatActivity {
      * Start an activity for editing the photo for this listing.
      */
     private void editPhoto() {
-        Intent intent = new Intent(this, PhotoEditActivity.class);
-        //todo extras?
-        startActivity(intent);
+        PhotoEditDialog photoEditDialog = PhotoEditDialog.newInstance(listing);
+        photoEditDialog.show(getSupportFragmentManager(), "Edit Photo");
     }
 
 
@@ -232,7 +248,7 @@ public class OwnListingViewActivity extends AppCompatActivity {
     /**
      * Starts a dialog to select a geolocation.
      */
-    private void setGeoLocation(){
+    private void setGeoLocation() {
         Toast.makeText(getApplicationContext(), "Select a Location\nTO BE IMPLEMENTED", Toast.LENGTH_SHORT).show();
         //todo implement
     }
@@ -240,7 +256,7 @@ public class OwnListingViewActivity extends AppCompatActivity {
     /**
      * Starts a dialog to view the geolocation
      */
-    private void viewGeoLocation(){
+    private void viewGeoLocation() {
         Toast.makeText(getApplicationContext(), "View GeoLocation Not Implemented", Toast.LENGTH_SHORT).show();
         //todo implement
     }

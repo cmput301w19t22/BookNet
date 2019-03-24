@@ -1,10 +1,10 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorPrimaryDark">@color/colorPrimary</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
@@ -17,6 +17,69 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+
+    <style name="BookNet.Toolbar.Title" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textColor">@color/textWhite</item>
+        <item name="android:textSize">18dp</item>
+    </style>
+
+    <style name="BookNet.Toolbar.Button" parent="Base.Widget.AppCompat.ImageButton">
+        <item name="android:background">@color/colorPrimaryDark</item>
+        <item name="android:tint">@color/textWhite</item>
+        <item name="android:textColor">@color/textWhite</item>
+    </style>
+
+    <style name="BookNet.Toolbar.ImageButton" parent="Base.Widget.AppCompat.ImageButton">
+        <item name="android:background">@color/transparency</item>
+        <item name="android:tint">@color/textWhite</item>
+<item name="android:padding">4dp</item>
+    </style>
+
+    <style name="BookNet.BottomNavigationView." parent="Widget.Design.BottomNavigationView">
+        <item name="android:iconTint" tools:targetApi="o">@color/navigationIcon</item>
+    </style>
+
+    <style name="BookNet.LoginEditText" parent="Base.Widget.AppCompat.EditText">
+        <item name="android:background">@drawable/edittext_rounded</item>
+        <item name="android:padding">4dp</item>
+        <item name="android:drawablePadding">4dp</item>
+        <item name="android:textSize">18dp</item>
+
+    </style>
+
+    <style name="BookNet.Button.Gray" parent="Base.TextAppearance.AppCompat.Button">
+        <item name="android:backgroundTint">@color/buttonPrimary</item>
+    </style>
+
+    <style name="BookNet.Button.Blue" parent="Base.TextAppearance.AppCompat.Button">
+        <item name="android:backgroundTint">@color/colorPrimary</item>
+        <item name="android:textColor">@color/textWhite</item>
+        <item name="android:tint">@color/textWhite</item>
+    </style>
+
+    <style name="BookNet.Button.Red" parent="Base.TextAppearance.AppCompat.Button">
+        <item name="android:backgroundTint">@color/colorAccent</item>
+        <item name="android:textColor">@color/textWhite</item>
+        <item name="android:tint">@color/textWhite</item>
+    </style>
+
+    <style name="BookNet.Button.White" parent="Base.TextAppearance.AppCompat.Button">
+        <item name="android:backgroundTint">@color/mainBackground</item>
+        <item name="android:textColor">@color/textMain</item>
+        <item name="android:tint">@color/textWhite</item>
+    </style>
+
+    <style name="BookNet.Spinner" parent="Base.Widget.AppCompat.Spinner">
+        <item name="android:backgroundTint">@color/textWhite</item>
+    </style>
+
+    <style name="BookNet.SearchView" parent="Base.Widget.AppCompat.SearchView">
+
+    </style>
+
+    <style name="BookNet.Text.White" parent="TextAppearance.AppCompat.Body1">
+        <item name="android:textColor">@color/textWhite</item>
+    </style>
     <!--<style name="AppActionBarTheme" parent="@android:style/Widget.Holo.Light.ActionBar">-->
     <!--<item name="android:background">ANY_HEX_COLOR_CODE</item>-->
     <!--</style>-->

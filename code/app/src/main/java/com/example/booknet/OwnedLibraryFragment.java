@@ -1,6 +1,5 @@
 package com.example.booknet;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,7 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -30,7 +29,7 @@ public class OwnedLibraryFragment extends Fragment {
     //Layout Objects
     private RecyclerView libraryListView;
     private OwnedLibraryAdapter listingAdapter;
-    private Button addButton;
+    private ImageButton addButton;
     private ValueEventListener valueEventListener = null;
 
     //Activity Data
@@ -114,13 +113,13 @@ public class OwnedLibraryFragment extends Fragment {
         listingAdapter = new OwnedLibraryAdapter(filteredLibrary, getActivity());
         libraryListView.setAdapter(listingAdapter);
 
-        Spinner filter = view.findViewById(R.id.spinner);
+        Spinner filter = view.findViewById(R.id.filterSpinner);
 
         filter.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 TextView selectedView = (TextView) view;
-                if (selectedView != null){
+                if (selectedView != null) {
                     String selectedItem = selectedView.getText().toString();
                     if (selectedItem.equals("All")) {
                         filteredLibrary.copyOneByOne(library);
@@ -169,7 +168,7 @@ public class OwnedLibraryFragment extends Fragment {
      * Starts the activity to add a new book
      */
     private void addBook() {
-        Intent intent = new Intent(getActivity(), NewBookActivity.class);
-        startActivity(intent);
+        NewBookDialog newBookDialog = NewBookDialog.newInstance();
+        newBookDialog.show(getFragmentManager(), "Add Book");
     }
 }

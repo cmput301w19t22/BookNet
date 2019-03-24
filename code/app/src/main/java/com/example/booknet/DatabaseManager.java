@@ -373,7 +373,7 @@ public class DatabaseManager {
 
         progressDialog = new ProgressDialog(context);
         progressDialog.setCancelable(false);
-        progressDialog.setMessage("connecting to database");
+        progressDialog.setMessage("Connecting to Database...");
 
         progressDialog.show();
         new InitiationTask(context).execute();

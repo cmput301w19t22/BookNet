@@ -24,6 +24,7 @@ public class BookListing implements Serializable, Cloneable {
     private String borrowerName;
     private UserLocation geoLocation;
     private int dupInd;
+    private Photo photo;
 
     private DatabaseManager manager = DatabaseManager.getInstance();
 
@@ -87,6 +88,14 @@ public class BookListing implements Serializable, Cloneable {
 
     public void setGeoLocation(UserLocation userLocation) {
         this.geoLocation = userLocation;
+    }
+
+    public Photo getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(Photo photo) {
+        this.photo = photo;
     }
 
     //#endregion

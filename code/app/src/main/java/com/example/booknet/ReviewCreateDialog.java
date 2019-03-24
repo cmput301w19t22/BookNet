@@ -37,7 +37,7 @@ public class ReviewCreateDialog extends DialogFragment {
     private String reviewed = "";
 
     /**
-     * Create an instance of this dialog.
+     * Create a new instance of this dialog.
      *
      * @param reviewer User making the review
      * @param reviewed User receiving the review
@@ -78,8 +78,8 @@ public class ReviewCreateDialog extends DialogFragment {
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         //Create the Dialog Builder
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        final LayoutInflater inflater = requireActivity().getLayoutInflater();
-        final View dialogView = inflater.inflate(R.layout.fragment_review_create, null);
+        LayoutInflater inflater = requireActivity().getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.fragment_review_create, null);
         builder.setView(dialogView);
 
         //Setup Layout

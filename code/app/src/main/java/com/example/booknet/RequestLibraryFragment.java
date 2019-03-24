@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -26,7 +27,7 @@ public class RequestLibraryFragment extends Fragment {
     //Layout Objects
     private RecyclerView libraryListView;
     private OwnedLibraryAdapter listingAdapter;
-    private Button addButton;
+    private ImageButton addButton;
 
     //Activity Data
     private BookLibrary library = new BookLibrary();
@@ -59,12 +60,13 @@ public class RequestLibraryFragment extends Fragment {
 
         Log.d("seanTag", "onCreateView Request");
 
-        //Add Click Listener
+        //Deactivate Add Button
         addButton = view.findViewById(R.id.addBookButton);
-        addButton.setVisibility(View.GONE);//Dont use this button
+        addButton.setVisibility(View.GONE);
+        addButton.setClickable(false);
 
-        TextView debuglabel = view.findViewById(R.id.debugLabel);//Change the debug label todo remove later
-        debuglabel.setText("Requested Books");
+        TextView titlelabel = view.findViewById(R.id.titleLabel);
+        titlelabel.setText("Requested Books");//Change the page title
 
         //Get Data From the Database
         library = manager.readUserRequestLibrary();
@@ -81,7 +83,7 @@ public class RequestLibraryFragment extends Fragment {
         libraryListView.setAdapter(listingAdapter);
 
         //Setup Filter Menu todo
-        Spinner filter = view.findViewById(R.id.spinner);
+        Spinner filter = view.findViewById(R.id.filterSpinner);
 
         filter.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override

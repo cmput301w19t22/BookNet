@@ -366,7 +366,18 @@ public class DatabaseManager {
      * @return A BookLibrary for the given user
      */
     public BookLibrary readUserRequestLibrary() {
-        return userRequestLibrary;
+        BookLibrary result = new BookLibrary();
+        allListingReadLock.lock();
+        for (BookListing bl: allBookLibrary){
+            if (bl.getRequests().contains(CurrentUser.getInstance().getUsername()) ||
+                    bl.getBorrowerName().equals(CurrentUser.getInstance().getUsername())){
+                result.addBookListing(bl.clone());
+            }
+        }
+        allListingReadLock.unlock();
+
+
+        return result;
     }
 
     public void connectToDatabase(Activity context) {

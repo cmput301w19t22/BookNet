@@ -15,6 +15,13 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.booknet.Constants.BookListingStatus;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+
+import static com.example.booknet.Constants.BookListingStatus.Available;
 
 /**
  * An activity to display the requested library of a user. (ie. the books that user has requested)
@@ -26,15 +33,20 @@ public class RequestLibraryFragment extends Fragment {
 
     //Layout Objects
     private RecyclerView libraryListView;
-    private OwnedLibraryAdapter listingAdapter;
+    private RequestedLibraryAdapter listingAdapter;
     private ImageButton addButton;
 
     //Activity Data
-    private BookLibrary library = new BookLibrary();
     private BookLibrary filteredLibrary;
 
     DatabaseManager manager = DatabaseManager.getInstance();
+    ValueEventListener listener;
 
+    ReentrantReadWriteLock locks = new ReentrantReadWriteLock();
+    ReentrantReadWriteLock.ReadLock readLock = locks.readLock();
+    ReentrantReadWriteLock.WriteLock writeLock = locks.writeLock();
+
+    String selectedStatus = "All";
 
     public static RequestLibraryFragment newInstance() {
         RequestLibraryFragment myFragment = new RequestLibraryFragment();
@@ -55,8 +67,7 @@ public class RequestLibraryFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         //Create the view
-        //(Currently reusing the ui from the owned library layout) todo? use it's own layout?
-        View view = inflater.inflate(R.layout.activity_owned_library, container, false);
+        View view = inflater.inflate(R.layout.fragment_requested_library, container, false);
 
         Log.d("seanTag", "onCreateView Request");
 
@@ -69,33 +80,79 @@ public class RequestLibraryFragment extends Fragment {
         titlelabel.setText("Requested Books");//Change the page title
 
         //Get Data From the Database
-        library = manager.readUserRequestLibrary();
-        //Put a null check while db functions being worked on
-        if (library == null) {
-            library = new BookLibrary();
-        }
-        filteredLibrary = library.clone();
+        filteredLibrary = manager.readUserRequestLibrary();
+        Log.d("mattTag", "SIZE" + filteredLibrary.size());
+
+
+        listener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // once the data is changed, we just change our corresponding static variable
+                writeLock.lock();
+                //first empty it
+                filteredLibrary.removeAllBooks();
+                Log.d("mattTag", "REMOVED");
+
+                // then fill it as it is in the database
+                for (DataSnapshot data : dataSnapshot.getChildren()) {
+                    BookListing bookListing = data.getValue(BookListing.class);
+                    if (bookListing != null) {
+                        if (selectedStatus.equals("All")){
+                            if (bookListing.getRequests().contains(CurrentUser.getInstance().getUsername()) ||
+                                    bookListing.getBorrowerName().equals(CurrentUser.getInstance().getUsername())){
+                                filteredLibrary.addBookListing(bookListing.clone());
+                            }
+
+                        }
+                        else if (selectedStatus.equals(bookListing.getStatus().toString())){
+                            if (bookListing.getRequests().contains(CurrentUser.getInstance().getUsername()) ||
+                            bookListing.getBorrowerName().equals(CurrentUser.getInstance().getUsername())){
+                                filteredLibrary.addBookListing(bookListing.clone());
+                            }
+                        }
+
+
+
+                    }
+                }
+
+                listingAdapter.notifyDataSetChanged();
+
+                writeLock.unlock();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                System.out.println("The read failed: " + databaseError.getCode());
+            }
+        };
+
+        manager.getAllListingsRef().addValueEventListener(listener);
+
+
 
         //Setup RecyclerView
         libraryListView = view.findViewById(R.id.bookLibrary);
         libraryListView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        listingAdapter = new OwnedLibraryAdapter(library, getActivity());
+        listingAdapter = new RequestedLibraryAdapter(filteredLibrary,readLock, getActivity());
         libraryListView.setAdapter(listingAdapter);
 
         //Setup Filter Menu todo
-        Spinner filter = view.findViewById(R.id.filterSpinner);
 
+        Spinner filter = view.findViewById(R.id.filterSpinner);
         filter.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 TextView selectedView = (TextView) view;
                 if (selectedView != null) {
-                    String selectedItem = selectedView.getText().toString();
-                    if (selectedItem.equals("All")) {
-                        filteredLibrary.copyOneByOne(library);
+                    selectedStatus = selectedView.getText().toString();
+                    writeLock.lock();
+                    if (selectedStatus.equals("All")) {
+                        filteredLibrary.copyOneByOne(manager.readUserRequestLibrary());
                     } else {
-                        filteredLibrary.filterByStatus(library, BookListingStatus.valueOf(selectedItem));
+                        filteredLibrary.filterByStatus(manager.readUserRequestLibrary(), BookListingStatus.valueOf(selectedStatus));
                     }
+                    writeLock.unlock();
                     listingAdapter.notifyDataSetChanged();
                 }
             }
@@ -105,8 +162,14 @@ public class RequestLibraryFragment extends Fragment {
 
             }
         });
-
+        listingAdapter.notifyDataSetChanged();
         return view;
     }
 
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        manager.getAllListingsRef().removeEventListener(listener);
+    }
 }

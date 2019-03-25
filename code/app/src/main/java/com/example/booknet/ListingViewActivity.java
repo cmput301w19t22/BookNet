@@ -80,9 +80,9 @@ public class ListingViewActivity extends AppCompatActivity {
         //Get Intent
         Intent intent = getIntent();
         //Check if given info to fetch listing
-        if (intent.hasExtra("username") && intent.hasExtra("bookisbn")) {
-            String username = intent.getStringExtra("username");
-            String isbn = intent.getStringExtra("bookisbn");
+        if (intent.hasExtra("ownerUsername") && intent.hasExtra("isbn")) {
+            String username = intent.getStringExtra("ownerUsername");
+            String isbn = intent.getStringExtra("isbn");
             int dupID = intent.getIntExtra("dupID", 0);
             listing = manager.readBookListingOfUsername(username, isbn, dupID);
         }

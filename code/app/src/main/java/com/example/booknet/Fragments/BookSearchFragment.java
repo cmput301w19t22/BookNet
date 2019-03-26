@@ -1,5 +1,9 @@
 package com.example.booknet.Fragments;
 
+import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -14,14 +18,24 @@ import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.Spinner;
 
+import com.example.booknet.Activities.LoginPageActivity;
 import com.example.booknet.Model.BookLibrary;
 import com.example.booknet.Model.BookListing;
 import com.example.booknet.Adapters.BookSearchAdapter;
 import com.example.booknet.DatabaseManager;
+import com.example.booknet.Model.CurrentUser;
+import com.example.booknet.Model.Notification;
+import com.example.booknet.Model.Photo;
 import com.example.booknet.R;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.util.HashMap;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * Activity to search the database for available books.
@@ -45,6 +59,10 @@ public class BookSearchFragment extends Fragment {
 
     private BookLibrary filteredLibrary = new BookLibrary();
     private ValueEventListener listener;
+
+    ReentrantReadWriteLock locks = new ReentrantReadWriteLock();
+    ReentrantReadWriteLock.ReadLock readLock = locks.readLock();
+    ReentrantReadWriteLock.WriteLock writeLock = locks.writeLock();
 
 
     public static BookSearchFragment newInstance() {
@@ -78,7 +96,10 @@ public class BookSearchFragment extends Fragment {
 
                 //first empty it
                 if (searchBar != null) {
+
+                    writeLock.lock();
                     filteredLibrary.removeAllBooks();
+
 
                     // then fill it as it is in the database
                     for (DataSnapshot data : dataSnapshot.getChildren()) {
@@ -87,9 +108,10 @@ public class BookSearchFragment extends Fragment {
                             if (bookListing.containKeyword(searchBar.getQuery().toString())) {
                                 filteredLibrary.addBookListing(bookListing.clone());
                             }
-
                         }
                     }
+                    writeLock.unlock();
+                    new ThumnailFetchingTask(getActivity()).execute();
                     listingAdapter.notifyDataSetChanged();
                 }
 
@@ -101,18 +123,9 @@ public class BookSearchFragment extends Fragment {
             }
         };
 
-        if (manager == null){
-            Log.d("mattTag", "how?");
-        }
-        else if (listener == null){
-            Log.d("mattTag", "no way");
-        }
-        else if (manager.getAllListingsRef() == null){
-            Log.d("mattTag", "this is ridicoulous");
-        }
-        else{
-            manager.getAllListingsRef().addValueEventListener(listener);
-        }
+
+        manager.getAllListingsRef().addValueEventListener(listener);
+
 
 
 
@@ -124,7 +137,7 @@ public class BookSearchFragment extends Fragment {
         allBookListings = manager.readAllBookListings();
 
         searchResults.setLayoutManager(new LinearLayoutManager(getActivity()));
-        listingAdapter = new BookSearchAdapter(filteredLibrary, getActivity());
+        listingAdapter = new BookSearchAdapter(filteredLibrary, getActivity(), readLock);
         searchResults.setAdapter(listingAdapter);
 
         searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -139,7 +152,7 @@ public class BookSearchFragment extends Fragment {
             public boolean onQueryTextChange(String s) {
                 // async sound play needs to use the soundpool thing
 //                mSoundPool.play(backgroundSoundId, (float)1, (float)1, 1, 0, (float)1);
-
+                writeLock.lock();
                 filteredLibrary.removeAllBooks();
                 for (BookListing listing : allBookListings) {
                     if (listing.containKeyword(s)) {
@@ -147,6 +160,7 @@ public class BookSearchFragment extends Fragment {
                     }
 
                 }
+                writeLock.unlock();
                 listingAdapter.notifyDataSetChanged();
                 return true;
             }
@@ -163,6 +177,9 @@ public class BookSearchFragment extends Fragment {
 
             }
         });
+
+
+        new ThumnailFetchingTask(getActivity()).execute();
 
         return view;
     }
@@ -188,4 +205,64 @@ public class BookSearchFragment extends Fragment {
         super.onDestroy();
         manager.getAllListingsRef().removeEventListener(listener);
     }
+
+    public class ThumnailFetchingTask extends AsyncTask<Void, Void, Boolean> {
+        Activity context;
+
+        ThumnailFetchingTask(Activity context) {
+            this.context = context;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            readLock.lock();
+            for (final BookListing bl: filteredLibrary){
+                if (bl.getPhotoBitmap() == null){
+
+                    Log.d("mattX", bl.toString() + " photo is null");
+
+                    manager.fetchListingThumbnail(bl,
+
+                            new OnSuccessListener<byte[]>() {
+                                @Override
+                                public void onSuccess(byte[] bytes) {
+
+
+                                    Bitmap fetchedThumnail = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                                    writeLock.lock();
+
+                                    bl.setPhoto(new Photo(fetchedThumnail));
+
+                                    writeLock.unlock();
+
+                                    listingAdapter.notifyDataSetChanged();
+                                    Log.d("imageFetching", "fetching succeededed" );
+                                }
+                            },
+
+                            new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Log.d("imageFetching", "fetching failed, cause: " + e.getLocalizedMessage());
+                                }
+                            });
+
+                }
+                else{
+
+
+
+                }
+
+            }
+            readLock.unlock();
+
+
+            return true;
+        }
+
+
+
+    }
+
 }

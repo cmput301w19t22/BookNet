@@ -2,9 +2,11 @@ package com.example.booknet.Adapters;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresPermission;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +17,8 @@ import com.example.booknet.Activities.ListingViewActivity;
 import com.example.booknet.Model.BookLibrary;
 import com.example.booknet.Model.BookListing;
 import com.example.booknet.R;
+
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 //Reused/adapted code from assignment 1
 
@@ -29,7 +33,7 @@ public class BookSearchAdapter extends RecyclerView.Adapter<BookSearchAdapter.Bo
 
     //The list of BookListings to display
     private BookLibrary data;
-    private LayoutInflater inflater;
+    private ReentrantReadWriteLock.ReadLock readLock;
 
     //The activity this adapter was created from
     private FragmentActivity sourceActivity;
@@ -37,13 +41,14 @@ public class BookSearchAdapter extends RecyclerView.Adapter<BookSearchAdapter.Bo
 
     /**
      * Creates the adapter
-     *
-     * @param data           The list of BookListings to use for the list display
+     *  @param data           The list of BookListings to use for the list display
      * @param sourceActivity The activity that created this adapter
+     * @param readLock
      */
-    public BookSearchAdapter(BookLibrary data, FragmentActivity sourceActivity) {
+    public BookSearchAdapter(BookLibrary data, FragmentActivity sourceActivity, ReentrantReadWriteLock.ReadLock readLock) {
         this.data = data;
         this.sourceActivity = sourceActivity;
+        this.readLock = readLock;
     }
 
     /**
@@ -70,14 +75,22 @@ public class BookSearchAdapter extends RecyclerView.Adapter<BookSearchAdapter.Bo
      */
     @Override
     public void onBindViewHolder(@NonNull BookListingViewHolder bookListingViewHolder, int position) {
+        readLock.lock();
         //Get the data at the provided position
         final BookListing item = data.getBookAtPosition(position);
         //Index to pass to the edit activity
         final int index = bookListingViewHolder.getAdapterPosition();
 
         //Fill the text fields with the object's data
-        //bookListingViewHolder.bookThumbnail.//todo apply photo
-        bookListingViewHolder.bookThumbnail.setImageResource(R.drawable.ic_photo_lightgray_24dp);
+        if (item.getPhotoBitmap() != null){
+            Log.d("mattX", "yeah boi");
+            bookListingViewHolder.bookThumbnail.setImageBitmap(item.getPhotoBitmap());
+        }
+        else{
+            Log.d("mattX", "nahnah");
+            bookListingViewHolder.bookThumbnail.setImageResource(R.drawable.ic_photo_lightgray_24dp);
+        }
+
         bookListingViewHolder.bookTitleLabel.setText(item.getBook().getTitle());
         bookListingViewHolder.bookAuthorLabel.setText(item.getBook().getAuthor());
         bookListingViewHolder.isbnLabel.setText(item.getBook().getIsbn());
@@ -99,6 +112,8 @@ public class BookSearchAdapter extends RecyclerView.Adapter<BookSearchAdapter.Bo
                 clickedItem(item);
             }
         });
+
+        readLock.unlock();
     }
 
     /**

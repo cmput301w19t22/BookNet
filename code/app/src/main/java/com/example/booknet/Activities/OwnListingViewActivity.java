@@ -106,7 +106,7 @@ public class OwnListingViewActivity extends AppCompatActivity implements DialogC
         //Fill Layout
         updateLayout(listing);
 
-
+        // todo: fix edit
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -3,7 +3,10 @@ package com.example.booknet;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.example.booknet.Activities.LoginPageActivity;
@@ -17,12 +20,18 @@ import com.example.booknet.Model.Notification;
 import com.example.booknet.Model.Notifications;
 import com.example.booknet.Model.Review;
 import com.example.booknet.Model.UserAccount;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -60,12 +69,16 @@ public class DatabaseManager {
     private DatabaseReference notificationRefOther;
     private DatabaseReference notificationRefSelf;
 
+    private StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+
+
     private ValueEventListener allListingsListener;
     private ValueEventListener userListingsListener;
     private ValueEventListener usernameListener;
     private ValueEventListener userPhoneListener;
     private ValueEventListener allUserProfileListener;
     private ValueEventListener notificationListener;
+
 
 
     private Boolean phoneLoaded = false;
@@ -267,6 +280,18 @@ public class DatabaseManager {
 
 
     }
+
+    public void writeThumbnailForListing(BookListing listing, Bitmap thumnailBitmap, OnSuccessListener onSuccessListener, OnFailureListener onFailureListener){
+        // todo: we shouldn't allow "/" in the username
+        StorageReference ref = storageRef.child(listing.getOwnerUsername()).child(listing.getISBN()+"-"+listing.getDupInd());
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        thumnailBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] data = baos.toByteArray();
+
+        UploadTask uploadTask = ref.putBytes(data);
+        uploadTask.addOnFailureListener(onFailureListener).addOnSuccessListener(onSuccessListener);
+    }
+
 
     /**
      * Declines the request of a user for a book in the database
@@ -704,7 +729,14 @@ public class DatabaseManager {
         return allUserProfileRef;
     }
 
+    public void fetchListingThumbnail(BookListing listing, OnSuccessListener<byte[]> onSuccessListener, OnFailureListener onFailureListener) {
+        StorageReference ref = storageRef.child(listing.getOwnerUsername()).child(listing.getISBN()+"-"+listing.getDupInd());
 
+        // maximum size of the image
+        final long TEN_MEGABYTE = 1024 * 1024 * 10;      //todo: limit the maximum size of the image the user can upload to 10 mb
+        ref.getBytes(TEN_MEGABYTE).addOnSuccessListener(onSuccessListener).addOnFailureListener(onFailureListener);
+
+    }
 
 
     public class InitiationTask extends AsyncTask<Void, Void, Boolean> {

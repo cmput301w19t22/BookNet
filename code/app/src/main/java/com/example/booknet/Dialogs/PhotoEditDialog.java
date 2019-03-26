@@ -5,8 +5,11 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,6 +18,7 @@ import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -23,6 +27,11 @@ import com.example.booknet.DatabaseManager;
 import com.example.booknet.Model.BookListing;
 import com.example.booknet.Model.Photo;
 import com.example.booknet.R;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+
+import java.io.File;
+import java.io.IOException;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -45,7 +54,10 @@ public class PhotoEditDialog extends DialogFragment {
     private ImageButton cameraButton;
     private ImageButton selectFileButton;
     private ImageButton deleteButton;
+    private Button submitButton;
     private View dialogView;
+
+    private Bitmap viewingBitmap;
 
     //Dialog Data
     private BookListing listing;
@@ -60,7 +72,7 @@ public class PhotoEditDialog extends DialogFragment {
      */
     public static PhotoEditDialog newInstance(BookListing listing) {
         PhotoEditDialog fragment = new PhotoEditDialog();
-        fragment.listing = listing;//todo cant we just do this?
+        fragment.listing = listing;//todo cant we just do this? // I don't know -matt
         Bundle args = new Bundle();
         //args.putString("reviewer", reviewer);
         //todo put extras for data
@@ -89,7 +101,7 @@ public class PhotoEditDialog extends DialogFragment {
         //Create the Dialog Builder
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = requireActivity().getLayoutInflater();
-        dialogView = inflater.inflate(R.layout.activity_photo_edit, null);
+        dialogView = inflater.inflate(R.layout.dialog_photo_edit, null);
         builder.setView(dialogView);
 
         //Get Layout Objects
@@ -98,6 +110,7 @@ public class PhotoEditDialog extends DialogFragment {
         selectFileButton = dialogView.findViewById(R.id.selectFileButton);
         deleteButton = dialogView.findViewById(R.id.deleteButton);
         leaveButton = dialogView.findViewById(R.id.leave_button);
+        submitButton = dialogView.findViewById(R.id.thumbnail_submit_button);
 
         Bitmap photoBitmap = listing.getPhotoBitmap();
         if (photoBitmap != null) {
@@ -118,6 +131,14 @@ public class PhotoEditDialog extends DialogFragment {
             @Override
             public void onClick(View v) {
                 selectImageFromFile();
+            }
+        });
+
+        submitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                submitThumbNail();
+                dismiss();
             }
         });
 
@@ -172,6 +193,7 @@ public class PhotoEditDialog extends DialogFragment {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
+
             savePhoto(imageBitmap);
             Photo photo = new Photo(imageBitmap);
 
@@ -189,10 +211,18 @@ public class PhotoEditDialog extends DialogFragment {
             if (data == null) {
                 Toast.makeText(getActivity(), "File Not Selected", Toast.LENGTH_LONG).show();
             } else {
+
                 Toast.makeText(getActivity(), data.getDataString(), Toast.LENGTH_LONG).show();
                 Log.d("jamie", data.getDataString());
                 Uri dataPath = data.getData();
                 photoView.setImageURI(dataPath);
+
+
+                try {
+                    viewingBitmap = Bitmap.createBitmap(MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), dataPath));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -218,6 +248,34 @@ public class PhotoEditDialog extends DialogFragment {
         intent.setType("image/*");
         startActivityForResult(intent, REQUEST_IMAGE_FILE);
     }
+
+    private void submitThumbNail(){
+        final Activity sourceActivity = getActivity();
+        if (viewingBitmap == null){
+            Toast.makeText(getActivity(), "Thumbnail not changed", Toast.LENGTH_LONG).show();
+        }
+        else{
+            manager.writeThumbnailForListing(listing, viewingBitmap,
+
+                    new OnSuccessListener() {
+                @Override
+                public void onSuccess(Object o) {
+                    Toast.makeText(sourceActivity, "Thumnail changed", Toast.LENGTH_SHORT).show();
+                }
+            },
+
+                    new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(sourceActivity, "Thumnail change failed", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+
+        }
+
+    }
+
 
     /**
      * Saves a photo bitmap to file/database.

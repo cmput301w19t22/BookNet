@@ -185,7 +185,7 @@ public class BookSearchFragment extends Fragment {
     }
 
     public void onDestroy() {
-        manager.getAllListingsRef().removeEventListener(listener);
         super.onDestroy();
+        manager.getAllListingsRef().removeEventListener(listener);
     }
 }

@@ -2,7 +2,6 @@ package com.example.booknet.Adapters;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -12,10 +11,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.booknet.Activities.OwnListingViewActivity;
+import com.example.booknet.Activities.ListingViewActivity;
 import com.example.booknet.Model.BookLibrary;
 import com.example.booknet.Model.BookListing;
 import com.example.booknet.R;
+
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 //Reused/adapted code from assignment 1
 
@@ -26,7 +27,7 @@ import com.example.booknet.R;
  * @author Jamie
  * @version 1.0
  */
-public class OwnedLibraryAdapter extends RecyclerView.Adapter<OwnedLibraryAdapter.OwnedListingViewHolder> {
+public class RequestedLibraryAdapter extends RecyclerView.Adapter<RequestedLibraryAdapter.OwnedListingViewHolder> {
 
     //The BookLibrary to display
     private BookLibrary library;
@@ -34,15 +35,18 @@ public class OwnedLibraryAdapter extends RecyclerView.Adapter<OwnedLibraryAdapte
     //The activity this adapter was created from
     private FragmentActivity sourceActivity;
 
+    private ReentrantReadWriteLock.ReadLock readLock;
+
     /**
      * Creates the adapter
      *
      * @param library        The BookLibrary to use for the list display
      * @param sourceActivity The activity that created this adapter
      */
-    public OwnedLibraryAdapter(BookLibrary library, FragmentActivity sourceActivity) {
+    public RequestedLibraryAdapter(BookLibrary library, ReentrantReadWriteLock.ReadLock readLock, FragmentActivity sourceActivity) {
         this.library = library;
         this.sourceActivity = sourceActivity;
+        this.readLock = readLock;
     }
 
     /**
@@ -51,6 +55,8 @@ public class OwnedLibraryAdapter extends RecyclerView.Adapter<OwnedLibraryAdapte
      *
      * @return A new OwnedListingViewHolder using the list layout
      */
+
+
     @NonNull
     @Override
     public OwnedListingViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
@@ -69,8 +75,10 @@ public class OwnedLibraryAdapter extends RecyclerView.Adapter<OwnedLibraryAdapte
      */
     @Override
     public void onBindViewHolder(@NonNull OwnedListingViewHolder ownedListingViewHolder, int position) {
+        readLock.lock();
         //Get the library at the provided position
-        final BookListing item = library.getBookAtPosition(position);
+        final BookListing item = library.getBookAtPosition(position).clone();
+        readLock.unlock();
         //Index to pass to the edit activity
         final int index = ownedListingViewHolder.getAdapterPosition();
 
@@ -85,9 +93,6 @@ public class OwnedLibraryAdapter extends RecyclerView.Adapter<OwnedLibraryAdapte
         ownedListingViewHolder.statusLabel.setText(item.getStatus().toString());
         Log.d("mattTag", "really? " + item.getBook().toString() + " " + item.getStatus());
 
-        if ((position & 1) == 1) {//check odd
-            ownedListingViewHolder.constraintLayout.setBackgroundColor(sourceActivity.getResources().getColor(R.color.lightDarkerTint));
-        }
 
         //Add the click listener to the item
         ownedListingViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -104,10 +109,11 @@ public class OwnedLibraryAdapter extends RecyclerView.Adapter<OwnedLibraryAdapte
      */
     public void clickedItem(BookListing item) {
         //Start View/Edit Activity with Clicked Item
-        Intent intent = new Intent(sourceActivity, OwnListingViewActivity.class);
+        Intent intent = new Intent(sourceActivity, ListingViewActivity.class);
         if (item != null) {
             intent.putExtra("isbn", item.getBook().getIsbn());
             intent.putExtra("dupID", item.getDupInd());
+            intent.putExtra("ownerUsername", item.getOwnerUsername());
         }
         sourceActivity.startActivity(intent);
     }
@@ -128,7 +134,6 @@ public class OwnedLibraryAdapter extends RecyclerView.Adapter<OwnedLibraryAdapte
     public static class OwnedListingViewHolder extends RecyclerView.ViewHolder {
 
         //Layout Objects
-        private ConstraintLayout constraintLayout;
         private ImageView bookThumbnail;
         private TextView bookTitleLabel;
         private TextView bookAuthorLabel;
@@ -147,7 +152,6 @@ public class OwnedLibraryAdapter extends RecyclerView.Adapter<OwnedLibraryAdapte
             super(itemView);
 
             //Obtain Layout Object References
-            constraintLayout = itemView.findViewById(R.id.bookLayout);
             bookThumbnail = itemView.findViewById(R.id.bookThumbnail);
             bookTitleLabel = itemView.findViewById(R.id.bookTitleLabel);
             bookAuthorLabel = itemView.findViewById(R.id.bookAuthorLabel);

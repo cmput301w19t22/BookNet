@@ -28,6 +28,13 @@
         <item>Borrowed</item>
     </string-array>
 
+    <string-array name="status_array_requested_page">
+        <item>All</item>
+        <item>Requested</item>
+        <item>Accepted</item>
+        <item>Borrowed</item>
+    </string-array>
+
     <string name="status_filter_prompt">Filter By Status: </string>
     <string name="usernameRequiredMessage">You need a unique username to proceed</string>
     <string name="usernameRequiredTitle">Set Username</string>

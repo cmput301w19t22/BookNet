@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".OwnListingViewActivity">
+    tools:context=".Activities.OwnListingViewActivity">
 
 
     <android.support.constraint.ConstraintLayout
@@ -89,13 +89,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
-        android:background="@drawable/ic_circle_black_24dp"
+        android:background="@drawable/bg_circle"
         android:clickable="true"
         android:contentDescription="Edit Photo"
         android:elevation="4dp"
         android:focusable="auto"
         android:focusableInTouchMode="true"
-        android:padding="4dp"
+        android:padding="8dp"
         android:tooltipText="Edit Photo"
         app:layout_constraintBottom_toBottomOf="@+id/bookThumbnail"
         app:layout_constraintEnd_toEndOf="parent"
@@ -114,6 +114,8 @@
         android:layout_marginEnd="16dp"
         android:clickable="false"
         android:contentDescription="Book Photo"
+        android:cropToPadding="true"
+        android:drawingCacheQuality="auto"
         android:tooltipText="Book Photo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -132,6 +134,7 @@
 
         <TextView
             android:id="@+id/BookTitleLabel"
+            style="@style/BookNet.Text.Main"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -144,17 +147,16 @@
             android:scrollHorizontally="true"
             android:singleLine="false"
             android:text="[Book Title]"
-            android:textSize="24sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/bookAuthorLabel"
+            style="@style/BookNet.Text.Main"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
             android:ellipsize="marquee"
             android:focusable="auto"
             android:focusableInTouchMode="true"
@@ -162,13 +164,13 @@
             android:scrollHorizontally="true"
             android:singleLine="true"
             android:text="[Author]"
-            android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/BookTitleLabel"
             app:layout_constraintTop_toBottomOf="@+id/BookTitleLabel" />
 
         <TextView
             android:id="@+id/isbnLabel"
+            style="@style/BookNet.Text.Main.Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
@@ -227,17 +229,32 @@
             app:layout_constraintBaseline_toBaselineOf="@+id/statusLabel"
             app:layout_constraintEnd_toEndOf="parent" />
 
+        <Button
+            android:id="@+id/verifyButton"
+            style="@style/BookNet.Button.Blue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="8dp"
+            android:drawableLeft="@drawable/ic_barcode"
+            android:drawablePadding="4dp"
+            android:text="Verify"
+            android:tooltipText="Verify Transaction by Scanning"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/viewRequestsButton"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <TextView
             android:id="@+id/statusLabel"
+            style="@style/BookNet.Text.Main"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:rotation="0"
             android:text="[Status]"
-            android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -253,10 +270,10 @@
             android:paddingLeft="1dp"
             android:paddingTop="2dp"
             android:paddingRight="1dp"
-            android:text="99+"
+            android:text="XX+"
             android:textAlignment="center"
             android:textAllCaps="false"
-            android:textColor="@color/zxing_status_text"
+            android:textColor="@color/textWhite"
             app:layout_constraintEnd_toStartOf="@+id/viewRequestsButton"
             app:layout_constraintStart_toStartOf="@+id/viewRequestsButton"
             app:layout_constraintTop_toTopOf="@+id/viewRequestsButton" />
@@ -291,6 +308,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
+            android:drawableLeft="@drawable/ic_edit_location_black_24dp"
+            android:drawablePadding="4dp"
             android:text="Set GeoLocation"
             android:tooltipText="Set Geolocation for pickup"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -303,8 +322,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="16dp"
             android:clickable="true"
             android:contentDescription="View GeoLocation"
             android:tooltipText="View GeoLocation"
@@ -315,10 +332,10 @@
 
         <TextView
             android:id="@+id/geolocationLabel"
+            style="@style/BookNet.Text.Main.Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
             android:layout_marginBottom="8dp"
             android:text="[Location Not Set]"
             app:layout_constraintBottom_toBottomOf="@+id/viewLocationButton"

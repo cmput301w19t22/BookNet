@@ -39,9 +39,17 @@
         <item name="android:iconTint" tools:targetApi="o">@color/navigationIcon</item>
     </style>
 
-    <style name="BookNet.LoginEditText" parent="Base.Widget.AppCompat.EditText">
+    <style name="BookNet.EditText.Login" parent="Base.Widget.AppCompat.EditText">
         <item name="android:background">@drawable/edittext_rounded</item>
         <item name="android:padding">4dp</item>
+        <item name="android:drawablePadding">4dp</item>
+        <item name="android:textSize">18dp</item>
+
+    </style>
+
+    <style name="BookNet.EditText.OnWhite" parent="Base.Widget.AppCompat.EditText">
+        <item name="android:background">@drawable/edittext_onwhite</item>
+        <item name="android:padding">8dp</item>
         <item name="android:drawablePadding">4dp</item>
         <item name="android:textSize">18dp</item>
 
@@ -51,23 +59,26 @@
         <item name="android:backgroundTint">@color/buttonPrimary</item>
     </style>
 
-    <style name="BookNet.Button.Blue" parent="Base.TextAppearance.AppCompat.Button">
+    <style name="BookNet.Button.White" parent="Base.TextAppearance.AppCompat.Button">
+        <item name="android:background">@drawable/button_custom</item>
+        <item name="android:backgroundTint">@color/mainBackground</item>
+        <item name="android:textColor">@color/textMain</item>
+        <item name="android:tint">@color/textWhite</item>
+        <item name="android:drawablePadding">4dp</item>
+    </style>
+
+    <style name="BookNet.Button.Blue" parent="BookNet.Button.White">
         <item name="android:backgroundTint">@color/colorPrimary</item>
         <item name="android:textColor">@color/textWhite</item>
         <item name="android:tint">@color/textWhite</item>
     </style>
 
-    <style name="BookNet.Button.Red" parent="Base.TextAppearance.AppCompat.Button">
+    <style name="BookNet.Button.Red" parent="BookNet.Button.White">
         <item name="android:backgroundTint">@color/colorAccent</item>
         <item name="android:textColor">@color/textWhite</item>
         <item name="android:tint">@color/textWhite</item>
     </style>
 
-    <style name="BookNet.Button.White" parent="Base.TextAppearance.AppCompat.Button">
-        <item name="android:backgroundTint">@color/mainBackground</item>
-        <item name="android:textColor">@color/textMain</item>
-        <item name="android:tint">@color/textWhite</item>
-    </style>
 
     <style name="BookNet.Spinner" parent="Base.Widget.AppCompat.Spinner">
         <item name="android:backgroundTint">@color/textWhite</item>
@@ -79,7 +90,32 @@
 
     <style name="BookNet.Text.White" parent="TextAppearance.AppCompat.Body1">
         <item name="android:textColor">@color/textWhite</item>
+        <item name="android:textSize">18dp</item>
+        <item name="android:drawablePadding">4dp</item>
     </style>
+
+    <style name="BookNet.Text.White.Small" parent="BookNet.Text.White">
+        <item name="android:textSize">14dp</item>
+    </style>
+
+    <style name="BookNet.Text.White.Title" parent="BookNet.Text.White">
+        <item name="android:textSize">22dp</item>
+    </style>
+
+    <style name="BookNet.Text.Main" parent="TextAppearance.AppCompat.Body1">
+        <item name="android:textColor">@color/textMain</item>
+        <item name="android:textSize">18dp</item>
+        <item name="android:drawablePadding">4dp</item>
+    </style>
+
+    <style name="BookNet.Text.Main.Small" parent="BookNet.Text.Main">
+        <item name="android:textSize">14dp</item>
+    </style>
+
+    <style name="BookNet.Text.Main.Title" parent="BookNet.Text.Main">
+        <item name="android:textSize">22dp</item>
+    </style>
+
     <!--<style name="AppActionBarTheme" parent="@android:style/Widget.Holo.Light.ActionBar">-->
     <!--<item name="android:background">ANY_HEX_COLOR_CODE</item>-->
     <!--</style>-->

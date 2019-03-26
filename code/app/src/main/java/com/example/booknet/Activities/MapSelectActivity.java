@@ -1,0 +1,119 @@
+package com.example.booknet.Activities;
+
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.View;
+import android.widget.ImageButton;
+import android.widget.Toast;
+
+import com.example.booknet.R;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+
+/**
+ * Activity to select a location on a map.
+ */
+public class MapSelectActivity extends AppCompatActivity implements OnMapReadyCallback {
+
+    public final float UAQUAD_LATITUDE = 53.5260290f;
+    public final float UAQUAD_LONGITUDE = -113.5252808f;
+
+    //Layout Objects
+    ImageButton backButton;
+    SupportMapFragment mapView;
+
+    //Activity Data
+    GoogleMap googleMap;
+
+    private void setGoogleMap(GoogleMap googleMap) {
+        this.googleMap = googleMap;
+    }
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_map_select);
+
+        //Get Layout Objects
+        backButton = findViewById(R.id.backButton);
+        //mapView = findViewById(R.id.mapView);
+        mapView = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapView);
+
+        //Set Listeners
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+        //Setup Map
+        mapView.getMapAsync(this);
+
+
+    }
+
+    private void requestPermissions() {
+        ActivityCompat.requestPermissions(this
+                , new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
+        ActivityCompat.requestPermissions(this
+                , new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        mapView.getMapAsync(this);
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        googleMap.addMarker(new MarkerOptions()
+                .position(new LatLng(UAQUAD_LATITUDE, UAQUAD_LONGITUDE)));
+        googleMap.getUiSettings().setZoomControlsEnabled(true);
+        googleMap.getUiSettings().setAllGesturesEnabled(true);
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(UAQUAD_LATITUDE, UAQUAD_LONGITUDE), 10f));
+
+        googleMap.setBuildingsEnabled(true);
+        //googleMap.setMapType(1);
+
+
+        googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                Toast.makeText(getApplicationContext(), "Clicked LatLong:\n" + latLng.toString(), Toast.LENGTH_LONG).show();
+            }
+        });
+
+
+        if (ActivityCompat.checkSelfPermission(getApplicationContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(getApplicationContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            requestPermissions();
+            Log.d("jamie", "no map permission");
+            return;
+        }
+        googleMap.setMyLocationEnabled(true);
+        googleMap.getUiSettings().setMyLocationButtonEnabled(true);
+
+        setGoogleMap(googleMap);
+    }
+}

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context=".ReviewCreateDialog">
+    tools:context=".Dialogs.ReviewCreateDialog">
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/reviewing"
@@ -16,6 +16,7 @@
 
         <TextView
             android:id="@+id/rating"
+            style="@style/BookNet.Text.Main.Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -54,6 +55,7 @@
 
         <TextView
             android:id="@+id/ratingFeedback"
+            style="@style/BookNet.Text.Main.Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="(5)"
@@ -63,6 +65,7 @@
 
         <TextView
             android:id="@+id/commentLabel"
+            style="@style/BookNet.Text.Main.Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -72,6 +75,7 @@
 
         <TextView
             android:id="@+id/remainingTextLabel"
+            style="@style/BookNet.Text.Main.Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="(280)"
@@ -81,6 +85,7 @@
 
         <EditText
             android:id="@+id/commentField"
+            style="@style/BookNet.EditText.OnWhite"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -113,7 +118,7 @@
 
     <ImageButton
         android:id="@+id/cancelButton"
-        style="@style/BookNet.Button.Blue"
+        style="@style/BookNet.Button.Red"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"

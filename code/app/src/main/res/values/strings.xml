@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">BookNet</string>
+    <string name="google_api_key2">AIzaSyAfl7PywUQczUr-QpT127xeNa8CWSO0oLs</string>
+    <string name="google_map_api_key">AIzaSyA_l5LTtWn_7HN38SqGzFGsal6TRPeBJZk</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>

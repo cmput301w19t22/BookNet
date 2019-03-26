@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
 
-    tools:context=".BookSearchFragment">
+    tools:context=".Fragments.BookSearchFragment">
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/searchzone"
@@ -25,8 +25,10 @@
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="8dp"
             android:background="@drawable/ic_filter_list_black_24dp"
+            android:backgroundTint="@color/buttonBlankFocus"
             android:dropDownWidth="wrap_content"
             android:entries="@array/status_array"
+            android:popupElevation="4dp"
             android:prompt="@string/status_filter_prompt"
             android:spinnerMode="dropdown"
             android:tooltipText="Filter By Status"
@@ -60,8 +62,7 @@
         android:id="@+id/searchResults"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
+        android:scrollbars="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

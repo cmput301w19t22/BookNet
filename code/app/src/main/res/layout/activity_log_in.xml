@@ -10,7 +10,7 @@
     android:paddingTop="0dp"
     android:paddingRight="0dp"
     android:paddingBottom="0dp"
-    tools:context="com.example.booknet.LoginPageActivity">
+    tools:context="com.example.booknet.Activities.LoginPageActivity">
 
     <ImageView
         android:id="@+id/appLogo"
@@ -46,7 +46,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
-            android:id="@+id/btnSignIn"
+            android:id="@+id/createAccountButton"
             style="@style/BookNet.Button.White"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -60,7 +60,7 @@
 
         <EditText
             android:id="@+id/etEmailAddr"
-            style="@style/BookNet.LoginEditText"
+            style="@style/BookNet.EditText.Login"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -84,11 +84,11 @@
             android:textColor="@color/textMain"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btnSignIn" />
+            app:layout_constraintTop_toBottomOf="@+id/createAccountButton" />
 
         <EditText
             android:id="@+id/etPassword"
-            style="@style/BookNet.LoginEditText"
+            style="@style/BookNet.EditText.Login"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -112,7 +112,7 @@
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
         android:background="?android:attr/listDivider"
-        android:backgroundTint="@color/textWhite"
+        android:backgroundTint="@color/mainBackground"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/loginArea" />
@@ -122,7 +122,6 @@
         style="@style/BookNet.Button.White"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/common_google_signin_btn_text_dark_default"
         android:text="Create Account"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

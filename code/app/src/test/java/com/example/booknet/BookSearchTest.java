@@ -1,5 +1,7 @@
 package com.example.booknet;
 
+import com.example.booknet.Model.BookListing;
+
 import org.junit.Test;
 
 import java.util.ArrayList;

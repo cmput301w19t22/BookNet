@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context=".NewBookDialog">
+    tools:context=".Dialogs.NewBookDialog">
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/toolbar"
@@ -47,50 +47,62 @@
 
     <TextView
         android:id="@+id/bookISBNLabel"
+        style="@style/BookNet.Text.Main"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
         android:text="ISBN"
-        android:textSize="24sp"
         app:layout_constraintBaseline_toBaselineOf="@+id/isbnField"
         app:layout_constraintEnd_toStartOf="@+id/guideline3" />
 
     <TextView
         android:id="@+id/bookDescriptionLabel"
+        style="@style/BookNet.Text.Main"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
         android:text="Description"
-        android:textSize="24sp"
         app:layout_constraintBaseline_toBaselineOf="@+id/descriptionField"
         app:layout_constraintEnd_toStartOf="@+id/guideline3" />
 
     <TextView
         android:id="@+id/BookTitleLabel"
+        style="@style/BookNet.Text.Main"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
         android:text="Title"
-        android:textSize="24sp"
         app:layout_constraintBaseline_toBaselineOf="@+id/titleField"
         app:layout_constraintEnd_toStartOf="@+id/guideline3" />
 
     <TextView
         android:id="@+id/bookAuthorLabel"
+        style="@style/BookNet.Text.Main"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
         android:text="Author"
-        android:textSize="24sp"
         app:layout_constraintBaseline_toBaselineOf="@+id/authorField"
         app:layout_constraintEnd_toStartOf="@+id/guideline3" />
 
     <EditText
+        android:id="@+id/isbnField"
+        style="@style/BookNet.EditText.OnWhite"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:ems="10"
+        android:hint="ISBN"
+        android:inputType="number"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guideline3"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+
+    <EditText
         android:id="@+id/titleField"
+        style="@style/BookNet.EditText.OnWhite"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -105,6 +117,7 @@
 
     <EditText
         android:id="@+id/authorField"
+        style="@style/BookNet.EditText.OnWhite"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -118,6 +131,7 @@
 
     <EditText
         android:id="@+id/descriptionField"
+        style="@style/BookNet.EditText.OnWhite"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -146,20 +160,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_begin="140dp" />
-
-    <EditText
-        android:id="@+id/isbnField"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:ems="10"
-        android:hint="ISBN"
-        android:inputType="number"
-        app:layout_constraintStart_toStartOf="@+id/guideline3"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+        app:layout_constraintGuide_begin="122dp" />
 
     <Button
         android:id="@+id/cancelButton"

@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/requestLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
 
     <TextView
         android:id="@+id/userNameLabel"
+        style="@style/BookNet.Text.Main"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
         android:text="[UserName]"
         android:textSize="18sp"
@@ -19,10 +20,10 @@
 
     <TextView
         android:id="@+id/ratingTextLabel"
+        style="@style/BookNet.Text.Main"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
         android:layout_marginBottom="8dp"
         android:text="1.0"
         android:textSize="18sp"
@@ -77,13 +78,6 @@
         app:layout_constraintStart_toEndOf="@+id/ratingStar4"
         app:layout_constraintTop_toTopOf="@+id/ratingTextLabel" />
 
-    <android.support.constraint.Guideline
-        android:id="@+id/guideline4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_begin="116dp" />
-
     <Button
         android:id="@+id/acceptButton"
         style="@style/BookNet.Button.Blue"
@@ -100,7 +94,7 @@
 
     <Button
         android:id="@+id/declineButton"
-        style="@style/BookNet.Button.Blue"
+        style="@style/BookNet.Button.Red"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"

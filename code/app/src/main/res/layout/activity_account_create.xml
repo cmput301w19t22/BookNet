@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorPrimary"
-    tools:context=".AccountCreateActivity">
+    tools:context=".Activities.AccountCreateActivity">
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/loginArea"
@@ -21,6 +21,7 @@
 
         <TextView
             android:id="@+id/signinLabel"
+            style="@style/BookNet.Toolbar.Title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -33,7 +34,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
-            android:id="@+id/btnSignIn"
+            android:id="@+id/createAccountButton"
             style="@style/BookNet.Button.White"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -48,7 +49,7 @@
 
         <EditText
             android:id="@+id/etEmailAddr"
-            style="@style/BookNet.LoginEditText"
+            style="@style/BookNet.EditText.Login"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -62,21 +63,9 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/signinLabel" />
 
-        <TextView
-            android:id="@+id/tvSignInStatus"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/textMain"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btnSignIn" />
-
         <EditText
             android:id="@+id/etPassword"
-            style="@style/BookNet.LoginEditText"
+            style="@style/BookNet.EditText.Login"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -93,7 +82,7 @@
 
         <EditText
             android:id="@+id/usernameField"
-            style="@style/BookNet.LoginEditText"
+            style="@style/BookNet.EditText.Login"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -110,7 +99,7 @@
 
         <EditText
             android:id="@+id/phoneField"
-            style="@style/BookNet.LoginEditText"
+            style="@style/BookNet.EditText.Login"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -124,6 +113,18 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/usernameField" />
+
+        <TextView
+            android:id="@+id/tvSignInStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textAlignment="center"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/textWhite"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/createAccountButton" />
 
     </android.support.constraint.ConstraintLayout>
 </android.support.constraint.ConstraintLayout>

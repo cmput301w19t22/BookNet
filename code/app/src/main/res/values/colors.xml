@@ -8,16 +8,23 @@
 
     <color name="notificationCircle">#CA415C</color>
     <color name="mainBackground">#F8F8F8</color>
+    <color name="brightBackground">#FFFFFF</color>
 
-    <color name="textMain">#241D1D</color>
+    <color name="textMain">#666363</color>
+    <color name="textLightGray">#D8D4D4</color>
     <color name="textWhite">#FCFCFC</color>
 
     <color name="navigationIcon">#404347</color>
     <color name="buttonPrimary">#CACFD8</color>
-    <color name="button2">#77D2E7</color>
+    <color name="buttonDrop">#83868D</color>
+    <color name="buttonBlankPrimary">#FFFFFF</color>
+    <color name="buttonBlankInactive">#B0FFFFFF</color>
+    <color name="buttonBlankFocus">#F1F1F1</color>
+    <color name="buttonBlankDrop">#A0AAC7</color>
+    <color name="buttonBlue">#77D2E7</color>
 
     <color name="starFill">#9CDFF0</color>
     <color name="photoDefaultMain">#E2E2E2</color>
     <color name="photoDefaultBack">#F3F3F3</color>
-    <color name="lightDarkerTint" >#09000000</color>
+    <color name="lightDarkerTint" >#05000000</color>
 </resources>

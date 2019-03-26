@@ -2,6 +2,7 @@ package com.example.booknet.Adapters;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -27,7 +28,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * @author Jamie
  * @version 1.0
  */
-public class RequestedLibraryAdapter extends RecyclerView.Adapter<RequestedLibraryAdapter.OwnedListingViewHolder> {
+public class RequestedLibraryAdapter extends RecyclerView.Adapter<RequestedLibraryAdapter.RequestListingViewHolder> {
 
     //The BookLibrary to display
     private BookLibrary library;
@@ -50,52 +51,55 @@ public class RequestedLibraryAdapter extends RecyclerView.Adapter<RequestedLibra
     }
 
     /**
-     * Routine when creating a new OwnedListingViewHolder.
+     * Routine when creating a new RequestListingViewHolder.
      * Assigns the list item layout to the new ViewHolder.
      *
-     * @return A new OwnedListingViewHolder using the list layout
+     * @return A new RequestListingViewHolder using the list layout
      */
 
 
     @NonNull
     @Override
-    public OwnedListingViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+    public RequestListingViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         //Create a new view
         View view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.book_listing_item_list, viewGroup, false);
-        OwnedListingViewHolder ownedListingViewHolder = new OwnedListingViewHolder(view);
-        return ownedListingViewHolder;
+        RequestListingViewHolder requestListingViewHolder = new RequestListingViewHolder(view);
+        return requestListingViewHolder;
     }
 
     /**
      * Routine for binding new library to a list item
      *
-     * @param ownedListingViewHolder The ViewHolder to be assigned
+     * @param requestListingViewHolder The ViewHolder to be assigned
      * @param position               Index in the list to use for this list slot
      */
     @Override
-    public void onBindViewHolder(@NonNull OwnedListingViewHolder ownedListingViewHolder, int position) {
+    public void onBindViewHolder(@NonNull RequestListingViewHolder requestListingViewHolder, int position) {
         readLock.lock();
         //Get the library at the provided position
         final BookListing item = library.getBookAtPosition(position).clone();
         readLock.unlock();
         //Index to pass to the edit activity
-        final int index = ownedListingViewHolder.getAdapterPosition();
+        final int index = requestListingViewHolder.getAdapterPosition();
 
         //Fill the text fields with the object's library
-        //ownedListingViewHolder.bookThumbnail.//todo listing photo
-        ownedListingViewHolder.bookThumbnail.setImageResource(R.drawable.ic_photo_lightgray_24dp);
-        ownedListingViewHolder.bookTitleLabel.setText(item.getBook().getTitle());
-        ownedListingViewHolder.bookAuthorLabel.setText(item.getBook().getAuthor());
-        ownedListingViewHolder.isbnLabel.setText(item.getBook().getIsbn());
-        ownedListingViewHolder.ownerLabel.setVisibility(View.GONE);//Exclude this element
-        ownedListingViewHolder.ownedLabel.setVisibility(View.GONE);//Exclude this element
-        ownedListingViewHolder.statusLabel.setText(item.getStatus().toString());
+        //requestListingViewHolder.bookThumbnail.//todo listing photo
+        requestListingViewHolder.bookThumbnail.setImageResource(R.drawable.ic_photo_lightgray_24dp);
+        requestListingViewHolder.bookTitleLabel.setText(item.getBook().getTitle());
+        requestListingViewHolder.bookAuthorLabel.setText(item.getBook().getAuthor());
+        requestListingViewHolder.isbnLabel.setText(item.getBook().getIsbn());
+        requestListingViewHolder.ownerLabel.setVisibility(View.GONE);//Exclude this element
+        requestListingViewHolder.ownedLabel.setVisibility(View.GONE);//Exclude this element
+        requestListingViewHolder.statusLabel.setText(item.getStatus().toString());
         Log.d("mattTag", "really? " + item.getBook().toString() + " " + item.getStatus());
 
+        if ((position & 1) == 1) {//check odd
+            requestListingViewHolder.constraintLayout.setBackgroundColor(sourceActivity.getResources().getColor(R.color.lightDarkerTint));
+        }
 
         //Add the click listener to the item
-        ownedListingViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+        requestListingViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 clickedItem(item);
@@ -131,9 +135,10 @@ public class RequestedLibraryAdapter extends RecyclerView.Adapter<RequestedLibra
     /**
      * Stores the view library for a list item.
      */
-    public static class OwnedListingViewHolder extends RecyclerView.ViewHolder {
+    public static class RequestListingViewHolder extends RecyclerView.ViewHolder {
 
         //Layout Objects
+        private ConstraintLayout constraintLayout;
         private ImageView bookThumbnail;
         private TextView bookTitleLabel;
         private TextView bookAuthorLabel;
@@ -144,14 +149,15 @@ public class RequestedLibraryAdapter extends RecyclerView.Adapter<RequestedLibra
 
 
         /**
-         * Creates the OwnedListingViewHolder
+         * Creates the RequestListingViewHolder
          *
          * @param itemView The view for this item
          */
-        public OwnedListingViewHolder(@NonNull View itemView) {
+        public RequestListingViewHolder(@NonNull View itemView) {
             super(itemView);
 
             //Obtain Layout Object References
+            constraintLayout = itemView.findViewById(R.id.bookLayout);
             bookThumbnail = itemView.findViewById(R.id.bookThumbnail);
             bookTitleLabel = itemView.findViewById(R.id.bookTitleLabel);
             bookAuthorLabel = itemView.findViewById(R.id.bookAuthorLabel);

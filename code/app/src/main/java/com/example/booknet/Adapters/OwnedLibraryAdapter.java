@@ -46,10 +46,10 @@ public class OwnedLibraryAdapter extends RecyclerView.Adapter<OwnedLibraryAdapte
     }
 
     /**
-     * Routine when creating a new OwnedListingViewHolder.
+     * Routine when creating a new RequestListingViewHolder.
      * Assigns the list item layout to the new ViewHolder.
      *
-     * @return A new OwnedListingViewHolder using the list layout
+     * @return A new RequestListingViewHolder using the list layout
      */
     @NonNull
     @Override
@@ -139,7 +139,7 @@ public class OwnedLibraryAdapter extends RecyclerView.Adapter<OwnedLibraryAdapte
 
 
         /**
-         * Creates the OwnedListingViewHolder
+         * Creates the RequestListingViewHolder
          *
          * @param itemView The view for this item
          */

@@ -3,12 +3,15 @@ package com.example.booknet;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ImageButton;
 
 /**
  * Activity to view a listing that the current user owns.
@@ -28,8 +31,13 @@ public class OwnListingViewActivity extends AppCompatActivity {
     private TextView requestCountLabel;
     private Button requestButton;
     private Button viewRequestsButton;
-    private Button deleteButton;
-    private Button editButton;
+    private ImageButton deleteButton;
+    private ImageButton editButton;
+    private ImageButton editPhotoButton;
+    private ConstraintLayout geoLocationBlock;
+    private Button setLocationButton;
+    private ImageView viewLocationButton;
+    private TextView geolocationLabel;
     private DatabaseManager manager = DatabaseManager.getInstance();
 
     //Activity Data

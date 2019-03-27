@@ -1,9 +1,11 @@
 package com.example.booknet.Dialogs;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -13,7 +15,9 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,6 +27,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.booknet.BuildConfig;
 import com.example.booknet.DatabaseManager;
 import com.example.booknet.Model.BookListing;
 import com.example.booknet.Model.Photo;
@@ -32,6 +37,8 @@ import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -49,6 +56,7 @@ public class PhotoEditDialog extends DialogFragment {
 
 
     //Layout Objects
+
     private ImageView photoView;
     private ImageButton leaveButton;
     private ImageButton cameraButton;
@@ -56,6 +64,9 @@ public class PhotoEditDialog extends DialogFragment {
     private ImageButton deleteButton;
     private Button submitButton;
     private View dialogView;
+
+    private String photoLocalPath;
+    private Uri photoUri;
 
     private Bitmap viewingBitmap;
 
@@ -193,20 +204,16 @@ public class PhotoEditDialog extends DialogFragment {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
-
-            savePhoto(imageBitmap);
-            Photo photo = new Photo(imageBitmap);
-
-            listing.setPhoto(photo);
-            try {
-                manager.writeUserBookListing(listing);
-            } catch (Exception e) {
-                Log.d("jamie", "Failed write photo:\n" + e.getLocalizedMessage());
-            }
-
-
             photoView.setImageBitmap(imageBitmap);
+
+            viewingBitmap = imageBitmap;
+
+//            savePhoto(imageBitmap);
+//            Photo photo = new Photo(imageBitmap);
+//            photoView.setImageBitmap(imageBitmap);
+
         }
+
         if (requestCode == REQUEST_IMAGE_FILE && resultCode == RESULT_OK) {
             if (data == null) {
                 Toast.makeText(getActivity(), "File Not Selected", Toast.LENGTH_LONG).show();
@@ -229,21 +236,102 @@ public class PhotoEditDialog extends DialogFragment {
 
     /**
      * Creates a request to take a photo.
+     * The photo will also be saved to the local picture directory.
+     * <p>
+     * Uses code from: https://stackoverflow.com/questions/6448856/android-camera-intent-how-to-get-full-sized-photo
      */
     public void requestTakePhoto() {
         Log.d("jamie", "taking photo");
-        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (cameraIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-            //todo save image to file
-            startActivityForResult(cameraIntent, REQUEST_IMAGE_CAPTURE);
+        //Only continue if we have permissions
+
+        if (!checkPermissions()) {
+            requestPermissions(1);
+        }else{
+            Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            if (cameraIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+                //todo save image to file
+                startActivityForResult(cameraIntent, REQUEST_IMAGE_CAPTURE);
+//                //Get the directory for photos and create a new file
+//                //File pictures = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "Camera");
+//                File dcim = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), "Camera");
+//                String photoFilename = makePhotoFilename(listing);
+//                //File output = new File(pictures, photoFilename);
+//                File output = null;
+//                Log.d("jamie", "photo temp path: " + dcim.toString() + ", " + photoFilename + ".jpg");
+//                //output = File.createTempFile(photoFilename, ".jpg", dcim);
+//                output = new File(dcim, photoFilename + ".jpg");
+//                if (output != null) {
+//                    //Create the Uri for where to output the photo
+//                    Uri outputUri = FileProvider.getUriForFile(getActivity(),
+//                            BuildConfig.APPLICATION_ID + ".provider", output);
+//
+//                    //Save the path for future use
+//                    this.photoLocalPath = "file:" + output.getAbsolutePath();
+//                    Log.d("jamie", "photo filepath: " + output.getAbsolutePath());
+//                    Log.d("jamie", "photo uri " + outputUri.isAbsolute() + ": " + outputUri.toString());
+//                    //output.delete();
+//
+//                    cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputUri);
+//                    startActivityForResult(cameraIntent, REQUEST_IMAGE_CAPTURE);
+//                }
+
+
+        }
+
+
+
         }
     }
+
+    /**
+     * Creates a filename for a new photo based on a listing.
+     * The returned name format is: [isbn]_[title]_on[timestamp]
+     *
+     * @param listing The listing to use to make the name.
+     * @return A presumably unique filename.
+     */
+    private String makePhotoFilename(BookListing listing) {
+        String format = "%s_%s_on%s";
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
+        String timestamp = dateFormat.format(new Date());
+        String path = String.format(format, listing.getISBN(),
+                listing.getBook().getTitle().replaceAll("\\s", "_"), timestamp);
+        return path;
+    }
+
+
+    private boolean checkPermissions() {
+        if (ActivityCompat.checkSelfPermission(getActivity(),
+                Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(getActivity(),
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+
+
+
+
+            return true;
+        }
+
+        boolean perm1 = ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+        boolean perm2 = ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+        boolean perm3 = ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
+
+        Log.d("jamie", "perm1: "+perm1);
+        Log.d("jamie", "perm2: "+perm2);
+        Log.d("jamie", "perm3: "+perm3);
+        Log.d("jamie", "failed permissions");
+        return false;
+    }
+
+
+
 
 
     /**
      * Obtains a photo from a file.
      */
-    private void selectImageFromFile() {
+    public void selectImageFromFile() {
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType("image/*");
         startActivityForResult(intent, REQUEST_IMAGE_FILE);
@@ -275,6 +363,17 @@ public class PhotoEditDialog extends DialogFragment {
         }
 
     }
+
+
+    private void requestPermissions(int request) {
+        Log.d("jamie", getActivity().getLocalClassName());
+        ActivityCompat.requestPermissions(getActivity()
+                , new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA}, request);
+
+        Log.d("jamie", "requesting permissions");
+    }
+
+
 
 
     /**

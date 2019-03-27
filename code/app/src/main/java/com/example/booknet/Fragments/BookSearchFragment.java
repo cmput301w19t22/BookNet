@@ -79,6 +79,8 @@ public class BookSearchFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        Log.d("mattD", "get claled");
+
         View view = inflater.inflate(R.layout.activity_book_search, container, false);
 
         //Get Layout Objects
@@ -125,6 +127,8 @@ public class BookSearchFragment extends Fragment {
 
 
         manager.getAllListingsRef().addValueEventListener(listener);
+
+
 
 
 

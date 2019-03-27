@@ -2,8 +2,10 @@ package com.example.booknet.Activities;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AlertDialog;
@@ -52,6 +54,7 @@ public class OwnListingViewActivity extends AppCompatActivity implements DialogC
     private ImageView viewLocationButton;
     private TextView geolocationLabel;
     private ImageButton backButton;
+    private PhotoEditDialog photoEditDialog;
     private DatabaseManager manager = DatabaseManager.getInstance();
 
     //Activity Data
@@ -277,7 +280,7 @@ public class OwnListingViewActivity extends AppCompatActivity implements DialogC
      * Start an activity for editing the photo for this listing.
      */
     private void editPhoto() {
-        PhotoEditDialog photoEditDialog = PhotoEditDialog.newInstance(listing);
+        photoEditDialog = PhotoEditDialog.newInstance(listing);
         DialogInterface.OnDismissListener dismissListener = new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
@@ -345,4 +348,26 @@ public class OwnListingViewActivity extends AppCompatActivity implements DialogC
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        Log.d("jamie", "permissions return");
+
+
+        for (int r : grantResults) {
+            if (r != PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Permission Not Granted\nCannot use feature", Toast.LENGTH_LONG).show();
+                return;
+            }
+        }
+        if (requestCode == 1) {
+            photoEditDialog.requestTakePhoto();
+        }
+        if (requestCode == 2) {
+            photoEditDialog.selectImageFromFile();
+        }
+    }
+
+
 }

@@ -117,6 +117,8 @@ public class MainActivity extends FragmentActivity {
 
             @Override
             public void onPageSelected(int i) {
+
+
                 if (i == 0) {
                     navigation.setSelectedItemId(R.id.navigation_search);
                 }
@@ -188,4 +190,5 @@ public class MainActivity extends FragmentActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
     }
+
 }

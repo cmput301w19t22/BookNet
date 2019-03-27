@@ -147,7 +147,7 @@ public class DatabaseManagerTest {
         databaseManager.writeToAllBookListings(listing);
 
         //Read the listing back
-        BookLibrary library = databaseManager.readUserRequests("testuser");
+        BookLibrary library = databaseManager.readUserRequestLibrary("testuser");
         ArrayList<BookListing> books = library.getBooks();
 
         assertNotNull(library);

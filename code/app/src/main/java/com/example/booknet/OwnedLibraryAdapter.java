@@ -3,8 +3,8 @@ package com.example.booknet;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +20,7 @@ import android.widget.TextView;
  * @author Jamie
  * @version 1.0
  */
-public class OwnedListingAdapter extends RecyclerView.Adapter<OwnedListingAdapter.OwnedListingViewHolder> {
+public class OwnedLibraryAdapter extends RecyclerView.Adapter<OwnedLibraryAdapter.OwnedListingViewHolder> {
 
     //The BookLibrary to display
     private BookLibrary library;
@@ -32,7 +32,7 @@ public class OwnedListingAdapter extends RecyclerView.Adapter<OwnedListingAdapte
      * Creates the adapter
      *  @param library        The BookLibrary to use for the list display
      * @param sourceActivity The activity that created this adapter*/
-    public OwnedListingAdapter(BookLibrary library, FragmentActivity sourceActivity) {
+    public OwnedLibraryAdapter(BookLibrary library, FragmentActivity sourceActivity) {
         this.library = library;
         this.sourceActivity = sourceActivity;
     }
@@ -72,13 +72,14 @@ public class OwnedListingAdapter extends RecyclerView.Adapter<OwnedListingAdapte
 
         //Fill the text fields with the object's library
         //ownedListingViewHolder.bookThumbnail.//todo listing photo
-        ownedListingViewHolder.bookThumbnail.setImageResource(R.mipmap.ic_launcher);
+        ownedListingViewHolder.bookThumbnail.setImageResource(R.drawable.ic_photo_lightgray_24dp);
         ownedListingViewHolder.bookTitleLabel.setText(item.getBook().getTitle());
         ownedListingViewHolder.bookAuthorLabel.setText(item.getBook().getAuthor());
         ownedListingViewHolder.isbnLabel.setText(item.getBook().getIsbn());
         ownedListingViewHolder.ownerLabel.setVisibility(View.GONE);//Exclude this element
         ownedListingViewHolder.ownedLabel.setVisibility(View.GONE);//Exclude this element
-        ownedListingViewHolder.statusLabel.setText(item.getStatusString());
+        ownedListingViewHolder.statusLabel.setText(item.getStatus().toString());
+        Log.d("mattTag", "really? "+ item.getBook().toString() + " " + item.getStatus());
 
 
         //Add the click listener to the item
@@ -98,8 +99,8 @@ public class OwnedListingAdapter extends RecyclerView.Adapter<OwnedListingAdapte
         //Start View/Edit Activity with Clicked Item
         Intent intent = new Intent(sourceActivity, OwnListingViewActivity.class);
         if (item != null) {
-            intent.putExtra("username", item.getOwnerUsername());
-            intent.putExtra("bookisbn", item.getBook().getIsbn());
+            intent.putExtra("isbn", item.getBook().getIsbn());
+            intent.putExtra("dupID", item.getDupInd());
         }
         sourceActivity.startActivity(intent);
     }
@@ -143,7 +144,7 @@ public class OwnedListingAdapter extends RecyclerView.Adapter<OwnedListingAdapte
             bookAuthorLabel = itemView.findViewById(R.id.bookAuthorLabel);
             isbnLabel = itemView.findViewById(R.id.isbnLabel);
             ownerLabel = itemView.findViewById(R.id.ownerLabel);
-            ownedLabel = itemView.findViewById(R.id.ownedLabel);
+            ownedLabel = itemView.findViewById(R.id.ownedBy);
             statusLabel = itemView.findViewById(R.id.statusLabel);
 
             bookTitleLabel.setSelected(true);//select to enable scrolling

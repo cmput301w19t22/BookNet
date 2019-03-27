@@ -4,7 +4,6 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -30,24 +29,23 @@ public class MainActivity extends FragmentActivity {
 
         @Override
         public int getCount() {
-            return 3;
+            return 5;
         }
 
         @Override
         public Fragment getItem(int position) {
-            Log.d("mattTag", "position "+String.valueOf(position));
-            if (position == 0){
-
+            Log.d("mattTag", "position " + String.valueOf(position));
+            if (position == 0) {
                 return BookSearchFragment.newInstance();
-            }
-
-            if (position == 1){
+            } else if (position == 1) {
                 return OwnedLibraryFragment.newInstance();
-            }
-            else if (position == 2){
+            } else if (position == 2) {
+                return RequestLibraryFragment.newInstance();
+            } else if (position == 3) {
                 return UserProfileViewFragment.newInstance();
+            } else if (position == 4) {
+                return NotificationFragment.newInstance();
             }
-
             return BookSearchFragment.newInstance();
         }
     }
@@ -57,9 +55,6 @@ public class MainActivity extends FragmentActivity {
     private SearchView searchBar;
     MyAdapter mAdapter;
     ViewPager mPager;
-
-
-
 
     //Set Click Listener for Navigation Bar
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -74,11 +69,14 @@ public class MainActivity extends FragmentActivity {
                 case R.id.navigation_mybooks:
                     myBooksClicked();
                     return true;
+                case R.id.navigation_myrequests:
+                    myRequestsClicked();
+                    return true;
                 case R.id.navigation_myaccount:
                     myAccountClicked();
                     return true;
                 case R.id.navigation_notifications:
-                    mTextMessage.setText(R.string.title_notifications);
+                    myNotificationsClicked();
                     return true;
             }
             return false;
@@ -89,68 +87,66 @@ public class MainActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
         setContentView(R.layout.activity_main);
 
         mAdapter = new MyAdapter(getSupportFragmentManager());
 
-        mPager = (ViewPager)findViewById(R.id.pager);
+        mPager = (ViewPager) findViewById(R.id.pager);
         mPager.setAdapter(mAdapter);
 
-
-
-
-        mTextMessage = (TextView) findViewById(R.id.message);
         final BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-        mPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+
+        mPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
-            public void onPageScrolled(int i, float v, int i1) {
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
             }
 
             @Override
             public void onPageSelected(int i) {
-                if (i == 0){
-
+                if (i == 0) {
                     navigation.setSelectedItemId(R.id.navigation_search);
                 }
-
-                if (i == 1){
+                else if (i == 1) {
                     navigation.setSelectedItemId(R.id.navigation_mybooks);
                 }
-                else if (i == 2){
+                else if (i == 2) {
+                    navigation.setSelectedItemId(R.id.navigation_myrequests);
+                }
+                else if (i == 3) {
                     navigation.setSelectedItemId(R.id.navigation_myaccount);
                 }
-
-
+                else if (i == 4) {
+                    navigation.setSelectedItemId(R.id.navigation_notifications);
+                }
             }
 
             @Override
-            public void onPageScrollStateChanged(int i) {
+            public void onPageScrollStateChanged(int state) {
 
             }
         });
-        searchBar = findViewById(R.id.mainSearch);
-
-        Log.d("mattTag", "leaving main activity onCreate");
     }
 
+    private void onSearchClicked() {
+        mPager.setCurrentItem(0);
+    }
 
     private void myBooksClicked() {
         mPager.setCurrentItem(1);
     }
 
-    private void myAccountClicked() {
+    private void myRequestsClicked() {
         mPager.setCurrentItem(2);
-
     }
 
-    private void onSearchClicked() {
-        mPager.setCurrentItem(0);
-//        Intent intent = new Intent(this, BookSearchFragment.class);
-//        startActivity(intent);
+    private void myAccountClicked() {
+        mPager.setCurrentItem(3);
+    }
 
+    private void myNotificationsClicked() {
+        mPager.setCurrentItem(4);
     }
 
     @Override
@@ -159,8 +155,7 @@ public class MainActivity extends FragmentActivity {
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle("Are you sure?")
                 .setMessage("Log out?")
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener()
-                {
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         CurrentUser.getInstance().logout();

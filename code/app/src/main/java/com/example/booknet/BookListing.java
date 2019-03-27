@@ -1,12 +1,11 @@
 package com.example.booknet;
 
-import android.provider.ContactsContract;
-import android.util.Log;
-import android.graphics.Bitmap;
+import com.example.booknet.Constants.BookListingStatus;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.io.Serializable;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
+import com.google.firebase.auth.UserInfo;
 
 /**
  * Keeps track of a book that is listed on the app.
@@ -17,42 +16,15 @@ public class BookListing implements Serializable, Cloneable {
         return book.isSameBook(listing.book);
     }
 
-
-    /**
-     * Enum for the status of a BookListing, so the values are more easily tracked
-     */
-    public enum Status {
-        Available, Requested, Accepted, Borrowed;
-
-        /**
-         * Returns the status as a text string.
-         *
-         * @return
-         */
-        @Override
-        public String toString() {
-            switch (this) {
-                case Available:
-                    return "Available";
-                case Requested:
-                    return "Requested";
-                case Accepted:
-                    return "Accepted";
-                case Borrowed:
-                    return "Borrowed";
-            }
-            return super.toString();
-        }
-    }
-
     //Attributes
     private Book book;
-    private Status status;
+    private BookListingStatus status;
     private String ownerUsername;
     private ArrayList<String> requests;
     private String borrowerName;
     private UserLocation geoLocation;
     private int dupInd;
+
     private DatabaseManager manager = DatabaseManager.getInstance();
 
     /**
@@ -62,11 +34,10 @@ public class BookListing implements Serializable, Cloneable {
         this.book = new Book();
         this.ownerUsername = "";
         this.borrowerName = "";
-        this.status = Status.Available;
+        this.status = BookListingStatus.Available;
         this.requests = new ArrayList<String>();
         this.geoLocation = new UserLocation();
-        dupInd = 0;
-
+        this.dupInd = 0;
     }
 
     public int getDupInd() {
@@ -86,7 +57,7 @@ public class BookListing implements Serializable, Cloneable {
         this.book = book;
         this.ownerUsername = CurrentUser.getInstance().getUsername();
         this.borrowerName = "";
-        this.status = Status.Available;
+        this.status = BookListingStatus.Available;
         this.requests = new ArrayList<String>();
         this.geoLocation = new UserLocation();
         dupInd = manager.getDupCount(this, CurrentUser.getInstance().getUID());
@@ -97,9 +68,6 @@ public class BookListing implements Serializable, Cloneable {
         return book;
     }
 
-    public Status getStatus() {
-        return status;
-    }
 
     public String getOwnerUsername() {
         return ownerUsername;
@@ -132,13 +100,13 @@ public class BookListing implements Serializable, Cloneable {
      */
     public void addRequest(String requesterName) {
         //Only requestable when Available or Requested
-        if (status == Status.Available || status == Status.Requested) {
+        if (status == BookListingStatus.Available || status == BookListingStatus.Requested) {
             //Add to the list
             if (!requests.contains(requesterName)) {
                 requests.add(requesterName);
             }
             //change status to reflect change
-            this.status = Status.Requested;
+            this.status = BookListingStatus.Requested;
             //todo send to database
         } else {
             //todo notify cannot add request
@@ -151,7 +119,7 @@ public class BookListing implements Serializable, Cloneable {
      * @param requesterName The user whose request to accept
      */
     public void acceptRequest(String requesterName) {
-        if (status == Status.Requested) {
+        if (status == BookListingStatus.Requested) {
             if (requests.contains(requesterName)) {
                 requests.remove(requesterName);
 
@@ -164,7 +132,7 @@ public class BookListing implements Serializable, Cloneable {
                 requests.clear();
 
                 //Accept this request
-                status = Status.Accepted;
+                status = BookListingStatus.Accepted;
                 this.borrowerName = requesterName;
                 //todo allow geolocation
                 //todo notify database
@@ -192,7 +160,7 @@ public class BookListing implements Serializable, Cloneable {
     public void denyRequest(String requesterName) {
         if (requests.contains(requesterName)) {
             requests.remove(requesterName);
-            if(requests.size() < 1) this.status = Status.Available;
+            if(requests.size() < 1) this.status = BookListingStatus.Available;
             //todo notify database
         }
     }
@@ -202,7 +170,7 @@ public class BookListing implements Serializable, Cloneable {
      */
     public void bookBorrowed() {
         //todo: complete?
-        status = Status.Borrowed;
+        status = BookListingStatus.Borrowed;
     }
 
     /**
@@ -210,7 +178,7 @@ public class BookListing implements Serializable, Cloneable {
      */
     public void bookReturned() {
         //todo: complete?
-        status = Status.Available;
+        status = BookListingStatus.Available;
         borrowerName = "";
     }
 
@@ -224,8 +192,8 @@ public class BookListing implements Serializable, Cloneable {
 
 
 
-    public String getStatusString() {
-        return status.toString();
+    public BookListingStatus getStatus() {
+        return status;
     }
 
     public BookListing clone(){
@@ -256,7 +224,7 @@ public class BookListing implements Serializable, Cloneable {
         this.requests = requests;
     }
 
-    public void setStatus(Status status) {
+    public void setStatus(BookListingStatus status) {
         this.status = status;
     }
 
@@ -272,8 +240,18 @@ public class BookListing implements Serializable, Cloneable {
     @Override
     public String toString() {
         String s = "";
-        s += book.toString() + " " + borrowerName + " " + status.toString() + " " + requests.toString();
+        s += book.toString() + " with  status:" + status.toString() + " with ISBN: "+ book.getIsbn();
         return s;
+    }
+
+    public String getOwnerPhone() {
+        return manager.getPhoneFromUsername(ownerUsername);
+
+    }
+
+    public String getOwnerEmail() {
+        return manager.getEmailFromUsername(ownerUsername);
+
     }
 
 

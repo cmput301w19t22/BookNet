@@ -4,7 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".UserProfileViewFragment">
+    tools:context=".UserProfileViewFragment"
+    android:tag="user_profile_view"
+    >
+
 
     <TextView
         android:id="@+id/userNameLabel"
@@ -27,7 +30,7 @@
         android:layout_marginTop="8dp"
         android:text="[Phone Number]"
         android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="@+id/userNameLabel"
+        app:layout_constraintStart_toEndOf="@+id/phoneIcon"
         app:layout_constraintTop_toBottomOf="@+id/userNameLabel" />
 
     <TextView
@@ -39,8 +42,30 @@
         android:layout_marginTop="8dp"
         android:text="[Email]"
         android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="@+id/userNameLabel"
+        app:layout_constraintStart_toEndOf="@+id/emailIcon"
         app:layout_constraintTop_toBottomOf="@+id/phoneNumberLabel" />
+
+    <ImageView
+        android:id="@+id/phoneIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/userNameLabel"
+        app:srcCompat="@drawable/ic_phone_black_24dp" />
+
+    <ImageView
+        android:id="@+id/emailIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/phoneIcon"
+        app:srcCompat="@drawable/ic_email_black_24dp" />
 
     <android.support.constraint.Guideline
         android:id="@+id/guideline"
@@ -72,7 +97,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/ratingTextLabel"
         app:layout_constraintStart_toEndOf="@+id/ratingTextLabel"
         app:layout_constraintTop_toTopOf="@+id/ratingTextLabel"
-        app:srcCompat="@android:drawable/star_off" />
+        app:srcCompat="@drawable/ic_star_border_24dp" />
 
     <ImageView
         android:id="@+id/ratingStar2"
@@ -81,7 +106,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/ratingTextLabel"
         app:layout_constraintStart_toEndOf="@+id/ratingStar1"
         app:layout_constraintTop_toTopOf="@+id/ratingTextLabel"
-        app:srcCompat="@android:drawable/star_off" />
+        app:srcCompat="@drawable/ic_star_border_24dp" />
 
     <ImageView
         android:id="@+id/ratingStar3"
@@ -90,7 +115,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/ratingTextLabel"
         app:layout_constraintStart_toEndOf="@+id/ratingStar2"
         app:layout_constraintTop_toTopOf="@+id/ratingTextLabel"
-        app:srcCompat="@android:drawable/star_off" />
+        app:srcCompat="@drawable/ic_star_border_24dp" />
 
     <ImageView
         android:id="@+id/ratingStar4"
@@ -99,7 +124,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/ratingTextLabel"
         app:layout_constraintStart_toEndOf="@+id/ratingStar3"
         app:layout_constraintTop_toTopOf="@+id/ratingTextLabel"
-        app:srcCompat="@android:drawable/star_off" />
+        app:srcCompat="@drawable/ic_star_border_24dp" />
 
     <ImageView
         android:id="@+id/ratingStar5"
@@ -108,7 +133,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/ratingTextLabel"
         app:layout_constraintStart_toEndOf="@+id/ratingStar4"
         app:layout_constraintTop_toTopOf="@+id/ratingTextLabel"
-        app:srcCompat="@android:drawable/star_off" />
+        app:srcCompat="@drawable/ic_star_border_24dp" />
 
     <Button
         android:id="@+id/reviewsButton"
@@ -140,17 +165,18 @@
         app:layout_constraintStart_toEndOf="@+id/reviewsButton"
         app:layout_constraintTop_toTopOf="@+id/guideline2" />
 
-    <Button
+    <ImageButton
         android:id="@+id/editButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
-        android:text="Edit"
+        android:contentDescription="Edit Profile"
         android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@+id/guideline"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/ic_edit_black_24dp" />
 
     <Button
         android:id="@+id/logoutButton"
@@ -163,4 +189,5 @@
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline2" />
+
 </android.support.constraint.ConstraintLayout>

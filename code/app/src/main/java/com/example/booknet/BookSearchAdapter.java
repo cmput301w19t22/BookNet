@@ -19,7 +19,7 @@ import android.widget.TextView;
  * @author Jamie
  * @version 1.0
  */
-public class BookListingAdapter extends RecyclerView.Adapter<BookListingAdapter.BookListingViewHolder> {
+public class BookSearchAdapter extends RecyclerView.Adapter<BookSearchAdapter.BookListingViewHolder> {
 
     //The list of BookListings to display
     private BookLibrary data;
@@ -35,7 +35,7 @@ public class BookListingAdapter extends RecyclerView.Adapter<BookListingAdapter.
      * @param sourceActivity The activity that created this adapter
 
      */
-    public BookListingAdapter(BookLibrary data, FragmentActivity sourceActivity) {
+    public BookSearchAdapter(BookLibrary data, FragmentActivity sourceActivity) {
         this.data = data;
         this.sourceActivity = sourceActivity;
     }
@@ -71,12 +71,12 @@ public class BookListingAdapter extends RecyclerView.Adapter<BookListingAdapter.
 
         //Fill the text fields with the object's data
         //bookListingViewHolder.bookThumbnail.//todo apply photo
-        bookListingViewHolder.bookThumbnail.setImageResource(R.mipmap.ic_launcher);
+        bookListingViewHolder.bookThumbnail.setImageResource(R.drawable.ic_photo_lightgray_24dp);
         bookListingViewHolder.bookTitleLabel.setText(item.getBook().getTitle());
         bookListingViewHolder.bookAuthorLabel.setText(item.getBook().getAuthor());
         bookListingViewHolder.isbnLabel.setText(item.getBook().getIsbn());
         bookListingViewHolder.ownerLabel.setText(item.getOwnerUsername());
-        bookListingViewHolder.statusLabel.setText(item.getStatusString());
+        bookListingViewHolder.statusLabel.setText(item.getStatus().toString());
         bookListingViewHolder.item = item;
 
         //Add the click listener to the item
@@ -102,6 +102,7 @@ public class BookListingAdapter extends RecyclerView.Adapter<BookListingAdapter.
         if (item != null) {
             intent.putExtra("username", item.getOwnerUsername());
             intent.putExtra("bookisbn", item.getBook().getIsbn());
+            intent.putExtra("dupID", item.getDupInd());
         }
         sourceActivity.startActivity(intent);
     }

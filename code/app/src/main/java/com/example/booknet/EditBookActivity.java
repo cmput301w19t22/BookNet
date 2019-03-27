@@ -60,9 +60,10 @@ public class EditBookActivity extends AppCompatActivity {
         //Get Intent
         Intent intent = getIntent();
         //Check if given info to fetch listing
-        if (intent.hasExtra("bookisbn")) {
-            String isbn = intent.getStringExtra("bookisbn");
-            listing = manager.readUserOwnedBookListingWithISBN(isbn);
+        if (intent.hasExtra("isbn")) {
+            String isbn = intent.getStringExtra("isbn");
+            int dupInt = intent.getIntExtra("dupInd", 0);
+            listing = manager.readUserOwnedBookListing(isbn, dupInt);
             book = listing.getBook();
         }
 

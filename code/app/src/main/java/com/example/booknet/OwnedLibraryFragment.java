@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.example.booknet.Constants.BookListingStatus;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -28,7 +29,7 @@ public class OwnedLibraryFragment extends Fragment {
 
     //Layout Objects
     private RecyclerView libraryListView;
-    private OwnedListingAdapter listingAdapter;
+    private OwnedLibraryAdapter listingAdapter;
     private Button addButton;
     private ValueEventListener valueEventListener = null;
 
@@ -49,8 +50,6 @@ public class OwnedLibraryFragment extends Fragment {
 
         return myFragment;
     }
-
-
 
     /**
      * Called when creating the activity.
@@ -76,6 +75,8 @@ public class OwnedLibraryFragment extends Fragment {
         //Get Data From the Database, library will get auto updated (it's magic babe)
         library = manager.readUserOwnedLibrary();
 
+        Log.d("seanTag", "onCreateView Owned");
+
         listener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -88,7 +89,9 @@ public class OwnedLibraryFragment extends Fragment {
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
                     BookListing bookListing = data.getValue(BookListing.class);
                     if (bookListing != null) {
+
                         filteredLibrary.addBookListing(bookListing.clone());
+                        Log.d("mattTag", "lo: " + bookListing.toString());
                     }
                 }
 
@@ -105,12 +108,10 @@ public class OwnedLibraryFragment extends Fragment {
 
         filteredLibrary = library.clone();
 
-
-        Log.d("matt", "creating new adpator");
-
+        //Apply Adapter to RecyclerView
         libraryListView = view.findViewById(R.id.bookLibrary);
         libraryListView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        listingAdapter = new OwnedListingAdapter(filteredLibrary, getActivity());
+        listingAdapter = new OwnedLibraryAdapter(filteredLibrary, getActivity());
         libraryListView.setAdapter(listingAdapter);
 
         Spinner filter = view.findViewById(R.id.spinner);
@@ -119,17 +120,16 @@ public class OwnedLibraryFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 TextView selectedView = (TextView) view;
-                String selectedItem = selectedView.getText().toString();
-                if (selectedItem.equals("All")) {
-                    Log.d("mattTag", "copying one by one");
-                    filteredLibrary.copyOneByOne(library);
-                    Log.d("mattTag", "after copying: " + filteredLibrary.toString());
-                } else {
-                    Log.d("mattTag", "yi");
-                    filteredLibrary.filterByStatus(library, BookListing.Status.valueOf(selectedItem));
-                }
+                if (selectedView != null){
+                    String selectedItem = selectedView.getText().toString();
+                    if (selectedItem.equals("All")) {
+                        filteredLibrary.copyOneByOne(library);
+                    } else {
+                        filteredLibrary.filterByStatus(library, BookListingStatus.valueOf(selectedItem));
+                    }
 
-                listingAdapter.notifyDataSetChanged();
+                    listingAdapter.notifyDataSetChanged();
+                }
 
             }
 
@@ -139,7 +139,8 @@ public class OwnedLibraryFragment extends Fragment {
             }
         });
 
-    return view;
+
+        return view;
     }
 
     /**
@@ -149,8 +150,6 @@ public class OwnedLibraryFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        Log.d("mattTag", "starting the activity, notifying");
-        Log.d("mattTag", "when starting, the books are: " + filteredLibrary.toString());
         //Update List Data
         listingAdapter.notifyDataSetChanged();
     }

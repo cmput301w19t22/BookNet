@@ -3,6 +3,7 @@ package com.example.booknet.Activities;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -13,13 +14,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.booknet.Model.BookListing;
 import com.example.booknet.Constants.BookListingStatus;
-import com.example.booknet.Model.CurrentUser;
 import com.example.booknet.DatabaseManager;
 import com.example.booknet.Dialogs.OthersProfileViewCard;
-import com.example.booknet.R;
 import com.example.booknet.Dialogs.VerifyBorrowDialog;
+import com.example.booknet.Model.BookListing;
+import com.example.booknet.Model.CurrentUser;
+import com.example.booknet.R;
 
 
 /**
@@ -100,8 +101,6 @@ public class ListingViewActivity extends AppCompatActivity {
 
         //Fill Layout
         updateLayout(listing);
-
-
 
 
         //#region Listeners
@@ -200,7 +199,7 @@ public class ListingViewActivity extends AppCompatActivity {
         Bitmap thumbnail = listing.getPhotoBitmap();
         if (thumbnail != null) {
             bookThumbnail.setImageBitmap(thumbnail);
-        }else {
+        } else {
             bookThumbnail.setImageResource(R.drawable.ic_book_default);
         }
 
@@ -301,5 +300,13 @@ public class ListingViewActivity extends AppCompatActivity {
     private void viewGeoLocation() {
         Toast.makeText(getApplicationContext(), "View GeoLocation Not Implemented", Toast.LENGTH_SHORT).show();
         //todo implement
+    }
+
+    /**
+     * Gets the result and passes it up so nested fragments can get it.
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

@@ -1,6 +1,7 @@
 package com.example.booknet.Model;
 
 import android.graphics.Bitmap;
+import android.net.Uri;
 
 import java.io.Serializable;
 
@@ -10,6 +11,7 @@ import java.io.Serializable;
 public class Photo implements Serializable {
 
     private Bitmap imageData;
+    private Uri fullPath;
 
     public Photo(Bitmap imageBitmap) {
         this.imageData = imageBitmap;

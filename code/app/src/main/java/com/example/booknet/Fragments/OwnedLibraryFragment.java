@@ -1,5 +1,6 @@
 package com.example.booknet.Fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -176,5 +177,13 @@ public class OwnedLibraryFragment extends Fragment {
     private void addBook() {
         NewBookDialog newBookDialog = NewBookDialog.newInstance();
         newBookDialog.show(getFragmentManager(), "Add Book");
+    }
+
+    /**
+     * Gets the result and passes it up so nested fragments can get it.
+     */
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

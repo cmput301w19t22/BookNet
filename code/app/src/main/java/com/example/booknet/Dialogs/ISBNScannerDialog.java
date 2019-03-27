@@ -1,12 +1,12 @@
 package com.example.booknet.Dialogs;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.support.v4.app.DialogFragment;
+import android.util.Log;
 import android.widget.Toast;
 
-import com.example.booknet.Model.Portrait;
-import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
+import com.example.booknet.Activities.ScanActivity;
 
 /**
  * Class for scanning and verifying ISBN numbers.
@@ -25,28 +25,35 @@ public abstract class ISBNScannerDialog extends DialogFragment {
      */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-        if (result != null) {
-            if (result.getContents() == null) {
-                Toast.makeText(getContext(), "Result Not Found", Toast.LENGTH_SHORT).show();
-            } else {
-                onScanResults(result.getContents());
+        Log.d("isbn", "returned from scan");
+        if (requestCode == ScanActivity.SCAN_REQUEST && resultCode == Activity.RESULT_OK) {
+            Log.d("isbn", "got scan results");
+            if (data.hasExtra("result")) {
+                String result = data.getStringExtra("result");
+                if (result == null) {
+                    Toast.makeText(getContext(), "Result Not Found", Toast.LENGTH_SHORT).show();
+                } else {
+                    Log.d("isbn dialog result:", result);
+                    onScanResults(result);
+                }
             }
         }
     }
 
     /**
-     * Runs the code needed for the use of the ISBN scanner
      *
-     * @author Andi Aspin - https://www.youtube.com/watch?v=PRIVHoEyeL0&t=41s
      */
     protected final void scanNow() {
-        IntentIntegrator integrator = new IntentIntegrator(getActivity());
+        /*Activity source = getActivity();
+        IntentIntegrator integrator = new IntentIntegrator(source);
         integrator.setCaptureActivity(Portrait.class);
         integrator.setOrientationLocked(false);
         integrator.setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES);
         integrator.setPrompt("Scan Your Barcode");
-        integrator.initiateScan();
+        integrator.initiateScan();*/
+        Intent scanIntent = new Intent(getContext(), ScanActivity.class);
+        startActivityForResult(scanIntent, ScanActivity.SCAN_REQUEST);
+        //ScanActivity.requestScan(getActivity());
     }
 
     /**

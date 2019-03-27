@@ -2,7 +2,6 @@ package com.example.booknet.Adapters;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.annotation.RequiresPermission;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
@@ -82,9 +81,9 @@ public class BookSearchAdapter extends RecyclerView.Adapter<BookSearchAdapter.Bo
         final int index = bookListingViewHolder.getAdapterPosition();
 
         //Fill the text fields with the object's data
-        if (item.getPhotoBitmap() != null){
+        if (item.getPhotoUri() != null){
             Log.d("mattX", "yeah boi");
-            bookListingViewHolder.bookThumbnail.setImageBitmap(item.getPhotoBitmap());
+            bookListingViewHolder.bookThumbnail.setImageURI(item.getPhotoUri());
         }
         else{
             Log.d("mattX", "nahnah");

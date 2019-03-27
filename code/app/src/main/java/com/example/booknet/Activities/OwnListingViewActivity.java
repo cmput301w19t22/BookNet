@@ -2,7 +2,7 @@ package com.example.booknet.Activities;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -142,9 +142,13 @@ public class OwnListingViewActivity extends AppCompatActivity implements DialogC
             }
         };
 
-        //photoThumbnail.setOnClickListener(editPhotoListener);
         editPhotoButton.setOnClickListener(editPhotoListener);
-
+        photoThumbnail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //todo open zoomable view for image
+            }
+        });
 
         //Copied from Jamie's assignment 1
         //Create the dialog for the Delete button
@@ -218,9 +222,9 @@ public class OwnListingViewActivity extends AppCompatActivity implements DialogC
         isbnLabel.setText(listing.getBook().getIsbn());
         statusLabel.setText(listing.getStatus().toString());
 
-        Bitmap thumbnail = listing.getPhotoBitmap();
-        if (thumbnail != null) {
-            photoThumbnail.setImageBitmap(thumbnail);
+        Uri photoUri = listing.getPhotoUri();
+        if (photoUri != null) {
+            photoThumbnail.setImageURI(photoUri);
         } else {
             photoThumbnail.setImageResource(R.drawable.ic_book_default);
         }

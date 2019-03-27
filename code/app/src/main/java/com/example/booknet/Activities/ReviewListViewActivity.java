@@ -1,9 +1,12 @@
 package com.example.booknet.Activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +29,7 @@ public class ReviewListViewActivity extends AppCompatActivity {
     RecyclerView reviewList;
     ReviewListAdapter reviewListAdapter;
     TextView usernameLabel;
+    ImageButton backButton;
 
     //Activity Data
     UserAccount user;
@@ -39,8 +43,21 @@ public class ReviewListViewActivity extends AppCompatActivity {
 
         reviewList = findViewById(R.id.reviewList);
         usernameLabel = findViewById(R.id.usernameLabel);
+        backButton = findViewById(R.id.backButton);
+
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         //todo obtain user account from db
+        String username = "";
+        Intent intent = getIntent();
+        if(intent.hasExtra("username")){
+            username = intent.getStringExtra("username");
+        }
 
         fillLayout();
     }

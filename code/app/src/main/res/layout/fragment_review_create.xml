@@ -105,7 +105,7 @@
     </android.support.constraint.ConstraintLayout>
 
     <ImageButton
-        android:id="@+id/confirmButton"
+        android:id="@+id/submitButton"
         style="@style/BookNet.Button.Blue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -125,6 +125,6 @@
         android:layout_marginEnd="8dp"
         android:src="@drawable/ic_close_black_24dp"
         android:tooltipText="Cancel"
-        app:layout_constraintEnd_toStartOf="@+id/confirmButton"
+        app:layout_constraintEnd_toStartOf="@+id/submitButton"
         app:layout_constraintTop_toBottomOf="@+id/inputs" />
 </android.support.constraint.ConstraintLayout>

@@ -1,8 +1,7 @@
 package com.example.booknet.Fragments;
 
 import android.app.Activity;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -18,23 +17,18 @@ import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.Spinner;
 
-import com.example.booknet.Activities.LoginPageActivity;
-import com.example.booknet.Model.BookLibrary;
-import com.example.booknet.Model.BookListing;
 import com.example.booknet.Adapters.BookSearchAdapter;
 import com.example.booknet.DatabaseManager;
-import com.example.booknet.Model.CurrentUser;
-import com.example.booknet.Model.Notification;
+import com.example.booknet.Model.BookLibrary;
+import com.example.booknet.Model.BookListing;
 import com.example.booknet.Model.Photo;
 import com.example.booknet.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.HashMap;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
@@ -127,8 +121,6 @@ public class BookSearchFragment extends Fragment {
         manager.getAllListingsRef().addValueEventListener(listener);
 
 
-
-
 //        mSoundPool = new SoundPool(MAX_STREAM, AudioManager.STREAM_MUSIC, 0);
 //        final int backgroundSoundId = mSoundPool.load(this, R.raw.nice_keyboard_sound, 0);
 
@@ -216,8 +208,8 @@ public class BookSearchFragment extends Fragment {
         @Override
         protected Boolean doInBackground(Void... params) {
             readLock.lock();
-            for (final BookListing bl: filteredLibrary){
-                if (bl.getPhotoBitmap() == null){
+            for (final BookListing bl : filteredLibrary) {
+                if (bl.getPhotoUri() == null) {
 
                     Log.d("mattX", bl.toString() + " photo is null");
 
@@ -227,16 +219,17 @@ public class BookSearchFragment extends Fragment {
                                 @Override
                                 public void onSuccess(byte[] bytes) {
 
-
-                                    Bitmap fetchedThumnail = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                                    //Bitmap fetchedThumnail = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                                    Uri photoUri = Uri.parse(bytes.toString());
+                                    Log.d("jamie", bytes.toString());
                                     writeLock.lock();
 
-                                    bl.setPhoto(new Photo(fetchedThumnail));
+                                    bl.setPhoto(new Photo(photoUri));
 
                                     writeLock.unlock();
 
                                     listingAdapter.notifyDataSetChanged();
-                                    Log.d("imageFetching", "fetching succeededed" );
+                                    Log.d("imageFetching", "fetching succeededed");
                                 }
                             },
 
@@ -247,9 +240,7 @@ public class BookSearchFragment extends Fragment {
                                 }
                             });
 
-                }
-                else{
-
+                } else {
 
 
                 }
@@ -260,7 +251,6 @@ public class BookSearchFragment extends Fragment {
 
             return true;
         }
-
 
 
     }

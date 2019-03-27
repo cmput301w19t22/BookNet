@@ -90,7 +90,7 @@ public class ReviewCreateDialog extends DialogFragment {
         ratingFeedback = dialogView.findViewById(R.id.ratingFeedback);
         remainingTextLabel = dialogView.findViewById(R.id.remainingTextLabel);
         commentField = dialogView.findViewById(R.id.commentField);
-        confirmButton = dialogView.findViewById(R.id.confirmButton);
+        confirmButton = dialogView.findViewById(R.id.submitButton);
         cancelButton = dialogView.findViewById(R.id.cancelButton);
 
         //Set Listeners

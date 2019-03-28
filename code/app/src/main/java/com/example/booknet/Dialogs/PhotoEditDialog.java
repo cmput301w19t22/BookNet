@@ -74,6 +74,10 @@ public class PhotoEditDialog extends DialogFragment {
 
     private Bitmap viewingBitmap;
 
+    private int imageSource;
+    final int FROM_CAMERA = 0;
+    final int FROM_LIBRARY = 1;
+
     //Dialog Data
     private BookListing listing;
     private DatabaseManager manager = DatabaseManager.getInstance();
@@ -87,10 +91,9 @@ public class PhotoEditDialog extends DialogFragment {
      */
     public static PhotoEditDialog newInstance(BookListing listing) {
         PhotoEditDialog fragment = new PhotoEditDialog();
-        fragment.listing = listing;//todo cant we just do this? // I don't know -matt
+        fragment.listing = listing;
         Bundle args = new Bundle();
         //args.putString("reviewer", reviewer);
-        //todo put extras for data
         fragment.setArguments(args);
         return fragment;
     }
@@ -104,8 +107,7 @@ public class PhotoEditDialog extends DialogFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            //field = getArguments().getString("key");
-            //todo get listing data
+
         }
     }
 
@@ -152,9 +154,21 @@ public class PhotoEditDialog extends DialogFragment {
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                submitThumbNail();
-                saveToInternalStorage(viewingBitmap);
-                Toast.makeText(getContext(), "Photo saved to local storage", Toast.LENGTH_SHORT).show();
+
+                if (viewingBitmap == null){ // the user didn't choose any picture
+                    Toast.makeText(getActivity(), "Thumbnail not changed", Toast.LENGTH_LONG).show();
+
+                }
+                else{
+                    submitThumbNail();
+                    if (imageSource == FROM_CAMERA){
+                        saveToInternalStorage(viewingBitmap);
+                        Toast.makeText(getContext(), "Photo saved to local storage", Toast.LENGTH_SHORT).show();
+                    }
+                    listing.setPhoto(new Photo(viewingBitmap));
+
+                }
+
                 dismiss();
             }
         });
@@ -208,6 +222,8 @@ public class PhotoEditDialog extends DialogFragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.d("jamie", "returning photo...");
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            imageSource = FROM_CAMERA;
+
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             photoView.setImageBitmap(imageBitmap);
@@ -234,6 +250,8 @@ public class PhotoEditDialog extends DialogFragment {
         }
 
         if (requestCode == REQUEST_IMAGE_FILE && resultCode == RESULT_OK) {
+            imageSource = FROM_LIBRARY;
+
             if (data == null) {
                 Toast.makeText(getActivity(), "File Not Selected", Toast.LENGTH_LONG).show();
             } else {
@@ -367,28 +385,25 @@ public class PhotoEditDialog extends DialogFragment {
 
     private void submitThumbNail(){
         final Activity sourceActivity = getActivity();
-        if (viewingBitmap == null){
-            Toast.makeText(getActivity(), "Thumbnail not changed", Toast.LENGTH_LONG).show();
-        }
-        else{
-            manager.writeThumbnailForListing(listing, viewingBitmap,
 
-                    new OnSuccessListener() {
-                        @Override
-                        public void onSuccess(Object o) {
-                            Toast.makeText(sourceActivity, "Thumnail changed", Toast.LENGTH_SHORT).show();
-                        }
-                    },
+        manager.writeThumbnailForListing(listing, viewingBitmap,
 
-                    new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(sourceActivity, "Thumnail change failed", Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                new OnSuccessListener() {
+                    @Override
+                    public void onSuccess(Object o) {
+                        Toast.makeText(sourceActivity, "Thumnail changed", Toast.LENGTH_SHORT).show();
+                    }
+                },
+
+                new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(sourceActivity, "Thumnail change failed", Toast.LENGTH_SHORT).show();
+                    }
+                });
 
 
-        }
+
 
     }
 

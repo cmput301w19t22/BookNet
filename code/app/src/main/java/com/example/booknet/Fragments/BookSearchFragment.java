@@ -248,7 +248,6 @@ public class BookSearchFragment extends Fragment {
                 else{
 
 
-
                 }
 
             }

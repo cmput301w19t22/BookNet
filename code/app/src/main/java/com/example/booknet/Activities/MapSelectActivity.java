@@ -2,6 +2,7 @@ package com.example.booknet.Activities;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -9,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.booknet.R;
@@ -17,6 +19,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 /**
@@ -30,9 +33,11 @@ public class MapSelectActivity extends AppCompatActivity implements OnMapReadyCa
     //Layout Objects
     ImageButton backButton;
     SupportMapFragment mapView;
+    TextView latLongTV;
 
     //Activity Data
     GoogleMap googleMap;
+    Marker myMarker;
 
     private void setGoogleMap(GoogleMap googleMap) {
         this.googleMap = googleMap;
@@ -60,6 +65,8 @@ public class MapSelectActivity extends AppCompatActivity implements OnMapReadyCa
         //Setup Map
         mapView.getMapAsync(this);
 
+        latLongTV = (TextView) findViewById(R.id.latLongTV);
+
 
     }
 
@@ -78,8 +85,9 @@ public class MapSelectActivity extends AppCompatActivity implements OnMapReadyCa
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        googleMap.addMarker(new MarkerOptions()
+        myMarker = googleMap.addMarker(new MarkerOptions()
                 .position(new LatLng(UAQUAD_LATITUDE, UAQUAD_LONGITUDE)));
+        latLongTV.setText("Latitude: " + UAQUAD_LATITUDE+"\nLongitude: " + UAQUAD_LONGITUDE);
         googleMap.getUiSettings().setZoomControlsEnabled(true);
         googleMap.getUiSettings().setAllGesturesEnabled(true);
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(UAQUAD_LATITUDE, UAQUAD_LONGITUDE), 10f));
@@ -88,10 +96,17 @@ public class MapSelectActivity extends AppCompatActivity implements OnMapReadyCa
         //googleMap.setMapType(1);
 
 
-        googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+        googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
-            public void onMapClick(LatLng latLng) {
-                Toast.makeText(getApplicationContext(), "Clicked LatLong:\n" + latLng.toString(), Toast.LENGTH_LONG).show();
+            public void onMapLongClick(LatLng latLng) {
+                myMarker.setPosition(latLng);
+                LatLng coordinates = myMarker.getPosition();
+
+                Location location = new Location("LongPressLocationProvider");
+                location.setLatitude(coordinates.latitude);
+                location.setLongitude(coordinates.longitude);
+
+                latLongTV.setText("Latitude: " + location.getLatitude()+"\nLongitude: " + location.getLongitude());
             }
         });
 

@@ -280,11 +280,11 @@ public class DatabaseManager {
 
     }
 
-    public void writeThumbnailForListing(BookListing listing, Uri photoUri, OnSuccessListener onSuccessListener, OnFailureListener onFailureListener){
+    public void writeThumbnailForListing(BookListing listing, Bitmap bitmap, OnSuccessListener onSuccessListener, OnFailureListener onFailureListener){
         // todo: we shouldn't allow "/" in the username
         StorageReference ref = storageRef.child(listing.getOwnerUsername()).child(listing.getISBN()+"-"+listing.getDupInd());
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        //photoUri.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         byte[] data = baos.toByteArray();
 
         UploadTask uploadTask = ref.putBytes(data);

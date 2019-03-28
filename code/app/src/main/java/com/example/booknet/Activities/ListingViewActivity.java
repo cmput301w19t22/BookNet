@@ -199,9 +199,9 @@ public class ListingViewActivity extends AppCompatActivity {
         ownerLabel.setText(listing.getOwnerUsername());
         statusLabel.setText(listing.getStatus().toString());
 
-        Uri photoUri = listing.getPhotoUri();
-        if (photoUri != null) {
-            bookThumbnail.setImageURI(photoUri);
+        Bitmap bitmap = listing.getPhotoBitmap();
+        if (bitmap != null) {
+            bookThumbnail.setImageBitmap(bitmap);
         } else {
             bookThumbnail.setImageResource(R.drawable.ic_book_default);
         }

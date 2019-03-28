@@ -1,5 +1,6 @@
 package com.example.booknet.Model;
 
+import android.graphics.Bitmap;
 import android.net.Uri;
 
 /**
@@ -8,32 +9,17 @@ import android.net.Uri;
 public class Photo {
 
     //private Bitmap imageData;
-    private String localPath;
-    private Uri fullPath;
+    private Bitmap bitmap;
 
-    public Photo() {
-    }
 
-    public Photo(Uri fullPath) {
-        this.fullPath = fullPath;
+    public Photo(Bitmap bitmap) {
+        this.bitmap = bitmap;
     }
 
 
-    public String getLocalPath() {
-        return localPath;
+
+    public Bitmap getBitmap() {
+        return bitmap;
     }
 
-    public void setLocalPath(String localPath) {
-        this.localPath = localPath;
-    }
-
-    public Uri getFullPath() {
-        return fullPath;
-    }
-
-    public void setFullPath(Uri fullPath) {
-        this.fullPath = fullPath;
-    }
-
-    //todo complete
 }

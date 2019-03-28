@@ -1,5 +1,6 @@
 package com.example.booknet.Model;
 
+import android.graphics.Bitmap;
 import android.net.Uri;
 
 import com.example.booknet.Constants.BookListingStatus;
@@ -94,13 +95,6 @@ public class BookListing implements Serializable, Cloneable {
 
     public Photo getPhoto() {
         return photo;
-    }
-
-    public Uri getPhotoUri() {
-        if (photo != null) {
-            return photo.getFullPath();
-        }
-        return null;
     }
 
     public void setPhoto(Photo photo) {
@@ -307,6 +301,16 @@ public class BookListing implements Serializable, Cloneable {
 
     public boolean isSameListing(BookListing listing) {
         return getISBN() == listing.getISBN() && dupInd == listing.getDupInd() && ownerUsername == listing.getOwnerUsername();
+
+    }
+
+    public Bitmap getPhotoBitmap() {
+        if (photo != null){
+            return photo.getBitmap();
+        }
+        else{
+            return null;
+        }
 
     }
 

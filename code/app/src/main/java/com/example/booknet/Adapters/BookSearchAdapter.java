@@ -81,9 +81,9 @@ public class BookSearchAdapter extends RecyclerView.Adapter<BookSearchAdapter.Bo
         final int index = bookListingViewHolder.getAdapterPosition();
 
         //Fill the text fields with the object's data
-        if (item.getPhotoUri() != null){
+        if (item.getPhotoBitmap() != null){
             Log.d("mattX", "yeah boi");
-            bookListingViewHolder.bookThumbnail.setImageURI(item.getPhotoUri());
+            bookListingViewHolder.bookThumbnail.setImageBitmap(item.getPhotoBitmap());
         }
         else{
             Log.d("mattX", "nahnah");

@@ -3,6 +3,8 @@ package com.example.booknet.Dialogs;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -37,6 +39,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -63,7 +66,7 @@ public class PhotoEditDialog extends DialogFragment {
     private ImageButton cameraButton;
     private ImageButton selectFileButton;
     private ImageButton deleteButton;
-    private Button submitButton;
+    private ImageButton submitButton;
     private View dialogView;
 
     private String photoLocalPath;
@@ -122,7 +125,7 @@ public class PhotoEditDialog extends DialogFragment {
         selectFileButton = dialogView.findViewById(R.id.selectFileButton);
         deleteButton = dialogView.findViewById(R.id.deleteButton);
         leaveButton = dialogView.findViewById(R.id.leave_button);
-        submitButton = dialogView.findViewById(R.id.thumbnail_submit_button);
+        submitButton = dialogView.findViewById(R.id.submitButton);
 
         Bitmap photoBitmap = listing.getPhotoBitmap();
         if (photoBitmap != null) {
@@ -150,6 +153,8 @@ public class PhotoEditDialog extends DialogFragment {
             @Override
             public void onClick(View view) {
                 submitThumbNail();
+                saveToInternalStorage(viewingBitmap);
+                Toast.makeText(getContext(), "Photo saved to local storage", Toast.LENGTH_SHORT).show();
                 dismiss();
             }
         });
@@ -209,16 +214,18 @@ public class PhotoEditDialog extends DialogFragment {
 
             viewingBitmap = imageBitmap;
 
-            Uri imageUri = Uri.parse(photoLocalPath);
-            File photoFile = new File(imageUri.getPath());
 
-            MediaScannerConnection.scanFile(getActivity(), new String[]{imageUri.getPath()}, null,
-                    new MediaScannerConnection.OnScanCompletedListener() {
-                        @Override
-                        public void onScanCompleted(String path, Uri uri) {
+//            Uri imageUri = Uri.parse(photoLocalPath);
+////            File photoFile = new File(imageUri.getPath());
+////
+//            MediaScannerConnection.scanFile(getActivity(), new String[]{imageUri.getPath()}, null,
+//                    new MediaScannerConnection.OnScanCompletedListener() {
+//                        @Override
+//                        public void onScanCompleted(String path, Uri uri) {
+//
+//                        }
+//                    });
 
-                        }
-                    });
 
 //            savePhoto(imageBitmap);
 //            Photo photo = new Photo(imageBitmap);
@@ -246,6 +253,38 @@ public class PhotoEditDialog extends DialogFragment {
         }
     }
 
+
+    private String saveToInternalStorage(Bitmap bitmapImage){
+        String root = Environment.getExternalStorageDirectory().toString();
+        File myDir = new File(root + "/saved_images");
+        myDir.mkdirs();
+
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String fname = "Shutta_"+ timeStamp +".jpg";
+
+        File file = new File(myDir, fname);
+        if (file.exists()) file.delete ();
+        try {
+            FileOutputStream out = new FileOutputStream(file);
+            bitmapImage.compress(Bitmap.CompressFormat.JPEG, 100, out);
+            out.flush();
+            out.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        MediaScannerConnection.scanFile(getActivity(), new String[]{file.toString()}, null,
+                new MediaScannerConnection.OnScanCompletedListener() {
+                    public void onScanCompleted(String path, Uri uri) {
+                        Log.i("ExternalStorage", "Scanned " + path + ":");
+                        Log.i("ExternalStorage", "-> uri=" + uri);
+                    }
+                });
+
+
+        return file.getAbsolutePath();
+    }
+
     /**
      * Creates a request to take a photo.
      * The photo will also be saved to the local picture directory.
@@ -261,31 +300,8 @@ public class PhotoEditDialog extends DialogFragment {
         }else{
             Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             if (cameraIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-                //todo save image to file
-//                startActivityForResult(cameraIntent, REQUEST_IMAGE_CAPTURE);
-//                //Get the directory for photos and create a new file
-//                //File pictures = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "Camera");
-                File dcim = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), "Camera");
-                String photoFilename = makePhotoFilename(listing);
-//                //File output = new File(pictures, photoFilename);
-                File output = null;
-//                Log.d("jamie", "photo temp path: " + dcim.toString() + ", " + photoFilename + ".jpg");
-//                //output = File.createTempFile(photoFilename, ".jpg", dcim);
-                output = new File(dcim, photoFilename + ".jpg");
-                if (output != null) {
-//                    //Create the Uri for where to output the photo
-                    Uri outputUri = FileProvider.getUriForFile(getActivity(),
-                            BuildConfig.APPLICATION_ID + ".provider", output);
-//
-//                    //Save the path for future use
-                    this.photoLocalPath = "file:" + output.getAbsolutePath();
-//                    Log.d("jamie", "photo filepath: " + output.getAbsolutePath());
-//                    Log.d("jamie", "photo uri " + outputUri.isAbsolute() + ": " + outputUri.toString());
-//                    //output.delete();
-//
-                    cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputUri);
-                    startActivityForResult(cameraIntent, REQUEST_IMAGE_CAPTURE);
-                }
+                startActivityForResult(cameraIntent, REQUEST_IMAGE_CAPTURE);
+            }
 
 
         }

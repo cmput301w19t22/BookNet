@@ -200,17 +200,18 @@ public class EditBookDialog extends ISBNScannerDialog {
         String description = descriptionField.getText().toString();
 
         //Modify the book
-        book.setTitle(title);
-        book.setAuthor(author);
-        book.setIsbn(isbn);
-        book.setDescription(description);
+        listing.editTitle(title);
+        listing.editAuthor(author);
+        listing.editIsbn(isbn);
+        listing.editDescription(description);
+
     }
 
     /**
      * Creates a request to write the edited book to the user's library in the database
      */
     private void editBookRequest() {
-        //manager.writeUserBookListing(listing);
+        manager.writeUserBookListing(listing);
     }
 
     /**

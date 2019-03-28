@@ -1,6 +1,6 @@
 package com.example.booknet.Model;
 
-import android.graphics.Bitmap;
+import android.net.Uri;
 
 import com.example.booknet.Constants.BookListingStatus;
 import com.example.booknet.DatabaseManager;
@@ -72,7 +72,6 @@ public class BookListing implements Serializable, Cloneable {
         return book;
     }
 
-
     public String getOwnerUsername() {
         return ownerUsername;
     }
@@ -97,10 +96,9 @@ public class BookListing implements Serializable, Cloneable {
         return photo;
     }
 
-    public Bitmap getPhotoBitmap() {
+    public Uri getPhotoUri() {
         if (photo != null) {
-            Bitmap bitmap = photo.getBitmap();
-            return bitmap;
+            return photo.getFullPath();
         }
         return null;
     }
@@ -127,6 +125,22 @@ public class BookListing implements Serializable, Cloneable {
 
     public void setVerifiedByBorrower(boolean verifiedByBorrower) {
         this.verifiedByBorrower = verifiedByBorrower;
+    }
+
+    public void editTitle(String title) {
+        book.setTitle(title);
+    }
+
+    public void editAuthor(String author) {
+        book.setAuthor(author);
+    }
+
+    public void editIsbn(String isbn) {
+        book.setIsbn(isbn);
+    }
+
+    public void editDescription(String description) {
+        book.setDescription(description);
     }
 
     //#endregion

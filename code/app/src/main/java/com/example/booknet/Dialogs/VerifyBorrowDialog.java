@@ -4,14 +4,15 @@ import android.app.Dialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.booknet.Model.BookListing;
 import com.example.booknet.Constants.BookListingStatus;
+import com.example.booknet.Model.BookListing;
 import com.example.booknet.R;
 
 /**
@@ -103,7 +104,12 @@ public class VerifyBorrowDialog extends ISBNScannerDialog {
     @Override
     protected void onScanResults(String isbn) {
         if (ISBNScannerDialog.isValidISBNFormat(isbn)) {
-            verifyTransaction();
+            if (listing.getISBN().equals(isbn)) {
+                Log.d("isbn", "scanned isbn matches, verification ok");
+            } else {
+                Log.d("isbn", "scanned isbn not match");
+            }
+            verifyTransaction();//todo move into matching if above
         } else {
             Toast.makeText(getContext(), "Wasn't a valid ISBN", Toast.LENGTH_LONG);
         }
@@ -118,14 +124,14 @@ public class VerifyBorrowDialog extends ISBNScannerDialog {
             listing.setVerifiedByOwner(true);
             if (listing.isVerifiedByBorrower()) {
                 infoText.setText("Transaction Complete.");
-            }else {
+            } else {
                 infoText.setText("Verified.\nPlease have the borrower scan this book to complete.");
             }
         } else {
             listing.setVerifiedByBorrower(true);
             if (listing.isVerifiedByOwner()) {
                 infoText.setText("Transaction Complete.");
-            }else {
+            } else {
                 infoText.setText("Verified.\nPlease have the owner scan this book to complete.");
             }
         }
@@ -133,5 +139,4 @@ public class VerifyBorrowDialog extends ISBNScannerDialog {
 
     }
 
-    public void doSomething(){}
 }

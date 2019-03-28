@@ -34,7 +34,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.HashMap;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
@@ -78,8 +77,6 @@ public class BookSearchFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        Log.d("mattD", "get claled");
 
         View view = inflater.inflate(R.layout.activity_book_search, container, false);
 
@@ -127,10 +124,6 @@ public class BookSearchFragment extends Fragment {
 
 
         manager.getAllListingsRef().addValueEventListener(listener);
-
-
-
-
 
 
 //        mSoundPool = new SoundPool(MAX_STREAM, AudioManager.STREAM_MUSIC, 0);

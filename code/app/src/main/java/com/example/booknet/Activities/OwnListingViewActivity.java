@@ -145,7 +145,6 @@ public class OwnListingViewActivity extends AppCompatActivity implements DialogC
             }
         };
 
-        //photoThumbnail.setOnClickListener(editPhotoListener);
         editPhotoButton.setOnClickListener(editPhotoListener);
 
 

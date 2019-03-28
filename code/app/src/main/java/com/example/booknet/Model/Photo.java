@@ -1,29 +1,39 @@
 package com.example.booknet.Model;
 
-import android.graphics.Bitmap;
 import android.net.Uri;
-
-import java.io.Serializable;
 
 /**
  * Class for handling images todo more describe
  */
-public class Photo implements Serializable {
+public class Photo {
 
-    private Bitmap imageData;
+    //private Bitmap imageData;
+    private String localPath;
     private Uri fullPath;
 
-    public Photo(Bitmap imageBitmap) {
-        this.imageData = imageBitmap;
+    public Photo() {
     }
 
-    public Bitmap getBitmap() {
-        return imageData;
+    public Photo(Uri fullPath) {
+        this.fullPath = fullPath;
     }
 
-    public void setBitmap(Bitmap imageData) {
-        this.imageData = imageData;
+
+    public String getLocalPath() {
+        return localPath;
     }
 
-//todo complete
+    public void setLocalPath(String localPath) {
+        this.localPath = localPath;
+    }
+
+    public Uri getFullPath() {
+        return fullPath;
+    }
+
+    public void setFullPath(Uri fullPath) {
+        this.fullPath = fullPath;
+    }
+
+    //todo complete
 }

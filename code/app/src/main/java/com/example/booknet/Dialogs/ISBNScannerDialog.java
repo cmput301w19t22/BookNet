@@ -41,7 +41,7 @@ public abstract class ISBNScannerDialog extends DialogFragment {
     }
 
     /**
-     *
+     * Iniiates the scan activity
      */
     protected final void scanNow() {
         /*Activity source = getActivity();

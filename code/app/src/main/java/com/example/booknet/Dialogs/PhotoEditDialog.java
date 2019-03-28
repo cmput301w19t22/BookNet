@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -208,6 +209,17 @@ public class PhotoEditDialog extends DialogFragment {
 
             viewingBitmap = imageBitmap;
 
+            Uri imageUri = Uri.parse(photoLocalPath);
+            File photoFile = new File(imageUri.getPath());
+
+            MediaScannerConnection.scanFile(getActivity(), new String[]{imageUri.getPath()}, null,
+                    new MediaScannerConnection.OnScanCompletedListener() {
+                        @Override
+                        public void onScanCompleted(String path, Uri uri) {
+
+                        }
+                    });
+
 //            savePhoto(imageBitmap);
 //            Photo photo = new Photo(imageBitmap);
 //            photoView.setImageBitmap(imageBitmap);
@@ -250,37 +262,37 @@ public class PhotoEditDialog extends DialogFragment {
             Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             if (cameraIntent.resolveActivity(getActivity().getPackageManager()) != null) {
                 //todo save image to file
-                startActivityForResult(cameraIntent, REQUEST_IMAGE_CAPTURE);
+//                startActivityForResult(cameraIntent, REQUEST_IMAGE_CAPTURE);
 //                //Get the directory for photos and create a new file
 //                //File pictures = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "Camera");
-//                File dcim = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), "Camera");
-//                String photoFilename = makePhotoFilename(listing);
+                File dcim = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), "Camera");
+                String photoFilename = makePhotoFilename(listing);
 //                //File output = new File(pictures, photoFilename);
-//                File output = null;
+                File output = null;
 //                Log.d("jamie", "photo temp path: " + dcim.toString() + ", " + photoFilename + ".jpg");
 //                //output = File.createTempFile(photoFilename, ".jpg", dcim);
-//                output = new File(dcim, photoFilename + ".jpg");
-//                if (output != null) {
+                output = new File(dcim, photoFilename + ".jpg");
+                if (output != null) {
 //                    //Create the Uri for where to output the photo
-//                    Uri outputUri = FileProvider.getUriForFile(getActivity(),
-//                            BuildConfig.APPLICATION_ID + ".provider", output);
+                    Uri outputUri = FileProvider.getUriForFile(getActivity(),
+                            BuildConfig.APPLICATION_ID + ".provider", output);
 //
 //                    //Save the path for future use
-//                    this.photoLocalPath = "file:" + output.getAbsolutePath();
+                    this.photoLocalPath = "file:" + output.getAbsolutePath();
 //                    Log.d("jamie", "photo filepath: " + output.getAbsolutePath());
 //                    Log.d("jamie", "photo uri " + outputUri.isAbsolute() + ": " + outputUri.toString());
 //                    //output.delete();
 //
-//                    cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputUri);
-//                    startActivityForResult(cameraIntent, REQUEST_IMAGE_CAPTURE);
-//                }
+                    cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputUri);
+                    startActivityForResult(cameraIntent, REQUEST_IMAGE_CAPTURE);
+                }
 
 
         }
 
 
 
-        }
+
     }
 
     /**
@@ -346,18 +358,18 @@ public class PhotoEditDialog extends DialogFragment {
             manager.writeThumbnailForListing(listing, viewingBitmap,
 
                     new OnSuccessListener() {
-                @Override
-                public void onSuccess(Object o) {
-                    Toast.makeText(sourceActivity, "Thumnail changed", Toast.LENGTH_SHORT).show();
-                }
-            },
+                        @Override
+                        public void onSuccess(Object o) {
+                            Toast.makeText(sourceActivity, "Thumnail changed", Toast.LENGTH_SHORT).show();
+                        }
+                    },
 
                     new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(sourceActivity, "Thumnail change failed", Toast.LENGTH_SHORT).show();
-                }
-            });
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(sourceActivity, "Thumnail change failed", Toast.LENGTH_SHORT).show();
+                        }
+                    });
 
 
         }

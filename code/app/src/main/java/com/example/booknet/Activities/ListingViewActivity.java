@@ -3,6 +3,7 @@ package com.example.booknet.Activities;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -198,9 +199,9 @@ public class ListingViewActivity extends AppCompatActivity {
         ownerLabel.setText(listing.getOwnerUsername());
         statusLabel.setText(listing.getStatus().toString());
 
-        Bitmap thumbnail = listing.getPhotoBitmap();
-        if (thumbnail != null) {
-            bookThumbnail.setImageBitmap(thumbnail);
+        Uri photoUri = listing.getPhotoUri();
+        if (photoUri != null) {
+            bookThumbnail.setImageURI(photoUri);
         } else {
             bookThumbnail.setImageResource(R.drawable.ic_book_default);
         }

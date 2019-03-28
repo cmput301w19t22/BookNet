@@ -4,9 +4,8 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.AsyncTask;
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.example.booknet.Activities.LoginPageActivity;
@@ -281,11 +280,11 @@ public class DatabaseManager {
 
     }
 
-    public void writeThumbnailForListing(BookListing listing, Bitmap thumnailBitmap, OnSuccessListener onSuccessListener, OnFailureListener onFailureListener){
+    public void writeThumbnailForListing(BookListing listing, Uri photoUri, OnSuccessListener onSuccessListener, OnFailureListener onFailureListener){
         // todo: we shouldn't allow "/" in the username
         StorageReference ref = storageRef.child(listing.getOwnerUsername()).child(listing.getISBN()+"-"+listing.getDupInd());
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        thumnailBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        //photoUri.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         byte[] data = baos.toByteArray();
 
         UploadTask uploadTask = ref.putBytes(data);
@@ -319,6 +318,9 @@ public class DatabaseManager {
 
         requesters.remove(requester);
         allListingsRef.child(allPath).child("requests").setValue(requesters);
+        if(requesters.size()==0){
+            allListingsRef.child(allPath).child("status").setValue(Available);
+        }
 
         writeNotification(new Notification(bookListing, requester, bookListing.getOwnerUsername(), NotificationType.hasDeclined));
     }
@@ -735,7 +737,6 @@ public class DatabaseManager {
         // maximum size of the image
         final long TEN_MEGABYTE = 1024 * 1024 * 10;      //todo: limit the maximum size of the image the user can upload to 10 mb
         ref.getBytes(TEN_MEGABYTE).addOnSuccessListener(onSuccessListener).addOnFailureListener(onFailureListener);
-
     }
 
 

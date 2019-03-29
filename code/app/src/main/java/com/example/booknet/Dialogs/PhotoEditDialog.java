@@ -3,14 +3,11 @@ package com.example.booknet.Dialogs;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
-import android.content.ContextWrapper;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
+import android.graphics.Matrix;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
@@ -20,17 +17,14 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.example.booknet.BuildConfig;
 import com.example.booknet.DatabaseManager;
 import com.example.booknet.Model.BookListing;
 import com.example.booknet.Model.Photo;
@@ -50,6 +44,7 @@ import static android.app.Activity.RESULT_OK;
 /**
  * Activity for viewing and editing a photo
  * Based on tutorial: https://developer.android.com/training/camera/photobasics
+ * Also: https://inthecheesefactory.com/blog/how-to-share-access-to-file-with-fileprovider-on-android-nougat/en
  */
 //todo convert to dialogfragment
 public class PhotoEditDialog extends DialogFragment {
@@ -60,7 +55,6 @@ public class PhotoEditDialog extends DialogFragment {
 
 
     //Layout Objects
-
     private ImageView photoView;
     private ImageButton leaveButton;
     private ImageButton cameraButton;
@@ -69,8 +63,6 @@ public class PhotoEditDialog extends DialogFragment {
     private ImageButton submitButton;
     private View dialogView;
 
-    private String photoLocalPath;
-    private Uri photoUri;
 
     private Bitmap viewingBitmap;
 
@@ -81,7 +73,8 @@ public class PhotoEditDialog extends DialogFragment {
     //Dialog Data
     private BookListing listing;
     private DatabaseManager manager = DatabaseManager.getInstance();
-
+    private String photoLocalPath;
+    private Uri photoUri;
 
     /**
      * Creates a new instance of this dialog.
@@ -136,7 +129,6 @@ public class PhotoEditDialog extends DialogFragment {
             photoView.setImageResource(R.drawable.ic_book_default);
         }
 
-
         cameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -155,13 +147,12 @@ public class PhotoEditDialog extends DialogFragment {
             @Override
             public void onClick(View view) {
 
-                if (viewingBitmap == null){ // the user didn't choose any picture
+                if (viewingBitmap == null) { // the user didn't choose any picture
                     Toast.makeText(getActivity(), "Thumbnail not changed", Toast.LENGTH_LONG).show();
 
-                }
-                else{
+                } else {
                     submitThumbNail();
-                    if (imageSource == FROM_CAMERA){
+                    if (imageSource == FROM_CAMERA) {
                         saveToInternalStorage(viewingBitmap);
                         Toast.makeText(getContext(), "Photo saved to local storage", Toast.LENGTH_SHORT).show();
                     }
@@ -229,24 +220,6 @@ public class PhotoEditDialog extends DialogFragment {
             photoView.setImageBitmap(imageBitmap);
 
             viewingBitmap = imageBitmap;
-
-
-//            Uri imageUri = Uri.parse(photoLocalPath);
-////            File photoFile = new File(imageUri.getPath());
-////
-//            MediaScannerConnection.scanFile(getActivity(), new String[]{imageUri.getPath()}, null,
-//                    new MediaScannerConnection.OnScanCompletedListener() {
-//                        @Override
-//                        public void onScanCompleted(String path, Uri uri) {
-//
-//                        }
-//                    });
-
-
-//            savePhoto(imageBitmap);
-//            Photo photo = new Photo(imageBitmap);
-//            photoView.setImageBitmap(imageBitmap);
-
         }
 
         if (requestCode == REQUEST_IMAGE_FILE && resultCode == RESULT_OK) {
@@ -272,16 +245,15 @@ public class PhotoEditDialog extends DialogFragment {
     }
 
 
-    private String saveToInternalStorage(Bitmap bitmapImage){
-        String root = Environment.getExternalStorageDirectory().toString();
-        File myDir = new File(root + "/saved_images");
+    private String saveToInternalStorage(Bitmap bitmapImage) {
+        String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString();
+        File myDir = new File(root + "/Camera");
         myDir.mkdirs();
 
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String fname = "Shutta_"+ timeStamp +".jpg";
+        String fname = makePhotoFilename(listing) + ".jpg";
 
         File file = new File(myDir, fname);
-        if (file.exists()) file.delete ();
+        if (file.exists()) file.delete();
         try {
             FileOutputStream out = new FileOutputStream(file);
             bitmapImage.compress(Bitmap.CompressFormat.JPEG, 100, out);
@@ -298,8 +270,6 @@ public class PhotoEditDialog extends DialogFragment {
                         Log.i("ExternalStorage", "-> uri=" + uri);
                     }
                 });
-
-
         return file.getAbsolutePath();
     }
 
@@ -312,21 +282,14 @@ public class PhotoEditDialog extends DialogFragment {
     public void requestTakePhoto() {
         Log.d("jamie", "taking photo");
         //Only continue if we have permissions
-
         if (!checkPermissions()) {
             requestPermissions(1);
-        }else{
+        } else {
             Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             if (cameraIntent.resolveActivity(getActivity().getPackageManager()) != null) {
                 startActivityForResult(cameraIntent, REQUEST_IMAGE_CAPTURE);
             }
-
-
         }
-
-
-
-
     }
 
     /**
@@ -338,7 +301,7 @@ public class PhotoEditDialog extends DialogFragment {
      */
     private String makePhotoFilename(BookListing listing) {
         String format = "%s_%s_on%s";
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
         String timestamp = dateFormat.format(new Date());
         String path = String.format(format, listing.getISBN(),
                 listing.getBook().getTitle().replaceAll("\\s", "_"), timestamp);
@@ -353,9 +316,6 @@ public class PhotoEditDialog extends DialogFragment {
                 Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
 
-
-
-
             return true;
         }
 
@@ -363,15 +323,12 @@ public class PhotoEditDialog extends DialogFragment {
         boolean perm2 = ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
         boolean perm3 = ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
 
-        Log.d("jamie", "perm1: "+perm1);
-        Log.d("jamie", "perm2: "+perm2);
-        Log.d("jamie", "perm3: "+perm3);
+        Log.d("jamie", "perm1: " + perm1);
+        Log.d("jamie", "perm2: " + perm2);
+        Log.d("jamie", "perm3: " + perm3);
         Log.d("jamie", "failed permissions");
         return false;
     }
-
-
-
 
 
     /**
@@ -383,7 +340,7 @@ public class PhotoEditDialog extends DialogFragment {
         startActivityForResult(intent, REQUEST_IMAGE_FILE);
     }
 
-    private void submitThumbNail(){
+    private void submitThumbNail() {
         final Activity sourceActivity = getActivity();
 
         manager.writeThumbnailForListing(listing, viewingBitmap,
@@ -391,20 +348,16 @@ public class PhotoEditDialog extends DialogFragment {
                 new OnSuccessListener() {
                     @Override
                     public void onSuccess(Object o) {
-                        Toast.makeText(sourceActivity, "Thumnail changed", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(sourceActivity, "Thumbnail changed", Toast.LENGTH_SHORT).show();
                     }
                 },
 
                 new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(sourceActivity, "Thumnail change failed", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(sourceActivity, "Thumbnail change failed", Toast.LENGTH_SHORT).show();
                     }
                 });
-
-
-
-
     }
 
 
@@ -416,7 +369,18 @@ public class PhotoEditDialog extends DialogFragment {
         Log.d("jamie", "requesting permissions");
     }
 
-
+    /**
+     * Rotates the photo by the given angle. Preferably use 90 degrees.
+     *
+     * @param original
+     * @param angle
+     * @return
+     */
+    public Bitmap rotatePhoto(Bitmap original, float angle) {
+        Matrix rotator = new Matrix();
+        rotator.postRotate(angle);
+        return Bitmap.createBitmap(original, 0, 0, original.getWidth(), original.getHeight(), rotator, true);
+    }
 
 
     /**

@@ -74,12 +74,19 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             @Override
             public void onClick(View v) {
                 //Expand Buttons
-                notificationViewHolder.expandButtons.setVisibility(View.VISIBLE);
+                boolean isExpanded = (notificationViewHolder.expandButtons.getVisibility() == View.VISIBLE);
+                if (isExpanded) {
+                    notificationViewHolder.expandButtons.animate();
+                    notificationViewHolder.expandButtons.setVisibility(View.GONE);
+                } else {
+                    notificationViewHolder.expandButtons.setVisibility(View.VISIBLE);
+                }
             }
         });
         notificationViewHolder.notificationBody.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
+                Log.d("jamie", "notification focus");
                 if (!hasFocus) {
                     Log.d("jamie", "notification lost focus");
                     notificationViewHolder.expandButtons.setVisibility(View.GONE);

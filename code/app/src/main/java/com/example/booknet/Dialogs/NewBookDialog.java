@@ -32,7 +32,7 @@ public class NewBookDialog extends ISBNScannerDialog {
     private EditText isbnField;
     private EditText descriptionField;
     private Button addButton;
-    private Button cancelButton;
+    private ImageButton cancelButton;
     private ImageButton scanButton;
 
 

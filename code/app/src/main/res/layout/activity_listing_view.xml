@@ -56,11 +56,19 @@
         android:id="@+id/bookThumbnail"
         android:layout_width="0dp"
         android:layout_height="300dp"
+        android:adjustViewBounds="true"
+        android:background="@color/photoBackground"
+        android:clickable="false"
         android:contentDescription="Book Photo"
-        android:src="@drawable/ic_book_default"
+        android:cropToPadding="true"
+        android:drawingCacheQuality="auto"
+        android:padding="2dp"
+        android:scaleType="fitCenter"
+        android:tooltipText="Book Photo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        app:srcCompat="@drawable/ic_book_default" />
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/ownerBlock"
@@ -78,6 +86,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="8dp"
+            android:drawableLeft="@drawable/ic_profileview"
             android:text="View Profile"
             android:tooltipText="View Owner Profile"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -265,7 +274,7 @@
 
         <TextView
             android:id="@+id/bookAuthorLabel"
-            style="@style/BookNet.Text.Main"
+            style="@style/BookNet.Text.Main.Small"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
@@ -276,7 +285,6 @@
             android:scrollHorizontally="true"
             android:singleLine="false"
             android:text="[Author]"
-            android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/BookTitleLabel"
             app:layout_constraintTop_toBottomOf="@+id/BookTitleLabel" />

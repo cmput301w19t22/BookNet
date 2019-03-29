@@ -32,10 +32,10 @@
     <style name="BookNet.Toolbar.ImageButton" parent="Base.Widget.AppCompat.ImageButton">
         <item name="android:background">@color/transparency</item>
         <item name="android:tint">@color/textWhite</item>
-<item name="android:padding">4dp</item>
+        <item name="android:padding">8dp</item>
     </style>
 
-    <style name="BookNet.BottomNavigationView." parent="Widget.Design.BottomNavigationView">
+    <style name="BookNet.BottomNavigationView" parent="Widget.Design.BottomNavigationView">
         <item name="android:iconTint" tools:targetApi="o">@color/navigationIcon</item>
     </style>
 
@@ -55,16 +55,14 @@
 
     </style>
 
-    <style name="BookNet.Button.Gray" parent="Base.TextAppearance.AppCompat.Button">
-        <item name="android:backgroundTint">@color/buttonPrimary</item>
-    </style>
-
-    <style name="BookNet.Button.White" parent="Base.TextAppearance.AppCompat.Button">
+    <style name="BookNet.Button.White" parent="Base.Widget.AppCompat.Button.Borderless">
         <item name="android:background">@drawable/button_custom</item>
         <item name="android:backgroundTint">@color/mainBackground</item>
         <item name="android:textColor">@color/textMain</item>
         <item name="android:tint">@color/textWhite</item>
         <item name="android:drawablePadding">4dp</item>
+        <item name="android:minWidth">24dp</item>
+        <item name="android:stateListAnimator">@null</item>
     </style>
 
     <style name="BookNet.Button.Blue" parent="BookNet.Button.White">
@@ -79,6 +77,9 @@
         <item name="android:tint">@color/textWhite</item>
     </style>
 
+    <style name="BookNet.Button.Gray" parent="BookNet.Button.White">
+        <item name="android:backgroundTint">@color/buttonPrimary</item>
+    </style>
 
     <style name="BookNet.Spinner" parent="Base.Widget.AppCompat.Spinner">
         <item name="android:backgroundTint">@color/textWhite</item>

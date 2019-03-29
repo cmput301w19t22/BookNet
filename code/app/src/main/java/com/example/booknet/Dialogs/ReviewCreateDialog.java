@@ -16,8 +16,8 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.booknet.R;
 import com.example.booknet.Model.Review;
+import com.example.booknet.R;
 
 
 /**
@@ -98,7 +98,7 @@ public class ReviewCreateDialog extends DialogFragment {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
                 if (fromUser) {
-                    ratingFeedback.setText(String.format("%1.1f", rating));
+                    ratingFeedback.setText(String.format("(%1.1f)", rating));
                 }
             }
         });
@@ -117,7 +117,7 @@ public class ReviewCreateDialog extends DialogFragment {
             @Override
             public void afterTextChanged(Editable s) {
                 int characters = s.toString().length();
-                int remaining = R.integer.ratingCommentMaxSize - characters;
+                int remaining = getResources().getInteger(R.integer.ratingCommentMaxSize) - characters;
                 remainingTextLabel.setText("(" + remaining + ")");
             }
         });

@@ -87,7 +87,7 @@ public class BookSearchAdapter extends RecyclerView.Adapter<BookSearchAdapter.Bo
         }
         else{
             Log.d("mattX", "nahnah");
-            bookListingViewHolder.bookThumbnail.setImageResource(R.drawable.ic_photo_lightgray_24dp);
+            bookListingViewHolder.bookThumbnail.setImageResource(R.drawable.ic_book_default);
         }
 
         bookListingViewHolder.bookTitleLabel.setText(item.getBook().getTitle());

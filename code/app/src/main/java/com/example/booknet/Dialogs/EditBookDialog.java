@@ -36,7 +36,7 @@ public class EditBookDialog extends ISBNScannerDialog {
     private EditText isbnField;
     private EditText descriptionField;
     private Button addButton;
-    private Button cancelButton;
+    private ImageButton cancelButton;
     private ImageButton scanButton;
 
     private DatabaseManager manager = DatabaseManager.getInstance();

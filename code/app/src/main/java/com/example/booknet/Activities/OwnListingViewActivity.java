@@ -25,6 +25,7 @@ import com.example.booknet.Dialogs.EditBookDialog;
 import com.example.booknet.Dialogs.PhotoEditDialog;
 import com.example.booknet.Dialogs.VerifyBorrowDialog;
 import com.example.booknet.Model.BookListing;
+import com.example.booknet.Model.CurrentUser;
 import com.example.booknet.R;
 
 /**
@@ -326,9 +327,12 @@ public class OwnListingViewActivity extends AppCompatActivity implements DialogC
      * Starts a dialog to select a geolocation.
      */
     private void setGeoLocation() {
-        Toast.makeText(getApplicationContext(), "Select a Location", Toast.LENGTH_SHORT).show();
-        //todo implement
+        //Toast.makeText(getApplicationContext(), "Select a Location", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(this, MapSelectActivity.class);
+        intent.putExtra("username", listing.getOwnerUsername());
+        intent.putExtra("bookisbn", listing.getBook().getIsbn());
+        intent.putExtra("dupID", listing.getDupInd());
+        intent.putExtra("editmode", true);
         startActivity(intent);
     }
 

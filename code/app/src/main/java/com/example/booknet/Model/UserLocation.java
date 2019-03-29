@@ -1,24 +1,28 @@
 package com.example.booknet.Model;
 
-import android.location.Location;
+import com.google.android.gms.maps.model.LatLng;
 
-public class UserLocation extends Location{
+public class UserLocation {
 
-    private Location userLocation;
+    private LatLng location;
+    private String note;
 
-    public UserLocation(){
-        super("");
+    public UserLocation() {
+        location = new LatLng(0,0);
+        note = "";
     }
 
-    public UserLocation(Location location){
-        super("");
+    public UserLocation(LatLng location, String note) {
+        this.location = location;
+        this.note = note;
     }
 
-    public Location getUserLocation() {
-        return userLocation;
+
+    public LatLng getLocation() {
+        return location;
     }
 
-    public void setUserLocation(Location userLocation) {
-        this.userLocation = userLocation;
+    public String getNote() {
+        return note;
     }
 }

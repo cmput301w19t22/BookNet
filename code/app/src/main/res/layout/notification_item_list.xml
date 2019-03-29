@@ -11,13 +11,15 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:clickable="true"
+        android:focusable="auto"
+        android:focusableInTouchMode="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/notificationBookTitle"
-            style="@style/BookNet.Text.Main.Title"
+            style="@style/BookNet.Text.Main"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"

@@ -36,9 +36,6 @@
             style="@style/BookNet.Toolbar.ImageButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
             android:contentDescription="Edit Book"
             android:src="@drawable/ic_edit_black_24dp"
             android:tooltipText="Edit Book"
@@ -51,9 +48,7 @@
             style="@style/BookNet.Toolbar.ImageButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
             android:contentDescription="Delete Listing"
             android:tooltipText="Delete Listing"
             android:visibility="visible"
@@ -88,7 +83,7 @@
         style="@style/BookNet.Button.Blue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="8dp"
         android:background="@drawable/bg_circle"
         android:clickable="true"
         android:contentDescription="Edit Photo"
@@ -107,10 +102,14 @@
         android:id="@+id/bookThumbnail"
         android:layout_width="0dp"
         android:layout_height="300dp"
+        android:adjustViewBounds="true"
+        android:background="@color/photoBackground"
         android:clickable="false"
         android:contentDescription="Book Photo"
         android:cropToPadding="true"
         android:drawingCacheQuality="auto"
+        android:padding="2dp"
+        android:scaleType="fitCenter"
         android:tooltipText="Book Photo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -148,7 +147,7 @@
 
         <TextView
             android:id="@+id/bookAuthorLabel"
-            style="@style/BookNet.Text.Main"
+            style="@style/BookNet.Text.Main.Small"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
@@ -276,17 +275,6 @@
     </android.support.constraint.ConstraintLayout>
 
 
-    <View
-        android:id="@+id/divider6"
-        android:layout_width="0dp"
-        android:layout_height="2dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:background="?android:attr/listDivider"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/bookInfo" />
-
     <android.support.constraint.ConstraintLayout
         android:id="@+id/geoLocationBlock"
         android:layout_width="0dp"
@@ -320,6 +308,7 @@
             android:clickable="true"
             android:contentDescription="View GeoLocation"
             android:tooltipText="View GeoLocation"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -331,11 +320,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:text="[Location Not Set]"
-            app:layout_constraintBottom_toBottomOf="@+id/viewLocationButton"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/viewLocationButton"
-            app:layout_constraintTop_toTopOf="@+id/viewLocationButton"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="1.0" />
     </android.support.constraint.ConstraintLayout>
 

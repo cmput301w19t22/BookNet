@@ -34,12 +34,15 @@
 
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/navigation"
-        style="@style/Widget.Design.BottomNavigationView"
+        style="@style/BookNet.BottomNavigationView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="?android:attr/windowBackground"
+        android:animateLayoutChanges="true"
+        android:isScrollContainer="true"
+        android:textDirection="firstStrongLtr"
         app:elevation="16dp"
-        app:itemIconTint="@color/navigationIcon"
+        app:itemBackground="@drawable/bg_navigation"
+        app:itemIconTint="@color/textMain"
         app:itemTextColor="@color/navigationIcon"
         app:labelVisibilityMode="labeled"
         app:layout_constraintBottom_toBottomOf="parent"

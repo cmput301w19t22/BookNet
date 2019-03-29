@@ -85,7 +85,7 @@ public class RequestedLibraryAdapter extends RecyclerView.Adapter<RequestedLibra
 
         //Fill the text fields with the object's library
         //requestListingViewHolder.bookThumbnail.//todo listing photo
-        requestListingViewHolder.bookThumbnail.setImageResource(R.drawable.ic_photo_lightgray_24dp);
+        requestListingViewHolder.bookThumbnail.setImageResource(R.drawable.ic_book_default);
         requestListingViewHolder.bookTitleLabel.setText(item.getBook().getTitle());
         requestListingViewHolder.bookAuthorLabel.setText(item.getBook().getAuthor());
         requestListingViewHolder.isbnLabel.setText(item.getBook().getIsbn());

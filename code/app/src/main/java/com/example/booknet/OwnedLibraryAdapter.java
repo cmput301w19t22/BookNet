@@ -102,6 +102,7 @@ public class OwnedLibraryAdapter extends RecyclerView.Adapter<OwnedLibraryAdapte
             intent.putExtra("isbn", item.getBook().getIsbn());
             intent.putExtra("dupID", item.getDupInd());
         }
+
         sourceActivity.startActivity(intent);
     }
 

@@ -1,34 +1,56 @@
 package com.example.booknet;
 
+import static org.junit.Assert.*;
+
+import android.app.Activity;
+import android.support.test.InstrumentationRegistry;
+import android.support.test.rule.ActivityTestRule;
+import android.support.test.runner.AndroidJUnit4;
+import android.support.v7.widget.RecyclerView;
+import android.test.InstrumentationTestCase;
+import android.widget.EditText;
+import android.widget.ListView;
+
+import com.robotium.solo.Solo;
+
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import androidx.test.rule.ActivityTestRule;
-import androidx.test.runner.AndroidJUnit4;
+import java.util.Random;
 
-
-
-import org.junit.Test;
-
-
-import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
-import static android.support.test.espresso.action.ViewActions.typeText;
-import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static org.junit.Assert.*;
 
+import static android.support.test.InstrumentationRegistry.getInstrumentation;
+
+@RunWith(AndroidJUnit4.class)
+public class LoginTest extends ActivityTestRule<LoginPageActivity> {
 
 
+    private Solo solo;
 
-public class LoginTest {
+    Random rand = new Random();
+    private String testRandom = "_" + rand.nextInt(10000); // Gives n such that 0 <= n < 20
 
+    public LoginTest(){
+        super(LoginPageActivity.class);
+    }
 
     @Rule
-    public ActivityTestRule<LoginPageActivity> activityRule
-            = new ActivityTestRule<>(LoginPageActivity.class);
+    public ActivityTestRule<LoginPageActivity> rule =
+            new ActivityTestRule<>(LoginPageActivity.class, true,
+                    true);
+
+    /**
+     *  Brings the UI tests to the LoginPageActivity before each test is run.
+     */
+    @Before
+    public void setUp() throws Exception{
+        solo = new Solo(getInstrumentation(), rule.getActivity());
+    }
+
 
     @Test
     /**
@@ -36,17 +58,14 @@ public class LoginTest {
      */
     public void validLoginTest(){
 
-        // Enter email.
-        onView(withId(R.id.etEmailAddr))
-                .perform(typeText("test1@gmail.com"), closeSoftKeyboard());
+        solo.assertCurrentActivity("Wrong Activity", LoginPageActivity.class);
 
-        onView(withId(R.id.etPassword))
-                .perform(typeText("password"), closeSoftKeyboard());
+        solo.enterText((EditText) solo.getView(R.id.etEmailAddr),"test1@gmail.com");
+        solo.enterText((EditText) solo.getView(R.id.etPassword),"password");
 
-        onView(withId(R.id.btnSignIn)).perform(click());
+        solo.clickOnButton("Sign In");
 
-        //Should be in logged in page
-        //todo ASSERT
+        solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
 
     }
 
@@ -56,15 +75,14 @@ public class LoginTest {
      */
     public void invalidLoginTest(){
 
-        onView(withId(R.id.etEmailAddr))
-                .perform(typeText("invalid@gmail.com"), closeSoftKeyboard());
+        solo.assertCurrentActivity("Wrong Activity", LoginPageActivity.class);
 
-        onView(withId(R.id.etPassword))
-                .perform(typeText("password"), closeSoftKeyboard());
+        solo.enterText((EditText) solo.getView(R.id.etEmailAddr),"test" + testRandom + "@gmail.com");
+        solo.enterText((EditText) solo.getView(R.id.etPassword),"password");
 
-        onView(withId(R.id.btnSignIn)).perform(click());
+        solo.clickOnButton("Sign In");
 
-        //todo ASSERT THAT IT DID NOT LOGIN
+        solo.assertCurrentActivity("Wrong Activity", LoginPageActivity.class);
 
     }
 
@@ -74,6 +92,19 @@ public class LoginTest {
      * Create an account, and confirm that the account is created and logged in.
      */
     public void registerNewAccountAndLogin(){
+
+        solo.assertCurrentActivity("Wrong Activity", LoginPageActivity.class);
+
+        solo.enterText((EditText) solo.getView(R.id.etEmailAddr),"test" + testRandom + "@gmail.com");
+        solo.enterText((EditText) solo.getView(R.id.etPassword),"password");
+
+        solo.clickOnButton("Register");
+
+        solo.clickOnButton("Sign In");
+
+        solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
+
+
 
     }
 

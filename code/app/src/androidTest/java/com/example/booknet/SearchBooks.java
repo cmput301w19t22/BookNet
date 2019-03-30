@@ -11,6 +11,8 @@ import android.test.InstrumentationTestCase;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.example.booknet.Activities.LoginPageActivity;
+import com.example.booknet.Activities.MainActivity;
 import com.robotium.solo.Solo;
 
 import org.junit.After;

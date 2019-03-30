@@ -11,6 +11,9 @@ import android.test.InstrumentationTestCase;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.example.booknet.Activities.LoginPageActivity;
+import com.example.booknet.Activities.MainActivity;
+import com.example.booknet.Activities.OwnListingViewActivity;
 import com.robotium.solo.Solo;
 
 import org.junit.After;
@@ -70,8 +73,6 @@ public class UserBooks extends ActivityTestRule<LoginPageActivity> {
         solo.clickOnView(solo.getView("navigation_mybooks"));
 
         solo.clickOnButton("Add Book");
-
-        solo.assertCurrentActivity("Wrong Activity", NewBookActivity.class);
 
         solo.enterText((EditText) solo.getView(R.id.isbnField),"0000000000000000000000000000000" + testRandom);
         solo.enterText((EditText) solo.getView(R.id.titleField),"Coraline" + testRandom);

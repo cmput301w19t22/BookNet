@@ -142,11 +142,5 @@ public class OthersProfileViewCard extends DialogFragment {
             return builder.create();
 
         }
-
-
     }
-
-
-
-
 }

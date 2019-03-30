@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.booknet.Model.Review;
+import com.example.booknet.Model.Reviews;
 import com.example.booknet.R;
 
 import java.util.ArrayList;
@@ -23,7 +24,7 @@ import java.util.ArrayList;
 public class ReviewListAdapter extends RecyclerView.Adapter<ReviewListAdapter.ReviewListViewHolder> {
 
     //The list of reviews to display
-    private ArrayList<Review> reviews;
+    private Reviews reviews;
 
     //The activity this adapter was created from
     private AppCompatActivity sourceActivity;
@@ -38,7 +39,7 @@ public class ReviewListAdapter extends RecyclerView.Adapter<ReviewListAdapter.Re
      * @param reviews        List of reviews to display
      * @param sourceActivity The activity that created this adapter.
      */
-    public ReviewListAdapter(ArrayList<Review> reviews, AppCompatActivity sourceActivity) {
+    public ReviewListAdapter(Reviews reviews, AppCompatActivity sourceActivity) {
         this.reviews = reviews;
         this.sourceActivity = sourceActivity;
     }
@@ -68,7 +69,7 @@ public class ReviewListAdapter extends RecyclerView.Adapter<ReviewListAdapter.Re
     @Override
     public void onBindViewHolder(@NonNull ReviewListViewHolder reviewListViewHolder, int position) {
         //Get the data at the provided position
-        final Review review = reviews.get(position);
+        final Review review = reviews.getReviewAtPosition(position);
 
         //Fill the text fields with the object's data
         reviewListViewHolder.reviewerName.setText(review.getReviewerUsername());

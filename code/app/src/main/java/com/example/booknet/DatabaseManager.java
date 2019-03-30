@@ -8,13 +8,8 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.View;
-import android.widget.Adapter;
-import android.widget.BaseAdapter;
-import android.widget.ListAdapter;
 
 import com.example.booknet.Activities.LoginPageActivity;
-import com.example.booknet.Adapters.BookSearchAdapter;
 import com.example.booknet.Constants.BookListingStatus;
 import com.example.booknet.Constants.NotificationType;
 import com.example.booknet.Model.Book;
@@ -25,6 +20,7 @@ import com.example.booknet.Model.Notification;
 import com.example.booknet.Model.Notifications;
 import com.example.booknet.Model.Photo;
 import com.example.booknet.Model.Review;
+import com.example.booknet.Model.Reviews;
 import com.example.booknet.Model.UserAccount;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -57,11 +53,11 @@ public class DatabaseManager {
     private static final DatabaseManager manager = new DatabaseManager();
 
     private BookLibrary userBookLibrary = new BookLibrary();
-    private BookLibrary userRequestLibrary = new BookLibrary();
     private BookLibrary allBookLibrary = new BookLibrary();
     private Map<String, String> usernames = new HashMap<>();
     private Map<String, HashMap<String, String>> allUserProfile = new HashMap<>();
     private Notifications notifications = new Notifications();
+    private Reviews reviews = new Reviews();
 
     //used to freeze user interaction when connecting
     private ProgressDialog progressDialog;
@@ -72,11 +68,9 @@ public class DatabaseManager {
     private DatabaseReference userPhoneRef;
     private DatabaseReference allUserProfileRef;
     private DatabaseReference notificationRef;
-    private DatabaseReference notificationRefOther;
-    private DatabaseReference notificationRefSelf;
+    private DatabaseReference reviewRef;
 
     private StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-
 
     private ValueEventListener allListingsListener;
     private ValueEventListener userListingsListener;
@@ -84,6 +78,7 @@ public class DatabaseManager {
     private ValueEventListener userPhoneListener;
     private ValueEventListener allUserProfileListener;
     private ValueEventListener notificationListener;
+    private ValueEventListener reviewListener;
 
 
     private Boolean phoneLoaded = false;
@@ -98,7 +93,7 @@ public class DatabaseManager {
 
     //only three of them are getting locks because these can be edited by multiple ends.
 
-    // read lock should be used when relevant local containers are accessed, write lock should be used when relevant local containers are editted
+    // read lock should be used when relevant local containers are accessed, write lock should be used when relevant local containers are edited
     private ReentrantReadWriteLock l1 = new ReentrantReadWriteLock();
     private ReentrantReadWriteLock.ReadLock allListingReadLock = l1.readLock();
     private ReentrantReadWriteLock.WriteLock allListingWriteLock = l1.writeLock();
@@ -141,7 +136,7 @@ public class DatabaseManager {
      */
 
     public void writeToAllBookListings(BookListing listing) {
-        int dupCount = getDupCount(listing, CurrentUser.getInstance().getUID());
+        int dupCount = getListingDupCount(listing, CurrentUser.getInstance().getUID());
         String path = generateAllListingPath(listing, dupCount, CurrentUser.getInstance().getUID());
         allListingsRef.child(path).setValue(listing);
     }
@@ -150,7 +145,7 @@ public class DatabaseManager {
         return listing.getBook().getIsbn() + "-" + String.valueOf(dupCount) + "-" + uid;
     }
 
-    public int getDupCount(BookListing listing, String UID) {
+    public int getListingDupCount(BookListing listing, String UID) {
         int currentInd = 0;
 
         allListingReadLock.lock();
@@ -162,6 +157,17 @@ public class DatabaseManager {
         allListingReadLock.unlock();
         return currentInd;
 
+    }
+
+    public int getReviewDupCount(String reviewed, String reviewer) {
+        int currentInd = 0;
+
+        for (Review r : reviews) {
+            if (r.equals(reviewed) && r.equals(reviewer)) {
+                currentInd += 1;
+            }
+        }
+        return currentInd;
     }
 
     private boolean doesBelong(BookListing l, String uid) {
@@ -180,7 +186,7 @@ public class DatabaseManager {
     // also adds the listing to the app
     public void writeUserBookListing(BookListing listing) {
 
-        int dupCount = getDupCount(listing, CurrentUser.getInstance().getUID());
+        int dupCount = getListingDupCount(listing, CurrentUser.getInstance().getUID());
 
         userListingsRef.child(generateUserListingPath(listing, dupCount)).setValue(listing);
 
@@ -195,7 +201,7 @@ public class DatabaseManager {
      */
     public void overwriteUserBookListing(BookListing listing) {
 
-        int dupCount = listing.getDupInd();//getDupCount(listing, CurrentUser.getInstance().getUID());
+        int dupCount = listing.getDupInd();//getListingDupCount(listing, CurrentUser.getInstance().getUID());
 
         userListingsRef.child(generateUserListingPath(listing, dupCount)).setValue(listing);
 
@@ -204,7 +210,7 @@ public class DatabaseManager {
 
 
     public void writeNotification(Notification notification) {
-        Log.d("seanTag", "write notification");
+        //Log.d("seanTag", "write notification");
         notificationRef.child(notification.getUserReceivingNotification()
                 + "-" + notification.getUserMakingNotification()
                 + "-" + notification.getRequestedBookListing().getISBN()
@@ -226,7 +232,9 @@ public class DatabaseManager {
      * @param review
      */
     public void writeReview(Review review) {
-        //todo: implement
+        reviewRef.child(review.getReviewedUsername()
+                + "-" + review.getReviewerUsername()
+                + "-" + review.getDupId()).setValue(review);
     }
 
 
@@ -468,14 +476,17 @@ public class DatabaseManager {
     }
 
     /**
-     * Reads the reviews for a specific user from the database
+     * Reads the reviews for the current user from the database
      *
-     * @param username The user whose reviews to obtain
-     * @return A list of the user's reviews, if any are found
+     * @return A list of the Current user's reviews, if any are found
      */
-    public ArrayList<Review> readUserReviews(String username) {
-        //todo change int to dfferent type
-        return null;
+    public Reviews readCurrentUserReviews() {
+        Reviews cloned;
+        //notificationReadLock.lock();
+        cloned = reviews.getCurrentUserReviews();
+        //notificationReadLock.unlock();
+
+        return cloned;
     }
 
     /**
@@ -1100,6 +1111,35 @@ public class DatabaseManager {
             };
             notificationRef = FirebaseDatabase.getInstance().getReference("Notifications");
             notificationRef.addValueEventListener(notificationListener);
+
+            reviewListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                    //notificationWriteLock.lock();
+                    reviews.removeAllReviews();
+
+                    Log.d("seanTag", "start review read for " + CurrentUser.getInstance().getUsername());
+
+                    for (DataSnapshot data : dataSnapshot.getChildren()) {
+                        Review review = data.getValue(Review.class);
+                        //if (review.getUserReceivingNotification().equals(CurrentUser.getInstance().getUsername())) {
+                            Log.d("seanTag", "new review ");
+                            reviews.addReview(review);
+                        //}
+                    }
+                    //notificationWriteLock.lock();
+                    //Log.d("seanTag", "read notification " + CurrentUser.getInstance().getUsername());
+                }
+
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    System.out.println("The read failed: " + databaseError.getCode());
+                }
+            };
+            reviewRef = FirebaseDatabase.getInstance().getReference("Reviews");
+            reviewRef.addValueEventListener(reviewListener);
 
             return true;
         }

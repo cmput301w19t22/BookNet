@@ -62,10 +62,10 @@ public class Reviews implements Serializable, Iterable<Review> {
         return reviews.iterator();
     }
 
-    public Reviews getCurrentUserReviews() {
+    public Reviews getReviews(String username) {
         Reviews currentUserReviews = new Reviews();
         for (Review r: this) {
-            if (r.getReviewedUsername().equals(CurrentUser.getInstance().getUsername())) {
+            if (r.getReviewedUsername().equals(username)) {
                 currentUserReviews.addReview(r.clone());
             }
         }

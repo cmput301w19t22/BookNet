@@ -35,6 +35,8 @@ public class ReviewListViewActivity extends AppCompatActivity {
     //Activity Data
     //UserAccount user;
     //ArrayList<Review> reviews = new ArrayList<>();
+    private String username;
+
     private DatabaseManager manager = DatabaseManager.getInstance();
 
     @Override
@@ -53,8 +55,6 @@ public class ReviewListViewActivity extends AppCompatActivity {
             }
         });
 
-        //todo obtain user account from db
-        String username = "";
         Intent intent = getIntent();
         if(intent.hasExtra("username")){
             username = intent.getStringExtra("username");
@@ -81,7 +81,7 @@ public class ReviewListViewActivity extends AppCompatActivity {
 
         //Setup RecyclerView
         reviewList.setLayoutManager(new LinearLayoutManager(this));
-        reviewListAdapter = new ReviewListAdapter(manager.readCurrentUserReviews(), this);
+        reviewListAdapter = new ReviewListAdapter(manager.readReviews(username), this);
         reviewList.setAdapter(reviewListAdapter);
         reviewList.addItemDecoration(new SpaceDecoration(12,16));
 

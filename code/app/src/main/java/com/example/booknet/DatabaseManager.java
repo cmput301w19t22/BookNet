@@ -480,10 +480,10 @@ public class DatabaseManager {
      *
      * @return A list of the Current user's reviews, if any are found
      */
-    public Reviews readCurrentUserReviews() {
+    public Reviews readReviews(String username) {
         Reviews cloned;
         //notificationReadLock.lock();
-        cloned = reviews.getCurrentUserReviews();
+        cloned = reviews.getReviews(username);
         //notificationReadLock.unlock();
 
         return cloned;

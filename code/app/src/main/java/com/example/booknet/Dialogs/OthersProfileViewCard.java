@@ -122,7 +122,9 @@ public class OthersProfileViewCard extends DialogFragment {
             reviewsButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    startActivity(new Intent(getContext(), ReviewListViewActivity.class));
+                    Intent intent = new Intent(getActivity(), ReviewListViewActivity.class);
+                    intent.putExtra("username", username);
+                    startActivity(intent);
                 }
             });
 

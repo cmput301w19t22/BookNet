@@ -4,10 +4,17 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
+import android.widget.Adapter;
+import android.widget.BaseAdapter;
+import android.widget.ListAdapter;
 
 import com.example.booknet.Activities.LoginPageActivity;
+import com.example.booknet.Adapters.BookSearchAdapter;
 import com.example.booknet.Constants.BookListingStatus;
 import com.example.booknet.Constants.NotificationType;
 import com.example.booknet.Model.Book;
@@ -16,6 +23,7 @@ import com.example.booknet.Model.BookListing;
 import com.example.booknet.Model.CurrentUser;
 import com.example.booknet.Model.Notification;
 import com.example.booknet.Model.Notifications;
+import com.example.booknet.Model.Photo;
 import com.example.booknet.Model.Review;
 import com.example.booknet.Model.UserAccount;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -82,6 +90,8 @@ public class DatabaseManager {
     private Boolean nameLoaded = false;
     private Boolean onLoginPage = true;
 
+    private HashMap<String, Bitmap> thumbNailCache = new HashMap<>();
+
     // synchronizes stuff. It ensures:
     // 1. write will be carried on one by one. new writes will be hold at writeLock.lock() util the last write finishes at writeLock.unlock()
     // 2. can't read while writing, read will be hold at readLock.lock(), which will only proceed after writeLock.unlock()
@@ -100,6 +110,10 @@ public class DatabaseManager {
     private ReentrantReadWriteLock l3 = new ReentrantReadWriteLock();
     private ReentrantReadWriteLock.ReadLock notificationReadLock = l3.readLock();
     private ReentrantReadWriteLock.WriteLock notificationWriteLock = l3.writeLock();
+
+    private ReentrantReadWriteLock l4 = new ReentrantReadWriteLock();
+    private ReentrantReadWriteLock.ReadLock thumbnailCacheReadLock = l4.readLock();
+    private ReentrantReadWriteLock.WriteLock thumbnailCacheWriteLock = l4.writeLock();
 
 
     //not in effect
@@ -823,12 +837,36 @@ public class DatabaseManager {
         return allUserProfileRef;
     }
 
-    public void fetchListingThumbnail(BookListing listing, OnSuccessListener<byte[]> onSuccessListener, OnFailureListener onFailureListener) {
+    /**
+     * @param listing : the booklisting that requires a thumbnail
+     * @param adapter : the adpater to notify once the thumbnail is fetched from db and cached in manager
+     * @param onFailureListener
+     */
+    public void fetchListingThumbnail(final BookListing listing, final RecyclerView.Adapter adapter, OnFailureListener onFailureListener) {
         StorageReference ref = storageRef.child(listing.getOwnerUsername()).child(listing.getISBN() + "-" + listing.getDupInd());
 
         // maximum size of the image
         final long TEN_MEGABYTE = 1024 * 1024 * 10;      //todo: limit the maximum size of the image the user can upload to 10 mb
-        ref.getBytes(TEN_MEGABYTE).addOnSuccessListener(onSuccessListener).addOnFailureListener(onFailureListener);
+        ref.getBytes(TEN_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+                Bitmap fetchedThumnail = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                thumbnailCacheWriteLock.lock();
+                thumbNailCache.put(listing.getOwnerUsername()+"-"+listing.getISBN()+"-"+listing.getDupInd(), fetchedThumnail);
+                thumbnailCacheWriteLock.unlock();
+                listing.setPhoto(new Photo(fetchedThumnail));
+                adapter.notifyDataSetChanged();
+
+            }
+        }).addOnFailureListener(onFailureListener);
+    }
+
+    public Bitmap getCachedThumbnail(BookListing bl) {
+        thumbnailCacheReadLock.lock();
+        Bitmap cachedBitmap = thumbNailCache.get(bl.getOwnerUsername()+"-"+bl.getISBN()+"-"+bl.getDupInd());
+        thumbnailCacheReadLock.unlock();
+
+        return cachedBitmap;
     }
 
 

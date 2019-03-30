@@ -212,45 +212,32 @@ public class BookSearchFragment extends Fragment {
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            readLock.lock();
+            writeLock.lock();
             for (final BookListing bl : filteredLibrary) {
                 if (bl.getPhotoBitmap() == null) {
 
                     Log.d("mattX", bl.toString() + " photo is null");
 
-                    manager.fetchListingThumbnail(bl,
+                    Bitmap thumbnailBitmap = manager.getCachedThumbnail(bl);
 
-                            new OnSuccessListener<byte[]>() {
-                                @Override
-                                public void onSuccess(byte[] bytes) {
+                    if (thumbnailBitmap == null) {
+                        manager.fetchListingThumbnail(bl,
+                                listingAdapter,
 
+                                new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.d("imageFetching", "fetching failed, cause: " + e.getLocalizedMessage());
+                                    }
+                                });
 
-                                    Bitmap fetchedThumnail = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                                    writeLock.lock();
-
-                                    bl.setPhoto(new Photo(fetchedThumnail));
-
-                                    writeLock.unlock();
-
-                                    listingAdapter.notifyDataSetChanged();
-                                    Log.d("imageFetching", "fetching succeededed");
-                                }
-                            },
-
-                            new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Log.d("imageFetching", "fetching failed, cause: " + e.getLocalizedMessage());
-                                }
-                            });
-
-                } else {
-
-
+                    } else {
+                        bl.setPhoto(new Photo(thumbnailBitmap));
+                    }
                 }
 
             }
-            readLock.unlock();
+            writeLock.unlock();
 
 
             return true;

@@ -266,6 +266,7 @@ public class BookListing implements Serializable, Cloneable {
         cloned.setRequests(nR);
         cloned.setGeoLocation(geoLocation);
         cloned.setOwnerUsername(ownerUsername);
+        cloned.setPhoto(photo);
 
 
         return cloned;

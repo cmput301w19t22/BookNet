@@ -140,8 +140,6 @@ public class BookSearchFragment extends Fragment {
         searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-
-
                 return false;
             }
 
@@ -158,6 +156,7 @@ public class BookSearchFragment extends Fragment {
 
                 }
                 writeLock.unlock();
+                new ThumnailFetchingTask(getActivity()).execute();
                 listingAdapter.notifyDataSetChanged();
                 return true;
             }

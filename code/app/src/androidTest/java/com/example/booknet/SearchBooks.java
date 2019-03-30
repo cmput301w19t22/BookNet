@@ -1,29 +1,53 @@
 package com.example.booknet;
 
+import static org.junit.Assert.*;
+
+import android.app.Activity;
+import android.support.test.InstrumentationRegistry;
+import android.support.test.rule.ActivityTestRule;
+import android.support.test.runner.AndroidJUnit4;
+import android.support.v7.widget.RecyclerView;
+import android.test.InstrumentationTestCase;
+import android.widget.EditText;
+import android.widget.ListView;
+
+import com.robotium.solo.Solo;
+
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import org.junit.Test;
+import java.util.Random;
 
-
-import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
-import static android.support.test.espresso.action.ViewActions.typeText;
-import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static org.junit.Assert.*;
 
-public class SearchBooks {
+import static android.support.test.InstrumentationRegistry.getInstrumentation;
 
-    @Before
+@RunWith(AndroidJUnit4.class)
+public class SearchBooks extends ActivityTestRule<LoginPageActivity> {
+
+    private Solo solo;
+
+    Random rand = new Random();
+    private String testRandom = "_" + rand.nextInt(10000); // Gives n such that 0 <= n < 1000
+
+    public SearchBooks(){
+        super(LoginPageActivity.class);
+    }
+
+    @Rule
+    public ActivityTestRule<LoginPageActivity> rule =
+            new ActivityTestRule<>(LoginPageActivity.class, true,
+                    true);
+
     /**
-     *  Brings the UI tests to the BookSearch Activity before each test is run.
+     *  Brings the UI tests to the LoginPageActivity before each test is run.
      */
-    public void getToSearchBooks(){
-        //todo step through the various UI, including logging in to get to the SearchBooks activity.
-
+    @Before
+    public void setUp() throws Exception{
+        solo = new Solo(getInstrumentation(), rule.getActivity());
     }
 
     @Test
@@ -33,6 +57,40 @@ public class SearchBooks {
      */
     public void searchBooks(){
         //todo search various known book titles, to see if the search works properly.
+
+        solo.assertCurrentActivity("Wrong Activity", LoginPageActivity.class);
+
+        solo.enterText((EditText) solo.getView(R.id.etEmailAddr),"test1@gmail.com");
+        solo.enterText((EditText) solo.getView(R.id.etPassword),"password");
+
+        solo.clickOnButton("Sign In");
+
+        solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
+
+        solo.clickOnView(solo.getView("navigation_search"));
+
+        solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
+
+        //todo implement clicking on searchView and entering "Harry Potter"
+
+        assertTrue(solo.searchText("J.K. Rowling"));
+
+        //todo implement clicking on searchView and entering "John Locke"
+
+        assertTrue(solo.searchText("Lost: The Book"));
+
+        //todo implement clicking on the searchView and entering "4815162342"
+
+        assertTrue(solo.searchText("John Locke"));
+
+        solo.clickOnView(solo.getView("navigation_myaccount"));
+
+        solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
+
+        solo.clickOnButton("Logout");
+
+
+
 
     }
 

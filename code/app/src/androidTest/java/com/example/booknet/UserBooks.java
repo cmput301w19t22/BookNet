@@ -31,7 +31,7 @@ public class UserBooks extends ActivityTestRule<LoginPageActivity> {
     private Solo solo;
 
     Random rand = new Random();
-    private String testRandom = "_" + rand.nextInt(10000); // Gives n such that 0 <= n < 20
+    private String testRandom = "_" + rand.nextInt(10000); // Gives n such that 0 <= n < 1000
 
     public UserBooks(){
         super(LoginPageActivity.class);
@@ -71,7 +71,7 @@ public class UserBooks extends ActivityTestRule<LoginPageActivity> {
 
         solo.clickOnButton("Add Book");
 
-        solo.assertCurrentActivity("Wrong Activity", OwnListingViewActivity.class);
+        solo.assertCurrentActivity("Wrong Activity", NewBookActivity.class);
 
         solo.enterText((EditText) solo.getView(R.id.isbnField),"0000000000000000000000000000000" + testRandom);
         solo.enterText((EditText) solo.getView(R.id.titleField),"Coraline" + testRandom);
@@ -119,6 +119,12 @@ public class UserBooks extends ActivityTestRule<LoginPageActivity> {
         assertFalse(solo.searchText("John Green" + testRandom));
         assertFalse(solo.searchText("Turtles All The Way Down" + testRandom));
         assertFalse(solo.searchText("0000000000000000000000000000001" + testRandom));
+
+        solo.clickOnView(solo.getView("navigation_myaccount"));
+
+        solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
+
+        solo.clickOnButton("Logout");
 
 
     }

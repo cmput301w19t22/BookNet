@@ -67,6 +67,12 @@ public class LoginTest extends ActivityTestRule<LoginPageActivity> {
 
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
 
+        solo.clickOnView(solo.getView("navigation_myaccount"));
+
+        solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
+
+        solo.clickOnButton("Logout");
+
     }
 
     @Test
@@ -98,11 +104,17 @@ public class LoginTest extends ActivityTestRule<LoginPageActivity> {
         solo.enterText((EditText) solo.getView(R.id.etEmailAddr),"test" + testRandom + "@gmail.com");
         solo.enterText((EditText) solo.getView(R.id.etPassword),"password");
 
-        solo.clickOnButton("Register");
+        solo.clickOnButton("Create Account");
 
         solo.clickOnButton("Sign In");
 
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
+
+        solo.clickOnView(solo.getView("navigation_myaccount"));
+
+        solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
+
+        solo.clickOnButton("Logout");
 
 
 

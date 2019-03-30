@@ -4,15 +4,20 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.booknet.GeocodingLocation;
 import com.example.booknet.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -34,6 +39,7 @@ public class MapSelectActivity extends AppCompatActivity implements OnMapReadyCa
     ImageButton backButton;
     SupportMapFragment mapView;
     TextView latLongTV;
+    Button addressButton;
 
     //Activity Data
     GoogleMap googleMap;
@@ -51,6 +57,8 @@ public class MapSelectActivity extends AppCompatActivity implements OnMapReadyCa
 
         //Get Layout Objects
         backButton = findViewById(R.id.backButton);
+        addressButton = (Button) findViewById(R.id.searchButton);
+        latLongTV = (TextView) findViewById(R.id.latLongTV);
         //mapView = findViewById(R.id.mapView);
         mapView = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapView);
 
@@ -65,9 +73,41 @@ public class MapSelectActivity extends AppCompatActivity implements OnMapReadyCa
         //Setup Map
         mapView.getMapAsync(this);
 
-        latLongTV = (TextView) findViewById(R.id.latLongTV);
+        addressButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
 
+                EditText editText = (EditText) findViewById(R.id.addressET);
+                String address = editText.getText().toString();
 
+                GeocodingLocation locationAddress = new GeocodingLocation();
+                locationAddress.getAddressFromLocation(address,
+                        getApplicationContext(), new GeocoderHandler());
+            }
+        });
+
+    }
+
+    private class GeocoderHandler extends Handler {
+        @Override
+        public void handleMessage(Message message) {
+            String locationAddress;
+            double Latitude;
+            double Longitude;
+            switch (message.what) {
+                case 1:
+                    Bundle bundle = message.getData();
+                    locationAddress = bundle.getString("address");
+                    Latitude = bundle.getDouble("Latitude");
+                    Longitude = bundle.getDouble("Longitude");
+                    googleMap.clear();
+                    myMarker = googleMap.addMarker(new MarkerOptions().position(new LatLng(Latitude, Longitude)));
+                    break;
+                default:
+                    locationAddress = null;
+            }
+            latLongTV.setText(locationAddress);
+        }
     }
 
     private void requestPermissions() {
@@ -84,7 +124,7 @@ public class MapSelectActivity extends AppCompatActivity implements OnMapReadyCa
     }
 
     @Override
-    public void onMapReady(GoogleMap googleMap) {
+    public void onMapReady(final GoogleMap googleMap) {
         myMarker = googleMap.addMarker(new MarkerOptions()
                 .position(new LatLng(UAQUAD_LATITUDE, UAQUAD_LONGITUDE)));
         latLongTV.setText("Latitude: " + UAQUAD_LATITUDE+"\nLongitude: " + UAQUAD_LONGITUDE);

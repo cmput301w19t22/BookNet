@@ -1,4 +1,7 @@
 package com.example.booknet;
+import com.example.booknet.Model.Review;
+import com.example.booknet.Model.UserAccount;
+
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class ReviewTest {
@@ -10,8 +13,8 @@ public class ReviewTest {
         Review review = new Review(reviewer,reviewed,5,"review1");
 
         //Basic
-        assertEquals(reviewer,review.getReviewerAccount());
-        assertEquals(reviewed,review.getReviewedAccount());
+        assertEquals(reviewer,review.getReviewerUsername());
+        assertEquals(reviewed,review.getReviewedUsername());
         assertEquals(5,review.getScore());
         assertEquals("review1",review.getMessage());
 

@@ -10,7 +10,8 @@
     <item
         android:id="@+id/navigation_mybooks"
         android:icon="@drawable/ic_local_library_black_24dp"
-        android:title="My Books" />
+        android:title="My Books"
+        android:titleCondensed="Books" />
 
     <item
         android:id="@+id/navigation_myrequests"

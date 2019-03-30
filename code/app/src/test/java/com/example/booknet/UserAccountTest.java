@@ -1,6 +1,12 @@
 package com.example.booknet;
 
 
+import com.example.booknet.Model.Book;
+import com.example.booknet.Model.BookLibrary;
+import com.example.booknet.Model.BookListing;
+import com.example.booknet.Model.Review;
+import com.example.booknet.Model.UserAccount;
+
 import org.junit.Test;
 
 import java.util.ArrayList;

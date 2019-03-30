@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:state_enabled="false">
+        <layer-list>
+            <item android:bottom="2dp" android:top="16dp">
+                <shape android:shape="rectangle" android:tintMode="multiply">
+                    <corners android:radius="6dp" />
+                    <solid android:color="@color/buttonBlankDrop" />
+                </shape>
+            </item>
+            <item android:bottom="6dp" android:top="6dp">
+                <shape android:shape="rectangle" android:tintMode="multiply">
+                    <corners android:radius="6dp" />
+                    <solid android:color="@color/buttonBlankPrimary" />
+                </shape>
+                <color android:color="@color/buttonDrop"/>
+            </item>
+        </layer-list>
+    </item>
+    <item android:state_enabled="true" android:state_pressed="true">
+        <layer-list>
+            <item android:bottom="2dp" android:top="16dp">
+                <shape android:shape="rectangle" android:tintMode="multiply">
+                    <corners android:radius="6dp" />
+                    <solid android:color="@color/buttonBlankDrop" />
+                </shape>
+            </item>
+            <item android:bottom="3dp" android:top="9dp">
+                <shape android:shape="rectangle" android:tintMode="multiply">
+                    <corners android:radius="6dp" />
+                    <solid android:color="@color/buttonBlankFocus" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+    <item android:state_enabled="true" android:state_focused="true">
+        <layer-list>
+            <item android:bottom="2dp" android:top="16dp">
+                <shape android:shape="rectangle" android:tintMode="multiply">
+                    <corners android:radius="6dp" />
+                    <solid android:color="@color/buttonBlankDrop" />
+                </shape>
+            </item>
+            <item android:bottom="6dp" android:top="6dp">
+                <shape android:shape="rectangle" android:tintMode="multiply">
+                    <corners android:radius="6dp" />
+                    <solid android:color="@color/buttonBlankFocus" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+    <item android:state_enabled="true">
+        <layer-list>
+            <item android:bottom="2dp" android:top="16dp">
+                <shape android:shape="rectangle" android:tintMode="multiply">
+                    <corners android:radius="6dp" />
+                    <solid android:color="@color/buttonBlankDrop" />
+                </shape>
+            </item>
+            <item android:bottom="6dp" android:top="6dp">
+                <shape android:shape="rectangle" android:tintMode="multiply">
+                    <corners android:radius="6dp" />
+                    <solid android:color="@color/buttonBlankPrimary" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+</selector>

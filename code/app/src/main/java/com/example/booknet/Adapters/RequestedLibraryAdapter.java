@@ -1,6 +1,7 @@
 package com.example.booknet.Adapters;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.FragmentActivity;
@@ -85,7 +86,13 @@ public class RequestedLibraryAdapter extends RecyclerView.Adapter<RequestedLibra
 
         //Fill the text fields with the object's library
         //requestListingViewHolder.bookThumbnail.//todo listing photo
-        requestListingViewHolder.bookThumbnail.setImageResource(R.drawable.ic_book_default);
+
+        Bitmap thumbnailBitmap = item.getPhotoBitmap();
+        if (thumbnailBitmap == null)
+            requestListingViewHolder.bookThumbnail.setImageResource(R.drawable.ic_book_default);
+        else
+            requestListingViewHolder.bookThumbnail.setImageBitmap(thumbnailBitmap);
+
         requestListingViewHolder.bookTitleLabel.setText(item.getBook().getTitle());
         requestListingViewHolder.bookAuthorLabel.setText(item.getBook().getAuthor());
         requestListingViewHolder.isbnLabel.setText(item.getBook().getIsbn());

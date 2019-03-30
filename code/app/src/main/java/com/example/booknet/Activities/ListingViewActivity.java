@@ -195,7 +195,7 @@ public class ListingViewActivity extends AppCompatActivity {
         ownerLabel.setText(listing.getOwnerUsername());
         statusLabel.setText(listing.getStatus().toString());
 
-        Bitmap bitmap = listing.getPhotoBitmap();
+        Bitmap bitmap = manager.getCachedThumbnail(listing);
         if (bitmap != null) {
             bookThumbnail.setImageBitmap(bitmap);
         } else {

@@ -844,7 +844,7 @@ public class DatabaseManager {
      */
     public void fetchListingThumbnail(final BookListing listing, final RecyclerView.Adapter adapter, OnFailureListener onFailureListener) {
         StorageReference ref = storageRef.child(listing.getOwnerUsername()).child(listing.getISBN() + "-" + listing.getDupInd());
-
+        Log.d("mattFetching","trying to fetch " + listing.getOwnerUsername()+ listing.getISBN() + "-" + listing.getDupInd());
         // maximum size of the image
         final long TEN_MEGABYTE = 1024 * 1024 * 10;      //todo: limit the maximum size of the image the user can upload to 10 mb
         ref.getBytes(TEN_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
@@ -860,6 +860,7 @@ public class DatabaseManager {
             }
         }).addOnFailureListener(onFailureListener);
     }
+
 
     public Bitmap getCachedThumbnail(BookListing bl) {
         thumbnailCacheReadLock.lock();

@@ -14,6 +14,7 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.example.booknet.Adapters.SpaceDecoration;
 import com.example.booknet.Model.BookLibrary;
 import com.example.booknet.Model.BookListing;
 import com.example.booknet.Constants.BookListingStatus;
@@ -119,6 +120,7 @@ public class OwnedLibraryFragment extends Fragment {
         libraryListView.setLayoutManager(new LinearLayoutManager(getActivity()));
         listingAdapter = new OwnedLibraryAdapter(filteredLibrary, getActivity());
         libraryListView.setAdapter(listingAdapter);
+        libraryListView.addItemDecoration(new SpaceDecoration(12,16));
 
         Spinner filter = view.findViewById(R.id.filterSpinner);
 

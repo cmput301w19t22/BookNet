@@ -97,9 +97,9 @@ public class BookSearchAdapter extends RecyclerView.Adapter<BookSearchAdapter.Bo
         bookListingViewHolder.statusLabel.setText(item.getStatus().toString());
         bookListingViewHolder.item = item;
 
-        if ((position & 1) == 1) {//check odd
+        /*if ((position & 1) == 1) {//check odd
             bookListingViewHolder.constraintLayout.setBackgroundColor(sourceActivity.getResources().getColor(R.color.lightDarkerTint));
-        }
+        }*/
 
         //Add the click listener to the item
         /**

@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.booknet.Constants.BookListingStatus;
+import com.example.booknet.DatabaseManager;
 import com.example.booknet.Model.BookListing;
 import com.example.booknet.R;
 
@@ -30,6 +31,8 @@ public class VerifyBorrowDialog extends ISBNScannerDialog {
     //Dialog Data
     private BookListing listing;
     private boolean isMyBook;
+
+    private DatabaseManager manager = DatabaseManager.getInstance();
 
     /**
      * Creates a new instance of this dialog.
@@ -106,10 +109,11 @@ public class VerifyBorrowDialog extends ISBNScannerDialog {
         if (ISBNScannerDialog.isValidISBNFormat(isbn)) {
             if (listing.getISBN().equals(isbn)) {
                 Log.d("isbn", "scanned isbn matches, verification ok");
+                //todo move verifytransaction here
             } else {
                 Log.d("isbn", "scanned isbn not match");
             }
-            verifyTransaction();//todo move into matching if above
+            verifyTransaction();//todo move into above todo
         } else {
             Toast.makeText(getContext(), "Wasn't a valid ISBN", Toast.LENGTH_LONG);
         }
@@ -122,21 +126,25 @@ public class VerifyBorrowDialog extends ISBNScannerDialog {
     private void verifyTransaction() {
         if (isMyBook) {
             listing.setVerifiedByOwner(true);
-            if (listing.isVerifiedByBorrower()) {
-                infoText.setText("Transaction Complete.");
+            boolean complete = manager.verifyRequest(listing, isMyBook);
+            if (complete) {
+                titleText.setText("Transaction Complete");
+                infoText.setText("You may now hand over the book.");
             } else {
-                infoText.setText("Verified.\nPlease have the borrower scan this book to complete.");
+                titleText.setText("Verified");
+                infoText.setText("Please have the borrower scan this book to complete.");
             }
         } else {
             listing.setVerifiedByBorrower(true);
-            if (listing.isVerifiedByOwner()) {
-                infoText.setText("Transaction Complete.");
+            boolean complete = manager.verifyRequest(listing, isMyBook);
+            if (complete) {
+                titleText.setText("Transaction Complete");
+                infoText.setText("Enjoy your book.");
             } else {
-                infoText.setText("Verified.\nPlease have the owner scan this book to complete.");
+                titleText.setText("Verified");
+                infoText.setText("Please have the owner scan this book to complete.");
             }
         }
-        //todo need to send anything to db?
-
     }
 
 }

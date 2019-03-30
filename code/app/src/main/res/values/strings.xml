@@ -38,6 +38,7 @@
     <string name="status_filter_prompt">Filter By Status: </string>
     <string name="usernameRequiredMessage">You need a unique username to proceed</string>
     <string name="usernameRequiredTitle">Set Username</string>
+    <string name="alphaNumericChars">abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_</string>
     <string name="initial_profile_prompt">Initial Unique Username and phone number required. Note: Account Email, Profile Email, Account Phone, Profile Phone are separate. Account email/phone are your credentials. Profile email/phone will be shown to others</string>
     <string name="title_activity_tab_test">TabTestActivity</string>
     <string name="action_settings">Settings</string>

@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.booknet.Adapters.ReviewListAdapter;
+import com.example.booknet.Adapters.SpaceDecoration;
 import com.example.booknet.DatabaseManager;
 import com.example.booknet.Model.Review;
 import com.example.booknet.Model.UserAccount;
@@ -82,6 +83,7 @@ public class ReviewListViewActivity extends AppCompatActivity {
         reviewList.setLayoutManager(new LinearLayoutManager(this));
         reviewListAdapter = new ReviewListAdapter(reviews, this);
         reviewList.setAdapter(reviewListAdapter);
+        reviewList.addItemDecoration(new SpaceDecoration(12,16));
 
         reviewListAdapter.notifyDataSetChanged();
     }

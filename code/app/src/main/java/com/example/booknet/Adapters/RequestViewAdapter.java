@@ -23,6 +23,7 @@ import java.util.ArrayList;
 
 /**
  * Adapter for displaying a request in a recycler view list with accept and decline buttons.
+ *
  * @author Jamie
  */
 public class RequestViewAdapter extends RecyclerView.Adapter<RequestViewAdapter.RequestViewHolder> {
@@ -95,9 +96,9 @@ public class RequestViewAdapter extends RecyclerView.Adapter<RequestViewAdapter.
         requestViewHolder.star4.setImageResource((score >= 4) ? starOn : starOff);
         requestViewHolder.star5.setImageResource((score >= 5) ? starOn : starOff);
 
-        if ((position & 1) == 1) {//check odd
+        /*if ((position & 1) == 1) {//check odd
             requestViewHolder.constraintLayout.setBackgroundColor(sourceActivity.getResources().getColor(R.color.lightDarkerTint));
-        }
+        }*/
 
         //Set Click Listeners
         // todo: fix this

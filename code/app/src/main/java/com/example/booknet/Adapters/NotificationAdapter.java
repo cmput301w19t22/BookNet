@@ -65,9 +65,9 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         notificationViewHolder.notificationStatus.setText(item.getRequestedBookListing().getStatus().toString());
         notificationViewHolder.item = item;
 
-        if ((position & 1) == 1) {//check odd
+        /*if ((position & 1) == 1) {//check odd
             notificationViewHolder.notificationBody.setBackgroundColor(sourceActivity.getResources().getColor(R.color.lightDarkerTint));
-        }
+        }*/
 
         //Add the click listener to the item
         notificationViewHolder.notificationBody.setOnClickListener(new View.OnClickListener() {

@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.booknet.Adapters.SpaceDecoration;
 import com.example.booknet.DatabaseManager;
 import com.example.booknet.Adapters.NotificationAdapter;
 import com.example.booknet.Model.Notifications;
@@ -44,6 +45,7 @@ public class NotificationFragment extends Fragment {
         notificationsListView.setLayoutManager(new LinearLayoutManager(getActivity()));
         notificationAdapter = new NotificationAdapter(notifications, getActivity());
         notificationsListView.setAdapter(notificationAdapter);
+        notificationsListView.addItemDecoration(new SpaceDecoration(12,16));
 
         return view;
     }

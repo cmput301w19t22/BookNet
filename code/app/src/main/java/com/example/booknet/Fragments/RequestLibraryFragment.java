@@ -14,6 +14,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.booknet.Adapters.RequestedLibraryAdapter;
+import com.example.booknet.Adapters.SpaceDecoration;
 import com.example.booknet.Constants.BookListingStatus;
 import com.example.booknet.DatabaseManager;
 import com.example.booknet.Model.BookLibrary;
@@ -136,6 +137,7 @@ public class RequestLibraryFragment extends Fragment {
         libraryListView.setLayoutManager(new LinearLayoutManager(getActivity()));
         listingAdapter = new RequestedLibraryAdapter(filteredLibrary, readLock, getActivity());
         libraryListView.setAdapter(listingAdapter);
+        libraryListView.addItemDecoration(new SpaceDecoration(12,16));
 
         //Setup Filter Menu todo
 

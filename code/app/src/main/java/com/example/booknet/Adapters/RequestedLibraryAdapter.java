@@ -94,9 +94,9 @@ public class RequestedLibraryAdapter extends RecyclerView.Adapter<RequestedLibra
         requestListingViewHolder.statusLabel.setText(item.getStatus().toString());
         Log.d("mattTag", "really? " + item.getBook().toString() + " " + item.getStatus());
 
-        if ((position & 1) == 1) {//check odd
+        /*if ((position & 1) == 1) {//check odd
             requestListingViewHolder.constraintLayout.setBackgroundColor(sourceActivity.getResources().getColor(R.color.lightDarkerTint));
-        }
+        }*/
 
         //Add the click listener to the item
         requestListingViewHolder.itemView.setOnClickListener(new View.OnClickListener() {

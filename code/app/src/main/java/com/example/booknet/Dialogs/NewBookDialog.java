@@ -64,6 +64,7 @@ public class NewBookDialog extends ISBNScannerDialog {
         LayoutInflater inflater = requireActivity().getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.activity_new_book, null);
         builder.setView(dialogView);
+        builder.setCancelable(false);
 
         //Obtain Refs to Layout Objects
         titleField = dialogView.findViewById(R.id.titleField);

@@ -46,7 +46,7 @@
             android:numStars="5"
             android:progressBackgroundTint="@color/lightDarkerTint"
             android:progressTint="@color/starFill"
-            android:rating="2.5"
+            android:rating="5"
             android:secondaryProgressTint="@color/starFill"
             android:stepSize="0.5"
             app:layout_constraintEnd_toEndOf="parent"
@@ -58,7 +58,7 @@
             style="@style/BookNet.Text.Main.Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="(5)"
+            android:text="(5.0)"
             android:textSize="12sp"
             app:layout_constraintStart_toEndOf="@+id/ratingInput"
             app:layout_constraintTop_toTopOf="@+id/ratingInput" />

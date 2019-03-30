@@ -85,9 +85,9 @@ public class OwnedLibraryAdapter extends RecyclerView.Adapter<OwnedLibraryAdapte
         ownedListingViewHolder.statusLabel.setText(item.getStatus().toString());
         Log.d("mattTag", "really? " + item.getBook().toString() + " " + item.getStatus());
 
-        if ((position & 1) == 1) {//check odd
+        /*if ((position & 1) == 1) {//check odd
             ownedListingViewHolder.constraintLayout.setBackgroundColor(sourceActivity.getResources().getColor(R.color.lightDarkerTint));
-        }
+        }*/
 
         //Add the click listener to the item
         ownedListingViewHolder.itemView.setOnClickListener(new View.OnClickListener() {

@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -18,20 +19,17 @@ import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.Spinner;
 
-import com.example.booknet.Activities.LoginPageActivity;
+import com.example.booknet.Adapters.BookSearchAdapter;
+import com.example.booknet.Adapters.SpaceDecoration;
+import com.example.booknet.DatabaseManager;
 import com.example.booknet.Model.BookLibrary;
 import com.example.booknet.Model.BookListing;
-import com.example.booknet.Adapters.BookSearchAdapter;
-import com.example.booknet.DatabaseManager;
-import com.example.booknet.Model.CurrentUser;
-import com.example.booknet.Model.Notification;
 import com.example.booknet.Model.Photo;
 import com.example.booknet.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -133,9 +131,11 @@ public class BookSearchFragment extends Fragment {
 
         allBookListings = manager.readAllBookListings();
 
-        searchResults.setLayoutManager(new LinearLayoutManager(getActivity()));
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        searchResults.setLayoutManager(layoutManager);
         listingAdapter = new BookSearchAdapter(filteredLibrary, getActivity(), readLock);
         searchResults.setAdapter(listingAdapter);
+        searchResults.addItemDecoration(new SpaceDecoration(12,16));
 
         searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -213,8 +213,8 @@ public class BookSearchFragment extends Fragment {
         @Override
         protected Boolean doInBackground(Void... params) {
             readLock.lock();
-            for (final BookListing bl: filteredLibrary){
-                if (bl.getPhotoBitmap() == null){
+            for (final BookListing bl : filteredLibrary) {
+                if (bl.getPhotoBitmap() == null) {
 
                     Log.d("mattX", bl.toString() + " photo is null");
 
@@ -233,7 +233,7 @@ public class BookSearchFragment extends Fragment {
                                     writeLock.unlock();
 
                                     listingAdapter.notifyDataSetChanged();
-                                    Log.d("imageFetching", "fetching succeededed" );
+                                    Log.d("imageFetching", "fetching succeededed");
                                 }
                             },
 
@@ -244,8 +244,7 @@ public class BookSearchFragment extends Fragment {
                                 }
                             });
 
-                }
-                else{
+                } else {
 
 
                 }
@@ -256,7 +255,6 @@ public class BookSearchFragment extends Fragment {
 
             return true;
         }
-
 
 
     }

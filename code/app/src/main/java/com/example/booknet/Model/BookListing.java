@@ -1,7 +1,6 @@
 package com.example.booknet.Model;
 
 import android.graphics.Bitmap;
-import android.net.Uri;
 
 import com.example.booknet.Constants.BookListingStatus;
 import com.example.booknet.DatabaseManager;
@@ -213,10 +212,21 @@ public class BookListing implements Serializable, Cloneable {
     }
 
     /**
+     * Checks whether the listing is verified by both the owner and borrower
+     * for either borrowing or returning a book.
+     *
+     * @return True if both users verified false otherwise
+     */
+    //public boolean isVerifiedByBothUsers() {
+    //    return verifiedByOwner && verifiedByBorrower;
+    //}
+
+    /**
      * Call this to update this BookListing when the book is borrowed.
      */
     public void bookBorrowed() {
-        //todo: complete?
+        setVerifiedByBorrower(false);//Reset the verification
+        setVerifiedByOwner(false);
         status = BookListingStatus.Borrowed;
     }
 
@@ -224,7 +234,8 @@ public class BookListing implements Serializable, Cloneable {
      * Call this to update this BookListing when the book is returned
      */
     public void bookReturned() {
-        //todo: complete?
+        setVerifiedByBorrower(false);//Reset the verification
+        setVerifiedByOwner(false);
         status = BookListingStatus.Available;
         borrowerName = "";
     }
@@ -305,10 +316,9 @@ public class BookListing implements Serializable, Cloneable {
     }
 
     public Bitmap getPhotoBitmap() {
-        if (photo != null){
+        if (photo != null) {
             return photo.getBitmap();
-        }
-        else{
+        } else {
             return null;
         }
 

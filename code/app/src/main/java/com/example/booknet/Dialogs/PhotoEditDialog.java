@@ -46,7 +46,6 @@ import static android.app.Activity.RESULT_OK;
  * Based on tutorial: https://developer.android.com/training/camera/photobasics
  * Also: https://inthecheesefactory.com/blog/how-to-share-access-to-file-with-fileprovider-on-android-nougat/en
  */
-//todo convert to dialogfragment
 public class PhotoEditDialog extends DialogFragment {
 
 

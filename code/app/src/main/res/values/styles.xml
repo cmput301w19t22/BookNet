@@ -71,6 +71,18 @@
         <item name="android:tint">@color/textWhite</item>
     </style>
 
+    <style name="BookNet.Button.Green" parent="BookNet.Button.White">
+        <item name="android:backgroundTint">@color/buttonGreen</item>
+        <item name="android:textColor">@color/textWhite</item>
+        <item name="android:tint">@color/textWhite</item>
+    </style>
+
+    <style name="BookNet.Button.DarkBlue" parent="BookNet.Button.White">
+        <item name="android:backgroundTint">@color/buttonDarkBlue</item>
+        <item name="android:textColor">@color/textWhite</item>
+        <item name="android:tint">@color/textWhite</item>
+    </style>
+
     <style name="BookNet.Button.Red" parent="BookNet.Button.White">
         <item name="android:backgroundTint">@color/colorAccent</item>
         <item name="android:textColor">@color/textWhite</item>
@@ -117,6 +129,14 @@
         <item name="android:textSize">22dp</item>
     </style>
 
+    <style name="BookNet.Text.Link" parent="BookNet.Text.Main">
+        <item name="android:textColor">@color/textLink</item>
+    </style>
+
+    <style name="BookNet.Layout.Bubble12" parent="">
+        <item name="android:background">@drawable/bg_round_rectangle_12</item>
+        <item name="android:backgroundTint">@color/mainBackground</item>
+    </style>
     <!--<style name="AppActionBarTheme" parent="@android:style/Widget.Holo.Light.ActionBar">-->
     <!--<item name="android:background">ANY_HEX_COLOR_CODE</item>-->
     <!--</style>-->

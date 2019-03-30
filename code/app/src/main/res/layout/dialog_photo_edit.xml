@@ -81,7 +81,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:contentDescription="Select From File"
-            android:src="@drawable/ic_photo_library_black_24dp"
+            android:src="@drawable/ic_perm_media_black_24dp"
             android:tooltipText="Select Photo From File"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/cameraButton"

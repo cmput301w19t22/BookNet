@@ -19,7 +19,7 @@ import java.util.ArrayList;
 
 /**
  * An activity for viewing which users have requested a listing and
- * allow the owner to acccept or deny each of these requests.
+ * allow the owner to accept or deny each of these requests.
  *
  * @author Jamie
  */
@@ -48,7 +48,6 @@ public class RequestsViewActivity extends AppCompatActivity {
             }
         });
 
-        //todo get real data
         //Get Intent
         Intent intent = getIntent();
         if (intent.hasExtra("listing")) {

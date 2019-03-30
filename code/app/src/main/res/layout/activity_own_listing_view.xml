@@ -4,6 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    android:background="@color/darkBackground"
     tools:context=".Activities.OwnListingViewActivity">
 
 
@@ -81,8 +83,8 @@
     <ImageButton
         android:id="@+id/editPhotoButton"
         style="@style/BookNet.Button.Blue"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
         android:layout_marginEnd="8dp"
         android:background="@drawable/bg_circle"
         android:clickable="true"
@@ -118,9 +120,13 @@
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/bookInfo"
+        style="@style/BookNet.Layout.Bubble12"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/bg_round_rectangle_12"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -128,10 +134,10 @@
 
         <TextView
             android:id="@+id/BookTitleLabel"
-            style="@style/BookNet.Text.Main"
+            style="@style/BookNet.Text.Main.Title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:ellipsize="marquee"
             android:focusable="auto"
@@ -175,172 +181,156 @@
 
     </android.support.constraint.ConstraintLayout>
 
-    <View
-        android:id="@+id/divider"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:background="?android:attr/listDivider"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/bookInfo" />
 
     <android.support.constraint.ConstraintLayout
-        android:id="@+id/statusBlock"
+        android:id="@+id/actions"
+        style="@style/BookNet.Layout.Bubble12"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider">
+        app:layout_constraintTop_toBottomOf="@+id/bookInfo">
 
-        <Button
-            android:id="@+id/viewRequestsButton"
-            style="@style/BookNet.Button.Blue"
-            android:layout_width="wrap_content"
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/statusBlock"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <Button
+                android:id="@+id/viewRequestsButton"
+                style="@style/BookNet.Button.Blue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:text="Requests"
+                android:tooltipText="View Requests for this book"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
+                android:id="@+id/requestButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginRight="16dp"
+                android:text="Send Request"
+                android:tooltipText="Request this book"
+                android:visibility="gone"
+                app:layout_constraintBaseline_toBaselineOf="@+id/statusLabel"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <Button
+                android:id="@+id/verifyButton"
+                style="@style/BookNet.Button.Blue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:drawableLeft="@drawable/ic_barcode"
+                android:drawablePadding="4dp"
+                android:text="Verify"
+                android:tooltipText="Verify Transaction by Scanning"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/viewRequestsButton"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/statusLabel"
+                style="@style/BookNet.Text.Main"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:rotation="0"
+                android:text="[Status]"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/requestsNum"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ic_circle_black_24dp"
+                android:backgroundTint="@color/colorAccent"
+                android:digits="2"
+                android:elevation="4dp"
+                android:paddingLeft="1dp"
+                android:paddingTop="2dp"
+                android:paddingRight="1dp"
+                android:text="XX+"
+                android:textAlignment="center"
+                android:textAllCaps="false"
+                android:textColor="@color/textWhite"
+                app:layout_constraintEnd_toStartOf="@+id/viewRequestsButton"
+                app:layout_constraintStart_toStartOf="@+id/viewRequestsButton"
+                app:layout_constraintTop_toTopOf="@+id/viewRequestsButton" />
+
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/geoLocationBlock"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="8dp"
-            android:text="View Requests"
-            android:tooltipText="View Requests for this book"
             android:visibility="visible"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <Button
-            android:id="@+id/requestButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
-            android:text="Send Request"
-            android:tooltipText="Request this book"
-            android:visibility="gone"
-            app:layout_constraintBaseline_toBaselineOf="@+id/statusLabel"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <Button
-            android:id="@+id/verifyButton"
-            style="@style/BookNet.Button.Blue"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="8dp"
-            android:drawableLeft="@drawable/ic_barcode"
-            android:drawablePadding="4dp"
-            android:text="Verify"
-            android:tooltipText="Verify Transaction by Scanning"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/viewRequestsButton"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/statusLabel"
-            style="@style/BookNet.Text.Main"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:rotation="0"
-            android:text="[Status]"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/statusBlock">
 
-        <TextView
-            android:id="@+id/requestsNum"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/ic_circle_black_24dp"
-            android:backgroundTint="@color/colorAccent"
-            android:digits="2"
-            android:elevation="4dp"
-            android:paddingLeft="1dp"
-            android:paddingTop="2dp"
-            android:paddingRight="1dp"
-            android:text="XX+"
-            android:textAlignment="center"
-            android:textAllCaps="false"
-            android:textColor="@color/textWhite"
-            app:layout_constraintEnd_toStartOf="@+id/viewRequestsButton"
-            app:layout_constraintStart_toStartOf="@+id/viewRequestsButton"
-            app:layout_constraintTop_toTopOf="@+id/viewRequestsButton" />
+            <Button
+                android:id="@+id/setLocationButton"
+                style="@style/BookNet.Button.Blue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:drawableLeft="@drawable/ic_edit_location_black_24dp"
+                android:text="Edit"
+                android:tooltipText="Set GeoLocation for pickup"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
+                android:id="@+id/viewLocationButton"
+                style="@style/BookNet.Button.Blue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:clickable="true"
+                android:contentDescription="View GeoLocation"
+                android:drawableLeft="@drawable/ic_place_black_24dp"
+                android:text="View"
+                android:tooltipText="View Geolocation"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/setLocationButton"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/geolocationLabel"
+                style="@style/BookNet.Text.Main.Small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:text="[Location Not Set]"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </android.support.constraint.ConstraintLayout>
 
     </android.support.constraint.ConstraintLayout>
-
-
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/geoLocationBlock"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:visibility="visible"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/statusBlock">
-
-        <Button
-            android:id="@+id/setLocationButton"
-            style="@style/BookNet.Button.Blue"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:drawableLeft="@drawable/ic_edit_location_black_24dp"
-            android:drawablePadding="4dp"
-            android:text="Set GeoLocation"
-            android:tooltipText="Set Geolocation for pickup"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <ImageButton
-            android:id="@+id/viewLocationButton"
-            style="@style/BookNet.Button.Blue"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:clickable="true"
-            android:contentDescription="View GeoLocation"
-            android:tooltipText="View GeoLocation"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_place_black_24dp" />
-
-        <TextView
-            android:id="@+id/geolocationLabel"
-            style="@style/BookNet.Text.Main.Small"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:text="[Location Not Set]"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/viewLocationButton"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="1.0" />
-    </android.support.constraint.ConstraintLayout>
-
-    <View
-        android:id="@+id/divider3"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:background="?android:attr/listDivider"
-        android:visibility="visible"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/statusBlock" />
 
 
 </android.support.constraint.ConstraintLayout>

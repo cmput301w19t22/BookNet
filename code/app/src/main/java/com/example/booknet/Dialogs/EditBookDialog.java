@@ -211,7 +211,7 @@ public class EditBookDialog extends ISBNScannerDialog {
      * Creates a request to write the edited book to the user's library in the database
      */
     private void editBookRequest() {
-        manager.writeUserBookListing(listing);
+        manager.overwriteUserBookListing(listing);
     }
 
     /**

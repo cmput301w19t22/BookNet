@@ -235,6 +235,8 @@ public class LoginPageActivity extends AppCompatActivity implements View.OnClick
                                     //intent.putExtra("emailLabel", email);
                                     //startActivity(intent);
 
+                                    Log.d("seanTag", "user "+mAuth.getCurrentUser().getEmail());
+
                                     //save current user for future use
                                     CurrentUser.getInstance().updateUser(mAuth.getCurrentUser());
 

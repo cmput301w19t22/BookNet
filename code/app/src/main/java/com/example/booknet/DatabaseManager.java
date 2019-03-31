@@ -231,14 +231,6 @@ public class DatabaseManager {
         allListingsRef.child(generateAllListingPath(listing, dupCount, CurrentUser.getInstance().getUID())).setValue(listing);
     }
 
-    public void writeNotification(InAppNotification inAppNotification) {
-        //Log.d("seanTag", "write inAppNotification");
-        notificationRef.child(inAppNotification.getUserReceivingNotification()
-                + "-" + inAppNotification.getUserMakingNotification()
-                + "-" + inAppNotification.getRequestedBookListing().getISBN()
-                + "-" + inAppNotification.getRequestedBookListing().getDupInd()).setValue(inAppNotification);
-    }
-
     /**
      * Deletes a BookListing from the database
      *
@@ -338,13 +330,6 @@ public class DatabaseManager {
     }
     //#endregion
 
-    public void removeNotification(InAppNotification inAppNotification) {
-        notificationRef.child(inAppNotification.getUserReceivingNotification()
-                + "-" + inAppNotification.getUserMakingNotification()
-                + "-" + inAppNotification.getRequestedBookListing().getISBN()
-                + "-" + inAppNotification.getRequestedBookListing().getDupInd()).removeValue();
-    }
-
     /**
      * @param listing
      */
@@ -352,7 +337,6 @@ public class DatabaseManager {
         if (!isBookListingRequestableAndNotOwnBook(listing)) {
             throw new DatabaseException("You can't request this book");
         }
-
 
         ArrayList<String> newRequests = new ArrayList<String>();
         allListingReadLock.lock();
@@ -375,7 +359,7 @@ public class DatabaseManager {
         }
 
         Log.d("mattTag", "wrting notif");
-        writeNotification(new Notification(listing, listing.getOwnerUsername(), CurrentUser.getInstance().getUsername(), NotificationType.hasRequested));
+        writeNotification(new InAppNotification(listing, listing.getOwnerUsername(), CurrentUser.getInstance().getUsername(), NotificationType.hasRequested));
         Log.d("mattTag", "finished wring noi");
     }
 
@@ -483,8 +467,6 @@ public class DatabaseManager {
             allListingsRef.child(allPath).child("status").setValue(Available);
             userListingsRef.child(ownerPath).child("status").setValue(Available);
         }
-
-
         writeNotification(new InAppNotification(bookListing, requester, bookListing.getOwnerUsername(), NotificationType.hasDeclined));
     }
 
@@ -506,17 +488,6 @@ public class DatabaseManager {
 
         DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("UserBooks/" + getUIDFromName(l.getOwnerUsername()) + "/" + generateUserListingPath(l, l.getDupInd())).child("status");
         userRef.setValue(s);
-    }
-
-    public InAppNotifications getAllNotifications() {
-        //Log.d("seanTag", "Get InAppNotifications");
-
-        InAppNotifications cloned;
-        notificationReadLock.lock();
-        cloned = inAppNotifications.clone();
-        notificationReadLock.unlock();
-
-        return cloned;
     }
 
     /**
@@ -558,17 +529,6 @@ public class DatabaseManager {
 
         String currentUser = CurrentUser.getInstance().getUsername();
 
-        return result;
-    }
-
-    public void connectToDatabase(Activity context) {
-        progressDialog = new ProgressDialog(context);
-        progressDialog.setCancelable(false);
-        progressDialog.setMessage("Connecting to Database...");
-
-        progressDialog.show();
-        new InitiationTask(context).execute();
-
         if (requesters.contains(currentUser) || borrower.equals(currentUser))
             alreadyRequested = true;
         else
@@ -597,7 +557,6 @@ public class DatabaseManager {
             }
         }
         allListingReadLock.unlock();
-
 
         return res;
     }
@@ -651,37 +610,6 @@ public class DatabaseManager {
         changeListingStatusTo(listing, Available);
         clearVerification(listing);
     }
-
-    public void requestBookListing(BookListing listing) throws DatabaseException {
-        if (!isBookListingRequestableAndNotOwnBook(listing)) {
-            throw new DatabaseException("You can't request this book");
-        }
-
-
-        ArrayList<String> newRequests = new ArrayList<String>();
-        allListingReadLock.lock();
-        for (BookListing l : allBookLibrary) {
-            if (l.isSameListing(listing)) {
-                for (String request : l.getRequests()) {
-                    newRequests.add(request);
-                }
-                newRequests.add(CurrentUser.getInstance().getUsername());
-
-                changeListingRequestsTo(listing, newRequests);
-                changeListingStatusTo(listing, Requested);
-                break;
-            }
-        }
-        allListingReadLock.unlock();
-
-        if (newRequests.size() == 0) {
-            throw new DatabaseException("The requested booklisting is not found");
-        }
-
-        Log.d("mattTag", "wrting notif");
-        writeNotification(new InAppNotification(listing, listing.getOwnerUsername(), CurrentUser.getInstance().getUsername(), NotificationType.hasRequested));
-        Log.d("mattTag", "finished wring noi");
-		}
 
 	/**
      * Clears the verification on a listing. To be called when fulfilling a borrow or return,
@@ -880,18 +808,18 @@ public class DatabaseManager {
     //#region Notifications
 
 
-    public Notifications getAllNotifications() {
+    public InAppNotifications getAllNotifications() {
         //Log.d("seanTag", "Get Notifications");
 
-        Notifications cloned;
+        InAppNotifications cloned;
         notificationReadLock.lock();
-        cloned = notifications.clone();
+        cloned = inAppNotifications.clone();
         notificationReadLock.unlock();
 
         return cloned;
     }
 
-    public void writeNotification(Notification notification) {
+    public void writeNotification(InAppNotification notification) {
         //Log.d("seanTag", "write notification");
         notificationRef.child(notification.getUserReceivingNotification()
                 + "-" + notification.getUserMakingNotification()
@@ -900,7 +828,7 @@ public class DatabaseManager {
     }
 
 
-    public void removeNotification(Notification notification) {
+    public void removeNotification(InAppNotification notification) {
         notificationRef.child(notification.getUserReceivingNotification()
                 + "-" + notification.getUserMakingNotification()
                 + "-" + notification.getRequestedBookListing().getISBN()
@@ -960,6 +888,57 @@ public class DatabaseManager {
         @Override
         protected Boolean doInBackground(Void... params) {
             Log.d("mattTag", "database connection task started");
+            String uid = CurrentUser.getInstance().getUID();
+
+            while (!nameLoaded) {
+                usernameListener = new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        usernames.clear();
+
+                        // then fill it as it is in the database
+                        for (DataSnapshot data : dataSnapshot.getChildren()) {
+                            String name = data.getKey();
+                            String uid = data.getValue(String.class);
+                            usernames.put(name, uid);
+                            if (uid.equals(CurrentUser.getInstance().getUID())) {
+                                CurrentUser.getInstance().setUsername(name);
+                                nameLoaded = true;
+                            }
+                        }
+
+                        Log.d("mattTag", "nameLoaded");
+                        if (phoneLoaded && progressDialog != null) {
+
+                            if (onLoginPage) {
+                                LoginPageActivity loginPageActivity = (LoginPageActivity) context;
+                                progressDialog.dismiss();
+                                progressDialog = null;
+
+                                if (CurrentUser.getInstance().getUsername() == null || CurrentUser.getInstance().getAccountPhone() == null) {
+                                    loginPageActivity.promptInitialProfile();
+                                } else {
+                                    // old users may not have UserProfile entries, in that case, use account email and account phone as their profile
+                                    if (!allUserProfile.containsKey(CurrentUser.getInstance().getUID())) {
+                                        writeUserProfile(CurrentUser.getInstance().getDefaultEmail(), CurrentUser.getInstance().getAccountPhone());
+                                    }
+
+                                    loginPageActivity.goToMainPage();
+                                }
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        System.out.println("The read failed: " + databaseError.getCode());
+                    }
+                };
+                usernameRef = FirebaseDatabase.getInstance().getReference("Usernames");
+                usernameRef.addValueEventListener(usernameListener);
+
+                Log.d("seanTag", "try again");
+            }
 
             allListingsListener = new ValueEventListener() {
                 @Override
@@ -986,7 +965,6 @@ public class DatabaseManager {
                 }
             };
             allListingsRef = FirebaseDatabase.getInstance().getReference("BookListings");
-            // This listener should take care of database value change automatically
             allListingsRef.addValueEventListener(allListingsListener);
 
             allUserProfileListener = new ValueEventListener() {
@@ -1015,11 +993,6 @@ public class DatabaseManager {
             allUserProfileRef = FirebaseDatabase.getInstance().getReference("UserProfiles");
             allUserProfileRef.addValueEventListener(allUserProfileListener);
 
-            // This listener should take care of database value change automatically
-            //allListingsRef.addValueEventListener(allListingsListener);
-
-            String uid = CurrentUser.getInstance().getUID();
-
             userListingsListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -1046,62 +1019,7 @@ public class DatabaseManager {
                 }
             };
             userListingsRef = FirebaseDatabase.getInstance().getReference("/UserBooks/" + uid);
-            // This listener should take care of database value change automatically
             userListingsRef.addValueEventListener(userListingsListener);
-
-            //usernameRef = FirebaseDatabase.getInstance().getReference("Usernames");
-
-            // This listener should take care of database value change automatically
-            usernameListener = new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    // once the data is changed, we just change our corresponding static variable
-
-                    usernames.clear();
-
-                    // then fill it as it is in the database
-                    for (DataSnapshot data : dataSnapshot.getChildren()) {
-                        String name = data.getKey();
-                        String uid = data.getValue(String.class);
-                        usernames.put(name, uid);
-                        if (uid.equals(CurrentUser.getInstance().getUID())) {
-                            CurrentUser.getInstance().setUsername(name);
-
-                        }
-                    }
-                    nameLoaded = true;
-
-
-                    Log.d("mattTag", "nameLoaded");
-                    if (phoneLoaded && progressDialog != null) {
-
-                        if (onLoginPage) {
-                            LoginPageActivity loginPageActivity = (LoginPageActivity) context;
-                            progressDialog.dismiss();
-                            progressDialog = null;
-
-
-                            if (CurrentUser.getInstance().getUsername() == null || CurrentUser.getInstance().getAccountPhone() == null) {
-                                loginPageActivity.promptInitialProfile();
-                            } else {
-                                // old users may not have UserProfile entries, in that case, use account email and account phone as their profile
-                                if (!allUserProfile.containsKey(CurrentUser.getInstance().getUID())) {
-                                    writeUserProfile(CurrentUser.getInstance().getDefaultEmail(), CurrentUser.getInstance().getAccountPhone());
-                                }
-
-                                loginPageActivity.goToMainPage();
-                            }
-                        }
-                    }
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    System.out.println("The read failed: " + databaseError.getCode());
-                }
-            };
-            usernameRef = FirebaseDatabase.getInstance().getReference("Usernames");
-            usernameRef.addValueEventListener(usernameListener);
 
             userPhoneListener = new ValueEventListener() {
                 @Override

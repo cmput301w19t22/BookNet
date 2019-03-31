@@ -51,7 +51,7 @@ public class BookLibrary implements Serializable, Iterable<BookListing> {
         }
     }
 
-    public void removeAllBooks(){
+    public void removeAllBooks() {
         books.clear();
     }
 
@@ -87,11 +87,15 @@ public class BookLibrary implements Serializable, Iterable<BookListing> {
     public BookLibrary clone() {
         BookLibrary cloned = new BookLibrary();
         cloned.books = new ArrayList<>();
-        for (BookListing booklisting: books) cloned.books.add(booklisting.clone());
+        for (BookListing booklisting : books) cloned.books.add(booklisting.clone());
         return cloned;
     }
 
-    public ArrayList<BookListing> asArray(){
+    public int indexOf(BookListing listing) {
+        return books.indexOf(listing);
+    }
+
+    public ArrayList<BookListing> asArray() {
         return books;
     }
 
@@ -101,25 +105,50 @@ public class BookLibrary implements Serializable, Iterable<BookListing> {
     }
 
 
-
     public BookListing getBookAtPosition(int position) {
         return books.get(position);
     }
 
-
+    /**
+     * Fills this BookLibrary with the filtered results of the given BookLibrary
+     *
+     * @param library The library to filter and copy
+     * @param status  The status of listing which will be in the filtered library.
+     */
     public void filterByStatus(BookLibrary library, BookListingStatus status) {
         books.clear();
-        for (BookListing bookListing: library){
+        for (BookListing bookListing : library) {
 
-            if (bookListing.getStatus() == status){
+            if (bookListing.getStatus() == status) {
                 books.add(bookListing);
             }
         }
     }
 
+    /**
+     * Fills this BookLibrary with the filtered results of the given BookLibrary.
+     * Results are listings that contain any of the given statuses.
+     *
+     * @param library  The library to filter and copy
+     * @param statuses The array of statuses to filter with
+     */
+    public void filterByStatus(BookLibrary library, ArrayList<BookListingStatus> statuses) {
+        books.clear();
+        for (BookListing bookListing : library) {
+            if (statuses.contains(bookListing.getStatus())) {
+                books.add(bookListing);
+            }
+        }
+    }
+
+    /**
+     * Copies all the books from a given library into this one.
+     *
+     * @param library The library to copy from.
+     */
     public void copyOneByOne(BookLibrary library) {
         removeAllBooks();
-        for (BookListing bookListing: library){
+        for (BookListing bookListing : library) {
             books.add(bookListing.clone());
         }
     }
@@ -128,7 +157,7 @@ public class BookLibrary implements Serializable, Iterable<BookListing> {
     @Override
     public String toString() {
         String s = "";
-        for (BookListing bookListing: books){
+        for (BookListing bookListing : books) {
             s += bookListing.toString();
         }
         return s;

@@ -1,6 +1,7 @@
 package com.example.booknet.Adapters;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.FragmentActivity;
@@ -9,6 +10,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.OvershootInterpolator;
+import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -75,8 +80,11 @@ public class OwnedLibraryAdapter extends RecyclerView.Adapter<OwnedLibraryAdapte
         final int index = ownedListingViewHolder.getAdapterPosition();
 
         //Fill the text fields with the object's library
-        //ownedListingViewHolder.bookThumbnail.//todo listing photo
-        ownedListingViewHolder.bookThumbnail.setImageResource(R.drawable.ic_book_default);
+        Bitmap thumbnailBitmap = item.getPhotoBitmap();
+        if (thumbnailBitmap == null)
+            ownedListingViewHolder.bookThumbnail.setImageResource(R.drawable.ic_book_default);
+        else
+            ownedListingViewHolder.bookThumbnail.setImageBitmap(thumbnailBitmap);
         ownedListingViewHolder.bookTitleLabel.setText(item.getBook().getTitle());
         ownedListingViewHolder.bookAuthorLabel.setText(item.getBook().getAuthor());
         ownedListingViewHolder.isbnLabel.setText(item.getBook().getIsbn());
@@ -85,9 +93,9 @@ public class OwnedLibraryAdapter extends RecyclerView.Adapter<OwnedLibraryAdapte
         ownedListingViewHolder.statusLabel.setText(item.getStatus().toString());
         Log.d("mattTag", "really? " + item.getBook().toString() + " " + item.getStatus());
 
-        if ((position & 1) == 1) {//check odd
+        /*if ((position & 1) == 1) {//check odd
             ownedListingViewHolder.constraintLayout.setBackgroundColor(sourceActivity.getResources().getColor(R.color.lightDarkerTint));
-        }
+        }*/
 
         //Add the click listener to the item
         ownedListingViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -97,6 +105,14 @@ public class OwnedLibraryAdapter extends RecyclerView.Adapter<OwnedLibraryAdapte
             }
         });
 
+        AlphaAnimation animIn = new AlphaAnimation(0.0f, 1.0f);
+        animIn.setDuration(500);
+        ownedListingViewHolder.itemView.startAnimation(animIn);
+        ScaleAnimation anim2 = new ScaleAnimation(0.5f, 1f, 0.5f, 1f,
+                Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        anim2.setDuration(500);
+        anim2.setInterpolator(new OvershootInterpolator());
+        ownedListingViewHolder.itemView.startAnimation(anim2);
     }
 
     /**

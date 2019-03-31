@@ -44,7 +44,7 @@ public class UserAccountTest {
         user.setRequestedBooks(requests);
         assertEquals(requests, user.getRequestedBooks());
 
-        //Reviews
+        //ReviewList
         ArrayList<Review> reviews = new ArrayList<Review>();
         UserAccount user2 = new UserAccount("test_username");
         reviews.add(new Review(user, user2, 4, "review1"));

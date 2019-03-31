@@ -38,7 +38,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
             android:contentDescription="Edit Profile"
             android:src="@drawable/ic_edit_black_24dp"
@@ -76,6 +75,10 @@
         android:id="@+id/profile"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/bg_round_rectangle_12"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar">
@@ -89,6 +92,7 @@
             android:layout_marginTop="8dp"
             android:drawableLeft="@drawable/ic_person_black_24dp"
             android:text="[UserName]"
+            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -124,6 +128,10 @@
         android:id="@+id/ratings"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/bg_round_rectangle_12"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/profile">
@@ -134,11 +142,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginTop="4dp"
             android:text="1.0"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/ratingTitle" />
 
         <ImageView
             android:id="@+id/ratingStar1"
@@ -192,6 +199,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
+            android:drawableLeft="@drawable/ic_comment_black_24dp"
             android:text="Reviews"
             android:tooltipText="User Reviews"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -200,7 +208,7 @@
 
         <TextView
             android:id="@+id/numReviews"
-            style="@style/BookNet.Text.Main"
+            style="@style/BookNet.Text.Main.Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
@@ -209,6 +217,16 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@+id/ratingTextLabel"
             app:layout_constraintTop_toBottomOf="@+id/ratingTextLabel" />
+
+        <TextView
+            android:id="@+id/ratingTitle"
+            style="@style/BookNet.Text.Main.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="Your Rating:"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
     </android.support.constraint.ConstraintLayout>
 
     <android.support.constraint.ConstraintLayout

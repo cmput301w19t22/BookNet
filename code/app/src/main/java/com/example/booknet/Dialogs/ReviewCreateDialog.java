@@ -16,6 +16,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.booknet.DatabaseManager;
 import com.example.booknet.Model.Review;
 import com.example.booknet.R;
 
@@ -38,6 +39,8 @@ public class ReviewCreateDialog extends DialogFragment {
     //Dialog Data
     private String reviewer = "";
     private String reviewed = "";
+
+    DatabaseManager manager = DatabaseManager.getInstance();
 
     /**
      * Create a new instance of this dialog.
@@ -145,15 +148,15 @@ public class ReviewCreateDialog extends DialogFragment {
      */
     private void createReview() {
         //Get Info To Create Review
-        int score = (int) ratingInput.getRating();
+        float score = ratingInput.getRating();
         String message = commentField.getText().toString();
 
         //Create review
-        Review review = new Review(reviewer, reviewed, score, message);
+        Review review = new Review(reviewed, reviewer, score, message);
 
         //Write Review to Database
-        //todo send review to db
-        Toast.makeText(getContext(), "Review Sent\n(Not Really)", Toast.LENGTH_LONG).show();
+        Toast.makeText(getContext(), "Review Sent", Toast.LENGTH_LONG).show();
+        manager.writeReview(review);
 
         //Close the dialog
         dismiss();

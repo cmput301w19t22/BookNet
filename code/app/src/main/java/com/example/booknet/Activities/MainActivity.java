@@ -1,7 +1,15 @@
 package com.example.booknet.Activities;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -10,20 +18,32 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.booknet.DatabaseManager;
 import com.example.booknet.Fragments.BookSearchFragment;
 import com.example.booknet.Model.CurrentUser;
 import com.example.booknet.Fragments.NotificationFragment;
 import com.example.booknet.Fragments.OwnedLibraryFragment;
+import com.example.booknet.Model.GlobalNotificationBuilder;
+import com.example.booknet.Model.InAppNotification;
+import com.example.booknet.Model.NotificationData;
+import com.example.booknet.Model.NotificationUtil;
 import com.example.booknet.R;
 import com.example.booknet.Fragments.RequestLibraryFragment;
 import com.example.booknet.Fragments.UserProfileViewFragment;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 
 /**
  * Activity for the app's homepage.
@@ -31,6 +51,13 @@ import com.example.booknet.Fragments.UserProfileViewFragment;
  * @version 0.1
  */
 public class MainActivity extends FragmentActivity {
+
+    public static final int NOTIFICATION_ID = 888;
+
+    private NotificationManagerCompat mNotificationManagerCompat;
+
+    DatabaseManager manager = DatabaseManager.getInstance();
+    private ValueEventListener listener;
 
     public static class MyAdapter extends FragmentPagerAdapter {
         public MyAdapter(FragmentManager fm) {
@@ -109,6 +136,35 @@ public class MainActivity extends FragmentActivity {
         final BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
+        mNotificationManagerCompat = NotificationManagerCompat.from(getApplicationContext());
+
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        notificationManager.cancel(NOTIFICATION_ID);
+
+        listener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot data : dataSnapshot.getChildren()) {
+                    InAppNotification inAppNotification = data.getValue(InAppNotification.class);
+                    if (inAppNotification != null) {
+                        if (inAppNotification.getUserReceivingNotification().equals(CurrentUser.getInstance().getUsername()) && !inAppNotification.getPushNotificationSent()) {
+                            Log.d("seanTag", "send push notification");
+                            generateNotification();
+                            inAppNotification.setPushNotificationSent(true);
+                            manager.writeNotification(inAppNotification);
+                        }
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
+        manager.getNotificationsRef().addValueEventListener(listener);
+
         mPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -180,7 +236,6 @@ public class MainActivity extends FragmentActivity {
                 })
                 .setNegativeButton("No", null)
                 .show();
-
     }
 
     /**
@@ -192,4 +247,53 @@ public class MainActivity extends FragmentActivity {
         Log.d("mattNeo", "yee I deed it");
     }
 
+    public void generateNotification() {
+        Log.d("seanTag", "generateBigTextStyleNotification()");
+        NotificationData notificationData = new NotificationData();
+
+        String notificationChannelId =
+                NotificationUtil.createNotificationChannel(this, notificationData);
+
+        NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle()
+                .bigText(notificationData.getContentText())
+                .setBigContentTitle(notificationData.getContentTitle())
+                .setSummaryText(notificationData.getChannelDescription());
+
+
+        Intent notifyIntent = new Intent(this, MainActivity.class);
+
+        notifyIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+        PendingIntent notifyPendingIntent =
+                PendingIntent.getActivity(
+                        this,
+                        0,
+                        notifyIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+
+        NotificationCompat.Builder notificationCompatBuilder =
+                new NotificationCompat.Builder(
+                        getApplicationContext(), notificationChannelId);
+
+        GlobalNotificationBuilder.setNotificationCompatBuilderInstance(notificationCompatBuilder);
+
+        Notification notification = notificationCompatBuilder
+                .setStyle(bigTextStyle)
+                .setContentTitle(notificationData.getContentTitle())
+                .setContentText(notificationData.getContentText())
+                .setSmallIcon(R.drawable.ic_star_24dp)
+                .setLargeIcon(BitmapFactory.decodeResource(
+                        getResources(),
+                        R.drawable.bg_round_rectangle_24))
+                .setContentIntent(notifyPendingIntent)
+                .setDefaults(NotificationCompat.DEFAULT_ALL)
+                .setColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary))
+                .setCategory(Notification.CATEGORY_REMINDER)
+                .setPriority(notificationData.getPriority())
+                .setVisibility(notificationData.getChannelLockscreenVisibility())
+                .build();
+
+        mNotificationManagerCompat.notify(NOTIFICATION_ID, notification);
+    }
 }

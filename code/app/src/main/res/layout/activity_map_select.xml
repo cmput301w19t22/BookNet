@@ -63,6 +63,58 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar" />-->
 
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/search"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:elevation="2dp"
+        android:paddingLeft="0dp"
+        android:paddingRight="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        tools:context="com.example.booknet.Activities.MapSelectActivity">
+
+        <SearchView
+            android:id="@+id/searchField"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/edittext_rounded"
+            android:backgroundTint="@color/brightBackground"
+            android:backgroundTintMode="src_over"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/addressField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:ems="10"
+            android:inputType="textEmailAddress"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/searchButton"
+            style="@style/BookNet.Button.Blue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:text="Search"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </android.support.constraint.ConstraintLayout>
+
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/mapView"
@@ -72,7 +124,7 @@
         app:layout_constraintBottom_toTopOf="@+id/noteBlock"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        app:layout_constraintTop_toTopOf="@+id/search"
         tools:context=".MapsActivity" />
 
     <android.support.constraint.ConstraintLayout
@@ -107,6 +159,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
             android:text=""
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.08"
@@ -141,7 +194,7 @@
             android:id="@+id/noteText"
             style="@style/BookNet.EditText.OnWhite"
             android:layout_width="0dp"
-            android:layout_height="40dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:drawableLeft="@drawable/ic_comment_black_24dp"
@@ -149,6 +202,7 @@
             android:hint="Leave a Note"
             android:inputType="textMultiLine|textPersonName"
             android:maxLength="140"
+            android:singleLine="false"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -162,14 +216,19 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
+            android:background="@drawable/bg_round_rectangle_12"
+            android:backgroundTint="@color/colorPrimaryLight"
+            android:backgroundTintMode="multiply"
+            android:drawableLeft="@drawable/ic_comment_black_24dp"
             android:padding="8dp"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@+id/noteText"
+            android:singleLine="false"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-
     </android.support.constraint.ConstraintLayout>
 
 </android.support.constraint.ConstraintLayout>

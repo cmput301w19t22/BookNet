@@ -35,8 +35,11 @@ public class CurrentUser {
 
     //Attributes
     private UserAccount account;
-
     private FirebaseUser user;
+
+    public FirebaseUser getUser() {
+        return user;
+    }
 
     public void setUser(FirebaseUser user) {
         this.user = user;

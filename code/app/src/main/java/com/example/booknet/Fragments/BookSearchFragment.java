@@ -2,7 +2,6 @@ package com.example.booknet.Fragments;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -17,21 +16,20 @@ import android.widget.AdapterView;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.Spinner;
+import android.widget.TextView;
 
-import com.example.booknet.Activities.LoginPageActivity;
+import com.example.booknet.Adapters.BookSearchAdapter;
+import com.example.booknet.Adapters.SpaceDecoration;
+import com.example.booknet.Adapters.SpinnerAdapter;
+import com.example.booknet.Constants.BookListingStatus;
+import com.example.booknet.DatabaseManager;
 import com.example.booknet.Model.BookLibrary;
 import com.example.booknet.Model.BookListing;
-import com.example.booknet.Adapters.BookSearchAdapter;
-import com.example.booknet.DatabaseManager;
-import com.example.booknet.Model.CurrentUser;
-import com.example.booknet.Model.Notification;
 import com.example.booknet.Model.Photo;
 import com.example.booknet.R;
 import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -51,6 +49,7 @@ public class BookSearchFragment extends Fragment {
     private BookSearchAdapter listingAdapter;
     private SearchView searchBar;
     private Spinner filter;
+    private TextView resultsCountLabel;
     private DatabaseManager manager = DatabaseManager.getInstance();
 
     //App Data
@@ -84,9 +83,17 @@ public class BookSearchFragment extends Fragment {
         searchResults = view.findViewById(R.id.searchResults);
         searchBar = view.findViewById(R.id.searchBar);
         filter = view.findViewById(R.id.searchFilter);
+        resultsCountLabel = view.findViewById(R.id.resultsNumLabel);
+
+        SpinnerAdapter filterAdapter = new SpinnerAdapter(getContext(), android.R.layout.simple_spinner_dropdown_item,
+                getResources().getStringArray(R.array.status_array));
+        filter.setAdapter(filterAdapter);
+
 
         allBookListings = manager.readAllBookListings();
         filteredLibrary.copyOneByOne(allBookListings);
+
+        resultsCountLabel.setText(String.format("%d Results", filteredLibrary.size()));
 
         listener = new ValueEventListener() {
             @Override
@@ -99,7 +106,6 @@ public class BookSearchFragment extends Fragment {
                     writeLock.lock();
                     filteredLibrary.removeAllBooks();
 
-
                     // then fill it as it is in the database
                     for (DataSnapshot data : dataSnapshot.getChildren()) {
                         BookListing bookListing = data.getValue(BookListing.class);
@@ -109,11 +115,17 @@ public class BookSearchFragment extends Fragment {
                             }
                         }
                     }
-                    writeLock.unlock();
-                    new ThumnailFetchingTask(getActivity()).execute();
-                    listingAdapter.notifyDataSetChanged();
-                }
 
+                    writeLock.unlock();
+
+                    new ThumbnailFetchingTask(getActivity()).execute();
+                    listingAdapter.setAllowNewAnimation(false);
+                    listingAdapter.notifyDataSetChanged();
+                    //listingAdapter.setAllowNewAnimation(true);
+                    //listingAdapter.cancelAllAnimations();
+                }
+                //update results count
+                resultsCountLabel.setText(String.format("%d Results", filteredLibrary.size()));
             }
 
             @Override
@@ -121,8 +133,6 @@ public class BookSearchFragment extends Fragment {
 
             }
         };
-
-
         manager.getAllListingsRef().addValueEventListener(listener);
 
 
@@ -133,15 +143,15 @@ public class BookSearchFragment extends Fragment {
 
         allBookListings = manager.readAllBookListings();
 
-        searchResults.setLayoutManager(new LinearLayoutManager(getActivity()));
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        searchResults.setLayoutManager(layoutManager);
         listingAdapter = new BookSearchAdapter(filteredLibrary, getActivity(), readLock);
         searchResults.setAdapter(listingAdapter);
+        searchResults.addItemDecoration(new SpaceDecoration(12, 16));
 
         searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-
-
                 return false;
             }
 
@@ -158,7 +168,10 @@ public class BookSearchFragment extends Fragment {
 
                 }
                 writeLock.unlock();
+                new ThumbnailFetchingTask(getActivity()).execute();
                 listingAdapter.notifyDataSetChanged();
+                //listingAdapter.cancelAllAnimations();
+                resultsCountLabel.setText(String.format("%d Results", filteredLibrary.size()));
                 return true;
             }
         });
@@ -167,6 +180,20 @@ public class BookSearchFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 //todo filter results
+                TextView selectedView = (TextView) view;
+
+                if (selectedView != null) {
+                    String selectedItem = selectedView.getText().toString();
+                    if (selectedItem.equals("All")) {
+                        filteredLibrary.copyOneByOne(allBookListings);
+                    } else {
+                        filteredLibrary.filterByStatus(allBookListings, BookListingStatus.valueOf(selectedItem));
+                    }
+                    new ThumbnailFetchingTask(getActivity()).execute();
+                    listingAdapter.notifyDataSetChanged();
+                    listingAdapter.cancelAllAnimations();
+                    resultsCountLabel.setText(String.format("%d Results", filteredLibrary.size()));
+                }
             }
 
             @Override
@@ -176,7 +203,7 @@ public class BookSearchFragment extends Fragment {
         });
 
 
-        new ThumnailFetchingTask(getActivity()).execute();
+        new ThumbnailFetchingTask(getActivity()).execute();
 
         return view;
     }
@@ -200,63 +227,67 @@ public class BookSearchFragment extends Fragment {
 
     public void onDestroy() {
         super.onDestroy();
-        manager.getAllListingsRef().removeEventListener(listener);
+        try {
+            manager.getAllListingsRef().removeEventListener(listener);
+        } catch (NullPointerException e) {
+            //todo what do?
+        }
     }
 
-    public class ThumnailFetchingTask extends AsyncTask<Void, Void, Boolean> {
+    public class ThumbnailFetchingTask extends AsyncTask<Void, Void, Boolean> {
         Activity context;
 
-        ThumnailFetchingTask(Activity context) {
+        ThumbnailFetchingTask(Activity context) {
             this.context = context;
         }
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            readLock.lock();
-            for (final BookListing bl: filteredLibrary){
-                if (bl.getPhotoBitmap() == null){
+            writeLock.lock();
+            for (final BookListing bl : filteredLibrary) {
+                if (bl.getPhotoBitmap() == null) {
 
                     Log.d("mattX", bl.toString() + " photo is null");
 
-                    manager.fetchListingThumbnail(bl,
+                    Bitmap thumbnailBitmap = manager.getCachedThumbnail(bl);
 
-                            new OnSuccessListener<byte[]>() {
-                                @Override
-                                public void onSuccess(byte[] bytes) {
+                    if (thumbnailBitmap == null) {
+                        manager.fetchListingThumbnail(bl,
+                                listingAdapter,
 
+                                new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.d("imageFetching", "fetching failed, cause: " + e.getLocalizedMessage());
+                                    }
+                                });
 
-                                    Bitmap fetchedThumnail = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                                    writeLock.lock();
-
-                                    bl.setPhoto(new Photo(fetchedThumnail));
-
-                                    writeLock.unlock();
-
-                                    listingAdapter.notifyDataSetChanged();
-                                    Log.d("imageFetching", "fetching succeededed" );
-                                }
-                            },
-
-                            new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Log.d("imageFetching", "fetching failed, cause: " + e.getLocalizedMessage());
-                                }
-                            });
-
-                }
-                else{
+                    } else {
+                        bl.setPhoto(new Photo(thumbnailBitmap));
 
 
+                        // weird bug happends while changing tab if you simply listingAdpater.notifyDataSetChanged()
+                        // solution found at: https://stackoverflow.com/questions/43221847/cannot-call-this-method-while-recyclerview-is-computing-a-layout-or-scrolling-wh
+                        searchResults.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                //listingAdapter.notifyDataSetChanged();
+                                listingAdapter.setAllowNewAnimation(false);
+                                listingAdapter.notifyItemChanged(filteredLibrary.indexOf(bl));
+                                listingAdapter.setAllowNewAnimation(true);
+                                listingAdapter.cancelAllAnimations();
+                            }
+                        });
+
+                    }
                 }
 
             }
-            readLock.unlock();
+            writeLock.unlock();
 
 
             return true;
         }
-
 
 
     }

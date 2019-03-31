@@ -1,7 +1,11 @@
 package com.example.booknet.Fragments;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,16 +18,21 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.example.booknet.Model.BookLibrary;
-import com.example.booknet.Model.BookListing;
+import com.example.booknet.Adapters.OwnedLibraryAdapter;
+import com.example.booknet.Adapters.SpaceDecoration;
 import com.example.booknet.Constants.BookListingStatus;
 import com.example.booknet.DatabaseManager;
 import com.example.booknet.Dialogs.NewBookDialog;
-import com.example.booknet.Adapters.OwnedLibraryAdapter;
+import com.example.booknet.Model.BookLibrary;
+import com.example.booknet.Model.BookListing;
+import com.example.booknet.Model.Photo;
 import com.example.booknet.R;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * An activity to display the owned library of a user.
@@ -37,6 +46,7 @@ public class OwnedLibraryFragment extends Fragment {
     private RecyclerView libraryListView;
     private OwnedLibraryAdapter listingAdapter;
     private ImageButton addButton;
+    private TextView bookCountLabel;
     private ValueEventListener valueEventListener = null;
 
     //Activity Data
@@ -46,6 +56,12 @@ public class OwnedLibraryFragment extends Fragment {
     private BookLibrary filteredLibrary = new BookLibrary();
 
     DatabaseManager manager = DatabaseManager.getInstance();
+
+
+    ReentrantReadWriteLock locks = new ReentrantReadWriteLock();
+    ReentrantReadWriteLock.ReadLock readLock = locks.readLock();
+    ReentrantReadWriteLock.WriteLock writeLock = locks.writeLock();
+
 
     public static OwnedLibraryFragment newInstance() {
         OwnedLibraryFragment myFragment = new OwnedLibraryFragment();
@@ -69,6 +85,8 @@ public class OwnedLibraryFragment extends Fragment {
         View view = inflater.inflate(R.layout.activity_owned_library, container, false);
 
         filteredLibrary = new BookLibrary();
+        bookCountLabel = view.findViewById(R.id.resultsNumLabel);
+
         //Add Click Listener
         addButton = view.findViewById(R.id.addBookButton);
         addButton.setOnClickListener(new View.OnClickListener() {
@@ -88,6 +106,7 @@ public class OwnedLibraryFragment extends Fragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // once the data is changed, we just change our corresponding static variable
 
+                writeLock.lock();
                 //first empty it
                 filteredLibrary.removeAllBooks();
 
@@ -100,8 +119,12 @@ public class OwnedLibraryFragment extends Fragment {
                         Log.d("mattTag", "lo: " + bookListing.toString());
                     }
                 }
+                writeLock.unlock();
+
+                new ThumbnailFetchingTask(getActivity()).execute();
 
                 listingAdapter.notifyDataSetChanged();
+                bookCountLabel.setText(String.format("%d Books", filteredLibrary.size()));
             }
 
             @Override
@@ -114,11 +137,14 @@ public class OwnedLibraryFragment extends Fragment {
 
         filteredLibrary = library.clone();
 
+        bookCountLabel.setText(String.format("%d Books", filteredLibrary.size()));
+
         //Apply Adapter to RecyclerView
         libraryListView = view.findViewById(R.id.bookLibrary);
         libraryListView.setLayoutManager(new LinearLayoutManager(getActivity()));
         listingAdapter = new OwnedLibraryAdapter(filteredLibrary, getActivity());
         libraryListView.setAdapter(listingAdapter);
+        libraryListView.addItemDecoration(new SpaceDecoration(12, 16));
 
         Spinner filter = view.findViewById(R.id.filterSpinner);
 
@@ -133,8 +159,9 @@ public class OwnedLibraryFragment extends Fragment {
                     } else {
                         filteredLibrary.filterByStatus(library, BookListingStatus.valueOf(selectedItem));
                     }
-
+                    new ThumbnailFetchingTask(getActivity()).execute();
                     listingAdapter.notifyDataSetChanged();
+                    bookCountLabel.setText(String.format("%d Books", filteredLibrary.size()));
                 }
 
             }
@@ -145,7 +172,7 @@ public class OwnedLibraryFragment extends Fragment {
             }
         });
 
-
+        new ThumbnailFetchingTask(getActivity()).execute();
         return view;
     }
 
@@ -161,7 +188,11 @@ public class OwnedLibraryFragment extends Fragment {
     }
 
     public void onDestroy() {
-        manager.getUserListingsRef().removeEventListener(listener);
+        try {
+            manager.getUserListingsRef().removeEventListener(listener);
+        } catch (NullPointerException e) {
+            //todo what is?
+        }
         super.onDestroy();
 
     }
@@ -187,4 +218,59 @@ public class OwnedLibraryFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
 
     }
+
+
+    public class ThumbnailFetchingTask extends AsyncTask<Void, Void, Boolean> {
+        Activity context;
+
+        ThumbnailFetchingTask(Activity context) {
+            this.context = context;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            writeLock.lock();
+            for (final BookListing bl : filteredLibrary) {
+                if (bl.getPhotoBitmap() == null) {
+
+                    Log.d("mattX", bl.toString() + " photo is null");
+
+                    Bitmap thumbnailBitmap = manager.getCachedThumbnail(bl);
+
+                    if (thumbnailBitmap == null) {
+                        Log.d("mattX", bl.toString() + " photo is not cached");
+                        manager.fetchListingThumbnail(bl,
+                                listingAdapter,
+
+                                new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.d("mattX", bl.toString() + " photo fethcing falied");
+                                        Log.d("imageFetching", "fetching failed, cause: " + e.getLocalizedMessage());
+                                    }
+                                });
+
+                    } else {
+                        Log.d("mattX", bl.toString() + " photo is cached in ownbooks");
+                        bl.setPhoto(new Photo(thumbnailBitmap));
+                        libraryListView.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                listingAdapter.notifyDataSetChanged();
+                            }
+                        });
+                    }
+                }
+
+            }
+            writeLock.unlock();
+
+
+            return true;
+        }
+
+
+    }
+
+
 }

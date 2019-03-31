@@ -9,16 +9,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.booknet.Adapters.SpaceDecoration;
 import com.example.booknet.DatabaseManager;
 import com.example.booknet.Adapters.NotificationAdapter;
-import com.example.booknet.Model.Notifications;
+import com.example.booknet.Model.InAppNotifications;
 import com.example.booknet.R;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 public class NotificationFragment extends Fragment {
 
-    private Notifications notifications;
+    private InAppNotifications inAppNotifications;
     private RecyclerView notificationsListView;
     private NotificationAdapter notificationAdapter;
+    private ValueEventListener notificationListener;
+    private DatabaseReference notificationRef;
 
     DatabaseManager manager = DatabaseManager.getInstance();
 
@@ -36,14 +41,15 @@ public class NotificationFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_notifications, container, false);
 
-        notifications = manager.getAllNotifications();
+        inAppNotifications = manager.getAllNotifications();
 
-        Log.d("seanTag", "onCreateView Notification");
+        Log.d("seanTag", "onCreateView InAppNotification");
 
-        notificationsListView = view.findViewById(R.id.notifications);
+        notificationsListView = view.findViewById(R.id.inAppNotifications);
         notificationsListView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        notificationAdapter = new NotificationAdapter(notifications, getActivity());
+        notificationAdapter = new NotificationAdapter(inAppNotifications, getActivity());
         notificationsListView.setAdapter(notificationAdapter);
+        notificationsListView.addItemDecoration(new SpaceDecoration(12,16));
 
         return view;
     }
@@ -55,7 +61,6 @@ public class NotificationFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        //Log.d("seanTag", "onStart notifications");
         notificationAdapter.notifyDataSetChanged();
     }
 

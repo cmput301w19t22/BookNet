@@ -1,16 +1,17 @@
 package com.example.booknet.Activities;
 
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnticipateOvershootInterpolator;
+import android.view.animation.RotateAnimation;
+import android.view.animation.ScaleAnimation;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -48,7 +49,7 @@ public class ListingViewActivity extends AppCompatActivity {
     private Button ownerProfileButton;
     private ConstraintLayout geoLocationBlock;
     private Button setLocationButton;
-    private ImageView viewLocationButton;
+    private Button viewLocationButton;
     private TextView geolocationLabel;
     private ImageButton backButton;
     private DatabaseManager manager = DatabaseManager.getInstance();
@@ -57,6 +58,8 @@ public class ListingViewActivity extends AppCompatActivity {
     private BookListing listing;
 
     private boolean alreadyRequested;
+
+    private String CHANNEL_ID = "BOOKNET_NOTIFICATION";
 
     /**
      * Called when creating the activity.
@@ -172,18 +175,25 @@ public class ListingViewActivity extends AppCompatActivity {
         setLocationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setGeoLocation();
-                //todo allow borrower to set location for return
+                openGeoLocation(true);
             }
         });
 
         viewLocationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                viewGeoLocation();
+                openGeoLocation(false);
             }
         });
         //#endregion
+
+        /*RotateAnimation anim2 = new RotateAnimation(45f, 0f,
+                Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 1f);
+        ScaleAnimation anim1 = new ScaleAnimation(0.1f,1f,0.1f,1f,
+                Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 1f);
+        anim1.setDuration(700);
+        anim1.setInterpolator(new AnticipateOvershootInterpolator());
+        findViewById(R.id.listingView).startAnimation(anim1);*/
     }
 
     /**
@@ -199,7 +209,7 @@ public class ListingViewActivity extends AppCompatActivity {
         ownerLabel.setText(listing.getOwnerUsername());
         statusLabel.setText(listing.getStatus().toString());
 
-        Bitmap bitmap = listing.getPhotoBitmap();
+        Bitmap bitmap = manager.getCachedThumbnail(listing);
         if (bitmap != null) {
             bookThumbnail.setImageBitmap(bitmap);
         } else {
@@ -225,16 +235,17 @@ public class ListingViewActivity extends AppCompatActivity {
         //Manage Request Button
         if (manager.ifListingRequestedByCurrentUser(listing)) {
             if (listing.getStatus() == BookListingStatus.Borrowed) {
-                requestButton.setEnabled(false);
+                requestButton.setEnabled(true);
                 requestButton.setText("Return");
             } else {
                 requestButton.setEnabled(true);
-                requestButton.setText("Cancel Request");
+                requestButton.setText("Cancel");
             }
         } else {
             if (listing.getStatus() == BookListingStatus.Accepted
                     || listing.getStatus() == BookListingStatus.Borrowed) {
                 requestButton.setEnabled(false);
+                requestButton.setVisibility(View.GONE);
             } else {
                 requestButton.setEnabled(true);
             }
@@ -251,10 +262,10 @@ public class ListingViewActivity extends AppCompatActivity {
     }
 
     /**
-     * Creates a request for this book listing from the current user.
+     * Cancels a request for this book listing from the current user.
      */
     private void sendRemoveRequest() throws DatabaseManager.DatabaseException {
-        manager.requestBookListingRemoval(listing);
+        manager.cancelRequestForListing(listing);
     }
 
     /**
@@ -290,20 +301,21 @@ public class ListingViewActivity extends AppCompatActivity {
     }
 
     /**
-     * Starts a dialog to select a geolocation.
+     * Starts a dialog to select or view a geolocation.
+     * The user will be able to set a position if editmode is on.
+     *
+     * @param editmode Whether to open the map in edit mode
      */
-    private void setGeoLocation() {
-        Toast.makeText(getApplicationContext(), "Select a Location\nTO BE IMPLEMENTED", Toast.LENGTH_SHORT).show();
-        //todo implement
+    private void openGeoLocation(boolean editmode) {
+        //Toast.makeText(getApplicationContext(), "Select a Location", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, MapSelectActivity.class);
+        intent.putExtra("username", listing.getOwnerUsername());
+        intent.putExtra("bookisbn", listing.getBook().getIsbn());
+        intent.putExtra("dupID", listing.getDupInd());
+        intent.putExtra("editmode", editmode);
+        startActivity(intent);
     }
 
-    /**
-     * Starts a dialog to view the geolocation
-     */
-    private void viewGeoLocation() {
-        Toast.makeText(getApplicationContext(), "View GeoLocation Not Implemented", Toast.LENGTH_SHORT).show();
-        //todo implement
-    }
 
     /**
      * Gets the result and passes it up so nested fragments can get it.
@@ -312,8 +324,4 @@ public class ListingViewActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
     }
-
-
-
-
 }

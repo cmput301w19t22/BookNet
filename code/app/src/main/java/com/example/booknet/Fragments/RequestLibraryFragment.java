@@ -1,6 +1,10 @@
 package com.example.booknet.Fragments;
 
+import android.app.Activity;
+import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,12 +18,15 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.booknet.Adapters.RequestedLibraryAdapter;
+import com.example.booknet.Adapters.SpaceDecoration;
 import com.example.booknet.Constants.BookListingStatus;
 import com.example.booknet.DatabaseManager;
 import com.example.booknet.Model.BookLibrary;
 import com.example.booknet.Model.BookListing;
 import com.example.booknet.Model.CurrentUser;
+import com.example.booknet.Model.Photo;
 import com.example.booknet.R;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -38,6 +45,7 @@ public class RequestLibraryFragment extends Fragment {
     private RecyclerView libraryListView;
     private RequestedLibraryAdapter listingAdapter;
     private ImageButton addButton;
+    private TextView bookCountLabel;
 
     //Activity Data
     private BookLibrary filteredLibrary;
@@ -70,9 +78,11 @@ public class RequestLibraryFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         //Create the view
-        View view = inflater.inflate(R.layout.fragment_requested_library, container, false);
+        View view = inflater.inflate(R.layout.activity_owned_library, container, false);
 
         Log.d("seanTag", "onCreateView Request");
+
+        bookCountLabel = view.findViewById(R.id.resultsNumLabel);
 
         //Deactivate Add Button
         addButton = view.findViewById(R.id.addBookButton);
@@ -118,7 +128,7 @@ public class RequestLibraryFragment extends Fragment {
                 }
 
                 listingAdapter.notifyDataSetChanged();
-
+                bookCountLabel.setText(String.format("%d Books",filteredLibrary.size()));
                 writeLock.unlock();
             }
 
@@ -136,6 +146,7 @@ public class RequestLibraryFragment extends Fragment {
         libraryListView.setLayoutManager(new LinearLayoutManager(getActivity()));
         listingAdapter = new RequestedLibraryAdapter(filteredLibrary, readLock, getActivity());
         libraryListView.setAdapter(listingAdapter);
+        libraryListView.addItemDecoration(new SpaceDecoration(12,16));
 
         //Setup Filter Menu todo
 
@@ -153,7 +164,9 @@ public class RequestLibraryFragment extends Fragment {
                         filteredLibrary.filterByStatus(manager.readUserRequestLibrary(), BookListingStatus.valueOf(selectedStatus));
                     }
                     writeLock.unlock();
+                    new ThumbnailFetchingTask(getActivity()).execute();
                     listingAdapter.notifyDataSetChanged();
+                    bookCountLabel.setText(String.format("%d Books",filteredLibrary.size()));
                 }
             }
 
@@ -162,6 +175,8 @@ public class RequestLibraryFragment extends Fragment {
 
             }
         });
+
+        new ThumbnailFetchingTask(getActivity()).execute();
         listingAdapter.notifyDataSetChanged();
         return view;
     }
@@ -170,6 +185,67 @@ public class RequestLibraryFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        manager.getAllListingsRef().removeEventListener(listener);
+
+        try {
+            manager.getAllListingsRef().removeEventListener(listener);//todo I get a null listener error here
+        } catch (Exception e){
+            //who knows
+        }
     }
+
+
+    public class ThumbnailFetchingTask extends AsyncTask<Void, Void, Boolean> {
+        Activity context;
+
+        ThumbnailFetchingTask(Activity context) {
+            this.context = context;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            writeLock.lock();
+            for (final BookListing bl : filteredLibrary) {
+                if (bl.getPhotoBitmap() == null) {
+
+                    Log.d("mattX", bl.toString() + " photo is null");
+
+                    Bitmap thumbnailBitmap = manager.getCachedThumbnail(bl);
+
+                    if (thumbnailBitmap == null) {
+                        Log.d("mattX", bl.toString() + " photo is not cached");
+                        manager.fetchListingThumbnail(bl,
+                                listingAdapter,
+
+                                new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.d("mattX", bl.toString() + " photo fethcing falied");
+                                        Log.d("imageFetching", "fetching failed, cause: " + e.getLocalizedMessage());
+                                    }
+                                });
+
+                    } else {
+                        Log.d("mattX", bl.toString() + " photo is cached in ownbooks");
+                        bl.setPhoto(new Photo(thumbnailBitmap));
+                        libraryListView.post(new Runnable()
+                        {
+                            @Override
+                            public void run() {
+                                listingAdapter.notifyDataSetChanged();
+                            }
+                        });
+                    }
+                }
+
+            }
+            writeLock.unlock();
+
+
+            return true;
+        }
+
+
+    }
+
+
 }

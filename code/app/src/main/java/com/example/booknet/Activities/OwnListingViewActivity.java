@@ -25,7 +25,6 @@ import com.example.booknet.Dialogs.EditBookDialog;
 import com.example.booknet.Dialogs.PhotoEditDialog;
 import com.example.booknet.Dialogs.VerifyBorrowDialog;
 import com.example.booknet.Model.BookListing;
-import com.example.booknet.Model.CurrentUser;
 import com.example.booknet.R;
 
 /**
@@ -52,7 +51,7 @@ public class OwnListingViewActivity extends AppCompatActivity implements DialogC
     private ImageButton editPhotoButton;
     private ConstraintLayout geoLocationBlock;
     private Button setLocationButton;
-    private ImageView viewLocationButton;
+    private Button viewLocationButton;
     private TextView geolocationLabel;
     private ImageButton backButton;
     private PhotoEditDialog photoEditDialog;
@@ -60,6 +59,9 @@ public class OwnListingViewActivity extends AppCompatActivity implements DialogC
 
     //Activity Data
     private BookListing listing;
+    private String intenntIsbn;
+    private int intentDupId;
+
 
     /**
      * Called when the activity is created.
@@ -102,14 +104,14 @@ public class OwnListingViewActivity extends AppCompatActivity implements DialogC
         Intent intent = getIntent();
         //Check if given info to fetch listing
         if (intent.hasExtra("isbn")) {
-            String isbn = intent.getStringExtra("isbn");
-            int dupID = intent.getIntExtra("dupID", 0);
+            intenntIsbn = intent.getStringExtra("isbn");
+            intentDupId = intent.getIntExtra("dupID", 0);
 
-            listing = manager.readUserOwnedBookListing(isbn, dupID);
+            listing = manager.readUserOwnedBookListing(intenntIsbn, intentDupId);
         }
 
         //Fill Layout
-        updateLayout(listing);
+        updateLayout();
 
         // todo: fix edit
         editButton.setOnClickListener(new View.OnClickListener() {
@@ -151,30 +153,43 @@ public class OwnListingViewActivity extends AppCompatActivity implements DialogC
 
         //Copied from Jamie's assignment 1
         //Create the dialog for the Delete button
-        final AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
-        alertBuilder.setTitle("Confirm");
-        alertBuilder.setMessage("Are you sure you want to delete this item?");
-        alertBuilder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+        final AlertDialog.Builder deleteAlertBuilder = new AlertDialog.Builder(this);
+        deleteAlertBuilder.setTitle("Confirm");
+        deleteAlertBuilder.setMessage("Are you sure you want to delete this item?");
+        deleteAlertBuilder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //Delete
-                Toast.makeText(getApplicationContext(), "Deleted Item", Toast.LENGTH_SHORT).show();
-                manager.removeBookListing(listing);
-                finish();
+                deleteListing(listing);
             }
         });
-        alertBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        deleteAlertBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //Toast.makeText(getApplicationContext(), "Did not delete.", Toast.LENGTH_SHORT).show();
             }
         });
 
+        final AlertDialog.Builder okAlertBuilder = new AlertDialog.Builder(this);
+        okAlertBuilder.setTitle("Error");
+        okAlertBuilder.setMessage("You can't delete a listing while it's being borrowed.");
+        okAlertBuilder.setCancelable(false);
+        okAlertBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Confirm Delete with a Dialog
-                alertBuilder.create().show();
+                if (listing.getStatus() == BookListingStatus.Borrowed) {
+                    okAlertBuilder.create().show();
+                } else {
+                    //Confirm Delete with a Dialog
+                    deleteAlertBuilder.create().show();
+                }
             }
         });
 
@@ -190,38 +205,48 @@ public class OwnListingViewActivity extends AppCompatActivity implements DialogC
         setLocationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setGeoLocation();
+                openGeoLocation(true);
             }
         });
 
         viewLocationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                viewGeoLocation();
+                openGeoLocation(false);
             }
         });
         //#endregion
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if (listing != null) {
+            updateLayout();
+        } else {
+            Log.d("jamie", "Listing was null, attempt to read from db again");
+            listing = manager.readUserOwnedBookListing(intenntIsbn, intentDupId);
+        }
+    }
+
+    @Override
     public void onDialogClose() {
-        updateLayout(listing);
+        updateLayout();
     }
 
     /**
      * Updates the contents of the layout objects. Called when creating the activity
      * and should be called whenever the listing data changes.
      *
-     * @param listing
      */
-    private void updateLayout(BookListing listing) {
+    private void updateLayout() {
         Log.d("jamie", "update own listing layout");
         bookTitleLabel.setText(listing.getBook().getTitle());
         bookAuthorLabel.setText(listing.getBook().getAuthor());
         isbnLabel.setText(listing.getBook().getIsbn());
         statusLabel.setText(listing.getStatus().toString());
 
-        Bitmap thumbnail = listing.getPhotoBitmap();
+        Bitmap thumbnail = manager.getCachedThumbnail(listing);
         if (thumbnail != null) {
             photoThumbnail.setImageBitmap(thumbnail);
         } else {
@@ -277,6 +302,18 @@ public class OwnListingViewActivity extends AppCompatActivity implements DialogC
     }
 
     /**
+     * Requests the listing be deleted from the database.
+     *
+     * @param listing The listing to delete
+     */
+    private void deleteListing(BookListing listing) {
+        Toast.makeText(getApplicationContext(), "Deleted Item", Toast.LENGTH_SHORT).show();
+        manager.removeBookListing(listing);
+        finish();
+    }
+
+
+    /**
      * Start an activity for editing the photo for this listing.
      */
     private void editPhoto() {
@@ -324,25 +361,21 @@ public class OwnListingViewActivity extends AppCompatActivity implements DialogC
     }
 
     /**
-     * Starts a dialog to select a geolocation.
+     * Starts a dialog to select or view a geolocation.
+     * The user will be able to set a position if editmode is on.
+     *
+     * @param editmode Whether to open the map in edit mode
      */
-    private void setGeoLocation() {
+    private void openGeoLocation(boolean editmode) {
         //Toast.makeText(getApplicationContext(), "Select a Location", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(this, MapSelectActivity.class);
         intent.putExtra("username", listing.getOwnerUsername());
         intent.putExtra("bookisbn", listing.getBook().getIsbn());
         intent.putExtra("dupID", listing.getDupInd());
-        intent.putExtra("editmode", true);
+        intent.putExtra("editmode", editmode);
         startActivity(intent);
     }
 
-    /**
-     * Starts a dialog to view the geolocation
-     */
-    private void viewGeoLocation() {
-        Toast.makeText(getApplicationContext(), "View GeoLocation Not Implemented", Toast.LENGTH_SHORT).show();
-        //todo implement
-    }
 
     /**
      * Gets the result and passes it up so nested fragments can get it.

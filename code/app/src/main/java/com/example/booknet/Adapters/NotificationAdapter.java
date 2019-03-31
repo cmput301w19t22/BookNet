@@ -13,23 +13,23 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.booknet.DatabaseManager;
-import com.example.booknet.Model.Notification;
-import com.example.booknet.Model.Notifications;
+import com.example.booknet.Model.InAppNotification;
+import com.example.booknet.Model.InAppNotifications;
 import com.example.booknet.R;
 
 public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapter.NotificationViewHolder> {
 
     //The list of BookListings to display
-    private Notifications notifications;
+    private InAppNotifications inAppNotifications;
 
     //The activity this adapter was created from
     private FragmentActivity sourceActivity;
 
     DatabaseManager manager = DatabaseManager.getInstance();
 
-    public NotificationAdapter(Notifications notifications, FragmentActivity sourceActivity) {
+    public NotificationAdapter(InAppNotifications inAppNotifications, FragmentActivity sourceActivity) {
         Log.d("seanTag", "Construct adaptor");
-        this.notifications = notifications;
+        this.inAppNotifications = inAppNotifications;
         this.sourceActivity = sourceActivity;
     }
 
@@ -41,19 +41,19 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                 .inflate(R.layout.notification_item_list, viewGroup, false);
         NotificationAdapter.NotificationViewHolder newNotificationViewHolder = new NotificationAdapter.NotificationViewHolder(view);
 
-        //Log.d("seanTag", "notifications onCreateView");
+        //Log.d("seanTag", "inAppNotifications onCreateView");
 
         return newNotificationViewHolder;
     }
 
     @Override
     public void onBindViewHolder(@NonNull final NotificationViewHolder notificationViewHolder, int position) {
-        //Get the notifications at the provided position
-        final Notification item = notifications.getNotificationAtPosition(position);
+        //Get the inAppNotifications at the provided position
+        final InAppNotification item = inAppNotifications.getNotificationAtPosition(position);
         //Index to pass to the edit activity
         final int index = notificationViewHolder.getAdapterPosition();
 
-        //Fill the text fields with the object's notifications
+        //Fill the text fields with the object's inAppNotifications
         //bookListingViewHolder.bookThumbnail.//todo apply photo
         //notificationViewHolder.notificationBookThumbnail.setImageResource(R.mipmap.ic_launcher);
         notificationViewHolder.notificationBookTitle.setText(item.getRequestedBookListing().getBook().getTitle());
@@ -65,9 +65,9 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         notificationViewHolder.notificationStatus.setText(item.getRequestedBookListing().getStatus().toString());
         notificationViewHolder.item = item;
 
-        if ((position & 1) == 1) {//check odd
+        /*if ((position & 1) == 1) {//check odd
             notificationViewHolder.notificationBody.setBackgroundColor(sourceActivity.getResources().getColor(R.color.lightDarkerTint));
-        }
+        }*/
 
         //Add the click listener to the item
         notificationViewHolder.notificationBody.setOnClickListener(new View.OnClickListener() {
@@ -108,8 +108,8 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         });
     }
 
-    private void removeNotification(Notification notification) {
-        manager.removeNotification(notification);
+    private void removeNotification(InAppNotification inAppNotification) {
+        manager.removeNotification(inAppNotification);
     }
 
     /**
@@ -119,7 +119,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
      */
     @Override
     public int getItemCount() {
-        return notifications.size();
+        return inAppNotifications.size();
     }
 
     public static class NotificationViewHolder extends RecyclerView.ViewHolder {
@@ -134,7 +134,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         private ConstraintLayout expandButtons;
         private Button dismissButton;
         private Button gotoButton;
-        private Notification item;
+        private InAppNotification item;
 
         /**
          * Creates the BookListingViewHolder

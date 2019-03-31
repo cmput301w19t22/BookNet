@@ -1,6 +1,7 @@
 package com.example.booknet.Adapters;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.FragmentActivity;
@@ -9,6 +10,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.OvershootInterpolator;
+import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -85,7 +90,13 @@ public class RequestedLibraryAdapter extends RecyclerView.Adapter<RequestedLibra
 
         //Fill the text fields with the object's library
         //requestListingViewHolder.bookThumbnail.//todo listing photo
-        requestListingViewHolder.bookThumbnail.setImageResource(R.drawable.ic_book_default);
+
+        Bitmap thumbnailBitmap = item.getPhotoBitmap();
+        if (thumbnailBitmap == null)
+            requestListingViewHolder.bookThumbnail.setImageResource(R.drawable.ic_book_default);
+        else
+            requestListingViewHolder.bookThumbnail.setImageBitmap(thumbnailBitmap);
+
         requestListingViewHolder.bookTitleLabel.setText(item.getBook().getTitle());
         requestListingViewHolder.bookAuthorLabel.setText(item.getBook().getAuthor());
         requestListingViewHolder.isbnLabel.setText(item.getBook().getIsbn());
@@ -94,9 +105,9 @@ public class RequestedLibraryAdapter extends RecyclerView.Adapter<RequestedLibra
         requestListingViewHolder.statusLabel.setText(item.getStatus().toString());
         Log.d("mattTag", "really? " + item.getBook().toString() + " " + item.getStatus());
 
-        if ((position & 1) == 1) {//check odd
+        /*if ((position & 1) == 1) {//check odd
             requestListingViewHolder.constraintLayout.setBackgroundColor(sourceActivity.getResources().getColor(R.color.lightDarkerTint));
-        }
+        }*/
 
         //Add the click listener to the item
         requestListingViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -106,6 +117,14 @@ public class RequestedLibraryAdapter extends RecyclerView.Adapter<RequestedLibra
             }
         });
 
+        AlphaAnimation animIn = new AlphaAnimation(0.0f, 1.0f);
+        animIn.setDuration(500);
+        requestListingViewHolder.itemView.startAnimation(animIn);
+        ScaleAnimation anim2 = new ScaleAnimation(0.5f, 1f, 0.5f, 1f,
+                Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        anim2.setDuration(500);
+        anim2.setInterpolator(new OvershootInterpolator());
+        requestListingViewHolder.itemView.startAnimation(anim2);
     }
 
     /**

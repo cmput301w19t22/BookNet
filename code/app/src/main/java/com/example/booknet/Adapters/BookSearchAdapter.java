@@ -9,6 +9,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnticipateOvershootInterpolator;
+import android.view.animation.OvershootInterpolator;
+import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,6 +22,7 @@ import com.example.booknet.Model.BookLibrary;
 import com.example.booknet.Model.BookListing;
 import com.example.booknet.R;
 
+import java.util.ArrayList;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 //Reused/adapted code from assignment 1
@@ -37,10 +43,19 @@ public class BookSearchAdapter extends RecyclerView.Adapter<BookSearchAdapter.Bo
     //The activity this adapter was created from
     private FragmentActivity sourceActivity;
 
+    private ArrayList<Animation> animations = new ArrayList<>();
+    private ArrayList<View> views = new ArrayList<>();
+
+    private boolean allowNewAnimation = true;
+
+    public void setAllowNewAnimation(boolean allowNewAnimation) {
+        this.allowNewAnimation = allowNewAnimation;
+    }
 
     /**
      * Creates the adapter
-     *  @param data           The list of BookListings to use for the list display
+     *
+     * @param data           The list of BookListings to use for the list display
      * @param sourceActivity The activity that created this adapter
      * @param readLock
      */
@@ -48,6 +63,15 @@ public class BookSearchAdapter extends RecyclerView.Adapter<BookSearchAdapter.Bo
         this.data = data;
         this.sourceActivity = sourceActivity;
         this.readLock = readLock;
+        registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onChanged() {
+                super.onChanged();
+
+                Log.d("jamie", "data obsrever on change");
+                //setAllowNewAnimation(false);
+            }
+        });
     }
 
     /**
@@ -81,11 +105,10 @@ public class BookSearchAdapter extends RecyclerView.Adapter<BookSearchAdapter.Bo
         final int index = bookListingViewHolder.getAdapterPosition();
 
         //Fill the text fields with the object's data
-        if (item.getPhotoBitmap() != null){
+        if (item.getPhotoBitmap() != null) {
             Log.d("mattX", "yeah boi");
             bookListingViewHolder.bookThumbnail.setImageBitmap(item.getPhotoBitmap());
-        }
-        else{
+        } else {
             Log.d("mattX", "nahnah");
             bookListingViewHolder.bookThumbnail.setImageResource(R.drawable.ic_book_default);
         }
@@ -97,9 +120,9 @@ public class BookSearchAdapter extends RecyclerView.Adapter<BookSearchAdapter.Bo
         bookListingViewHolder.statusLabel.setText(item.getStatus().toString());
         bookListingViewHolder.item = item;
 
-        if ((position & 1) == 1) {//check odd
+        /*if ((position & 1) == 1) {//check odd
             bookListingViewHolder.constraintLayout.setBackgroundColor(sourceActivity.getResources().getColor(R.color.lightDarkerTint));
-        }
+        }*/
 
         //Add the click listener to the item
         /**
@@ -112,7 +135,82 @@ public class BookSearchAdapter extends RecyclerView.Adapter<BookSearchAdapter.Bo
             }
         });
 
+
+        /*AlphaAnimation animIn = new AlphaAnimation(0.0f, 1.0f);
+        animIn.setDuration(500);
+        bookListingViewHolder.itemView.startAnimation(animIn);
+        ScaleAnimation anim2 = new ScaleAnimation(0f, 1f, 0f, 1f,
+                Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        anim2.setDuration(500);
+        anim2.setInterpolator(new OvershootInterpolator());
+        bookListingViewHolder.itemView.startAnimation(anim2);*/
         readLock.unlock();
+    }
+
+    @Override
+    public void onViewRecycled(@NonNull BookListingViewHolder holder) {
+        super.onViewRecycled(holder);
+        if (allowNewAnimation) {
+            AlphaAnimation animIn = new AlphaAnimation(0.0f, 1.0f);
+            animIn.setDuration(500);
+            holder.itemView.startAnimation(animIn);
+            final ScaleAnimation anim2 = new ScaleAnimation(0.5f, 1f, 0.5f, 1f,
+                    Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+            anim2.setDuration(500);
+            anim2.setInterpolator(new OvershootInterpolator());
+            holder.itemView.startAnimation(anim2);
+            //anim2.cancel();
+            anim2.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                    animations.add(anim2);
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    if (animations.contains(animation)) {
+                        animations.remove(animation);
+                    }
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+
+                }
+            });
+            Log.d("jamie", "animated list item");
+        } else {
+            Log.d("jamie", "not allowed animation");
+        }
+    }
+
+    /**
+     * Cancels all animations being performed by items in this adapter.
+     */
+    public void cancelAllAnimations() {
+        for (Animation a : animations) {
+            a.cancel();
+        }
+        for (View v : views) {
+            v.clearAnimation();
+            v.animate().cancel();
+        }
+        animations.clear();
+    }
+
+    @Override
+    public void onViewDetachedFromWindow(@NonNull BookListingViewHolder holder) {
+        super.onViewDetachedFromWindow(holder);
+        holder.itemView.clearAnimation();
+        if (views.contains(holder.itemView)) {
+            views.remove(holder.itemView);
+        }
+    }
+
+    @Override
+    public void onViewAttachedToWindow(@NonNull BookListingViewHolder holder) {
+        super.onViewAttachedToWindow(holder);
+        views.add(holder.itemView);
     }
 
     /**

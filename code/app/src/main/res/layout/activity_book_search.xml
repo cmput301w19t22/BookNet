@@ -5,11 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
 
-    android:background="@color/brightBackground"
+    android:background="@color/darkBackground"
     tools:context=".Fragments.BookSearchFragment">
 
     <android.support.constraint.ConstraintLayout
-        android:id="@+id/searchzone"
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary"
@@ -20,19 +20,23 @@
         <Spinner
             android:id="@+id/searchFilter"
             style="@style/BookNet.Spinner"
-            android:layout_width="24dp"
-            android:layout_height="wrap_content"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="8dp"
-            android:background="@drawable/ic_filter_list_black_24dp"
+            android:animateLayoutChanges="true"
+            android:background="@drawable/bg_spinner_filter"
             android:backgroundTint="@color/buttonBlankFocus"
+            android:clipToPadding="true"
             android:dropDownWidth="wrap_content"
             android:entries="@array/status_array"
+            android:padding="8dp"
             android:popupElevation="4dp"
             android:prompt="@string/status_filter_prompt"
             android:spinnerMode="dropdown"
             android:tooltipText="Filter By Status"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -50,6 +54,21 @@
 
         </SearchView>
 
+        <TextView
+            android:id="@+id/titleCard"
+            style="@style/BookNet.Toolbar.Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:text="Search"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <Space
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -63,12 +82,39 @@
         android:id="@+id/searchResults"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:background="@color/darkBackground"
         android:scrollbars="vertical"
         android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/bottombar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/searchzone"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
         tools:listitem="@layout/book_listing_item_list" />
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/bottombar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/bg_navigation"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:id="@+id/resultsNumLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="8dp"
+            android:text="## Results"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </android.support.constraint.ConstraintLayout>
 
 </android.support.constraint.ConstraintLayout>

@@ -1,5 +1,6 @@
 package com.example.booknet.Model;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -8,7 +9,7 @@ import java.util.Map;
 public class ReviewManager {
 
     //Collection to keep the reviews in each entry in this map is the list
-    private Map<String, ReviewList> userReviews;
+    private Map<String, ReviewList> userReviews = new HashMap<>();
 
     /**
      * Adds the review to the collection.

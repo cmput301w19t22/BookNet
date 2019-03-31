@@ -246,7 +246,6 @@ public class BookSearchFragment extends Fragment {
             writeLock.lock();
             for (final BookListing bl : filteredLibrary) {
                 if (bl.getPhotoBitmap() == null) {
-
                     Log.d("mattX", bl.toString() + " photo is null");
 
                     Bitmap thumbnailBitmap = manager.getCachedThumbnail(bl);
@@ -265,7 +264,6 @@ public class BookSearchFragment extends Fragment {
                     } else {
                         bl.setPhoto(new Photo(thumbnailBitmap));
 
-
                         // weird bug happends while changing tab if you simply listingAdpater.notifyDataSetChanged()
                         // solution found at: https://stackoverflow.com/questions/43221847/cannot-call-this-method-while-recyclerview-is-computing-a-layout-or-scrolling-wh
                         searchResults.post(new Runnable() {
@@ -278,13 +276,10 @@ public class BookSearchFragment extends Fragment {
                                 listingAdapter.cancelAllAnimations();
                             }
                         });
-
                     }
                 }
-
             }
             writeLock.unlock();
-
 
             return true;
         }

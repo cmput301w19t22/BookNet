@@ -14,7 +14,7 @@ public enum NotificationType {
     public String toString() {
         switch (this) {
             case hasRequested:
-                return "has requested this book";
+                return "has requested a book";
             case hasAccepted:
                 return "has accepted your book request";
             case hasDeclined:

@@ -9,26 +9,40 @@ import android.support.v4.app.NotificationCompat;
 public class NotificationData {
     /** Represents standard data needed for a InAppNotification. */
     // Standard notification values:
-    protected String mContentTitle;
-    protected String mContentText;
-    protected int mPriority;
+    private String mContentTitle;
+    private String mContentText;
+    private int mPriority;
 
     // InAppNotification channel values (O and above):
-    protected String mChannelId;
-    protected CharSequence mChannelName;
-    protected String mChannelDescription;
-    protected int mChannelImportance;
-    protected boolean mChannelEnableVibrate;
-    protected int mChannelLockscreenVisibility;
+    private String mChannelId;
+    private CharSequence mChannelName;
+    private String mChannelDescription;
+    private int mChannelImportance;
+    private boolean mChannelEnableVibrate;
+    private int mChannelLockscreenVisibility;
 
     public NotificationData() {
         this.mPriority = NotificationCompat.PRIORITY_DEFAULT;
         this.mChannelId = "channel_reminder_1";
-        this.mChannelName = "Sample Reminder";
+        this.mChannelName = "BookNet Notification";
 
         this.mContentTitle = "A InAppNotification";
         this.mContentText = "To notify you of important";
         this.mChannelDescription = "Test InAppNotification";
+
+        this.mChannelImportance = NotificationManager.IMPORTANCE_DEFAULT;
+        this.mChannelEnableVibrate = false;
+        this.mChannelLockscreenVisibility = NotificationCompat.VISIBILITY_PUBLIC;
+    }
+
+    public NotificationData(String mContentText, String mContentTitle, String mChannelDescription) {
+        this.mPriority = NotificationCompat.PRIORITY_DEFAULT;
+        this.mChannelId = "channel_reminder_1";
+        this.mChannelName = "BookNet Notification";
+
+        this.mContentTitle = mContentTitle;
+        this.mContentText = mContentText;
+        this.mChannelDescription = mChannelDescription;
 
         this.mChannelImportance = NotificationManager.IMPORTANCE_DEFAULT;
         this.mChannelEnableVibrate = false;

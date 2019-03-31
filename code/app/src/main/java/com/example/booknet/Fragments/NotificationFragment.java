@@ -12,14 +12,15 @@ import android.view.ViewGroup;
 import com.example.booknet.Adapters.SpaceDecoration;
 import com.example.booknet.DatabaseManager;
 import com.example.booknet.Adapters.NotificationAdapter;
-import com.example.booknet.Model.InAppNotifications;
+import com.example.booknet.Model.CurrentUser;
+import com.example.booknet.Model.InAppNotificationList;
 import com.example.booknet.R;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
 public class NotificationFragment extends Fragment {
 
-    private InAppNotifications inAppNotifications;
+    private InAppNotificationList inAppNotificationList;
     private RecyclerView notificationsListView;
     private NotificationAdapter notificationAdapter;
     private ValueEventListener notificationListener;
@@ -41,13 +42,13 @@ public class NotificationFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_notifications, container, false);
 
-        inAppNotifications = manager.getAllNotifications();
+        inAppNotificationList = manager.readNotifications(CurrentUser.getInstance().getUsername());
 
         Log.d("seanTag", "onCreateView InAppNotification");
 
-        notificationsListView = view.findViewById(R.id.inAppNotifications);
+        notificationsListView = view.findViewById(R.id.inAppNotificationList);
         notificationsListView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        notificationAdapter = new NotificationAdapter(inAppNotifications, getActivity());
+        notificationAdapter = new NotificationAdapter(inAppNotificationList, getActivity());
         notificationsListView.setAdapter(notificationAdapter);
         notificationsListView.addItemDecoration(new SpaceDecoration(12,16));
 

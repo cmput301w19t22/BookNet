@@ -138,20 +138,15 @@ public class MainActivity extends FragmentActivity {
 
         mNotificationManagerCompat = NotificationManagerCompat.from(getApplicationContext());
 
-        NotificationManager notificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-        notificationManager.cancel(NOTIFICATION_ID);
-
         listener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot data : dataSnapshot.getChildren()) {
-                    InAppNotification inAppNotification = data.getValue(InAppNotification.class);
-                    if (inAppNotification != null) {
+                for (DataSnapshot user : dataSnapshot.getChildren()) {
+                    for (DataSnapshot data : user.getChildren()) {
+                        InAppNotification inAppNotification = data.getValue(InAppNotification.class);
                         if (inAppNotification.getUserReceivingNotification().equals(CurrentUser.getInstance().getUsername()) && !inAppNotification.getPushNotificationSent()) {
                             Log.d("seanTag", "send push notification");
-                            generateNotification();
+                            generateNotification(inAppNotification.getUserMakingNotification().toString() + inAppNotification.getNotificationType().toString(), "BookNet Notification", "test");
                             inAppNotification.setPushNotificationSent(true);
                             manager.writeNotification(inAppNotification);
                         }
@@ -160,7 +155,6 @@ public class MainActivity extends FragmentActivity {
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
             }
         };
         manager.getNotificationsRef().addValueEventListener(listener);
@@ -247,9 +241,9 @@ public class MainActivity extends FragmentActivity {
         Log.d("mattNeo", "yee I deed it");
     }
 
-    public void generateNotification() {
+    public void generateNotification(String text, String title, String description) {
         Log.d("seanTag", "generateBigTextStyleNotification()");
-        NotificationData notificationData = new NotificationData();
+        NotificationData notificationData = new NotificationData(text, title, description);
 
         String notificationChannelId =
                 NotificationUtil.createNotificationChannel(this, notificationData);

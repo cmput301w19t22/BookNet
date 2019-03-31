@@ -17,7 +17,8 @@ import com.example.booknet.Model.BookLibrary;
 import com.example.booknet.Model.BookListing;
 import com.example.booknet.Model.CurrentUser;
 import com.example.booknet.Model.InAppNotification;
-import com.example.booknet.Model.InAppNotifications;
+import com.example.booknet.Model.InAppNotificationList;
+import com.example.booknet.Model.InAppNotificationManager;
 import com.example.booknet.Model.Photo;
 import com.example.booknet.Model.Review;
 import com.example.booknet.Model.ReviewList;
@@ -58,7 +59,7 @@ public class DatabaseManager {
     private BookLibrary allBookLibrary = new BookLibrary();
     private Map<String, String> usernames = new HashMap<>();
     private Map<String, HashMap<String, String>> allUserProfile = new HashMap<>();
-    private InAppNotifications inAppNotifications = new InAppNotifications();
+    private InAppNotificationManager inAppNotificationManager = new InAppNotificationManager();
     private ReviewManager reviewManager = new ReviewManager();
     //private ReviewList reviewList = new ReviewList();
 
@@ -787,7 +788,8 @@ public class DatabaseManager {
      */
     public void writeReview(Review review) {
         String receiverId = getUIDFromName(review.getReviewedUsername());
-        reviewRef.child(receiverId).child(review.getReviewerUsername()
+        reviewRef.child(receiverId)
+                 .child(review.getReviewerUsername()
                 + "-" + review.getDupId()).setValue(review);
     }
 
@@ -797,11 +799,6 @@ public class DatabaseManager {
      * @return A list of the Current user's reviewList, if any are found
      */
     public ReviewList readReviews(String username) {
-        //ReviewList cloned;
-        //notificationReadLock.lock();
-        //cloned = reviewList.getReviews(username);
-        //notificationReadLock.unlock();
-
         return reviewManager.getReviews(username);
     }
 
@@ -849,24 +846,21 @@ public class DatabaseManager {
 
     //#region Notifications
 
-
-    public InAppNotifications getAllNotifications() {
-        //Log.d("seanTag", "Get Notifications");
-
-        InAppNotifications cloned;
-        notificationReadLock.lock();
-        cloned = inAppNotifications.clone();
-        notificationReadLock.unlock();
-
-        return cloned;
+    /**
+     * Reads the notificationList for the current user from the database
+     *
+     * @return A list of the Current user's notificationList, if any are found
+     */
+    public InAppNotificationList readNotifications(String username) {
+        return inAppNotificationManager.getInAppNotifications(username);
     }
 
-    public void writeNotification(InAppNotification notification) {
-        //Log.d("seanTag", "write notification");
-        notificationRef.child(notification.getUserReceivingNotification()
-                + "-" + notification.getUserMakingNotification()
-                + "-" + notification.getRequestedBookListing().getISBN()
-                + "-" + notification.getRequestedBookListing().getDupInd()).setValue(notification);
+    public void writeNotification(InAppNotification inAppNotification) {
+        String receiverId = getUIDFromName(inAppNotification.getUserReceivingNotification());
+        Log.d("seanTag", "write noti "+receiverId);
+        notificationRef.child(receiverId)
+                 .child(inAppNotification.getUserMakingNotification()
+                + "-" + inAppNotification.getRequestedBookListing().getDupInd()).setValue(inAppNotification);
     }
 
 
@@ -889,7 +883,6 @@ public class DatabaseManager {
 
         progressDialog.show();
         new InitiationTask(context).execute();
-
     }
 
     public void setOnLoginPage(boolean b) {
@@ -1114,20 +1107,19 @@ public class DatabaseManager {
             notificationListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-
-                    //notificationWriteLock.lock();
-                    inAppNotifications.removeAllNotificiations();
+                    inAppNotificationManager.clear();
 
                     Log.d("seanTag", "start noti read for " + CurrentUser.getInstance().getUsername());
 
-                    for (DataSnapshot data : dataSnapshot.getChildren()) {
-                        InAppNotification inAppNotification = data.getValue(InAppNotification.class);
-                        if (inAppNotification.getUserReceivingNotification().equals(CurrentUser.getInstance().getUsername())) {
-                            Log.d("seanTag", "new noti " + inAppNotification.getRequestedBookListing().getISBN());
-                            inAppNotifications.addNotification(inAppNotification);
+                    for (DataSnapshot user : dataSnapshot.getChildren()) {
+                        for (DataSnapshot data : user.getChildren()) {
+                            InAppNotification inAppNotification = data.getValue(InAppNotification.class);
+                            if (inAppNotification.getUserReceivingNotification().equals(CurrentUser.getInstance().getUsername())) {
+                                Log.d("seanTag", "new noti " + inAppNotification.getUserReceivingNotification());
+                                inAppNotificationManager.addInAppNotification(inAppNotification);
+                            }
                         }
                     }
-                    //notificationWriteLock.unlock();
                 }
 
                 @Override
@@ -1135,14 +1127,12 @@ public class DatabaseManager {
                     System.out.println("The read failed: " + databaseError.getCode());
                 }
             };
-            notificationRef = FirebaseDatabase.getInstance().getReference("InAppNotifications/" + CurrentUser.getInstance().getUsername());
+            notificationRef = FirebaseDatabase.getInstance().getReference("InAppNotificationList");
             notificationRef.addValueEventListener(notificationListener);
 
             reviewListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    //notificationWriteLock.lock();
-                    //reviewList.removeAllReviews();
                     reviewManager.clear();
 
                     Log.d("seanTag", "start review read for " + CurrentUser.getInstance().getUsername());
@@ -1154,10 +1144,6 @@ public class DatabaseManager {
                             reviewManager.addReview(review);
                             Log.d("seanTag", "new review ");
                         }
-                        //Review review = data.getValue(Review.class);
-                        //if (review.getUserReceivingNotification().equals(CurrentUser.getInstance().getUsername())) {
-                        //reviewList.addReview(review);
-                        //}
                     }
                 }
 

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/bookLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -17,7 +18,7 @@
         android:background="@drawable/bg_round_rectangle_4"
         android:backgroundTint="@color/photoBackgroundLight"
         android:cropToPadding="true"
-        android:padding="4dp"
+        android:padding="2dp"
         android:scaleType="centerCrop"
         android:src="@drawable/ic_photo_lightgray_24dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -27,10 +28,11 @@
 
     <TextView
         android:id="@+id/bookTitleLabel"
-        style="@style/BookNet.Text.Main.Title"
+        style="@style/BookNet.Text.Main"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+
         android:ellipsize="marquee"
         android:focusable="auto"
         android:focusableInTouchMode="true"
@@ -42,6 +44,7 @@
         android:scrollHorizontally="true"
         android:singleLine="false"
         android:text="[Book Title]"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/bookThumbnail"
         app:layout_constraintTop_toTopOf="parent" />
@@ -62,6 +65,7 @@
         android:scrollHorizontally="true"
         android:singleLine="false"
         android:text="[Author]"
+        android:textStyle="italic"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/bookTitleLabel"
         app:layout_constraintTop_toBottomOf="@+id/bookTitleLabel" />
@@ -93,19 +97,20 @@
         android:text="[OwnerName]"
         app:layout_constraintBaseline_toBaselineOf="@+id/ownedBy"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/statusLabel" />
+        app:layout_constraintStart_toEndOf="@+id/ownedBy" />
 
     <TextView
         android:id="@+id/statusLabel"
         style="@style/BookNet.Text.Main"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
+        android:elevation="2dp"
         android:paddingLeft="4dp"
         android:text="[Status]"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/bookThumbnail" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView
         android:id="@+id/ownedBy"
@@ -119,5 +124,17 @@
         app:layout_constraintBottom_toTopOf="@+id/statusLabel"
         app:layout_constraintStart_toEndOf="@+id/bookThumbnail"
         app:layout_constraintTop_toBottomOf="@+id/isbnLabel" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:adjustViewBounds="false"
+        android:src="@drawable/ic_ribbon_left"
+        android:tint="@color/textBackDark"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/ic_ribbon_left" />
 
 </android.support.constraint.ConstraintLayout>

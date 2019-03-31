@@ -18,13 +18,13 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.example.booknet.Adapters.OwnedLibraryAdapter;
 import com.example.booknet.Adapters.SpaceDecoration;
-import com.example.booknet.Model.BookLibrary;
-import com.example.booknet.Model.BookListing;
 import com.example.booknet.Constants.BookListingStatus;
 import com.example.booknet.DatabaseManager;
 import com.example.booknet.Dialogs.NewBookDialog;
-import com.example.booknet.Adapters.OwnedLibraryAdapter;
+import com.example.booknet.Model.BookLibrary;
+import com.example.booknet.Model.BookListing;
 import com.example.booknet.Model.Photo;
 import com.example.booknet.R;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -46,6 +46,7 @@ public class OwnedLibraryFragment extends Fragment {
     private RecyclerView libraryListView;
     private OwnedLibraryAdapter listingAdapter;
     private ImageButton addButton;
+    private TextView bookCountLabel;
     private ValueEventListener valueEventListener = null;
 
     //Activity Data
@@ -84,6 +85,8 @@ public class OwnedLibraryFragment extends Fragment {
         View view = inflater.inflate(R.layout.activity_owned_library, container, false);
 
         filteredLibrary = new BookLibrary();
+        bookCountLabel = view.findViewById(R.id.resultsNumLabel);
+
         //Add Click Listener
         addButton = view.findViewById(R.id.addBookButton);
         addButton.setOnClickListener(new View.OnClickListener() {
@@ -121,6 +124,7 @@ public class OwnedLibraryFragment extends Fragment {
                 new ThumbnailFetchingTask(getActivity()).execute();
 
                 listingAdapter.notifyDataSetChanged();
+                bookCountLabel.setText(String.format("%d Books", filteredLibrary.size()));
             }
 
             @Override
@@ -133,12 +137,14 @@ public class OwnedLibraryFragment extends Fragment {
 
         filteredLibrary = library.clone();
 
+        bookCountLabel.setText(String.format("%d Books", filteredLibrary.size()));
+
         //Apply Adapter to RecyclerView
         libraryListView = view.findViewById(R.id.bookLibrary);
         libraryListView.setLayoutManager(new LinearLayoutManager(getActivity()));
         listingAdapter = new OwnedLibraryAdapter(filteredLibrary, getActivity());
         libraryListView.setAdapter(listingAdapter);
-        libraryListView.addItemDecoration(new SpaceDecoration(12,16));
+        libraryListView.addItemDecoration(new SpaceDecoration(12, 16));
 
         Spinner filter = view.findViewById(R.id.filterSpinner);
 
@@ -155,6 +161,7 @@ public class OwnedLibraryFragment extends Fragment {
                     }
                     new ThumbnailFetchingTask(getActivity()).execute();
                     listingAdapter.notifyDataSetChanged();
+                    bookCountLabel.setText(String.format("%d Books", filteredLibrary.size()));
                 }
 
             }
@@ -181,7 +188,11 @@ public class OwnedLibraryFragment extends Fragment {
     }
 
     public void onDestroy() {
-        manager.getUserListingsRef().removeEventListener(listener);
+        try {
+            manager.getUserListingsRef().removeEventListener(listener);
+        } catch (NullPointerException e) {
+            //todo what is?
+        }
         super.onDestroy();
 
     }
@@ -242,8 +253,7 @@ public class OwnedLibraryFragment extends Fragment {
                     } else {
                         Log.d("mattX", bl.toString() + " photo is cached in ownbooks");
                         bl.setPhoto(new Photo(thumbnailBitmap));
-                        libraryListView.post(new Runnable()
-                        {
+                        libraryListView.post(new Runnable() {
                             @Override
                             public void run() {
                                 listingAdapter.notifyDataSetChanged();

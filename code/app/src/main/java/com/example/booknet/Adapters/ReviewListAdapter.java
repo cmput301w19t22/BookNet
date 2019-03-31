@@ -7,6 +7,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnticipateOvershootInterpolator;
+import android.view.animation.OvershootInterpolator;
+import android.view.animation.ScaleAnimation;
+import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -30,11 +36,12 @@ public class ReviewListAdapter extends RecyclerView.Adapter<ReviewListAdapter.Re
     //Image Drawables to use in this activity
     private int starOn = R.drawable.ic_star_24dp;
     private int starOff = R.drawable.ic_star_border_24dp;
+    private int starHalf = R.drawable.ic_star_half_24dp;
 
     /**
      * Creates the adapter.
      *
-     * @param reviewList        List of reviewList to display
+     * @param reviewList     List of reviewList to display
      * @param sourceActivity The activity that created this adapter.
      */
     public ReviewListAdapter(ReviewList reviewList, AppCompatActivity sourceActivity) {
@@ -62,7 +69,7 @@ public class ReviewListAdapter extends RecyclerView.Adapter<ReviewListAdapter.Re
      * Routine for binding new data to a list item
      *
      * @param reviewListViewHolder The ViewHolder to be assigned
-     * @param position         Index in the list to use for this list slot
+     * @param position             Index in the list to use for this list slot
      */
     @Override
     public void onBindViewHolder(@NonNull ReviewListViewHolder reviewListViewHolder, int position) {
@@ -74,18 +81,26 @@ public class ReviewListAdapter extends RecyclerView.Adapter<ReviewListAdapter.Re
         reviewListViewHolder.reviewComment.setText(review.getMessage());
         float score = review.getScore();
         reviewListViewHolder.ratingLabel.setText(String.format("%1.1f", score));
-        reviewListViewHolder.star1.setImageResource((score >= 1) ? starOn : starOff);
-        reviewListViewHolder.star2.setImageResource((score >= 2) ? starOn : starOff);
-        reviewListViewHolder.star3.setImageResource((score >= 3) ? starOn : starOff);
-        reviewListViewHolder.star4.setImageResource((score >= 4) ? starOn : starOff);
-        reviewListViewHolder.star5.setImageResource((score >= 5) ? starOn : starOff);
+        int[] stars = new int[]{starOff, starHalf, starOn};
+        reviewListViewHolder.star1.setImageResource(Review.starImage(score, 0, stars));
+        reviewListViewHolder.star2.setImageResource(Review.starImage(score, 1, stars));
+        reviewListViewHolder.star3.setImageResource(Review.starImage(score, 2, stars));
+        reviewListViewHolder.star4.setImageResource(Review.starImage(score, 3, stars));
+        reviewListViewHolder.star5.setImageResource(Review.starImage(score, 4, stars));
 
-        if ((position & 1) == 1) {//check odd
+        /*if ((position & 1) == 1) {//check odd
             reviewListViewHolder.constraintLayout.setBackgroundColor(sourceActivity.getResources().getColor(R.color.lightDarkerTint));
-        }
+        }*/
 
         //Set Click Listeners
         //todo any click listeners?
+
+
+        ScaleAnimation anim2 = new ScaleAnimation(0.5f, 1f, 0.5f, 1f,
+                Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        anim2.setDuration(500);
+        anim2.setInterpolator(new OvershootInterpolator());
+        reviewListViewHolder.itemView.startAnimation(anim2);
     }
 
     /**

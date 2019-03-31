@@ -27,7 +27,7 @@ public class UserAccountTest {
 
     @Test
     public void Setters() {
-        String user = new UserAccount("user1");
+        UserAccount user = new UserAccount("user1");
 
         //Check Id and Password
         user.setUsername("newname");
@@ -49,8 +49,8 @@ public class UserAccountTest {
 
         //ReviewList
         ArrayList<Review> reviews = new ArrayList<Review>();
-        String user2 = new UserAccount("user2");
-        reviews.add(new Review(user, user2, 4, "review1"));
+        UserAccount user2 = new UserAccount("user2");
+        reviews.add(new Review(user.getUsername(), user2.getUsername(), 4, "review1"));
         user.setReviews(reviews);
         assertEquals(reviews, user.getReviews());
     }

@@ -241,7 +241,9 @@ public class BookListing implements Serializable, Cloneable {
     }
 
     public boolean containKeyword(String keyword) {
-        return book.getTitle().contains(keyword) || book.getAuthor().contains(keyword) || getOwnerUsername().contains(keyword);
+        return book.getTitle().toLowerCase().contains(keyword.toLowerCase())
+                || book.getAuthor().toLowerCase().contains(keyword.toLowerCase())
+                || getOwnerUsername().toLowerCase().contains(keyword.toLowerCase());
     }
 
     public String getISBN() {

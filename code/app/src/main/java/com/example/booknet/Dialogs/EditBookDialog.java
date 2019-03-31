@@ -178,10 +178,10 @@ public class EditBookDialog extends ISBNScannerDialog {
         if (!ISBNScannerDialog.isValidISBNFormat(isbn)) {
             return false;
         }
-        if (title.length() == 0) {
+        if (title.trim().length() == 0) {
             return false;
         }
-        if (author.length() == 0) {
+        if (author.trim().length() == 0) {
             return false;
         }
         //todo any further validation?
@@ -194,8 +194,8 @@ public class EditBookDialog extends ISBNScannerDialog {
      */
     private void editBook() {
         //Get the data from the layout fields
-        String title = titleField.getText().toString();
-        String author = authorField.getText().toString();
+        String title = titleField.getText().toString().trim();
+        String author = authorField.getText().toString().trim();
         String isbn = isbnField.getText().toString();
         String description = descriptionField.getText().toString();
 

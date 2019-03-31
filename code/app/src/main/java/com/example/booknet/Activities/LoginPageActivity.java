@@ -2,7 +2,7 @@ package com.example.booknet.Activities;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.content.Intent;;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -10,13 +10,16 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.OvershootInterpolator;
+import android.view.animation.ScaleAnimation;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.booknet.Model.CurrentUser;
 import com.example.booknet.DatabaseManager;
 import com.example.booknet.Dialogs.InitialUserProfileDialog;
+import com.example.booknet.Model.CurrentUser;
 import com.example.booknet.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -28,6 +31,8 @@ import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.lang.reflect.Field;
+
+;
 
 public class LoginPageActivity extends AppCompatActivity implements View.OnClickListener, InitialUserProfileDialog.InitialUserProfileListener {
     private final String TAG = "FB_SIGNIN";
@@ -49,6 +54,13 @@ public class LoginPageActivity extends AppCompatActivity implements View.OnClick
         manager.setOnLoginPage(true);
 
         setContentView(R.layout.activity_log_in);
+
+        ScaleAnimation logoAnim = new ScaleAnimation(0f, 1f, 0f, 1f,
+                Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        logoAnim.setInterpolator(new OvershootInterpolator());
+        logoAnim.setDuration(800);
+        findViewById(R.id.appLogo).startAnimation(logoAnim);
+
 
         findViewById(R.id.btnCreate).setOnClickListener(this);
         findViewById(R.id.createAccountButton).setOnClickListener(this);
@@ -90,14 +102,14 @@ public class LoginPageActivity extends AppCompatActivity implements View.OnClick
 
         String debugger = null;
         Log.d("mattTag", "fist");
-        try  {
+        try {
 
             Field debuggerField = Class.forName("com.example.booknet.Debugger").getDeclaredField("debuggerName");
             debuggerField.setAccessible(true);
 
             debugger = (String) debuggerField.get(null);
 
-        }  catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException e) {
             Log.d("mattTag", "nono");
 
         } catch (NoSuchFieldException e) {
@@ -110,18 +122,17 @@ public class LoginPageActivity extends AppCompatActivity implements View.OnClick
         String email = null;
         String password = null;
 
-        if (debugger != null){
+        if (debugger != null) {
             String n = debugger.toLowerCase();
-            if (n.equals("matt") || n.equals("jamie") || n.equals("jace") || n.equals("sean") || n.equals("seth") || n.equals("calvin")){
+            if (n.equals("matt") || n.equals("jamie") || n.equals("jace") || n.equals("sean") || n.equals("seth") || n.equals("calvin")) {
                 email = n + "@debug.com";
                 password = "123456";
             }
         }
-        if (email != null){
+        if (email != null) {
 
             signIn(email, password);
         }
-
 
 
     }
@@ -162,7 +173,7 @@ public class LoginPageActivity extends AppCompatActivity implements View.OnClick
             etEmail.setError("Email Required");
             return false;
         }
-        if (password.isEmpty()){
+        if (password.isEmpty()) {
             etPass.setError("Password Required");
             return false;
         }
@@ -175,12 +186,10 @@ public class LoginPageActivity extends AppCompatActivity implements View.OnClick
         FirebaseUser user = mAuth.getCurrentUser();
         if (user != null) {
             tvStat.setText("Signed in: " + user.getEmail());
-        }
-        else {
+        } else {
             tvStat.setText("Signed Out");
         }
     }
-
 
 
     private void updateStatus(String stat) {
@@ -195,7 +204,6 @@ public class LoginPageActivity extends AppCompatActivity implements View.OnClick
         final String email = etEmail.getText().toString();
         String password = etPass.getText().toString();
         signIn(email, password);
-
 
 
     }
@@ -222,8 +230,8 @@ public class LoginPageActivity extends AppCompatActivity implements View.OnClick
         }
     }
 
-    private void signIn(String email, String password){
-        mAuth.signInWithEmailAndPassword(email,password)
+    private void signIn(String email, String password) {
+        mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this,
                         new OnCompleteListener<AuthResult>() {
                             @Override
@@ -235,7 +243,7 @@ public class LoginPageActivity extends AppCompatActivity implements View.OnClick
                                     //intent.putExtra("emailLabel", email);
                                     //startActivity(intent);
 
-                                    Log.d("seanTag", "user "+mAuth.getCurrentUser().getEmail());
+                                    Log.d("seanTag", "user " + mAuth.getCurrentUser().getEmail());
 
                                     //save current user for future use
                                     CurrentUser.getInstance().updateUser(mAuth.getCurrentUser());
@@ -246,8 +254,7 @@ public class LoginPageActivity extends AppCompatActivity implements View.OnClick
                                     // As user phone/name needs to be checked, connection needs to be established first
                                     //this method also takes care of following intents
                                     manager.connectToDatabase(LoginPageActivity.this);
-                                }
-                                else {
+                                } else {
                                     Toast.makeText(LoginPageActivity.this, "Sign in failed", Toast.LENGTH_SHORT)
                                             .show();
                                 }
@@ -260,11 +267,9 @@ public class LoginPageActivity extends AppCompatActivity implements View.OnClick
                     public void onFailure(@NonNull Exception e) {
                         if (e instanceof FirebaseAuthInvalidCredentialsException) {
                             updateStatus("Invalid password.");
-                        }
-                        else if (e instanceof FirebaseAuthInvalidUserException) {
+                        } else if (e instanceof FirebaseAuthInvalidUserException) {
                             updateStatus("No account with this email.");
-                        }
-                        else {
+                        } else {
                             updateStatus(e.getLocalizedMessage());
                         }
                     }
@@ -273,8 +278,8 @@ public class LoginPageActivity extends AppCompatActivity implements View.OnClick
 
     }
 
-    private void createUserAccount(){
-        Intent intent = new Intent(this,AccountCreateActivity.class);
+    private void createUserAccount() {
+        Intent intent = new Intent(this, AccountCreateActivity.class);
         startActivity(intent);
     }
 
@@ -316,17 +321,16 @@ public class LoginPageActivity extends AppCompatActivity implements View.OnClick
     }*/
 
     @Override
-    public void onDialogPositiveClick(DialogFragment dialog, String email ,String phonenumber, String username) {
+    public void onDialogPositiveClick(DialogFragment dialog, String email, String phonenumber, String username) {
 
         //todo: validate phonenumber
         boolean takenUsername = manager.isUsernameTaken(username);
         Log.d("mattTag", phonenumber);
         Log.d("mattTag", username);
-        if (takenUsername){
+        if (takenUsername) {
             Toast.makeText(LoginPageActivity.this, "Username taken!", Toast.LENGTH_SHORT)
                     .show();
-        }
-        else{
+        } else {
 
             Log.d("mattTag", "yeas");
             manager.writeUserProfile(email, phonenumber);
@@ -347,7 +351,7 @@ public class LoginPageActivity extends AppCompatActivity implements View.OnClick
     }
 
 
-    public void promptInitialProfile(){
+    public void promptInitialProfile() {
         DialogFragment dialog = new InitialUserProfileDialog();
         dialog.show(getSupportFragmentManager(), "InitialUserProfileDialog");
 

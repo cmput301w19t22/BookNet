@@ -10,6 +10,7 @@
         android:id="@+id/info"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -19,7 +20,6 @@
             style="@style/BookNet.Toolbar.Title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="@color/colorPrimary"
             android:paddingTop="8dp"
             android:text="Borrowing"
             android:textAlignment="center"
@@ -32,7 +32,6 @@
             style="@style/BookNet.Text.White.Small"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="@color/colorPrimary"
             android:padding="8dp"
             android:paddingTop="8dp"
             android:paddingBottom="8dp"

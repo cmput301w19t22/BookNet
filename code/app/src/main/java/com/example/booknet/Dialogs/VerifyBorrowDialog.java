@@ -7,6 +7,10 @@ import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.CycleInterpolator;
+import android.view.animation.ScaleAnimation;
+import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -145,6 +149,12 @@ public class VerifyBorrowDialog extends ISBNScannerDialog {
                 infoText.setText("Please have the owner scan this book to complete.");
             }
         }
+        //ScaleAnimation anim = new ScaleAnimation(1f, 1.5f, 1f, 1.5f,
+        //        Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        TranslateAnimation anim = new TranslateAnimation(0f,0f,0f,4f);
+        anim.setInterpolator(new CycleInterpolator(3));
+        anim.setDuration(2000);
+        titleText.startAnimation(anim);
     }
 
 }

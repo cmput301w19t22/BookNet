@@ -64,7 +64,7 @@ public class BookListing implements Serializable, Cloneable {
         this.status = BookListingStatus.Available;
         this.requests = new ArrayList<String>();
         this.geoLocation = new UserLocation();
-        dupInd = manager.getDupCount(this, CurrentUser.getInstance().getUID());
+        dupInd = manager.getListingDupCount(this, CurrentUser.getInstance().getUID());
     }
 
     //#region Getters Setters

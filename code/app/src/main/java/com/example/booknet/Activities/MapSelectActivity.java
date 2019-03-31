@@ -119,6 +119,7 @@ public class MapSelectActivity extends AppCompatActivity implements OnMapReadyCa
         selectButton.setEnabled(false);
         if (editMode) {
             noteLabel.setVisibility(View.GONE);
+            searchBar.setVisibility(View.GONE);
         } else {
             noteField.setVisibility(View.GONE);
             noteLabel.setVisibility(View.VISIBLE);

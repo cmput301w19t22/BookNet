@@ -251,7 +251,7 @@ public class ListingViewActivity extends AppCompatActivity {
      * Cancels a request for this book listing from the current user.
      */
     private void sendRemoveRequest() throws DatabaseManager.DatabaseException {
-        manager.requestBookListingRemoval(listing);
+        manager.cancelRequestForListing(listing);
     }
 
     /**

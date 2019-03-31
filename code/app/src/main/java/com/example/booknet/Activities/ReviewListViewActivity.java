@@ -33,8 +33,10 @@ public class ReviewListViewActivity extends AppCompatActivity {
     ImageButton backButton;
 
     //Activity Data
-    UserAccount user;
-    ArrayList<Review> reviews = new ArrayList<>();
+    //UserAccount user;
+    //ArrayList<Review> reviews = new ArrayList<>();
+    private String username;
+
     private DatabaseManager manager = DatabaseManager.getInstance();
 
     @Override
@@ -53,8 +55,6 @@ public class ReviewListViewActivity extends AppCompatActivity {
             }
         });
 
-        //todo obtain user account from db
-        String username = "";
         Intent intent = getIntent();
         if(intent.hasExtra("username")){
             username = intent.getStringExtra("username");
@@ -68,7 +68,7 @@ public class ReviewListViewActivity extends AppCompatActivity {
      * Fills the layout with the data in the listing
      */
     private void fillLayout() {
-        if (user == null) {
+        /*if (user == null) {
             Toast.makeText(this, "User Could Not Be Loaded", Toast.LENGTH_LONG).show();
         } else {
             reviews = user.getReviews();
@@ -77,11 +77,11 @@ public class ReviewListViewActivity extends AppCompatActivity {
         if (user != null) {
             //Fill Summary
             usernameLabel.setText(user.getUsername());
-        }
+        }*/
 
         //Setup RecyclerView
         reviewList.setLayoutManager(new LinearLayoutManager(this));
-        reviewListAdapter = new ReviewListAdapter(reviews, this);
+        reviewListAdapter = new ReviewListAdapter(manager.readReviews(username), this);
         reviewList.setAdapter(reviewListAdapter);
         reviewList.addItemDecoration(new SpaceDecoration(12,16));
 

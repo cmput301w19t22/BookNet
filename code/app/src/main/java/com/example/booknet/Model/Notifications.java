@@ -12,7 +12,7 @@ public class Notifications implements Serializable, Iterable<Notification>  {
      * Constructor
      */
     public Notifications() {
-        this.notifications = new ArrayList<Notification>();
+        this.notifications = new ArrayList<>();
     }
 
     /**
@@ -70,10 +70,6 @@ public class Notifications implements Serializable, Iterable<Notification>  {
         }
         return false;
     }*/
-
-    public ArrayList<Notification> asArray(){
-        return notifications;
-    }
 
     @Override
     public Iterator<Notification> iterator() {

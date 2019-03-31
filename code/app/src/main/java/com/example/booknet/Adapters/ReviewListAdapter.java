@@ -11,9 +11,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.booknet.Model.Review;
+import com.example.booknet.Model.ReviewList;
 import com.example.booknet.R;
-
-import java.util.ArrayList;
 
 /**
  * Adapter for displaying a review in a recycler view list.
@@ -22,8 +21,8 @@ import java.util.ArrayList;
  */
 public class ReviewListAdapter extends RecyclerView.Adapter<ReviewListAdapter.ReviewListViewHolder> {
 
-    //The list of reviews to display
-    private ArrayList<Review> reviews;
+    //The list of reviewList to display
+    private ReviewList reviewList;
 
     //The activity this adapter was created from
     private AppCompatActivity sourceActivity;
@@ -35,11 +34,11 @@ public class ReviewListAdapter extends RecyclerView.Adapter<ReviewListAdapter.Re
     /**
      * Creates the adapter.
      *
-     * @param reviews        List of reviews to display
+     * @param reviewList        List of reviewList to display
      * @param sourceActivity The activity that created this adapter.
      */
-    public ReviewListAdapter(ArrayList<Review> reviews, AppCompatActivity sourceActivity) {
-        this.reviews = reviews;
+    public ReviewListAdapter(ReviewList reviewList, AppCompatActivity sourceActivity) {
+        this.reviewList = reviewList;
         this.sourceActivity = sourceActivity;
     }
 
@@ -68,7 +67,7 @@ public class ReviewListAdapter extends RecyclerView.Adapter<ReviewListAdapter.Re
     @Override
     public void onBindViewHolder(@NonNull ReviewListViewHolder reviewListViewHolder, int position) {
         //Get the data at the provided position
-        final Review review = reviews.get(position);
+        final Review review = reviewList.getReviewAtPosition(position);
 
         //Fill the text fields with the object's data
         reviewListViewHolder.reviewerName.setText(review.getReviewerUsername());
@@ -96,7 +95,7 @@ public class ReviewListAdapter extends RecyclerView.Adapter<ReviewListAdapter.Re
      */
     @Override
     public int getItemCount() {
-        return reviews.size();
+        return reviewList.size();
     }
 
     /**

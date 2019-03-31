@@ -49,6 +49,7 @@
             android:layout_marginEnd="8dp"
             android:drawableLeft="@drawable/ic_person_black_24dp"
             android:text="[UserName]"
+            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -77,7 +78,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
-            android:drawableLeft="@drawable/ic_search_black_24dp"
+            android:drawableLeft="@drawable/ic_comment_black_24dp"
             android:text="Reviews"
             android:tooltipText="Reviews"
             app:layout_constraintBottom_toBottomOf="parent"

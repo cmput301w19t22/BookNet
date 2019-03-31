@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 import com.example.booknet.DatabaseManager;
 import com.example.booknet.Fragments.UserProfileViewFragment;
 import com.example.booknet.Model.BookListing;
+import com.example.booknet.Model.Review;
 import com.example.booknet.R;
 
 import java.util.ArrayList;
@@ -41,6 +43,7 @@ public class RequestViewAdapter extends RecyclerView.Adapter<RequestViewAdapter.
     //Image Drawables to use in this activity
     private int starOn = R.drawable.ic_star_24dp;
     private int starOff = R.drawable.ic_star_border_24dp;
+    private int starHalf = R.drawable.ic_star_half_24dp;
 
 
     /**
@@ -89,19 +92,19 @@ public class RequestViewAdapter extends RecyclerView.Adapter<RequestViewAdapter.
         requestViewHolder.username.setText(username);
         // todo: use real score
         float score = Float.parseFloat("2.0");
+        int[] stars = new int[]{starOff, starHalf, starOn};
         requestViewHolder.ratingText.setText(String.format("%1.1f", score));
-        requestViewHolder.star1.setImageResource((score >= 1) ? starOn : starOff);
-        requestViewHolder.star2.setImageResource((score >= 2) ? starOn : starOff);
-        requestViewHolder.star3.setImageResource((score >= 3) ? starOn : starOff);
-        requestViewHolder.star4.setImageResource((score >= 4) ? starOn : starOff);
-        requestViewHolder.star5.setImageResource((score >= 5) ? starOn : starOff);
+        requestViewHolder.star1.setImageResource(Review.starImage(score, 0, stars));
+        requestViewHolder.star2.setImageResource(Review.starImage(score, 1, stars));
+        requestViewHolder.star3.setImageResource(Review.starImage(score, 2, stars));
+        requestViewHolder.star4.setImageResource(Review.starImage(score, 3, stars));
+        requestViewHolder.star5.setImageResource(Review.starImage(score, 4, stars));
 
         /*if ((position & 1) == 1) {//check odd
             requestViewHolder.constraintLayout.setBackgroundColor(sourceActivity.getResources().getColor(R.color.lightDarkerTint));
         }*/
 
         //Set Click Listeners
-        // todo: fix this
         requestViewHolder.username.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -121,6 +124,10 @@ public class RequestViewAdapter extends RecyclerView.Adapter<RequestViewAdapter.
                 declineButton(username);
             }
         });
+
+        TranslateAnimation animIn = new TranslateAnimation(0.0f, 0f, 2000f, 0f);
+        animIn.setDuration(500);
+        requestViewHolder.itemView.startAnimation(animIn);
     }
 
     /**

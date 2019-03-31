@@ -16,10 +16,11 @@ import android.widget.TextView;
 import com.example.booknet.Activities.LoginPageActivity;
 import com.example.booknet.Activities.ProfileEditActivity;
 import com.example.booknet.Activities.ReviewListViewActivity;
-import com.example.booknet.Model.CurrentUser;
 import com.example.booknet.DatabaseManager;
-import com.example.booknet.R;
+import com.example.booknet.Model.CurrentUser;
+import com.example.booknet.Model.Review;
 import com.example.booknet.Model.UserAccount;
+import com.example.booknet.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -39,6 +40,7 @@ public class UserProfileViewFragment extends Fragment {
     private TextView phoneLabel;
     private TextView emailLabel;
     private TextView ratingLabel;
+    private TextView ratingCountLabel;
     private ImageView star1;
     private ImageView star2;
     private ImageView star3;
@@ -49,6 +51,7 @@ public class UserProfileViewFragment extends Fragment {
     private ImageButton logoutButton;
     private int starOff = R.drawable.ic_star_border_24dp;
     private int starOn = R.drawable.ic_star_24dp;
+    private int starHalf = R.drawable.ic_star_half_24dp;
 
     private DatabaseManager manager = DatabaseManager.getInstance();
     private ValueEventListener listener;
@@ -68,7 +71,8 @@ public class UserProfileViewFragment extends Fragment {
     //Activity Data
     UserAccount userAccount;
     String username = "";
-
+    float userRatingAverage;
+    int userRatingCount;
     HashMap<String, String> userProfile = new HashMap<String, String>();
 
     /**
@@ -96,7 +100,7 @@ public class UserProfileViewFragment extends Fragment {
                 userProfile.clear();
                 HashMap<String, HashMap<String, String>> all = (HashMap<String, HashMap<String, String>>) dataSnapshot.getValue();
                 HashMap<String, String> p = all.get(CurrentUser.getInstance().getUID());
-                if (all != null && p != null){
+                if (all != null && p != null) {
                     userProfile.putAll(all.get(CurrentUser.getInstance().getUID()));
                     notifyProfileChange();
                 }
@@ -110,12 +114,15 @@ public class UserProfileViewFragment extends Fragment {
         };
 
         manager.getAllProfileRef().addValueEventListener(listener);
+        userRatingAverage = manager.readUserReviewAverage(CurrentUser.getInstance().getUsername());
+        userRatingCount = manager.readUserReviewCount(CurrentUser.getInstance().getUsername());
 
         //Obtain References To Layout Objects
         usernameLabel = view.findViewById(R.id.userNameLabel);
         phoneLabel = view.findViewById(R.id.phoneNumberLabel);
         emailLabel = view.findViewById(R.id.emailLabel);
         ratingLabel = view.findViewById(R.id.ratingTextLabel);
+        ratingCountLabel = view.findViewById(R.id.numReviews);
         star1 = view.findViewById(R.id.ratingStar1);
         star2 = view.findViewById(R.id.ratingStar2);
         star3 = view.findViewById(R.id.ratingStar3);
@@ -170,9 +177,20 @@ public class UserProfileViewFragment extends Fragment {
         phoneLabel.setText(userProfile.get("Phone"));
         emailLabel.setText(userProfile.get("Email"));
 
-        // todo: fix rating score
-//        ratingLabel.setText(String.format("%1.1f", userAccount.getRatingScore()));
-        ratingLabel.setText("0.0");
+        // Fill Rating Section
+        int[] stars = new int[]{starOff, starHalf, starOn};
+        star1.setImageResource(Review.starImage(userRatingAverage, 0, stars));
+        star2.setImageResource(Review.starImage(userRatingAverage, 1, stars));
+        star3.setImageResource(Review.starImage(userRatingAverage, 2, stars));
+        star4.setImageResource(Review.starImage(userRatingAverage, 3, stars));
+        star5.setImageResource(Review.starImage(userRatingAverage, 4, stars));
+        if (userRatingAverage >= 0) {
+            ratingLabel.setText(String.format("%1.1f", userRatingAverage));
+        } else {
+            ratingLabel.setText("---");
+        }
+        ratingCountLabel.setText(String.format("(%d Ratings)", userRatingCount));
+
 
     }
 
@@ -222,7 +240,12 @@ public class UserProfileViewFragment extends Fragment {
 
 
     public void onDestroy() {
-        manager.getAllProfileRef().removeEventListener(listener);
+        try {
+            manager.getAllProfileRef().removeEventListener(listener);
+        } catch (NullPointerException e) {
+            //todo who knows
+        }
+
         super.onDestroy();
 
     }

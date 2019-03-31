@@ -45,6 +45,7 @@ public class RequestLibraryFragment extends Fragment {
     private RecyclerView libraryListView;
     private RequestedLibraryAdapter listingAdapter;
     private ImageButton addButton;
+    private TextView bookCountLabel;
 
     //Activity Data
     private BookLibrary filteredLibrary;
@@ -77,9 +78,11 @@ public class RequestLibraryFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         //Create the view
-        View view = inflater.inflate(R.layout.fragment_requested_library, container, false);
+        View view = inflater.inflate(R.layout.activity_owned_library, container, false);
 
         Log.d("seanTag", "onCreateView Request");
+
+        bookCountLabel = view.findViewById(R.id.resultsNumLabel);
 
         //Deactivate Add Button
         addButton = view.findViewById(R.id.addBookButton);
@@ -125,7 +128,7 @@ public class RequestLibraryFragment extends Fragment {
                 }
 
                 listingAdapter.notifyDataSetChanged();
-
+                bookCountLabel.setText(String.format("%d Books",filteredLibrary.size()));
                 writeLock.unlock();
             }
 
@@ -163,6 +166,7 @@ public class RequestLibraryFragment extends Fragment {
                     writeLock.unlock();
                     new ThumbnailFetchingTask(getActivity()).execute();
                     listingAdapter.notifyDataSetChanged();
+                    bookCountLabel.setText(String.format("%d Books",filteredLibrary.size()));
                 }
             }
 
@@ -181,7 +185,12 @@ public class RequestLibraryFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        manager.getAllListingsRef().removeEventListener(listener);
+
+        try {
+            manager.getAllListingsRef().removeEventListener(listener);//todo I get a null listener error here
+        } catch (Exception e){
+            //who knows
+        }
     }
 
 

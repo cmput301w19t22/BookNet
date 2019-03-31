@@ -1,5 +1,6 @@
 package com.example.booknet;
 
+import com.example.booknet.Constants.BookListingStatus;
 import com.example.booknet.Model.Book;
 import com.example.booknet.Model.BookListing;
 import com.example.booknet.Model.UserAccount;
@@ -40,7 +41,7 @@ public class BookListingTest {
 
         assertTrue("Request Added", requestersList.contains("requester1"));
 
-        assertEquals(BookListing.Status.Requested, listing.getStatus());
+        assertEquals(BookListingStatus.Requested, listing.getStatus());
     }
 
     @Test
@@ -59,7 +60,7 @@ public class BookListingTest {
         assertTrue(listing.getRequests().size()==0);
         assertEquals("requester1", listing.getBorrowerName());
 
-        assertEquals(BookListing.Status.Accepted, listing.getStatus());
+        assertEquals(BookListingStatus.Accepted, listing.getStatus());
     }
 
     @Test
@@ -78,12 +79,12 @@ public class BookListingTest {
         assertFalse("Request Denied", requesters.contains("requester1"));
 
         //Still one request left
-        assertEquals(BookListing.Status.Requested, listing.getStatus());
+        assertEquals(BookListingStatus.Requested, listing.getStatus());
         assertTrue(requesters.contains("requester2"));
 
         //Remove all requests
         listing.denyRequest("requester2");
-        assertEquals(BookListing.Status.Available, listing.getStatus());
+        assertEquals(BookListingStatus.Available, listing.getStatus());
     }
 
     @Test
@@ -100,7 +101,7 @@ public class BookListingTest {
 
         assertEquals("requester1", listing.getBorrowerName());
         assertTrue(listing.getRequests().isEmpty());
-        assertEquals(BookListing.Status.Borrowed, listing.getStatus());
+        assertEquals(BookListingStatus.Borrowed, listing.getStatus());
     }
 
     @Test
@@ -117,7 +118,7 @@ public class BookListingTest {
         listing.bookReturned();
 
         assertNotEquals("requester1", listing.getBorrowerName());
-        assertEquals(BookListing.Status.Available, listing.getStatus());
+        assertEquals(BookListingStatus.Available, listing.getStatus());
     }
 
     @Test

@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
 import com.example.booknet.Activities.LoginPageActivity;
+import com.example.booknet.Adapters.BookSearchAdapter;
 import com.example.booknet.Constants.BookListingStatus;
 import com.example.booknet.Constants.NotificationType;
 import com.example.booknet.Model.BookLibrary;
@@ -113,6 +114,7 @@ public class DatabaseManager {
 
     //not in effect
     private boolean readwritePermission = false;
+    //#endregion
 
     //#region Constructor, Getters, Setters
     private DatabaseManager() {
@@ -278,7 +280,16 @@ public class DatabaseManager {
                 thumbNailCache.put(listing.getOwnerUsername() + "-" + listing.getISBN() + "-" + listing.getDupInd(), fetchedThumnail);
                 thumbnailCacheWriteLock.unlock();
                 listing.setPhoto(new Photo(fetchedThumnail));
+                if (adapter instanceof BookSearchAdapter) {
+                    ((BookSearchAdapter) adapter).setAllowNewAnimation(false);
+                }
+
                 adapter.notifyDataSetChanged();
+
+                if (adapter instanceof BookSearchAdapter) {
+                    ((BookSearchAdapter) adapter).cancelAllAnimations();
+                    ((BookSearchAdapter) adapter).setAllowNewAnimation(true);
+                }
 
             }
         }).addOnFailureListener(onFailureListener);
@@ -329,6 +340,8 @@ public class DatabaseManager {
         return getUIDFromName(l.getOwnerUsername()).equals(uid);
     }
     //#endregion
+
+    //#region BookListings Requests
 
     /**
      * @param listing
@@ -611,7 +624,7 @@ public class DatabaseManager {
         clearVerification(listing);
     }
 
-	/**
+    /**
      * Clears the verification on a listing. To be called when fulfilling a borrow or return,
      * and when canceling a transaction.
      *
@@ -790,6 +803,35 @@ public class DatabaseManager {
         //notificationReadLock.unlock();
 
         return reviewManager.getReviews(username);
+    }
+
+    /**
+     * Reads the average rating score for the given user
+     *
+     * @param username The user whose reviews to check.
+     * @return The average review score, or -1 if there are no reviews.
+     */
+    public float readUserReviewAverage(String username) {
+        ReviewList reviewList = readReviews(username);
+        float totalRating = 0;
+        if (reviewList.size() > 0) {
+            for (Review r : reviewList) {
+                totalRating += r.getScore();
+            }
+            return totalRating / reviewList.size();
+        } else {
+            return -1;
+        }
+    }
+
+    /**
+     * Reads the number of reviews for a given user.
+     *
+     * @param username The user whoes reviews to check
+     * @return The number of reviews the user has
+     */
+    public int readUserReviewCount(String username) {
+        return readReviews(username).size();
     }
 
     public int getReviewDupCount(String reviewed, String reviewer) {
@@ -1093,7 +1135,7 @@ public class DatabaseManager {
                     System.out.println("The read failed: " + databaseError.getCode());
                 }
             };
-            notificationRef = FirebaseDatabase.getInstance().getReference("InAppNotifications/"+CurrentUser.getInstance().getUsername());
+            notificationRef = FirebaseDatabase.getInstance().getReference("InAppNotifications/" + CurrentUser.getInstance().getUsername());
             notificationRef.addValueEventListener(notificationListener);
 
             reviewListener = new ValueEventListener() {

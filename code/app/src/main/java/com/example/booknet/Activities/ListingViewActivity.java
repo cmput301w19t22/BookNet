@@ -8,6 +8,10 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnticipateOvershootInterpolator;
+import android.view.animation.RotateAnimation;
+import android.view.animation.ScaleAnimation;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -182,6 +186,14 @@ public class ListingViewActivity extends AppCompatActivity {
             }
         });
         //#endregion
+
+        /*RotateAnimation anim2 = new RotateAnimation(45f, 0f,
+                Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 1f);
+        ScaleAnimation anim1 = new ScaleAnimation(0.1f,1f,0.1f,1f,
+                Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 1f);
+        anim1.setDuration(700);
+        anim1.setInterpolator(new AnticipateOvershootInterpolator());
+        findViewById(R.id.listingView).startAnimation(anim1);*/
     }
 
     /**

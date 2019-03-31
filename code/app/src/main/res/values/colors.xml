@@ -35,4 +35,5 @@
     <color name="lightDarkerTint" >#05000000</color>
     <color name="photoBackground">#37474F</color>
     <color name="photoBackgroundLight">#78909C</color>
+    <color name="textBackDark">#E0EDF6</color>
 </resources>

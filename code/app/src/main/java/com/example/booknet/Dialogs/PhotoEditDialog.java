@@ -121,7 +121,7 @@ public class PhotoEditDialog extends DialogFragment {
         leaveButton = dialogView.findViewById(R.id.leave_button);
         submitButton = dialogView.findViewById(R.id.submitButton);
 
-        Bitmap photoBitmap = listing.getPhotoBitmap();
+        Bitmap photoBitmap = manager.getCachedThumbnail(listing);
         if (photoBitmap != null) {
             photoView.setImageBitmap(photoBitmap);
         } else {
@@ -396,6 +396,7 @@ public class PhotoEditDialog extends DialogFragment {
      */
     private void deletePhoto() {
         listing.deletePhoto();
+        //todo delete from db
         Toast.makeText(getActivity(), "Deleted Photo", Toast.LENGTH_LONG).show();
         dismiss();
     }

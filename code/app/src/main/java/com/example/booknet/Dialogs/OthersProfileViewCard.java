@@ -10,19 +10,41 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.booknet.Activities.ReviewListViewActivity;
+import com.example.booknet.DatabaseManager;
 import com.example.booknet.Model.BookListing;
 import com.example.booknet.Model.CurrentUser;
+import com.example.booknet.Model.Review;
 import com.example.booknet.R;
 
 // https://developer.android.com/guide/topics/ui/dialogs#java
 public class OthersProfileViewCard extends DialogFragment {
 
+    //Layout Objects
+    private ImageView star1;
+    private ImageView star2;
+    private ImageView star3;
+    private ImageView star4;
+    private ImageView star5;
+    private TextView ratingAverageText;
+    private TextView ratingCountText;
+
     private int starOff = R.drawable.ic_star_border_24dp;
     private int starOn = R.drawable.ic_star_24dp;
+    private int starHalf = R.drawable.ic_star_half_24dp;
 
+    //Dialog Data
+    private boolean isOutdated;
+    private String username;
+    private String phone;
+    private String email;
+    private float userRatingAverage;
+    private int userRatingCount;
+
+    private DatabaseManager manager = DatabaseManager.getInstance();
 
     // Override the Fragment.onAttach() method to instantiate the NoticeDialogListener
     @Override
@@ -30,11 +52,6 @@ public class OthersProfileViewCard extends DialogFragment {
         super.onAttach(context);
 
     }
-
-    private boolean isOutdated;
-    private String username;
-    private String phone;
-    private String email;
 
     /**
      * create a profile card for the owner of a booklisting
@@ -47,10 +64,9 @@ public class OthersProfileViewCard extends DialogFragment {
 
         Bundle args = new Bundle();
         String phone = l.getOwnerPhone();
-        if (phone == null){
+        if (phone == null) {
             args.putBoolean("outdated", true);
-        }
-        else {
+        } else {
             args.putBoolean("outdated", false);
             args.putString("username", l.getOwnerUsername());
             args.putString("phone", phone);
@@ -71,6 +87,8 @@ public class OthersProfileViewCard extends DialogFragment {
         username = getArguments().getString("username");
         phone = getArguments().getString("phone");
         email = getArguments().getString("email");
+        userRatingAverage = manager.readUserReviewAverage(username);
+        userRatingCount = manager.readUserReviewCount(username);
     }
 
 
@@ -78,7 +96,7 @@ public class OthersProfileViewCard extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
 
-        if (isOutdated){
+        if (isOutdated) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setTitle("Cannot Read User Profile");
             builder.setMessage("User profile read " +
@@ -90,8 +108,7 @@ public class OthersProfileViewCard extends DialogFragment {
                     "first log-in in the new app version");
             return builder.create();
 
-        }
-        else{
+        } else {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             // Get the layout inflater
             final LayoutInflater inflater = requireActivity().getLayoutInflater();
@@ -100,13 +117,39 @@ public class OthersProfileViewCard extends DialogFragment {
             usernameText.setText(username);
 
             TextView phoneText = dialogView.findViewById(R.id.others_phonenumber);
-            phoneText.setText(phone);
+            if (phone.equals("")) {
+                phoneText.setText("---");
+            } else {
+                phoneText.setText(phone);
+            }
 
             TextView emailText = dialogView.findViewById(R.id.other_profile_email);
-            emailText.setText(email);
+            if (email.equals("")) {
+                emailText.setText("---");
+            } else {
+                emailText.setText(email);
+            }
 
+            star1 = dialogView.findViewById(R.id.ratingStar1);
+            star2 = dialogView.findViewById(R.id.ratingStar2);
+            star3 = dialogView.findViewById(R.id.ratingStar3);
+            star4 = dialogView.findViewById(R.id.ratingStar4);
+            star5 = dialogView.findViewById(R.id.ratingStar5);
+            ratingAverageText = dialogView.findViewById(R.id.others_rating);
+            ratingCountText = dialogView.findViewById(R.id.numReviews);
 
-
+            int[] stars = new int[]{starOff, starHalf, starOn};
+            star1.setImageResource(Review.starImage(userRatingAverage, 0, stars));
+            star2.setImageResource(Review.starImage(userRatingAverage, 1, stars));
+            star3.setImageResource(Review.starImage(userRatingAverage, 2, stars));
+            star4.setImageResource(Review.starImage(userRatingAverage, 3, stars));
+            star5.setImageResource(Review.starImage(userRatingAverage, 4, stars));
+            if (userRatingAverage >= 0) {
+                ratingAverageText.setText(String.format("%1.1f", userRatingAverage));
+            } else {
+                ratingAverageText.setText("---");
+            }
+            ratingCountText.setText(String.format("(%d Ratings)", userRatingCount));
 
             // Inflate and set the layout for the dialog
             // Pass null as the parent view because its going in the dialog layout
@@ -133,8 +176,8 @@ public class OthersProfileViewCard extends DialogFragment {
             addReviewButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ReviewCreateDialog reviewCreateDialog = ReviewCreateDialog.newInstance(CurrentUser.getInstance().getUsername(),username);
-                    reviewCreateDialog.show(getActivity().getSupportFragmentManager(),"Create Review");
+                    ReviewCreateDialog reviewCreateDialog = ReviewCreateDialog.newInstance(CurrentUser.getInstance().getUsername(), username);
+                    reviewCreateDialog.show(getActivity().getSupportFragmentManager(), "Create Review");
                 }
             });
 

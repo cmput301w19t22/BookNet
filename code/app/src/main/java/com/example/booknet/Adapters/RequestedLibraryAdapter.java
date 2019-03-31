@@ -10,6 +10,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.OvershootInterpolator;
+import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -113,6 +117,14 @@ public class RequestedLibraryAdapter extends RecyclerView.Adapter<RequestedLibra
             }
         });
 
+        AlphaAnimation animIn = new AlphaAnimation(0.0f, 1.0f);
+        animIn.setDuration(500);
+        requestListingViewHolder.itemView.startAnimation(animIn);
+        ScaleAnimation anim2 = new ScaleAnimation(0.5f, 1f, 0.5f, 1f,
+                Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        anim2.setDuration(500);
+        anim2.setInterpolator(new OvershootInterpolator());
+        requestListingViewHolder.itemView.startAnimation(anim2);
     }
 
     /**

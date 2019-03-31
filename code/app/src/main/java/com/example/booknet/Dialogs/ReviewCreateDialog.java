@@ -148,7 +148,7 @@ public class ReviewCreateDialog extends DialogFragment {
      */
     private void createReview() {
         //Get Info To Create Review
-        int score = (int) ratingInput.getRating();
+        float score = ratingInput.getRating();
         String message = commentField.getText().toString();
 
         //Create review

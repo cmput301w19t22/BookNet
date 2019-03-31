@@ -91,6 +91,10 @@ public class BookLibrary implements Serializable, Iterable<BookListing> {
         return cloned;
     }
 
+    public int indexOf(BookListing listing) {
+        return books.indexOf(listing);
+    }
+
     public ArrayList<BookListing> asArray() {
         return books;
     }

@@ -1,6 +1,10 @@
 package com.example.booknet.Fragments;
 
+import android.app.Activity;
+import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,7 +24,9 @@ import com.example.booknet.DatabaseManager;
 import com.example.booknet.Model.BookLibrary;
 import com.example.booknet.Model.BookListing;
 import com.example.booknet.Model.CurrentUser;
+import com.example.booknet.Model.Photo;
 import com.example.booknet.R;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -155,6 +161,7 @@ public class RequestLibraryFragment extends Fragment {
                         filteredLibrary.filterByStatus(manager.readUserRequestLibrary(), BookListingStatus.valueOf(selectedStatus));
                     }
                     writeLock.unlock();
+                    new ThumbnailFetchingTask(getActivity()).execute();
                     listingAdapter.notifyDataSetChanged();
                 }
             }
@@ -164,6 +171,8 @@ public class RequestLibraryFragment extends Fragment {
 
             }
         });
+
+        new ThumbnailFetchingTask(getActivity()).execute();
         listingAdapter.notifyDataSetChanged();
         return view;
     }
@@ -174,4 +183,60 @@ public class RequestLibraryFragment extends Fragment {
         super.onDestroy();
         manager.getAllListingsRef().removeEventListener(listener);
     }
+
+
+    public class ThumbnailFetchingTask extends AsyncTask<Void, Void, Boolean> {
+        Activity context;
+
+        ThumbnailFetchingTask(Activity context) {
+            this.context = context;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            writeLock.lock();
+            for (final BookListing bl : filteredLibrary) {
+                if (bl.getPhotoBitmap() == null) {
+
+                    Log.d("mattX", bl.toString() + " photo is null");
+
+                    Bitmap thumbnailBitmap = manager.getCachedThumbnail(bl);
+
+                    if (thumbnailBitmap == null) {
+                        Log.d("mattX", bl.toString() + " photo is not cached");
+                        manager.fetchListingThumbnail(bl,
+                                listingAdapter,
+
+                                new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.d("mattX", bl.toString() + " photo fethcing falied");
+                                        Log.d("imageFetching", "fetching failed, cause: " + e.getLocalizedMessage());
+                                    }
+                                });
+
+                    } else {
+                        Log.d("mattX", bl.toString() + " photo is cached in ownbooks");
+                        bl.setPhoto(new Photo(thumbnailBitmap));
+                        libraryListView.post(new Runnable()
+                        {
+                            @Override
+                            public void run() {
+                                listingAdapter.notifyDataSetChanged();
+                            }
+                        });
+                    }
+                }
+
+            }
+            writeLock.unlock();
+
+
+            return true;
+        }
+
+
+    }
+
+
 }

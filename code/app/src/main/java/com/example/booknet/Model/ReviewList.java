@@ -4,21 +4,21 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class Reviews implements Serializable, Iterable<Review> {
+public class ReviewList implements Serializable, Iterable<Review> {
 
     private ArrayList<Review> reviews;
 
     /**
      * Constructor
      */
-    public Reviews() {
+    public ReviewList() {
         this.reviews = new ArrayList<>();
     }
 
     /**
-     * Gets the list of Reviews.
+     * Gets the list of ReviewList.
      *
-     * @return ArrayList containing Reviews
+     * @return ArrayList containing ReviewList
      */
     public ArrayList<Review> getReviews() {
         return reviews;
@@ -62,14 +62,14 @@ public class Reviews implements Serializable, Iterable<Review> {
         return reviews.iterator();
     }
 
-    public Reviews getReviews(String username) {
-        Reviews currentUserReviews = new Reviews();
+    public ReviewList getReviews(String username) {
+        ReviewList currentUserReviewList = new ReviewList();
         for (Review r: this) {
             if (r.getReviewedUsername().equals(username)) {
-                currentUserReviews.addReview(r.clone());
+                currentUserReviewList.addReview(r.clone());
             }
         }
-        return currentUserReviews;
+        return currentUserReviewList;
     }
 
     public Review getReviewAtPosition(int position) {

@@ -1,6 +1,7 @@
 package com.example.booknet.Adapters;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.FragmentActivity;
@@ -75,8 +76,11 @@ public class OwnedLibraryAdapter extends RecyclerView.Adapter<OwnedLibraryAdapte
         final int index = ownedListingViewHolder.getAdapterPosition();
 
         //Fill the text fields with the object's library
-        //ownedListingViewHolder.bookThumbnail.//todo listing photo
-        ownedListingViewHolder.bookThumbnail.setImageResource(R.drawable.ic_book_default);
+        Bitmap thumbnailBitmap = item.getPhotoBitmap();
+        if (thumbnailBitmap == null)
+            ownedListingViewHolder.bookThumbnail.setImageResource(R.drawable.ic_book_default);
+        else
+            ownedListingViewHolder.bookThumbnail.setImageBitmap(thumbnailBitmap);
         ownedListingViewHolder.bookTitleLabel.setText(item.getBook().getTitle());
         ownedListingViewHolder.bookAuthorLabel.setText(item.getBook().getAuthor());
         ownedListingViewHolder.isbnLabel.setText(item.getBook().getIsbn());

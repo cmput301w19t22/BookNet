@@ -137,8 +137,6 @@ public class BookSearchFragment extends Fragment {
         searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-
-
                 return false;
             }
 
@@ -155,6 +153,7 @@ public class BookSearchFragment extends Fragment {
 
                 }
                 writeLock.unlock();
+                new ThumnailFetchingTask(getActivity()).execute();
                 listingAdapter.notifyDataSetChanged();
                 return true;
             }
@@ -230,6 +229,18 @@ public class BookSearchFragment extends Fragment {
 
                     } else {
                         bl.setPhoto(new Photo(thumbnailBitmap));
+
+
+                        // weird bug happends while changing tab if you simply listingAdpater.notifyDataSetChanged()
+                        // solution found at: https://stackoverflow.com/questions/43221847/cannot-call-this-method-while-recyclerview-is-computing-a-layout-or-scrolling-wh
+                        searchResults.post(new Runnable()
+                        {
+                            @Override
+                            public void run() {
+                                listingAdapter.notifyDataSetChanged();
+                            }
+                        });
+
                     }
                 }
 

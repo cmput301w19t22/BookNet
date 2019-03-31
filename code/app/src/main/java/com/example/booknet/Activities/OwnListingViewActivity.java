@@ -111,7 +111,7 @@ public class OwnListingViewActivity extends AppCompatActivity implements DialogC
         }
 
         //Fill Layout
-        updateLayout(listing);
+        updateLayout();
 
         // todo: fix edit
         editButton.setOnClickListener(new View.OnClickListener() {
@@ -222,7 +222,7 @@ public class OwnListingViewActivity extends AppCompatActivity implements DialogC
     protected void onResume() {
         super.onResume();
         if (listing != null) {
-            updateLayout(listing);
+            updateLayout();
         } else {
             Log.d("jamie", "Listing was null, attempt to read from db again");
             listing = manager.readUserOwnedBookListing(intenntIsbn, intentDupId);
@@ -231,23 +231,22 @@ public class OwnListingViewActivity extends AppCompatActivity implements DialogC
 
     @Override
     public void onDialogClose() {
-        updateLayout(listing);
+        updateLayout();
     }
 
     /**
      * Updates the contents of the layout objects. Called when creating the activity
      * and should be called whenever the listing data changes.
      *
-     * @param listing
      */
-    private void updateLayout(BookListing listing) {
+    private void updateLayout() {
         Log.d("jamie", "update own listing layout");
         bookTitleLabel.setText(listing.getBook().getTitle());
         bookAuthorLabel.setText(listing.getBook().getAuthor());
         isbnLabel.setText(listing.getBook().getIsbn());
         statusLabel.setText(listing.getStatus().toString());
 
-        Bitmap thumbnail = listing.getPhotoBitmap();
+        Bitmap thumbnail = manager.getCachedThumbnail(listing);
         if (thumbnail != null) {
             photoThumbnail.setImageBitmap(thumbnail);
         } else {

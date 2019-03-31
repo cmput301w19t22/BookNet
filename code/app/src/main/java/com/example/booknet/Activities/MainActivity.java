@@ -138,6 +138,11 @@ public class MainActivity extends FragmentActivity {
 
         mNotificationManagerCompat = NotificationManagerCompat.from(getApplicationContext());
 
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        notificationManager.cancel(NOTIFICATION_ID);
+
         listener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

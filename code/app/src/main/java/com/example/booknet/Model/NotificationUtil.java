@@ -22,21 +22,12 @@ public class NotificationUtil {
             // The user-visible name of the channel.
             CharSequence channelName = notificationData.getChannelName();
             // The user-visible description of the channel.
-            String channelDescription = notificationData.getChannelDescription();
             int channelImportance = notificationData.getChannelImportance();
-            boolean channelEnableVibrate = notificationData.isChannelEnableVibrate();
-            int channelLockscreenVisibility = notificationData.getChannelLockscreenVisibility();
 
             // Initializes NotificationChannel.
             NotificationChannel notificationChannel =
                     new NotificationChannel(channelId, channelName, channelImportance);
-            //notificationChannel.setDescription(channelDescription);
-            //notificationChannel.enableVibration(channelEnableVibrate);
-            //notificationChannel.setLockscreenVisibility(channelLockscreenVisibility);
 
-            // Adds NotificationChannel to system. Attempting to create an existing notification
-            // channel with its original values performs no operation, so it's safe to perform the
-            // below sequence.
             NotificationManager notificationManager =
                     (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
             notificationManager.createNotificationChannel(notificationChannel);

@@ -25,9 +25,11 @@ public class NotificationData {
         this.mPriority = NotificationCompat.PRIORITY_DEFAULT;
         this.mChannelId = "channel_reminder_1";
         this.mChannelName = "Sample Reminder";
+
         this.mContentTitle = "A InAppNotification";
         this.mContentText = "To notify you of important";
         this.mChannelDescription = "Test InAppNotification";
+
         this.mChannelImportance = NotificationManager.IMPORTANCE_DEFAULT;
         this.mChannelEnableVibrate = false;
         this.mChannelLockscreenVisibility = NotificationCompat.VISIBILITY_PUBLIC;

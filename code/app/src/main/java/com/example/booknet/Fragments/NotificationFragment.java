@@ -14,12 +14,16 @@ import com.example.booknet.DatabaseManager;
 import com.example.booknet.Adapters.NotificationAdapter;
 import com.example.booknet.Model.InAppNotifications;
 import com.example.booknet.R;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 public class NotificationFragment extends Fragment {
 
     private InAppNotifications inAppNotifications;
     private RecyclerView notificationsListView;
     private NotificationAdapter notificationAdapter;
+    private ValueEventListener notificationListener;
+    private DatabaseReference notificationRef;
 
     DatabaseManager manager = DatabaseManager.getInstance();
 
@@ -57,7 +61,6 @@ public class NotificationFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        //Log.d("seanTag", "onStart inAppNotifications");
         notificationAdapter.notifyDataSetChanged();
     }
 

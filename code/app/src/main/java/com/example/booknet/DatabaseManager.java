@@ -109,7 +109,6 @@ public class DatabaseManager {
     private ReentrantReadWriteLock.ReadLock thumbnailCacheReadLock = l4.readLock();
     private ReentrantReadWriteLock.WriteLock thumbnailCacheWriteLock = l4.writeLock();
 
-
     //not in effect
     private boolean readwritePermission = false;
 
@@ -885,7 +884,6 @@ public class DatabaseManager {
 
     public class InitiationTask extends AsyncTask<Void, Void, Boolean> {
         Activity context;
-        String uid = CurrentUser.getInstance().getUID();
 
         InitiationTask(Activity context) {
             this.context = context;
@@ -1089,7 +1087,7 @@ public class DatabaseManager {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
 
-                    notificationWriteLock.lock();
+                    //notificationWriteLock.lock();
                     inAppNotifications.removeAllNotificiations();
 
                     Log.d("seanTag", "start noti read for " + CurrentUser.getInstance().getUsername());
@@ -1101,18 +1099,15 @@ public class DatabaseManager {
                             inAppNotifications.addNotification(inAppNotification);
                         }
                     }
-                    notificationWriteLock.unlock();
-
-                    //Log.d("seanTag", "read notification " + CurrentUser.getInstance().getUsername());
+                    //notificationWriteLock.unlock();
                 }
-
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
                     System.out.println("The read failed: " + databaseError.getCode());
                 }
             };
-            notificationRef = FirebaseDatabase.getInstance().getReference("InAppNotifications");
+            notificationRef = FirebaseDatabase.getInstance().getReference("InAppNotifications/"+CurrentUser.getInstance().getUsername());
             notificationRef.addValueEventListener(notificationListener);
 
             reviewListener = new ValueEventListener() {

@@ -11,6 +11,9 @@ import android.test.InstrumentationTestCase;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.example.booknet.Activities.LoginPageActivity;
+import com.example.booknet.Activities.MainActivity;
+import com.example.booknet.Activities.ProfileEditActivity;
 import com.robotium.solo.Solo;
 
 import org.junit.After;
@@ -88,7 +91,7 @@ public class UserProfileTest extends ActivityTestRule<LoginPageActivity> {
         solo.enterText((EditText) solo.getView(R.id.etEmailAddr),"test1@gmail.com");
         solo.enterText((EditText) solo.getView(R.id.etPassword),"password");
 
-        solo.clickOnView(solo.getView(R.id.btnSignIn));
+        solo.clickOnButton("Sign In");
 
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
 

@@ -88,6 +88,7 @@ public class UserBooks extends ActivityTestRule<LoginPageActivity> {
         assertTrue(solo.searchText("0000000000000000000000000000000" + testRandom));
 
         //todo click on the first item in the list
+        solo.clickInRecyclerView(0, 0, R.id.bookLayout);
 
         solo.assertCurrentActivity("Wrong Activity", OwnListingViewActivity.class);
 

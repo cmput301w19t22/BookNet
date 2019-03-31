@@ -11,6 +11,7 @@ import android.test.InstrumentationTestCase;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.example.booknet.Activities.AccountCreateActivity;
 import com.example.booknet.Activities.LoginPageActivity;
 import com.example.booknet.Activities.MainActivity;
 import com.robotium.solo.Solo;
@@ -34,7 +35,8 @@ public class LoginTest extends ActivityTestRule<LoginPageActivity> {
     private Solo solo;
 
     Random rand = new Random();
-    private String testRandom = "_" + rand.nextInt(10000); // Gives n such that 0 <= n < 20
+    private String testRandomNum = "_" + rand.nextInt(10000); // Gives n such that 0 <= n < 20
+    private String testRandom = "_" + testRandomNum;
 
     public LoginTest(){
         super(LoginPageActivity.class);
@@ -103,10 +105,18 @@ public class LoginTest extends ActivityTestRule<LoginPageActivity> {
 
         solo.assertCurrentActivity("Wrong Activity", LoginPageActivity.class);
 
+        solo.clickOnButton("Create Account");
+
+        solo.assertCurrentActivity("Wrong Activity", AccountCreateActivity.class);
+
         solo.enterText((EditText) solo.getView(R.id.etEmailAddr),"test" + testRandom + "@gmail.com");
         solo.enterText((EditText) solo.getView(R.id.etPassword),"password");
+        solo.enterText((EditText) solo.getView(R.id.usernameField),"test" + testRandom );
+        solo.enterText((EditText) solo.getView(R.id.phoneField), "555-555-" + testRandomNum);
 
         solo.clickOnButton("Create Account");
+
+        solo.assertCurrentActivity("Wrong Activity", LoginPageActivity.class);
 
         solo.clickOnButton("Sign In");
 

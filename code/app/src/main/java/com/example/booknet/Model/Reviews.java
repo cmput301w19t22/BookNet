@@ -34,7 +34,7 @@ public class Reviews implements Serializable, Iterable<Review> {
     }
 
     /**
-     * Removes a Notification from the library.
+     * Removes a InAppNotification from the library.
      *
      * @param review The Review to remove
      */
@@ -51,7 +51,7 @@ public class Reviews implements Serializable, Iterable<Review> {
     /**
      * Get the number of notifications in the list of notifications.
      *
-     * @return Size of the Notifications list
+     * @return Size of the InAppNotifications list
      */
     public int size() {
         return reviews.size();

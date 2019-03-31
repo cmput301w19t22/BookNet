@@ -97,7 +97,6 @@ public class BookSearchFragment extends Fragment {
                     writeLock.lock();
                     filteredLibrary.removeAllBooks();
 
-
                     // then fill it as it is in the database
                     for (DataSnapshot data : dataSnapshot.getChildren()) {
                         BookListing bookListing = data.getValue(BookListing.class);
@@ -119,8 +118,6 @@ public class BookSearchFragment extends Fragment {
 
             }
         };
-
-
         manager.getAllListingsRef().addValueEventListener(listener);
 
 

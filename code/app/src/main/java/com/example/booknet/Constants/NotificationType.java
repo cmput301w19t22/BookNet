@@ -6,7 +6,7 @@ public enum NotificationType {
     hasDeclined;
 
     /**
-     * Returns the Notification type as a text string.
+     * Returns the InAppNotification type as a text string.
      *
      * @return
      */

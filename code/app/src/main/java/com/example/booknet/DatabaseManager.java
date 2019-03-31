@@ -16,8 +16,8 @@ import com.example.booknet.Model.Book;
 import com.example.booknet.Model.BookLibrary;
 import com.example.booknet.Model.BookListing;
 import com.example.booknet.Model.CurrentUser;
-import com.example.booknet.Model.Notification;
-import com.example.booknet.Model.Notifications;
+import com.example.booknet.Model.InAppNotification;
+import com.example.booknet.Model.InAppNotifications;
 import com.example.booknet.Model.Photo;
 import com.example.booknet.Model.Review;
 import com.example.booknet.Model.Reviews;
@@ -56,7 +56,7 @@ public class DatabaseManager {
     private BookLibrary allBookLibrary = new BookLibrary();
     private Map<String, String> usernames = new HashMap<>();
     private Map<String, HashMap<String, String>> allUserProfile = new HashMap<>();
-    private Notifications notifications = new Notifications();
+    private InAppNotifications inAppNotifications = new InAppNotifications();
     private Reviews reviews = new Reviews();
 
     //used to freeze user interaction when connecting
@@ -79,7 +79,6 @@ public class DatabaseManager {
     private ValueEventListener allUserProfileListener;
     private ValueEventListener notificationListener;
     private ValueEventListener reviewListener;
-
 
     private Boolean phoneLoaded = false;
     private Boolean nameLoaded = false;
@@ -123,6 +122,10 @@ public class DatabaseManager {
 
     public DatabaseReference getAllListingsRef() {
         return allListingsRef;
+    }
+
+    public DatabaseReference getNotificationsRef() {
+        return notificationRef;
     }
 
     public static DatabaseManager getInstance() {
@@ -209,12 +212,12 @@ public class DatabaseManager {
     }
 
 
-    public void writeNotification(Notification notification) {
-        //Log.d("seanTag", "write notification");
-        notificationRef.child(notification.getUserReceivingNotification()
-                + "-" + notification.getUserMakingNotification()
-                + "-" + notification.getRequestedBookListing().getISBN()
-                + "-" + notification.getRequestedBookListing().getDupInd()).setValue(notification);
+    public void writeNotification(InAppNotification inAppNotification) {
+        //Log.d("seanTag", "write inAppNotification");
+        notificationRef.child(inAppNotification.getUserReceivingNotification()
+                + "-" + inAppNotification.getUserMakingNotification()
+                + "-" + inAppNotification.getRequestedBookListing().getISBN()
+                + "-" + inAppNotification.getRequestedBookListing().getDupInd()).setValue(inAppNotification);
     }
 
     /**
@@ -259,11 +262,11 @@ public class DatabaseManager {
         allListingsRef.child(generateAllListingPath(bookListing, bookListing.getDupInd(), getUIDFromName(bookListing.getOwnerUsername()))).removeValue();
     }
 
-    public void removeNotification(Notification notification) {
-        notificationRef.child(notification.getUserReceivingNotification()
-                + "-" + notification.getUserMakingNotification()
-                + "-" + notification.getRequestedBookListing().getISBN()
-                + "-" + notification.getRequestedBookListing().getDupInd()).removeValue();
+    public void removeNotification(InAppNotification inAppNotification) {
+        notificationRef.child(inAppNotification.getUserReceivingNotification()
+                + "-" + inAppNotification.getUserMakingNotification()
+                + "-" + inAppNotification.getRequestedBookListing().getISBN()
+                + "-" + inAppNotification.getRequestedBookListing().getDupInd()).removeValue();
     }
 
     /**
@@ -303,7 +306,7 @@ public class DatabaseManager {
         userRef.child("requests").removeValue();
         userRef.child("borrowerName").setValue(requester);
 
-        writeNotification(new Notification(bookListing, requester, bookListing.getOwnerUsername(), NotificationType.hasAccepted));
+        writeNotification(new InAppNotification(bookListing, requester, bookListing.getOwnerUsername(), NotificationType.hasAccepted));
     }
 
     /**
@@ -425,7 +428,7 @@ public class DatabaseManager {
         }
 
 
-        writeNotification(new Notification(bookListing, requester, bookListing.getOwnerUsername(), NotificationType.hasDeclined));
+        writeNotification(new InAppNotification(bookListing, requester, bookListing.getOwnerUsername(), NotificationType.hasDeclined));
     }
 
     /**
@@ -464,12 +467,12 @@ public class DatabaseManager {
         return libClone;
     }
 
-    public Notifications getAllNotifications() {
-        //Log.d("seanTag", "Get Notifications");
+    public InAppNotifications getAllNotifications() {
+        //Log.d("seanTag", "Get InAppNotifications");
 
-        Notifications cloned;
+        InAppNotifications cloned;
         notificationReadLock.lock();
-        cloned = notifications.clone();
+        cloned = inAppNotifications.clone();
         notificationReadLock.unlock();
 
         return cloned;
@@ -523,7 +526,6 @@ public class DatabaseManager {
     }
 
     public void connectToDatabase(Activity context) {
-
         progressDialog = new ProgressDialog(context);
         progressDialog.setCancelable(false);
         progressDialog.setMessage("Connecting to Database...");
@@ -647,7 +649,7 @@ public class DatabaseManager {
         }
 
         Log.d("mattTag", "wrting notif");
-        writeNotification(new Notification(listing, listing.getOwnerUsername(), CurrentUser.getInstance().getUsername(), NotificationType.hasRequested));
+        writeNotification(new InAppNotification(listing, listing.getOwnerUsername(), CurrentUser.getInstance().getUsername(), NotificationType.hasRequested));
         Log.d("mattTag", "finished wring noi");
     }
 
@@ -1088,18 +1090,19 @@ public class DatabaseManager {
                 public void onDataChange(DataSnapshot dataSnapshot) {
 
                     notificationWriteLock.lock();
-                    notifications.removeAllNotificiations();
+                    inAppNotifications.removeAllNotificiations();
 
                     Log.d("seanTag", "start noti read for " + CurrentUser.getInstance().getUsername());
 
                     for (DataSnapshot data : dataSnapshot.getChildren()) {
-                        Notification notification = data.getValue(Notification.class);
-                        if (notification.getUserReceivingNotification().equals(CurrentUser.getInstance().getUsername())) {
-                            Log.d("seanTag", "new noti " + notification.getRequestedBookListing().getISBN());
-                            notifications.addNotification(notification);
+                        InAppNotification inAppNotification = data.getValue(InAppNotification.class);
+                        if (inAppNotification.getUserReceivingNotification().equals(CurrentUser.getInstance().getUsername())) {
+                            Log.d("seanTag", "new noti " + inAppNotification.getRequestedBookListing().getISBN());
+                            inAppNotifications.addNotification(inAppNotification);
                         }
                     }
-                    notificationWriteLock.lock();
+                    notificationWriteLock.unlock();
+
                     //Log.d("seanTag", "read notification " + CurrentUser.getInstance().getUsername());
                 }
 
@@ -1109,29 +1112,22 @@ public class DatabaseManager {
                     System.out.println("The read failed: " + databaseError.getCode());
                 }
             };
-            notificationRef = FirebaseDatabase.getInstance().getReference("Notifications");
+            notificationRef = FirebaseDatabase.getInstance().getReference("InAppNotifications");
             notificationRef.addValueEventListener(notificationListener);
 
             reviewListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-
-                    //notificationWriteLock.lock();
                     reviews.removeAllReviews();
 
                     Log.d("seanTag", "start review read for " + CurrentUser.getInstance().getUsername());
 
                     for (DataSnapshot data : dataSnapshot.getChildren()) {
                         Review review = data.getValue(Review.class);
-                        //if (review.getUserReceivingNotification().equals(CurrentUser.getInstance().getUsername())) {
-                            Log.d("seanTag", "new review ");
-                            reviews.addReview(review);
-                        //}
+                        Log.d("seanTag", "new review ");
+                        reviews.addReview(review);
                     }
-                    //notificationWriteLock.lock();
-                    //Log.d("seanTag", "read notification " + CurrentUser.getInstance().getUsername());
                 }
-
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {

@@ -55,6 +55,8 @@ public class ListingViewActivity extends AppCompatActivity {
 
     private boolean alreadyRequested;
 
+    private String CHANNEL_ID = "BOOKNET_NOTIFICATION";
+
     /**
      * Called when creating the activity.
      * Performs the following tasks:
@@ -310,6 +312,4 @@ public class ListingViewActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
     }
-
-
 }

@@ -273,17 +273,23 @@ public class DatabaseManager {
     /**
      * @param listing           : the booklisting that requires a thumbnail
      * @param adapter           : the adpater to notify once the thumbnail is fetched from db and cached in manager
-     * @param onFailureListener
      */
-    public void fetchListingThumbnail(final BookListing listing, final RecyclerView.Adapter adapter, OnFailureListener onFailureListener) {
+    public void fetchListingThumbnail(final BookListing listing, final RecyclerView.Adapter adapter) {
         Log.d("mattFin", listing.toString());
         if (! (listing.getOwnerUsername().isEmpty() || listing.getISBN().isEmpty())){
             StorageReference ref = storageRef.child(listing.getOwnerUsername()).child(listing.getISBN() + "-" + listing.getDupInd());
+
+
             Log.d("mattFin2", "trying to fetch " + listing.getOwnerUsername() + listing.getISBN() + "-" + listing.getDupInd());
             // maximum size of the image
             final long TEN_MEGABYTE = 1024 * 1024 * 10;      //todo: limit the maximum size of the image the user can upload to 10 mb
 
-            ref.getBytes(TEN_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            ref.getBytes(TEN_MEGABYTE).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+
+                }
+            }).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                 @Override
                 public void onSuccess(byte[] bytes) {
                     Bitmap fetchedThumnail = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
@@ -303,7 +309,7 @@ public class DatabaseManager {
                     }
 
                 }
-            }).addOnFailureListener(onFailureListener);
+            });
         }
     }
 

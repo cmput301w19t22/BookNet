@@ -82,7 +82,7 @@ public class OwnedLibraryFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_owned_library, container, false);
 
-        filteredLibrary = new BookLibrary();
+
         bookCountLabel = view.findViewById(R.id.resultsNumLabel);
 
         //Add Click Listener
@@ -117,12 +117,13 @@ public class OwnedLibraryFragment extends Fragment {
                         Log.d("mattTag", "lo: " + bookListing.toString());
                     }
                 }
+                int count = filteredLibrary.size();
                 writeLock.unlock();
 
                 new ThumbnailFetchingTask(getActivity()).execute();
 
                 listingAdapter.notifyDataSetChanged();
-                bookCountLabel.setText(String.format("%d Books", filteredLibrary.size()));
+                bookCountLabel.setText(String.format("%d Books", count));
             }
 
             @Override
@@ -133,14 +134,19 @@ public class OwnedLibraryFragment extends Fragment {
 
         manager.getUserListingsRef().addValueEventListener(listener);
 
-        filteredLibrary = library.clone();
+        writeLock.lock();
+        filteredLibrary.copyOneByOne(library);
+        int size = filteredLibrary.size();
+        writeLock.unlock();
 
-        bookCountLabel.setText(String.format("%d Books", filteredLibrary.size()));
+        bookCountLabel.setText(String.format("%d Books", size));
 
         //Apply Adapter to RecyclerView
         libraryListView = view.findViewById(R.id.bookLibrary);
         libraryListView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        listingAdapter = new OwnedLibraryAdapter(filteredLibrary, getActivity());
+
+        listingAdapter = new OwnedLibraryAdapter(filteredLibrary, getActivity(), readLock);
+
         libraryListView.setAdapter(listingAdapter);
         libraryListView.addItemDecoration(new SpaceDecoration(12, 16));
 
@@ -152,14 +158,19 @@ public class OwnedLibraryFragment extends Fragment {
                 TextView selectedView = (TextView) view;
                 if (selectedView != null) {
                     String selectedItem = selectedView.getText().toString();
+
+                    writeLock.lock();
                     if (selectedItem.equals("All")) {
                         filteredLibrary.copyOneByOne(library);
                     } else {
                         filteredLibrary.filterByStatus(library, BookListingStatus.valueOf(selectedItem));
                     }
+                    int size = filteredLibrary.size();
+                    writeLock.unlock();
+
                     new ThumbnailFetchingTask(getActivity()).execute();
                     listingAdapter.notifyDataSetChanged();
-                    bookCountLabel.setText(String.format("%d Books", filteredLibrary.size()));
+                    bookCountLabel.setText(String.format("%d Books", size));
                 }
 
             }

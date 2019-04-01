@@ -271,12 +271,25 @@ public class DatabaseManager {
     }
 
     /**
-     * @param listing           : the booklisting that requires a thumbnail
-     * @param adapter           : the adpater to notify once the thumbnail is fetched from db and cached in manager
+     * Deletes the photo thumbnail from the database
+     *
+     * @param listing           Listing to write for
+     * @param onSuccessListener
+     * @param onFailureListener
      */
-    public void fetchListingThumbnail(final BookListing listing, final RecyclerView.Adapter adapter) {
+    public void deleteThumbnailForListing(BookListing listing, OnSuccessListener onSuccessListener, OnFailureListener onFailureListener) {
+        StorageReference ref = storageRef.child(listing.getOwnerUsername()).child(listing.getISBN() + "-" + listing.getDupInd());
+
+        ref.delete().addOnSuccessListener(onSuccessListener).addOnFailureListener(onFailureListener);
+    }
+
+    /**
+     * @param listing : the booklisting that requires a thumbnail
+     * @param adapter : the adpater to notify once the thumbnail is fetched from db and cached in manager
+     */
+    public synchronized void fetchListingThumbnail(final BookListing listing, final RecyclerView.Adapter adapter) {
         Log.d("mattFin", listing.toString());
-        if (! (listing.getOwnerUsername().isEmpty() || listing.getISBN().isEmpty())){
+        if (!(listing.getOwnerUsername().isEmpty() || listing.getISBN().isEmpty())) {
             StorageReference ref = storageRef.child(listing.getOwnerUsername()).child(listing.getISBN() + "-" + listing.getDupInd());
 
 
@@ -297,16 +310,8 @@ public class DatabaseManager {
                     thumbNailCache.put(listing.getOwnerUsername() + "-" + listing.getISBN() + "-" + listing.getDupInd(), fetchedThumnail);
                     thumbnailCacheWriteLock.unlock();
                     listing.setPhoto(new Photo(fetchedThumnail));
-                    if (adapter instanceof BookSearchAdapter) {
-                        ((BookSearchAdapter) adapter).setAllowNewAnimation(false);
-                    }
-
                     adapter.notifyDataSetChanged();
 
-                    if (adapter instanceof BookSearchAdapter) {
-                        ((BookSearchAdapter) adapter).cancelAllAnimations();
-                        ((BookSearchAdapter) adapter).setAllowNewAnimation(true);
-                    }
 
                 }
             });
@@ -325,6 +330,14 @@ public class DatabaseManager {
         thumbnailCacheReadLock.unlock();
 
         return cachedBitmap;
+    }
+
+    public void removeCachedThumbnail(BookListing bl) {
+        thumbnailCacheWriteLock.lock();
+        Bitmap toRemove = getCachedThumbnail(bl);
+        toRemove.recycle();
+        thumbNailCache.remove(bl.getOwnerUsername() + "-" + bl.getISBN() + "-" + bl.getDupInd());
+        thumbnailCacheWriteLock.unlock();
     }
     //#endregion
 
@@ -819,8 +832,8 @@ public class DatabaseManager {
     public void writeReview(Review review) {
         String receiverId = getUIDFromName(review.getReviewedUsername());
         reviewRef.child(receiverId)
-                 .child(review.getReviewerUsername()
-                + "-" + review.getDupId()).setValue(review);
+                .child(review.getReviewerUsername()
+                        + "-" + review.getDupId()).setValue(review);
     }
 
     /**
@@ -887,16 +900,16 @@ public class DatabaseManager {
 
     public void writeNotification(InAppNotification inAppNotification) {
         String receiverId = getUIDFromName(inAppNotification.getUserReceivingNotification());
-        Log.d("seanTag", "write noti "+receiverId);
+        Log.d("seanTag", "write noti " + receiverId);
         notificationRef.child(receiverId)
-                 .child(inAppNotification.getUserMakingNotification()
-                + "-" + inAppNotification.getRequestedBookListing().getDupInd()).setValue(inAppNotification);
+                .child(inAppNotification.getUserMakingNotification()
+                        + "-" + inAppNotification.getRequestedBookListing().getDupInd()).setValue(inAppNotification);
     }
 
 
     public void removeNotification(InAppNotification inAppNotification) {
         String receiverId = getUIDFromName(inAppNotification.getUserReceivingNotification());
-        Log.d("seanTag", "remove noti "+receiverId);
+        Log.d("seanTag", "remove noti " + receiverId);
         notificationRef.child(receiverId)
                 .child(inAppNotification.getUserMakingNotification()
                         + "-" + inAppNotification.getRequestedBookListing().getDupInd()).removeValue();
@@ -964,7 +977,8 @@ public class DatabaseManager {
                     if (currentUserProfile != null) {
 
                         CurrentUser.getInstance().setProfile(currentUserProfile);
-                        if (LoginPageActivity.onLoginPage) LoginPageActivity.notifyTaskFinished(context, "user profile (contact email, phone) fetched from database");
+                        if (LoginPageActivity.onLoginPage)
+                            LoginPageActivity.notifyTaskFinished(context, "user profile (contact email, phone) fetched from database");
                     }
                     userProfileWriteLock.unlock();
                 }
@@ -990,7 +1004,8 @@ public class DatabaseManager {
                         usernames.put(name, uid);
                         if (uid.equals(CurrentUser.getInstance().getUID())) {
                             CurrentUser.getInstance().setUsername(name);
-                            if (LoginPageActivity.onLoginPage) LoginPageActivity.notifyTaskFinished(context,"username fetched from database");
+                            if (LoginPageActivity.onLoginPage)
+                                LoginPageActivity.notifyTaskFinished(context, "username fetched from database");
 
                         }
                     }
@@ -1143,7 +1158,7 @@ public class DatabaseManager {
         protected void onPostExecute(final Boolean success) {
             Log.d("mattTag", "DatabaseManager: database connected, allowing read/writes");
             if (success) allowReadWrite();
-            if (context instanceof AccountCreateActivity){
+            if (context instanceof AccountCreateActivity) {
                 ((AccountCreateActivity) context).notifyTaskFinished("Connected to database");
 
                 final String username = ((AccountCreateActivity) context).username;
@@ -1172,8 +1187,8 @@ public class DatabaseManager {
                     }
                 });
             }
-            if (context instanceof LoginPageActivity){
-                LoginPageActivity.notifyTaskFinished(context,"Connected to database");
+            if (context instanceof LoginPageActivity) {
+                LoginPageActivity.notifyTaskFinished(context, "Connected to database");
             }
         }
     }

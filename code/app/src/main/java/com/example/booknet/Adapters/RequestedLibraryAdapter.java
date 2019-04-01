@@ -22,6 +22,7 @@ import com.example.booknet.Model.BookLibrary;
 import com.example.booknet.Model.BookListing;
 import com.example.booknet.R;
 
+import java.util.ArrayList;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 //Reused/adapted code from assignment 1
@@ -43,6 +44,8 @@ public class RequestedLibraryAdapter extends RecyclerView.Adapter<RequestedLibra
 
     private ReentrantReadWriteLock.ReadLock readLock;
 
+    private ArrayList<RequestListingViewHolder> viewHolders = new ArrayList<>();
+
     /**
      * Creates the adapter
      *
@@ -53,6 +56,21 @@ public class RequestedLibraryAdapter extends RecyclerView.Adapter<RequestedLibra
         this.library = library;
         this.sourceActivity = sourceActivity;
         this.readLock = readLock;
+
+        registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onChanged() {
+                super.onChanged();
+                for (RequestListingViewHolder holder : viewHolders) {
+                    if (holder != null) {
+                        Log.d("jamie", "disable animation for " + holder.toString());
+                        holder.allowAnimation = false;
+                    } else {
+                        viewHolders.remove(holder);
+                    }
+                }
+            }
+        });
     }
 
     /**
@@ -77,7 +95,7 @@ public class RequestedLibraryAdapter extends RecyclerView.Adapter<RequestedLibra
      * Routine for binding new library to a list item
      *
      * @param requestListingViewHolder The ViewHolder to be assigned
-     * @param position               Index in the list to use for this list slot
+     * @param position                 Index in the list to use for this list slot
      */
     @Override
     public void onBindViewHolder(@NonNull RequestListingViewHolder requestListingViewHolder, int position) {
@@ -117,14 +135,23 @@ public class RequestedLibraryAdapter extends RecyclerView.Adapter<RequestedLibra
             }
         });
 
-        AlphaAnimation animIn = new AlphaAnimation(0.0f, 1.0f);
-        animIn.setDuration(500);
-        requestListingViewHolder.itemView.startAnimation(animIn);
-        ScaleAnimation anim2 = new ScaleAnimation(0.5f, 1f, 0.5f, 1f,
-                Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-        anim2.setDuration(500);
-        anim2.setInterpolator(new OvershootInterpolator());
-        requestListingViewHolder.itemView.startAnimation(anim2);
+        if (requestListingViewHolder.allowAnimation) {
+            AlphaAnimation animIn = new AlphaAnimation(0.0f, 1.0f);
+            animIn.setDuration(500);
+            requestListingViewHolder.itemView.startAnimation(animIn);
+            ScaleAnimation anim2 = new ScaleAnimation(0.5f, 1f, 0.5f, 1f,
+                    Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+            anim2.setDuration(500);
+            anim2.setInterpolator(new OvershootInterpolator());
+            requestListingViewHolder.itemView.startAnimation(anim2);
+        }
+    }
+
+    @Override
+    public void onViewAttachedToWindow(@NonNull RequestListingViewHolder holder) {
+        super.onViewAttachedToWindow(holder);
+        holder.allowAnimation = true;
+        holder.itemView.clearAnimation();
     }
 
     /**
@@ -166,6 +193,7 @@ public class RequestedLibraryAdapter extends RecyclerView.Adapter<RequestedLibra
         private TextView ownedLabel;
         private TextView statusLabel;
 
+        private boolean allowAnimation = true;
 
         /**
          * Creates the RequestListingViewHolder

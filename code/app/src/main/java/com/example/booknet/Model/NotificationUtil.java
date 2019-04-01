@@ -13,7 +13,7 @@ public class NotificationUtil {
 
     public static String createNotificationChannel(Context context, NotificationData notificationData) {
 
-        // NotificationChannels are required for InAppNotifications on O (API 26) and above.
+        // NotificationChannels are required for InAppNotificationList on O (API 26) and above.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
             // The id of the channel.

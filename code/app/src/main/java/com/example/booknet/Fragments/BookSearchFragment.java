@@ -27,7 +27,6 @@ import com.example.booknet.Model.BookLibrary;
 import com.example.booknet.Model.BookListing;
 import com.example.booknet.Model.Photo;
 import com.example.booknet.R;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -89,11 +88,14 @@ public class BookSearchFragment extends Fragment {
                 getResources().getStringArray(R.array.status_array));
         filter.setAdapter(filterAdapter);
 
-
         allBookListings = manager.readAllBookListings();
-        filteredLibrary.copyOneByOne(allBookListings);
 
+        writeLock.lock();
+        filteredLibrary.copyOneByOne(allBookListings);
         resultsCountLabel.setText(String.format("%d Results", filteredLibrary.size()));
+        writeLock.unlock();
+
+
 
         listener = new ValueEventListener() {
             @Override
@@ -101,6 +103,7 @@ public class BookSearchFragment extends Fragment {
                 // once the data is changed, we just change our corresponding static variable
 
                 //first empty it
+                int size = 0;
                 if (searchBar != null) {
 
                     writeLock.lock();
@@ -115,7 +118,7 @@ public class BookSearchFragment extends Fragment {
                             }
                         }
                     }
-
+                    size = filteredLibrary.size();
                     writeLock.unlock();
 
                     new ThumbnailFetchingTask(getActivity()).execute();
@@ -125,7 +128,7 @@ public class BookSearchFragment extends Fragment {
                     //listingAdapter.cancelAllAnimations();
                 }
                 //update results count
-                resultsCountLabel.setText(String.format("%d Results", filteredLibrary.size()));
+                resultsCountLabel.setText(String.format("%d Results", size));
             }
 
             @Override
@@ -184,15 +187,18 @@ public class BookSearchFragment extends Fragment {
 
                 if (selectedView != null) {
                     String selectedItem = selectedView.getText().toString();
+                    writeLock.lock();
                     if (selectedItem.equals("All")) {
                         filteredLibrary.copyOneByOne(allBookListings);
                     } else {
                         filteredLibrary.filterByStatus(allBookListings, BookListingStatus.valueOf(selectedItem));
                     }
+                    resultsCountLabel.setText(String.format("%d Results", filteredLibrary.size()));
+                    writeLock.unlock();
                     new ThumbnailFetchingTask(getActivity()).execute();
                     listingAdapter.notifyDataSetChanged();
-                    listingAdapter.cancelAllAnimations();
-                    resultsCountLabel.setText(String.format("%d Results", filteredLibrary.size()));
+
+
                 }
             }
 
@@ -201,7 +207,6 @@ public class BookSearchFragment extends Fragment {
 
             }
         });
-
 
         new ThumbnailFetchingTask(getActivity()).execute();
 
@@ -246,45 +251,35 @@ public class BookSearchFragment extends Fragment {
             writeLock.lock();
             for (final BookListing bl : filteredLibrary) {
                 if (bl.getPhotoBitmap() == null) {
-
                     Log.d("mattX", bl.toString() + " photo is null");
 
                     Bitmap thumbnailBitmap = manager.getCachedThumbnail(bl);
 
                     if (thumbnailBitmap == null) {
+                        listingAdapter.setAllowNewAnimation(false);
                         manager.fetchListingThumbnail(bl,
-                                listingAdapter,
-
-                                new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.d("imageFetching", "fetching failed, cause: " + e.getLocalizedMessage());
-                                    }
-                                });
+                                listingAdapter);
 
                     } else {
                         bl.setPhoto(new Photo(thumbnailBitmap));
-
 
                         // weird bug happends while changing tab if you simply listingAdpater.notifyDataSetChanged()
                         // solution found at: https://stackoverflow.com/questions/43221847/cannot-call-this-method-while-recyclerview-is-computing-a-layout-or-scrolling-wh
                         searchResults.post(new Runnable() {
                             @Override
                             public void run() {
+                                readLock.lock();
                                 //listingAdapter.notifyDataSetChanged();
                                 listingAdapter.setAllowNewAnimation(false);
                                 listingAdapter.notifyItemChanged(filteredLibrary.indexOf(bl));
                                 listingAdapter.setAllowNewAnimation(true);
-                                listingAdapter.cancelAllAnimations();
+                                readLock.unlock();
                             }
                         });
-
                     }
                 }
-
             }
             writeLock.unlock();
-
 
             return true;
         }

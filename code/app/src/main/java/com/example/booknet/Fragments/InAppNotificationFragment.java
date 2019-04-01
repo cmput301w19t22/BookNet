@@ -11,24 +11,26 @@ import android.view.ViewGroup;
 
 import com.example.booknet.Adapters.SpaceDecoration;
 import com.example.booknet.DatabaseManager;
-import com.example.booknet.Adapters.NotificationAdapter;
-import com.example.booknet.Model.InAppNotifications;
+import com.example.booknet.Adapters.InAppNotificationAdapter;
+import com.example.booknet.Model.CurrentUser;
+import com.example.booknet.Model.InAppNotification;
+import com.example.booknet.Model.InAppNotificationList;
 import com.example.booknet.R;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
-public class NotificationFragment extends Fragment {
+public class InAppNotificationFragment extends Fragment {
 
-    private InAppNotifications inAppNotifications;
+    private InAppNotificationList inAppNotificationList;
     private RecyclerView notificationsListView;
-    private NotificationAdapter notificationAdapter;
+    private InAppNotificationAdapter inAppNotificationAdapter;
     private ValueEventListener notificationListener;
     private DatabaseReference notificationRef;
 
     DatabaseManager manager = DatabaseManager.getInstance();
 
-    public static NotificationFragment newInstance() {
-        NotificationFragment myFragment = new NotificationFragment();
+    public static InAppNotificationFragment newInstance() {
+        InAppNotificationFragment myFragment = new InAppNotificationFragment();
 
         Bundle args = new Bundle();
         myFragment.setArguments(args);
@@ -41,17 +43,22 @@ public class NotificationFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_notifications, container, false);
 
-        inAppNotifications = manager.getAllNotifications();
+        inAppNotificationList = manager.readNotifications(CurrentUser.getInstance().getUsername());
 
         Log.d("seanTag", "onCreateView InAppNotification");
 
-        notificationsListView = view.findViewById(R.id.inAppNotifications);
+        notificationsListView = view.findViewById(R.id.inAppNotificationList);
         notificationsListView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        notificationAdapter = new NotificationAdapter(inAppNotifications, getActivity());
-        notificationsListView.setAdapter(notificationAdapter);
+        inAppNotificationAdapter = new InAppNotificationAdapter(inAppNotificationList, getActivity());
+        notificationsListView.setAdapter(inAppNotificationAdapter);
         notificationsListView.addItemDecoration(new SpaceDecoration(12,16));
 
         return view;
+    }
+
+    public void removeInAppNotification(InAppNotification inAppNotification) {
+        inAppNotificationList.removeNotification(inAppNotification);
+        notifyDataSetChanged();
     }
 
     /**
@@ -61,7 +68,7 @@ public class NotificationFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        notificationAdapter.notifyDataSetChanged();
+        inAppNotificationAdapter.notifyDataSetChanged();
     }
 
     public void onDestroy() {
@@ -69,6 +76,6 @@ public class NotificationFragment extends Fragment {
     }
 
     public void notifyDataSetChanged() {
-        notificationAdapter.notifyDataSetChanged();
+        inAppNotificationAdapter.notifyDataSetChanged();
     }
 }

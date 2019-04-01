@@ -105,9 +105,12 @@ public class ListingViewActivity extends AppCompatActivity {
             listing = manager.readBookListingOfUsername(username, isbn, dupID);
         }
 
+        //if (listing.getOwnerUsername().equals(CurrentUser.getInstance().getUsername())) {
+        //    requestButton.setVisibility(View.GONE);
+        //}
+
         //Fill Layout
         updateLayout(listing);
-
 
         //#region Listeners
         requestButton.setOnClickListener(new View.OnClickListener() {

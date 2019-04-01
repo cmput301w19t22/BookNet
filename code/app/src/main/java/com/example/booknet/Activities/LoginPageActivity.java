@@ -1,7 +1,9 @@
 package com.example.booknet.Activities;
 
+import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -34,7 +36,7 @@ import java.lang.reflect.Field;
 
 ;
 
-public class LoginPageActivity extends AppCompatActivity implements View.OnClickListener, InitialUserProfileDialog.InitialUserProfileListener {
+public class LoginPageActivity extends AppCompatActivity implements View.OnClickListener {
     private final String TAG = "FB_SIGNIN";
 
     private FirebaseAuth mAuth;
@@ -46,10 +48,22 @@ public class LoginPageActivity extends AppCompatActivity implements View.OnClick
 
     private String CHANNEL_ID = "BOOKNET_NOTIFICATION";
 
+    static ProgressDialog progressDialog;
+    public static boolean onLoginPage = false;
+
+    // There are several async tasks to wait
+    // 1. get username from database
+    // 2. get user profile (phone and contact email) from database
+    // 3. wait for database connection
+    // notifyTaskFinished() will increase this by one each time a task is finished and trigger further login upon final finish
+    public static int loginProgress;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        onLoginPage = true;
 
+        loginProgress = 0;
 
         manager.setOnLoginPage(true);
 
@@ -231,6 +245,11 @@ public class LoginPageActivity extends AppCompatActivity implements View.OnClick
     }
 
     private void signIn(String email, String password) {
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage("Trying to sign in...");
+        progressDialog.show();
+
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this,
                         new OnCompleteListener<AuthResult>() {
@@ -243,16 +262,12 @@ public class LoginPageActivity extends AppCompatActivity implements View.OnClick
                                     //intent.putExtra("emailLabel", email);
                                     //startActivity(intent);
 
-                                    Log.d("seanTag", "user " + mAuth.getCurrentUser().getEmail());
 
                                     //save current user for future use
                                     CurrentUser.getInstance().updateUser(mAuth.getCurrentUser());
 
                                     createNotificationChannel();
 
-                                    //Shows in-progress dialog during connection
-                                    // As user phone/name needs to be checked, connection needs to be established first
-                                    //this method also takes care of following intents
                                     manager.connectToDatabase(LoginPageActivity.this);
                                 } else {
                                     Toast.makeText(LoginPageActivity.this, "Sign in failed", Toast.LENGTH_SHORT)
@@ -320,54 +335,32 @@ public class LoginPageActivity extends AppCompatActivity implements View.OnClick
                 });
     }*/
 
-    @Override
-    public void onDialogPositiveClick(DialogFragment dialog, String email, String phonenumber, String username) {
-
-        //todo: validate phonenumber
-        boolean takenUsername = manager.isUsernameTaken(username);
-        Log.d("mattTag", phonenumber);
-        Log.d("mattTag", username);
-        if (takenUsername) {
-            Toast.makeText(LoginPageActivity.this, "Username taken!", Toast.LENGTH_SHORT)
-                    .show();
-        } else {
-
-            Log.d("mattTag", "yeas");
-            manager.writeUserProfile(email, phonenumber);
-            manager.writeUsername(username);
-            manager.writeUserPhone(phonenumber);
-            CurrentUser.getInstance().setUsername(username);
-            CurrentUser.getInstance().setAccountPhone(phonenumber);
-            startActivity(new Intent(getApplicationContext(), MainActivity.class));
-            finish();
-
-        }
-    }
-
     public void onDestroy() {
         Log.d("mattTag", "destroyed haha");
         manager.setOnLoginPage(false);
+        onLoginPage = false;
         super.onDestroy();
     }
 
-
-    public void promptInitialProfile() {
-        DialogFragment dialog = new InitialUserProfileDialog();
-        dialog.show(getSupportFragmentManager(), "InitialUserProfileDialog");
-
-    }
-
-
     @Override
-    public void onDialogNegativeClick(DialogFragment dialog) {
-        startActivity(new Intent(getApplicationContext(), LoginPageActivity.class));
-        CurrentUser.getInstance().logout();
-        finish();
+    public void onPause() {
+        super.onPause();
+        onLoginPage = false;
+        manager.setOnLoginPage(false);
     }
 
-    public void goToMainPage() {
-        startActivity(new Intent(getApplicationContext(), MainActivity.class));
-        finish();
+
+
+    // synchronized ensures accountCreatingProgress to be incremented by one thread everytime to avoid missing count
+    public static synchronized void notifyTaskFinished(Activity sourceActivity, String message) {
+        loginProgress += 1;
+        progressDialog.setMessage(message);
+        if (loginProgress == 3){
+            sourceActivity.startActivity(new Intent(sourceActivity, MainActivity.class));
+            sourceActivity.finish();
+            progressDialog.dismiss();
+        }
+
     }
 }
 

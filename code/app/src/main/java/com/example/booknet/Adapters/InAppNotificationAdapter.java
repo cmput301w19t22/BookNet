@@ -1,5 +1,6 @@
 package com.example.booknet.Adapters;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.FragmentActivity;
@@ -12,24 +13,27 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.booknet.Activities.ListingViewActivity;
+import com.example.booknet.Activities.OwnListingViewActivity;
+import com.example.booknet.Constants.NotificationType;
 import com.example.booknet.DatabaseManager;
 import com.example.booknet.Model.InAppNotification;
-import com.example.booknet.Model.InAppNotifications;
+import com.example.booknet.Model.InAppNotificationList;
 import com.example.booknet.R;
 
-public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapter.NotificationViewHolder> {
+public class InAppNotificationAdapter extends RecyclerView.Adapter<InAppNotificationAdapter.NotificationViewHolder> {
 
     //The list of BookListings to display
-    private InAppNotifications inAppNotifications;
+    private InAppNotificationList inAppNotificationList;
 
     //The activity this adapter was created from
     private FragmentActivity sourceActivity;
 
     DatabaseManager manager = DatabaseManager.getInstance();
 
-    public NotificationAdapter(InAppNotifications inAppNotifications, FragmentActivity sourceActivity) {
+    public InAppNotificationAdapter(InAppNotificationList inAppNotificationList, FragmentActivity sourceActivity) {
         Log.d("seanTag", "Construct adaptor");
-        this.inAppNotifications = inAppNotifications;
+        this.inAppNotificationList = inAppNotificationList;
         this.sourceActivity = sourceActivity;
     }
 
@@ -39,21 +43,19 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         //Create a new view
         View view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.notification_item_list, viewGroup, false);
-        NotificationAdapter.NotificationViewHolder newNotificationViewHolder = new NotificationAdapter.NotificationViewHolder(view);
+        InAppNotificationAdapter.NotificationViewHolder newNotificationViewHolder = new InAppNotificationAdapter.NotificationViewHolder(view);
 
-        //Log.d("seanTag", "inAppNotifications onCreateView");
+        //Log.d("seanTag", "inAppNotificationList onCreateView");
 
         return newNotificationViewHolder;
     }
 
     @Override
     public void onBindViewHolder(@NonNull final NotificationViewHolder notificationViewHolder, int position) {
-        //Get the inAppNotifications at the provided position
-        final InAppNotification item = inAppNotifications.getNotificationAtPosition(position);
-        //Index to pass to the edit activity
-        final int index = notificationViewHolder.getAdapterPosition();
+        //Get the inAppNotificationList at the provided position
+        final InAppNotification item = inAppNotificationList.getNotificationAtPosition(position);
 
-        //Fill the text fields with the object's inAppNotifications
+        //Fill the text fields with the object's inAppNotificationList
         //bookListingViewHolder.bookThumbnail.//todo apply photo
         //notificationViewHolder.notificationBookThumbnail.setImageResource(R.mipmap.ic_launcher);
         notificationViewHolder.notificationBookTitle.setText(item.getRequestedBookListing().getBook().getTitle());
@@ -96,20 +98,40 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         notificationViewHolder.dismissButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //todo dismiss notification
+                removeNotification(item);
             }
         });
 
         notificationViewHolder.gotoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //todo go to the source activity
+                Intent intent;
+                if (item.getNotificationType() == NotificationType.hasRequested) {
+                    intent = new Intent(sourceActivity, OwnListingViewActivity.class);
+                    if (item != null) {
+                        intent.putExtra("isbn", item.getRequestedBookListing().getBook().getIsbn());
+                        intent.putExtra("dupID", item.getRequestedBookListing().getDupInd());
+                    }
+                }
+                else {
+                    intent = new Intent(sourceActivity, ListingViewActivity.class);
+                    if (item != null) {
+                        intent.putExtra("ownerUsername", item.getRequestedBookListing().getOwnerUsername());
+                        intent.putExtra("isbn", item.getRequestedBookListing().getBook().getIsbn());
+                        intent.putExtra("dupID", item.getRequestedBookListing().getDupInd());
+                    }
+                }
+
+                sourceActivity.startActivity(intent);
+                removeNotification(item);
             }
         });
     }
 
     private void removeNotification(InAppNotification inAppNotification) {
         manager.removeNotification(inAppNotification);
+        inAppNotificationList.removeNotification(inAppNotification);
+        notifyDataSetChanged();
     }
 
     /**
@@ -119,7 +141,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
      */
     @Override
     public int getItemCount() {
-        return inAppNotifications.size();
+        return inAppNotificationList.size();
     }
 
     public static class NotificationViewHolder extends RecyclerView.ViewHolder {

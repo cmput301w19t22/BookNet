@@ -4,7 +4,7 @@ import android.support.v4.app.NotificationCompat;
 
 /**
  * We use a Singleton for a global copy of the NotificationCompat.Builder to update active
- * InAppNotifications from other Services/Activities.
+ * InAppNotificationList from other Services/Activities.
  *
  * You have two options for updating your notifications:
  *

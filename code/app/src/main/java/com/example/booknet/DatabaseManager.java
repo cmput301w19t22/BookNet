@@ -698,6 +698,8 @@ public class DatabaseManager {
     private void onReturnVerified(BookListing listing) {
         changeListingStatusTo(listing, Available);
         clearVerification(listing);
+        writeNotification(new InAppNotification(listing, listing.getBorrowerName(), listing.getOwnerUsername(), NotificationType.canReview));
+        writeNotification(new InAppNotification(listing, listing.getOwnerUsername(), listing.getBorrowerName(), NotificationType.canReview));
     }
 
     /**

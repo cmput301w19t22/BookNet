@@ -17,6 +17,8 @@ import com.example.booknet.Activities.ListingViewActivity;
 import com.example.booknet.Activities.OwnListingViewActivity;
 import com.example.booknet.Constants.NotificationType;
 import com.example.booknet.DatabaseManager;
+import com.example.booknet.Dialogs.ReviewCreateDialog;
+import com.example.booknet.Model.CurrentUser;
 import com.example.booknet.Model.InAppNotification;
 import com.example.booknet.Model.InAppNotificationList;
 import com.example.booknet.R;
@@ -112,17 +114,21 @@ public class InAppNotificationAdapter extends RecyclerView.Adapter<InAppNotifica
                         intent.putExtra("isbn", item.getRequestedBookListing().getBook().getIsbn());
                         intent.putExtra("dupID", item.getRequestedBookListing().getDupInd());
                     }
-                }
-                else {
+                    sourceActivity.startActivity(intent);
+                } else if (item.getNotificationType() == NotificationType.canReview) {
+                    ReviewCreateDialog reviewCreateDialog = ReviewCreateDialog.newInstance(CurrentUser.getInstance().getUsername(), item.getUserMakingNotification());
+                    reviewCreateDialog.show(sourceActivity.getSupportFragmentManager(), "Create Review");
+                } else {
                     intent = new Intent(sourceActivity, ListingViewActivity.class);
                     if (item != null) {
                         intent.putExtra("ownerUsername", item.getRequestedBookListing().getOwnerUsername());
                         intent.putExtra("isbn", item.getRequestedBookListing().getBook().getIsbn());
                         intent.putExtra("dupID", item.getRequestedBookListing().getDupInd());
                     }
+                    sourceActivity.startActivity(intent);
                 }
 
-                sourceActivity.startActivity(intent);
+
                 //removeNotification(item);//do not actually
             }
         });

@@ -20,7 +20,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.booknet.DatabaseManager;
-import com.example.booknet.Dialogs.InitialUserProfileDialog;
 import com.example.booknet.Model.CurrentUser;
 import com.example.booknet.R;
 import com.google.android.gms.tasks.OnCompleteListener;

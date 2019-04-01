@@ -864,11 +864,12 @@ public class DatabaseManager {
     }
 
 
-    public void removeNotification(InAppNotification notification) {
-        notificationRef.child(notification.getUserReceivingNotification()
-                + "-" + notification.getUserMakingNotification()
-                + "-" + notification.getRequestedBookListing().getISBN()
-                + "-" + notification.getRequestedBookListing().getDupInd()).removeValue();
+    public void removeNotification(InAppNotification inAppNotification) {
+        String receiverId = getUIDFromName(inAppNotification.getUserReceivingNotification());
+        Log.d("seanTag", "remove noti "+receiverId);
+        notificationRef.child(receiverId)
+                .child(inAppNotification.getUserMakingNotification()
+                        + "-" + inAppNotification.getRequestedBookListing().getDupInd()).removeValue();
     }
 
     //#endregion

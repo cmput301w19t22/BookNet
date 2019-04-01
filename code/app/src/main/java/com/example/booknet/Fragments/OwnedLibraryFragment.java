@@ -121,7 +121,7 @@ public class OwnedLibraryFragment extends Fragment {
                 }
                 writeLock.unlock();
 
-                new ThumbnailFetchingTask(getActivity()).execute();
+                //new ThumbnailFetchingTask(getActivity()).execute();
 
                 listingAdapter.notifyDataSetChanged();
                 bookCountLabel.setText(String.format("%d Books", filteredLibrary.size()));
@@ -159,7 +159,7 @@ public class OwnedLibraryFragment extends Fragment {
                     } else {
                         filteredLibrary.filterByStatus(library, BookListingStatus.valueOf(selectedItem));
                     }
-                    new ThumbnailFetchingTask(getActivity()).execute();
+                    //new ThumbnailFetchingTask(getActivity()).execute();
                     listingAdapter.notifyDataSetChanged();
                     bookCountLabel.setText(String.format("%d Books", filteredLibrary.size()));
                 }
@@ -172,7 +172,7 @@ public class OwnedLibraryFragment extends Fragment {
             }
         });
 
-        new ThumbnailFetchingTask(getActivity()).execute();
+        //new ThumbnailFetchingTask(getActivity()).execute();
         return view;
     }
 

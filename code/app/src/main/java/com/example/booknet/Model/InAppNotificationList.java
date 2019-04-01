@@ -25,6 +25,15 @@ public class InAppNotificationList implements Serializable, Iterable<InAppNotifi
     }
 
     /**
+     * Removes a InAppNotification to the library.
+     *
+     * @param inAppNotification The InAppNotification to remove
+     */
+    public void removeNotification(InAppNotification inAppNotification) {
+        this.inAppNotifications.remove(inAppNotification);
+    }
+
+    /**
      * Get the number of inAppNotifications in the list of inAppNotifications.
      *
      * @return Size of the InAppNotificationList list

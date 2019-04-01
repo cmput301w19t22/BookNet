@@ -13,6 +13,7 @@ import com.example.booknet.Adapters.SpaceDecoration;
 import com.example.booknet.DatabaseManager;
 import com.example.booknet.Adapters.NotificationAdapter;
 import com.example.booknet.Model.CurrentUser;
+import com.example.booknet.Model.InAppNotification;
 import com.example.booknet.Model.InAppNotificationList;
 import com.example.booknet.R;
 import com.google.firebase.database.DatabaseReference;
@@ -53,6 +54,11 @@ public class NotificationFragment extends Fragment {
         notificationsListView.addItemDecoration(new SpaceDecoration(12,16));
 
         return view;
+    }
+
+    public void removeInAppNotification(InAppNotification inAppNotification) {
+        inAppNotificationList.removeNotification(inAppNotification);
+        notifyDataSetChanged();
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.example.booknet.Adapters;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.FragmentActivity;
@@ -12,6 +13,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.booknet.Activities.ListingViewActivity;
 import com.example.booknet.DatabaseManager;
 import com.example.booknet.Model.InAppNotification;
 import com.example.booknet.Model.InAppNotificationList;
@@ -50,8 +52,6 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     public void onBindViewHolder(@NonNull final NotificationViewHolder notificationViewHolder, int position) {
         //Get the inAppNotificationList at the provided position
         final InAppNotification item = inAppNotificationList.getNotificationAtPosition(position);
-        //Index to pass to the edit activity
-        final int index = notificationViewHolder.getAdapterPosition();
 
         //Fill the text fields with the object's inAppNotificationList
         //bookListingViewHolder.bookThumbnail.//todo apply photo
@@ -96,20 +96,28 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         notificationViewHolder.dismissButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //todo dismiss notification
+                removeNotification(item);
             }
         });
 
         notificationViewHolder.gotoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //todo go to the source activity
+                Intent intent = new Intent(sourceActivity, ListingViewActivity.class);
+                if (item != null) {
+                    intent.putExtra("ownerUsername", item.getRequestedBookListing().getOwnerUsername());
+                    intent.putExtra("isbn", item.getRequestedBookListing().getBook().getIsbn());
+                    intent.putExtra("dupID", item.getRequestedBookListing().getDupInd());
+                }
+                sourceActivity.startActivity(intent);
             }
         });
     }
 
     private void removeNotification(InAppNotification inAppNotification) {
         manager.removeNotification(inAppNotification);
+        inAppNotificationList.removeNotification(inAppNotification);
+        notifyDataSetChanged();
     }
 
     /**

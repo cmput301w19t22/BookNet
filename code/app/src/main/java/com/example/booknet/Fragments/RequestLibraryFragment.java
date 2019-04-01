@@ -164,7 +164,7 @@ public class RequestLibraryFragment extends Fragment {
                         filteredLibrary.filterByStatus(manager.readUserRequestLibrary(), BookListingStatus.valueOf(selectedStatus));
                     }
                     writeLock.unlock();
-                    new ThumbnailFetchingTask(getActivity()).execute();
+                    //new ThumbnailFetchingTask(getActivity()).execute();
                     listingAdapter.notifyDataSetChanged();
                     bookCountLabel.setText(String.format("%d Books",filteredLibrary.size()));
                 }
@@ -176,7 +176,7 @@ public class RequestLibraryFragment extends Fragment {
             }
         });
 
-        new ThumbnailFetchingTask(getActivity()).execute();
+        //new ThumbnailFetchingTask(getActivity()).execute();
         listingAdapter.notifyDataSetChanged();
         return view;
     }

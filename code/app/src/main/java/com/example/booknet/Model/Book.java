@@ -40,9 +40,8 @@ public class Book implements Serializable {
     }
     //#endregion
 
-    public boolean isSameBook(Book book){
-        return title.equals(book.title) && author.equals(book.author) &&
-                isbn.equals(book.isbn);
+    public boolean isBookISBNtheSame(Book book){
+        return isbn.equals(book.isbn);
 
 
     }

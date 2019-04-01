@@ -13,7 +13,6 @@ import android.util.Log;
 
 import com.example.booknet.Activities.AccountCreateActivity;
 import com.example.booknet.Activities.LoginPageActivity;
-import com.example.booknet.Adapters.BookSearchAdapter;
 import com.example.booknet.Constants.BookListingStatus;
 import com.example.booknet.Constants.NotificationType;
 import com.example.booknet.Model.BookLibrary;
@@ -220,6 +219,7 @@ public class DatabaseManager {
      */
     public void writeUserBookListing(BookListing listing) {
 
+
         int dupCount = getListingDupCount(listing, CurrentUser.getInstance().getUID());
 
         userListingsRef.child(generateUserListingPath(listing, dupCount)).setValue(listing);
@@ -297,7 +297,9 @@ public class DatabaseManager {
                 public void onSuccess(byte[] bytes) {
                     Bitmap fetchedThumnail = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                     thumbnailCacheWriteLock.lock();
+                    Log.d("mattOmegaLul", listing.toString());
                     thumbNailCache.put(listing.getOwnerUsername() + "-" + listing.getISBN() + "-" + listing.getDupInd(), fetchedThumnail);
+
                     thumbnailCacheWriteLock.unlock();
                     listing.setPhoto(new Photo(fetchedThumnail));
                     adapter.notifyDataSetChanged();
@@ -360,7 +362,7 @@ public class DatabaseManager {
 
         allListingReadLock.lock();
         for (BookListing l : allBookLibrary) {
-            if (l.hasSameBook(listing) && belongsToUser(l, UID)) {
+            if (l.hasBookWithTheSameISBN(listing) && belongsToUser(l, UID)) {
                 currentInd += 1;
             }
         }

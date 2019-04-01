@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 
 import com.example.booknet.Constants.BookListingStatus;
 import com.example.booknet.DatabaseManager;
+import com.google.firebase.database.Exclude;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -13,8 +14,8 @@ import java.util.ArrayList;
  */
 public class BookListing implements Serializable, Cloneable {
 
-    public boolean hasSameBook(BookListing listing) {
-        return book.isSameBook(listing.book);
+    public boolean hasBookWithTheSameISBN(BookListing listing) {
+        return book.isBookISBNtheSame(listing.book);
     }
 
     //Attributes
@@ -246,6 +247,7 @@ public class BookListing implements Serializable, Cloneable {
                 || getOwnerUsername().toLowerCase().contains(keyword.toLowerCase());
     }
 
+    @Exclude
     public String getISBN() {
         return book.getIsbn();
     }
@@ -269,6 +271,8 @@ public class BookListing implements Serializable, Cloneable {
         cloned.setGeoLocation(geoLocation);
         cloned.setOwnerUsername(ownerUsername);
         cloned.setPhoto(photo);
+
+        cloned.setDupInd(dupInd);
 
 
         return cloned;
@@ -299,7 +303,7 @@ public class BookListing implements Serializable, Cloneable {
     @Override
     public String toString() {
         String s = "";
-        s += book.toString() + " with  status:" + status.toString() + " with ISBN: " + book.getIsbn();
+        s += book.toString() + " with  status:" + status.toString() + " with ISBN: " + book.getIsbn() + " with dupID: " + dupInd;
         return s;
     }
 

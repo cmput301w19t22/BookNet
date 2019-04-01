@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.test.InstrumentationTestCase;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.SearchView;
 
 import com.example.booknet.Activities.LoginPageActivity;
 import com.example.booknet.Activities.MainActivity;
@@ -60,7 +61,7 @@ public class UserBooks extends ActivityTestRule<LoginPageActivity> {
      * that it is properly removed.
      */
     @Test
-    public void addEditRemoveBook(){
+    public void addEditRemoveBook() throws Throwable {
 
         solo.assertCurrentActivity("Wrong Activity", LoginPageActivity.class);
 
@@ -88,39 +89,67 @@ public class UserBooks extends ActivityTestRule<LoginPageActivity> {
         assertTrue(solo.searchText("0000" + testRandomNumber));
 
         //todo click on the first item in the list
-        solo.clickOnText("Neil Gaiman");
+
+        final RecyclerView personalBookLibrary = (RecyclerView) solo.getView(R.id.bookLibrary);
+
+        runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+
+                personalBookLibrary.getChildAt(0).performClick();
+                //searchBar.setQuery("Lost: The Book", true);
+
+            }
+        });
+        //solo.clickOnText("Neil Gaiman" + testRandom);
+        //solo.clickOnText("Coraline" + testRandom);
+        //solo.clickOnView(solo.getView(R.id.bookLayout,1));
+        //solo.clickInRecyclerView(1);
 
         solo.assertCurrentActivity("Wrong Activity", OwnListingViewActivity.class);
 
         solo.clickOnView(solo.getView("editButton"));
 
-        solo.clearEditText((EditText) solo.getView(R.id.isbnField));
+        //solo.clearEditText((EditText) solo.getView(R.id.isbnField));
         solo.clearEditText((EditText) solo.getView(R.id.titleField));
         solo.clearEditText((EditText) solo.getView(R.id.authorField));
-        solo.clearEditText((EditText) solo.getView(R.id.descriptionField));
 
-        solo.enterText((EditText) solo.getView(R.id.isbnField),"0001" + testRandomNumber);
+        //solo.enterText((EditText) solo.getView(R.id.isbnField),"0001" + testRandomNumber);
         solo.enterText((EditText) solo.getView(R.id.titleField),"Turtles All The Way Down" + testRandom);
         solo.enterText((EditText) solo.getView(R.id.authorField),"John Green" + testRandom);
 
         solo.clickOnView(solo.getView("addButton"));
 
+        solo.clickOnView(solo.getView(R.id.backButton));
+
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
 
         assertTrue(solo.searchText("John Green" + testRandom));
         assertTrue(solo.searchText("Turtles All The Way Down" + testRandom));
-        assertTrue(solo.searchText("0001" + testRandomNumber));
+        assertTrue(solo.searchText("0000" + testRandomNumber));
 
         //todo click on the first item in the list
-        solo.clickOnText("John Green");
+        runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+
+                personalBookLibrary.getChildAt(0).performClick();
+                //searchBar.setQuery("Lost: The Book", true);
+
+            }
+        });
 
         solo.assertCurrentActivity("Wrong Activity", OwnListingViewActivity.class);
 
-        solo.clickOnButton("deleteButton");
+        solo.clickOnView(solo.getView(R.id.deleteButton));
+
+        solo.clickOnButton("Delete");
 
         assertFalse(solo.searchText("John Green" + testRandom));
         assertFalse(solo.searchText("Turtles All The Way Down" + testRandom));
-        assertFalse(solo.searchText("0000000000000000000000000000001" + testRandom));
+        assertFalse(solo.searchText("0000" + testRandomNumber));
 
         solo.clickOnView(solo.getView("navigation_myaccount"));
 

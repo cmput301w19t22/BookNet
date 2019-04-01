@@ -14,12 +14,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.booknet.Activities.ListingViewActivity;
+import com.example.booknet.Constants.NotificationType;
 import com.example.booknet.DatabaseManager;
 import com.example.booknet.Model.InAppNotification;
 import com.example.booknet.Model.InAppNotificationList;
 import com.example.booknet.R;
 
-public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapter.NotificationViewHolder> {
+public class InAppNotificationAdapter extends RecyclerView.Adapter<InAppNotificationAdapter.NotificationViewHolder> {
 
     //The list of BookListings to display
     private InAppNotificationList inAppNotificationList;
@@ -29,7 +30,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
     DatabaseManager manager = DatabaseManager.getInstance();
 
-    public NotificationAdapter(InAppNotificationList inAppNotificationList, FragmentActivity sourceActivity) {
+    public InAppNotificationAdapter(InAppNotificationList inAppNotificationList, FragmentActivity sourceActivity) {
         Log.d("seanTag", "Construct adaptor");
         this.inAppNotificationList = inAppNotificationList;
         this.sourceActivity = sourceActivity;
@@ -41,7 +42,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         //Create a new view
         View view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.notification_item_list, viewGroup, false);
-        NotificationAdapter.NotificationViewHolder newNotificationViewHolder = new NotificationAdapter.NotificationViewHolder(view);
+        InAppNotificationAdapter.NotificationViewHolder newNotificationViewHolder = new InAppNotificationAdapter.NotificationViewHolder(view);
 
         //Log.d("seanTag", "inAppNotificationList onCreateView");
 

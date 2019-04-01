@@ -3,13 +3,10 @@ package com.example.booknet.Activities;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.BitmapFactory;
-import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -27,12 +24,11 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.SearchView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.booknet.DatabaseManager;
 import com.example.booknet.Fragments.BookSearchFragment;
 import com.example.booknet.Model.CurrentUser;
-import com.example.booknet.Fragments.NotificationFragment;
+import com.example.booknet.Fragments.InAppNotificationFragment;
 import com.example.booknet.Fragments.OwnedLibraryFragment;
 import com.example.booknet.Model.GlobalNotificationBuilder;
 import com.example.booknet.Model.InAppNotification;
@@ -81,7 +77,7 @@ public class MainActivity extends FragmentActivity {
             } else if (position == 3) {
                 return UserProfileViewFragment.newInstance();
             } else if (position == 4) {
-                return NotificationFragment.newInstance();
+                return InAppNotificationFragment.newInstance();
             }
             return BookSearchFragment.newInstance();
         }

@@ -1,6 +1,12 @@
 package com.example.booknet;
 
 
+import com.example.booknet.Model.Book;
+import com.example.booknet.Model.BookLibrary;
+import com.example.booknet.Model.BookListing;
+import com.example.booknet.Model.Review;
+import com.example.booknet.Model.UserAccount;
+
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -13,22 +19,19 @@ public class UserAccountTest {
 
     @Test
     public void Constructor() {
-        UserAccount user = new UserAccount("user1");
+        UserAccount user = new UserAccount("test_username");
 
-        assertEquals("user1", user.getUsername());
-        //assertEquals("password", user.getAccountPassword());
+        assertEquals("test_username", user.getUsername());
     }
 
     @Test
     public void Setters() {
-        UserAccount user = new UserAccount("user1");
+        UserAccount user = new UserAccount("test_username");
 
         //Check Id and Password
         user.setUsername("newname");
-        //user.setAccountPassword("newpass");
 
         assertEquals("newname", user.getUsername());
-        //assertEquals("newpass", user.getAccountPassword());
 
 
         //Check BookLibrary
@@ -41,9 +44,9 @@ public class UserAccountTest {
         user.setRequestedBooks(requests);
         assertEquals(requests, user.getRequestedBooks());
 
-        //Reviews
+        //ReviewList
         ArrayList<Review> reviews = new ArrayList<Review>();
-        UserAccount user2 = new UserAccount("user2");
+        UserAccount user2 = new UserAccount("test_username");
         reviews.add(new Review(user, user2, 4, "review1"));
         user.setReviews(reviews);
         assertEquals(reviews, user.getReviews());
@@ -51,7 +54,7 @@ public class UserAccountTest {
 
     @Test
     public void AddBookToOwned() {
-        UserAccount user = new UserAccount("user1");
+        UserAccount user = new UserAccount("test_username");
         Book book = new Book("title", "author", "description",  "1234567890");
         BookListing listing = new BookListing(book);
 
@@ -63,7 +66,7 @@ public class UserAccountTest {
 
     @Test
     public void RemoveBookFromOwned() {
-        UserAccount user = new UserAccount("user1");
+        UserAccount user = new UserAccount("test_username");
         Book book = new Book("title", "author", "description", "1234567890");
         BookListing listing = new BookListing(book);
 
@@ -78,8 +81,8 @@ public class UserAccountTest {
 
     @Test
     public void AddListingToRequested() {
-        UserAccount user = new UserAccount("user1");
-        UserAccount owner = new UserAccount("notMe");
+        UserAccount user = new UserAccount("test_username_user");
+        UserAccount owner = new UserAccount("test_username_owner");
         Book book = new Book("title", "author", "description", "1234567890");
         BookListing listing = new BookListing(book);
 
@@ -91,8 +94,8 @@ public class UserAccountTest {
 
     @Test
     public void RemoveListingFromRequested() {
-        UserAccount user = new UserAccount("user1");
-        UserAccount owner = new UserAccount("notMe");
+        UserAccount user = new UserAccount("test_username_user");
+        UserAccount owner = new UserAccount("test_username_owner");
         Book book = new Book("title", "author", "description", "1234567890");
         BookListing listing = new BookListing(book);
 

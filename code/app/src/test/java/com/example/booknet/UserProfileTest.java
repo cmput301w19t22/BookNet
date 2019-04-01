@@ -1,5 +1,7 @@
 package com.example.booknet;
 
+import com.example.booknet.Model.UserProfile;
+
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class UserProfileTest {

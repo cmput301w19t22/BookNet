@@ -6,7 +6,7 @@ public enum NotificationType {
     hasDeclined;
 
     /**
-     * Returns the Notification type as a text string.
+     * Returns the InAppNotification type as a text string.
      *
      * @return
      */
@@ -14,11 +14,11 @@ public enum NotificationType {
     public String toString() {
         switch (this) {
             case hasRequested:
-                return "has requested this book";
+                return " has requested a book";
             case hasAccepted:
-                return "has accepted your book request";
+                return " has accepted your book request";
             case hasDeclined:
-                return "has declined your book request";
+                return " has declined your book request";
         }
         return super.toString();
     }

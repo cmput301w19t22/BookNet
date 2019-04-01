@@ -5,9 +5,27 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
-    <uses-permission android:name="android.permission.CAMERA"/>
-    <uses-feature android:name="android.hardware.camera"
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <uses-feature
+        android:name="android.hardware.camera"
         android:required="true" />
+    <uses-feature android:name="android.hardware.location.gps" />
 
 
     <application
@@ -17,37 +35,90 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".BorrowBookActivity" />
-        <activity android:name=".ReturnBookActivity" />
-        <activity android:name=".ProfileEditActivity" />
-        <activity android:name=".RequestsViewActivity" />
-        <activity android:name=".OwnListingViewActivity" />
-        <activity android:name=".NewBookActivity" />
-        <activity android:name=".EditBookActivity" />
-        <activity android:name=".BookSearchFragment">
+        <activity
+            android:name=".Activities.ScanActivity"
+            android:screenOrientation="portrait"></activity>
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_map_api_key" />
+
+        <activity
+            android:name=".Activities.MapSelectActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".Activities.ReviewListViewActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Dialogs.VerifyBorrowDialog"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activities.ProfileEditActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activities.RequestsViewActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activities.OwnListingViewActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Dialogs.NewBookDialog"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Dialogs.EditBookDialog"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Fragments.BookSearchFragment"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
         </activity>
-        <activity android:name=".UserProfileViewFragment" />
-        <activity android:name=".ListingViewActivity" />
-        <activity android:name=".OwnedLibraryFragment" />
         <activity
-            android:name=".MainActivity"
-            android:label="@string/app_name" />
-        <activity android:name=".PhotoEditActivity" />
+            android:name=".Fragments.UserProfileViewFragment"
+            android:screenOrientation="portrait" />
         <activity
-            android:name=".Portrait"
+            android:name=".Activities.ListingViewActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Fragments.OwnedLibraryFragment"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activities.MainActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Dialogs.PhotoEditDialog"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Model.Portrait"
             android:screenOrientation="fullSensor"
             android:stateNotNeeded="true"
             android:windowSoftInputMode="stateAlwaysHidden" />
-        <activity android:name=".LoginPageActivity">
+        <activity
+            android:name=".Activities.LoginPageActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".Activities.AccountCreateActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
     </application>
 
 </manifest>

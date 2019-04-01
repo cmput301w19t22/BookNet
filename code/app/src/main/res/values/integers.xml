@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="ratingCommentMaxSize">280</integer>
+    <integer name="notificationCircleMax">99</integer><!-- The max value to display on a inAppNotification circle -->
+
+</resources>

@@ -1,5 +1,7 @@
 package com.example.booknet;
 
+import com.example.booknet.Model.Book;
+
 import org.junit.Test;
 import static org.junit.Assert.*;
 

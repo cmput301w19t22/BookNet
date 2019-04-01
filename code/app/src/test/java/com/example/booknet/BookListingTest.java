@@ -1,5 +1,10 @@
 package com.example.booknet;
 
+import com.example.booknet.Constants.BookListingStatus;
+import com.example.booknet.Model.Book;
+import com.example.booknet.Model.BookListing;
+import com.example.booknet.Model.UserAccount;
+
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -16,18 +21,17 @@ public class BookListingTest {
     @Test
     public void Constructor() {
         Book book = new Book("title", "author", "description", "1234567890");
-        UserAccount owner = new UserAccount("owner");
         BookListing listing = new BookListing(book);
-
+        UserAccount owner = CurrentUser.getInstance().getUserAccount();
 
         assertEquals(book, listing.getBook());
-        assertEquals("owner", listing.getOwnerUsername());
+        assertEquals(owner.getUsername(), listing.getOwnerUsername());
     }
 
     @Test
     public void AddRequest() {
         Book book = new Book("title", "author", "description", "1234567890");
-        UserAccount owner = new UserAccount("owner");
+        UserAccount owner = new UserAccount("test_owner");
         BookListing listing = new BookListing(book);
 
         listing.addRequest("requester1");
@@ -36,16 +40,14 @@ public class BookListingTest {
 
         assertTrue("Request Added", requestersList.contains("requester1"));
 
-        assertEquals(BookListing.Status.Requested, listing.getStatus());
+        assertEquals(BookListingStatus.Requested, listing.getStatus());
     }
 
     @Test
     public void AcceptRequest() {
         Book book = new Book("title", "author", "description", "1234567890");
-
-        UserAccount owner = new UserAccount("owner");
+        UserAccount owner = new UserAccount("test_owner");
         BookListing listing = new BookListing(book);
-
 
         listing.addRequest("requester1");
         listing.addRequest("requester2");
@@ -55,13 +57,13 @@ public class BookListingTest {
         assertTrue(listing.getRequests().size()==0);
         assertEquals("requester1", listing.getBorrowerName());
 
-        assertEquals(BookListing.Status.Accepted, listing.getStatus());
+        assertEquals(BookListingStatus.Accepted, listing.getStatus());
     }
 
     @Test
     public void DenyRequest() {
         Book book = new Book("title", "author", "description", "1234567890");
-        UserAccount owner = new UserAccount("owner");
+        UserAccount owner = new UserAccount("test_owner");
         BookListing listing = new BookListing(book);
 
         listing.addRequest("requester1");
@@ -74,18 +76,18 @@ public class BookListingTest {
         assertFalse("Request Denied", requesters.contains("requester1"));
 
         //Still one request left
-        assertEquals(BookListing.Status.Requested, listing.getStatus());
+        assertEquals(BookListingStatus.Requested, listing.getStatus());
         assertTrue(requesters.contains("requester2"));
 
         //Remove all requests
         listing.denyRequest("requester2");
-        assertEquals(BookListing.Status.Available, listing.getStatus());
+        assertEquals(BookListingStatus.Available, listing.getStatus());
     }
 
     @Test
     public void BookBorrowed() {
         Book book = new Book("title", "author", "description", "1234567890");
-        UserAccount owner = new UserAccount("owner");
+        UserAccount owner = new UserAccount("test_owner");
         BookListing listing = new BookListing(book);
 
         listing.addRequest("requester1");
@@ -96,13 +98,13 @@ public class BookListingTest {
 
         assertEquals("requester1", listing.getBorrowerName());
         assertTrue(listing.getRequests().isEmpty());
-        assertEquals(BookListing.Status.Borrowed, listing.getStatus());
+        assertEquals(BookListingStatus.Borrowed, listing.getStatus());
     }
 
     @Test
     public void BookReturned() {
         Book book = new Book("title", "author", "description", "1234567890");
-        UserAccount owner = new UserAccount("owner");
+        UserAccount owner = new UserAccount("test_owner");
         BookListing listing = new BookListing(book);
 
         listing.addRequest("requester1");
@@ -113,15 +115,14 @@ public class BookListingTest {
         listing.bookReturned();
 
         assertNotEquals("requester1", listing.getBorrowerName());
-        assertEquals(BookListing.Status.Available, listing.getStatus());
+        assertEquals(BookListingStatus.Available, listing.getStatus());
     }
 
     @Test
     public void SetGeoLocation(){
         Book book = new Book("title", "author", "description", "1234567890");
-        UserAccount owner = new UserAccount("owner");
+        UserAccount owner = new UserAccount("test_owner");
         BookListing listing = new BookListing(book);
-
 
         //listing.setGeoLocation(new Location());
         //todo: how to get location?

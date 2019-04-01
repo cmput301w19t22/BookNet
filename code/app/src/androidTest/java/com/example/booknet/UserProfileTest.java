@@ -76,7 +76,7 @@ public class UserProfileTest extends ActivityTestRule<LoginPageActivity> {
         assertTrue(solo.searchText("test1"));
         assertTrue(solo.searchText("111-222-3333"));
 
-        solo.clickOnButton("Logout");
+        solo.clickOnView(solo.getView(R.id.logoutButton));
 
     }
 
@@ -109,7 +109,7 @@ public class UserProfileTest extends ActivityTestRule<LoginPageActivity> {
         solo.enterText((EditText) solo.getView(R.id.phoneField),"444-555-6666" + testRandom);
         solo.enterText((EditText) solo.getView(R.id.emailField),"test" + testRandom + "@gmail.com");
 
-        solo.clickOnButton("Apply");
+        solo.clickOnView(solo.getView(R.id.applyButton));
 
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
 
@@ -127,7 +127,7 @@ public class UserProfileTest extends ActivityTestRule<LoginPageActivity> {
         solo.enterText((EditText) solo.getView(R.id.phoneField),"111-222-3333");
         solo.enterText((EditText) solo.getView(R.id.emailField),"test1@gmail.com");
 
-        solo.clickOnButton("Apply");
+        solo.clickOnView(solo.getView(R.id.applyButton));
 
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
 
@@ -135,7 +135,7 @@ public class UserProfileTest extends ActivityTestRule<LoginPageActivity> {
         assertTrue(solo.searchText("test1"));
         assertTrue(solo.searchText("111-222-3333"));
 
-        solo.clickOnButton("Logout");
+        solo.clickOnView(solo.getView(R.id.logoutButton));
 
     }
 

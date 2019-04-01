@@ -34,7 +34,8 @@ public class UserBooks extends ActivityTestRule<LoginPageActivity> {
     private Solo solo;
 
     Random rand = new Random();
-    private String testRandom = "_" + rand.nextInt(10000); // Gives n such that 0 <= n < 1000
+    private String testRandomNumber = Integer.toString(rand.nextInt(10000)); // Gives n such that 0 <= n < 1000
+    private String testRandom = "_" + testRandomNumber;
 
     public UserBooks(){
         super(LoginPageActivity.class);
@@ -72,12 +73,11 @@ public class UserBooks extends ActivityTestRule<LoginPageActivity> {
 
         solo.clickOnView(solo.getView("navigation_mybooks"));
 
-        solo.clickOnButton("Add Book");
+        solo.clickOnView(solo.getView(R.id.addBookButton));
 
-        solo.enterText((EditText) solo.getView(R.id.isbnField),"0000000000000000000000000000000" + testRandom);
+        solo.enterText((EditText) solo.getView(R.id.isbnField),"0000" + testRandomNumber);
         solo.enterText((EditText) solo.getView(R.id.titleField),"Coraline" + testRandom);
         solo.enterText((EditText) solo.getView(R.id.authorField),"Neil Gaiman" + testRandom);
-        solo.enterText((EditText) solo.getView(R.id.descriptionField),"A story to strike fear into the hearts of all" + testRandom);
 
         solo.clickOnButton("Add");
 
@@ -85,10 +85,10 @@ public class UserBooks extends ActivityTestRule<LoginPageActivity> {
 
         assertTrue(solo.searchText("Neil Gaiman" + testRandom));
         assertTrue(solo.searchText("Coraline" + testRandom));
-        assertTrue(solo.searchText("0000000000000000000000000000000" + testRandom));
+        assertTrue(solo.searchText("0000" + testRandomNumber));
 
         //todo click on the first item in the list
-        solo.clickInRecyclerView(0, 0, R.id.bookLayout);
+        solo.clickOnText("Neil Gaiman");
 
         solo.assertCurrentActivity("Wrong Activity", OwnListingViewActivity.class);
 
@@ -99,20 +99,20 @@ public class UserBooks extends ActivityTestRule<LoginPageActivity> {
         solo.clearEditText((EditText) solo.getView(R.id.authorField));
         solo.clearEditText((EditText) solo.getView(R.id.descriptionField));
 
-        solo.enterText((EditText) solo.getView(R.id.isbnField),"0000000000000000000000000000001" + testRandom);
+        solo.enterText((EditText) solo.getView(R.id.isbnField),"0001" + testRandomNumber);
         solo.enterText((EditText) solo.getView(R.id.titleField),"Turtles All The Way Down" + testRandom);
         solo.enterText((EditText) solo.getView(R.id.authorField),"John Green" + testRandom);
-        solo.enterText((EditText) solo.getView(R.id.descriptionField),"A story about a girl finding a lost father" + testRandom);
 
-        solo.clickOnButton("Apply");
+        solo.clickOnView(solo.getView("addButton"));
 
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
 
         assertTrue(solo.searchText("John Green" + testRandom));
         assertTrue(solo.searchText("Turtles All The Way Down" + testRandom));
-        assertTrue(solo.searchText("0000000000000000000000000000001" + testRandom));
+        assertTrue(solo.searchText("0001" + testRandomNumber));
 
         //todo click on the first item in the list
+        solo.clickOnText("John Green");
 
         solo.assertCurrentActivity("Wrong Activity", OwnListingViewActivity.class);
 
@@ -126,7 +126,9 @@ public class UserBooks extends ActivityTestRule<LoginPageActivity> {
 
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
 
-        solo.clickOnButton("Logout");
+        solo.clickOnView(solo.getView(R.id.logoutButton));
+
+
 
 
     }

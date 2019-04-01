@@ -75,7 +75,7 @@ public class LoginTest extends ActivityTestRule<LoginPageActivity> {
 
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
 
-        solo.clickOnButton("Logout");
+        solo.clickOnView(solo.getView(R.id.logoutButton));
 
     }
 
@@ -126,7 +126,7 @@ public class LoginTest extends ActivityTestRule<LoginPageActivity> {
 
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
 
-        solo.clickOnButton("Logout");
+        solo.clickOnView(solo.getView(R.id.logoutButton));
 
 
 

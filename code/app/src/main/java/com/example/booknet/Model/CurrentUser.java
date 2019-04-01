@@ -41,10 +41,6 @@ public class CurrentUser {
         return user;
     }
 
-    public void setUser(FirebaseUser user) {
-        this.user = user;
-        account.setProfileEmail(user.getEmail());
-    }
 
     public String getUID() {
         return user.getUid();
@@ -110,7 +106,7 @@ public class CurrentUser {
         account.getProfile().setName(username);
     }
 
-    public void setAccountPhone(String phonenumber) {
+    public void setProfilePhone(String phonenumber) {
         account.setPhoneNumber(phonenumber);
     }
 
@@ -129,7 +125,7 @@ public class CurrentUser {
 
         // currently unkown
         setUsername(null);
-        setAccountPhone(null);
+        setProfilePhone(null);
     }
 
     public String getDefaultEmail() {
@@ -163,5 +159,9 @@ public class CurrentUser {
     public void setProfile(HashMap<String, String> currentUserProfile) {
         account.getProfile().setPhoneNumber(currentUserProfile.get("Phone"));
         account.getProfile().setEmail(currentUserProfile.get("Email"));
+    }
+
+    public void setProfileEmail(String email) {
+        account.setProfileEmail(email);
     }
 }

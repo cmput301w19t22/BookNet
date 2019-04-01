@@ -6,9 +6,12 @@ import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
+import com.example.booknet.Activities.AccountCreateActivity;
 import com.example.booknet.Activities.LoginPageActivity;
 import com.example.booknet.Adapters.BookSearchAdapter;
 import com.example.booknet.Constants.BookListingStatus;
@@ -76,6 +79,7 @@ public class DatabaseManager {
 
     private StorageReference storageRef = FirebaseStorage.getInstance().getReference();
 
+
     private ValueEventListener allListingsListener;
     private ValueEventListener userListingsListener;
     private ValueEventListener usernameListener;
@@ -94,8 +98,6 @@ public class DatabaseManager {
     // 1. write will be carried on one by one. new writes will be hold at writeLock.lock() util the last write finishes at writeLock.unlock()
     // 2. can't read while writing, read will be hold at readLock.lock(), which will only proceed after writeLock.unlock()
 
-    //only three of them are getting locks because these can be edited by multiple ends.
-
     // read lock should be used when relevant local containers are accessed, write lock should be used when relevant local containers are edited
     private ReentrantReadWriteLock l1 = new ReentrantReadWriteLock();
     private ReentrantReadWriteLock.ReadLock allListingReadLock = l1.readLock();
@@ -113,13 +115,27 @@ public class DatabaseManager {
     private ReentrantReadWriteLock.ReadLock thumbnailCacheReadLock = l4.readLock();
     private ReentrantReadWriteLock.WriteLock thumbnailCacheWriteLock = l4.writeLock();
 
+    private ReentrantReadWriteLock l5 = new ReentrantReadWriteLock();
+    private ReentrantReadWriteLock.ReadLock usernamesReadLock = l5.readLock();
+    private ReentrantReadWriteLock.WriteLock usernamesWriteLock = l5.writeLock();
+
+    private ReentrantReadWriteLock l6 = new ReentrantReadWriteLock();
+    private ReentrantReadWriteLock.ReadLock userProfileReadLock = l6.readLock();
+    private ReentrantReadWriteLock.WriteLock userProfileWriteLock = l6.writeLock();
+
     //not in effect
     private boolean readwritePermission = false;
     //#endregion
 
     //#region Constructor, Getters, Setters
     private DatabaseManager() {
+
+
+
+
     }
+
+
 
     public DatabaseReference getUserListingsRef() {
         return userListingsRef;
@@ -269,31 +285,39 @@ public class DatabaseManager {
      * @param onFailureListener
      */
     public void fetchListingThumbnail(final BookListing listing, final RecyclerView.Adapter adapter, OnFailureListener onFailureListener) {
-        StorageReference ref = storageRef.child(listing.getOwnerUsername()).child(listing.getISBN() + "-" + listing.getDupInd());
-        Log.d("mattFetching", "trying to fetch " + listing.getOwnerUsername() + listing.getISBN() + "-" + listing.getDupInd());
-        // maximum size of the image
-        final long TEN_MEGABYTE = 1024 * 1024 * 10;      //todo: limit the maximum size of the image the user can upload to 10 mb
-        ref.getBytes(TEN_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-            @Override
-            public void onSuccess(byte[] bytes) {
-                Bitmap fetchedThumnail = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                thumbnailCacheWriteLock.lock();
-                thumbNailCache.put(listing.getOwnerUsername() + "-" + listing.getISBN() + "-" + listing.getDupInd(), fetchedThumnail);
-                thumbnailCacheWriteLock.unlock();
-                listing.setPhoto(new Photo(fetchedThumnail));
-                if (adapter instanceof BookSearchAdapter) {
-                    ((BookSearchAdapter) adapter).setAllowNewAnimation(false);
+        Log.d("mattFin", listing.toString());
+        if (! (listing.getOwnerUsername().isEmpty() || listing.getISBN().isEmpty())){
+            StorageReference ref = storageRef.child(listing.getOwnerUsername()).child(listing.getISBN() + "-" + listing.getDupInd());
+            Log.d("mattFin2", "trying to fetch " + listing.getOwnerUsername() + listing.getISBN() + "-" + listing.getDupInd());
+            // maximum size of the image
+            final long TEN_MEGABYTE = 1024 * 1024 * 10;      //todo: limit the maximum size of the image the user can upload to 10 mb
+
+            ref.getBytes(TEN_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                @Override
+                public void onSuccess(byte[] bytes) {
+                    Bitmap fetchedThumnail = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                    thumbnailCacheWriteLock.lock();
+                    thumbNailCache.put(listing.getOwnerUsername() + "-" + listing.getISBN() + "-" + listing.getDupInd(), fetchedThumnail);
+                    thumbnailCacheWriteLock.unlock();
+                    listing.setPhoto(new Photo(fetchedThumnail));
+                    if (adapter instanceof BookSearchAdapter) {
+                        ((BookSearchAdapter) adapter).setAllowNewAnimation(false);
+                    }
+
+                    adapter.notifyDataSetChanged();
+
+                    if (adapter instanceof BookSearchAdapter) {
+                        ((BookSearchAdapter) adapter).cancelAllAnimations();
+                        ((BookSearchAdapter) adapter).setAllowNewAnimation(true);
+                    }
+
                 }
+            }).addOnFailureListener(onFailureListener);
 
-                adapter.notifyDataSetChanged();
 
-                if (adapter instanceof BookSearchAdapter) {
-                    ((BookSearchAdapter) adapter).cancelAllAnimations();
-                    ((BookSearchAdapter) adapter).setAllowNewAnimation(true);
-                }
 
-            }
-        }).addOnFailureListener(onFailureListener);
+        }
+
     }
 
 
@@ -705,29 +729,26 @@ public class DatabaseManager {
         return usernames.get(name);
     }
 
-    public boolean isUsernameTaken(String username) {
-        return usernames.containsKey(username);
-    }
     //#endregion
 
     //#region Profile
 
     /**
-     * writes the username under the current user's UID (this method should only be called when the user is signed in)
+     * writes the username under the current user's UID
      *
      * @param username the username to write to the database
      */
-    public void writeUsername(String username) {
-        usernameRef.child(username).setValue(CurrentUser.getInstance().getUID());
+    public void writeUsername(String username, DatabaseReference.CompletionListener completionListener) {
+        usernameRef.child(username).setValue(CurrentUser.getInstance().getUID(), completionListener);
     }
 
-    public void writeUserPhone(String phone) {
+    public void writeUserPhone(String phone, DatabaseReference.CompletionListener completionListener) {
         userPhoneRef.child(CurrentUser.getInstance().getUID()).setValue(phone);
     }
 
-    public void writeUserProfile(String newEmail, String newPhone) {
-        allUserProfileRef.child(CurrentUser.getInstance().getUID()).child("Email").setValue(newEmail);
-        allUserProfileRef.child(CurrentUser.getInstance().getUID()).child("Phone").setValue(newPhone);
+    public void writeUserProfile(String newEmail, String newPhone, DatabaseReference.CompletionListener completionListener1, DatabaseReference.CompletionListener completionListener2) {
+        allUserProfileRef.child(CurrentUser.getInstance().getUID()).child("Email").setValue(newEmail, completionListener1);
+        allUserProfileRef.child(CurrentUser.getInstance().getUID()).child("Phone").setValue(newPhone, completionListener2);
     }
 
     public HashMap<String, String> readCurrentUserProfile() {
@@ -877,12 +898,6 @@ public class DatabaseManager {
     //#region Connection, Misc
 
     public void connectToDatabase(Activity context) {
-
-        progressDialog = new ProgressDialog(context);
-        progressDialog.setCancelable(false);
-        progressDialog.setMessage("Connecting to Database...");
-
-        progressDialog.show();
         new InitiationTask(context).execute();
     }
 
@@ -923,58 +938,99 @@ public class DatabaseManager {
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            Log.d("mattTag", "database connection task started");
             String uid = CurrentUser.getInstance().getUID();
 
-            while (!nameLoaded) {
-                usernameListener = new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        usernames.clear();
 
-                        // then fill it as it is in the database
-                        for (DataSnapshot data : dataSnapshot.getChildren()) {
-                            String name = data.getKey();
-                            String uid = data.getValue(String.class);
-                            usernames.put(name, uid);
-                            if (uid.equals(CurrentUser.getInstance().getUID())) {
-                                CurrentUser.getInstance().setUsername(name);
-                                nameLoaded = true;
-                            }
-                        }
+            allUserProfileListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    userProfileWriteLock.lock();
+                    allUserProfile.clear();
+                    HashMap<String, HashMap<String, String>> fetchedProfile = (HashMap<String, HashMap<String, String>>) dataSnapshot.getValue();
+//                    Log.d("mattTag", "fetched" + String.valueOf(fetchedProfile.size()));
 
-                        Log.d("mattTag", "nameLoaded");
-                        if (phoneLoaded && progressDialog != null) {
+                    if (fetchedProfile != null) {
+                        allUserProfile.putAll(fetchedProfile);
+                    }
+                    HashMap<String, String> currentUserProfile = fetchedProfile.get(CurrentUser.getInstance().getUID());
+                    if (currentUserProfile != null) {
 
-                            if (onLoginPage) {
-                                LoginPageActivity loginPageActivity = (LoginPageActivity) context;
-                                progressDialog.dismiss();
-                                progressDialog = null;
+                        CurrentUser.getInstance().setProfile(currentUserProfile);
+                        if (LoginPageActivity.onLoginPage) LoginPageActivity.notifyTaskFinished(context, "user profile (contact email, phone) fetched from database");
+                    }
+                    userProfileWriteLock.unlock();
+                }
 
-                                if (CurrentUser.getInstance().getUsername() == null || CurrentUser.getInstance().getAccountPhone() == null) {
-                                    loginPageActivity.promptInitialProfile();
-                                } else {
-                                    // old users may not have UserProfile entries, in that case, use account email and account phone as their profile
-                                    if (!allUserProfile.containsKey(CurrentUser.getInstance().getUID())) {
-                                        writeUserProfile(CurrentUser.getInstance().getDefaultEmail(), CurrentUser.getInstance().getAccountPhone());
-                                    }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    System.out.println("The read failed: " + databaseError.getCode());
+                }
+            };
+            allUserProfileRef = FirebaseDatabase.getInstance().getReference("UserProfiles");
+            allUserProfileRef.addValueEventListener(allUserProfileListener);
 
-                                    loginPageActivity.goToMainPage();
-                                }
-                            }
+
+            usernameListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    usernamesWriteLock.lock();
+                    usernames.clear();
+
+                    // then fill it as it is in the database
+                    for (DataSnapshot data : dataSnapshot.getChildren()) {
+                        String name = data.getKey();
+                        String uid = data.getValue(String.class);
+                        usernames.put(name, uid);
+                        if (uid.equals(CurrentUser.getInstance().getUID())) {
+                            CurrentUser.getInstance().setUsername(name);
+                            if (LoginPageActivity.onLoginPage) LoginPageActivity.notifyTaskFinished(context,"username fetched from database");
+
                         }
                     }
+                    usernamesWriteLock.unlock();
+                }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        System.out.println("The read failed: " + databaseError.getCode());
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    System.out.println("The read failed: " + databaseError.getCode());
+                }
+            };
+            usernameRef = FirebaseDatabase.getInstance().getReference("Usernames");
+            usernameRef.addValueEventListener(usernameListener);
+
+
+            userPhoneListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    // once the data is changed, we just change our corresponding static variable
+
+                    // then fill it as it is in the database
+                    for (DataSnapshot data : dataSnapshot.getChildren()) {
+                        String uid = data.getKey();
+                        String phone = data.getValue(String.class);
+
+                        if (uid.equals(CurrentUser.getInstance().getUID())) {
+                            CurrentUser.getInstance().setProfilePhone(phone);
+
+                        }
                     }
-                };
-                usernameRef = FirebaseDatabase.getInstance().getReference("Usernames");
-                usernameRef.addValueEventListener(usernameListener);
+                }
 
-                Log.d("seanTag", "try again");
-            }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    System.out.println("The read failed: " + databaseError.getCode());
+                }
+            };
+            userPhoneRef = FirebaseDatabase.getInstance().getReference("UserPhones");
+            userPhoneRef.addValueEventListener(userPhoneListener);
+
+
+
+
+
+
+
+
 
             allListingsListener = new ValueEventListener() {
                 @Override
@@ -1003,31 +1059,6 @@ public class DatabaseManager {
             allListingsRef = FirebaseDatabase.getInstance().getReference("BookListings");
             allListingsRef.addValueEventListener(allListingsListener);
 
-            allUserProfileListener = new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-
-                    allUserProfile.clear();
-                    HashMap<String, HashMap<String, String>> fetchedProfile = (HashMap<String, HashMap<String, String>>) dataSnapshot.getValue();
-//                    Log.d("mattTag", "fetched" + String.valueOf(fetchedProfile.size()));
-
-                    if (fetchedProfile != null) {
-                        allUserProfile.putAll(fetchedProfile);
-                    }
-                    HashMap<String, String> currentUserProfile = fetchedProfile.get(CurrentUser.getInstance().getUID());
-                    if (currentUserProfile != null) {
-
-                        CurrentUser.getInstance().setProfile(currentUserProfile);
-                    }
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    System.out.println("The read failed: " + databaseError.getCode());
-                }
-            };
-            allUserProfileRef = FirebaseDatabase.getInstance().getReference("UserProfiles");
-            allUserProfileRef.addValueEventListener(allUserProfileListener);
 
             userListingsListener = new ValueEventListener() {
                 @Override
@@ -1056,54 +1087,6 @@ public class DatabaseManager {
             };
             userListingsRef = FirebaseDatabase.getInstance().getReference("/UserBooks/" + uid);
             userListingsRef.addValueEventListener(userListingsListener);
-
-            userPhoneListener = new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    // once the data is changed, we just change our corresponding static variable
-
-                    // then fill it as it is in the database
-                    for (DataSnapshot data : dataSnapshot.getChildren()) {
-                        String uid = data.getKey();
-                        String phone = data.getValue(String.class);
-
-                        if (uid.equals(CurrentUser.getInstance().getUID())) {
-                            CurrentUser.getInstance().setAccountPhone(phone);
-
-                        }
-                    }
-                    phoneLoaded = true;
-
-                    Log.d("mattTag", "phoneLoaded");
-                    if (nameLoaded && progressDialog != null) {
-                        Log.d("mattTag", "checking from phone");
-                        Log.d("mattTag", onLoginPage.toString());
-                        if (onLoginPage) {
-
-                            LoginPageActivity loginPageActivity = (LoginPageActivity) context;
-                            progressDialog.dismiss();
-                            progressDialog = null;
-
-                            if (CurrentUser.getInstance().getUsername() == null || CurrentUser.getInstance().getAccountPhone() == null) {
-                                loginPageActivity.promptInitialProfile();
-                            } else {
-                                // old users may not have UserProfile entries, in that case, use account email and account phone as their profile
-                                if (!allUserProfile.containsKey(CurrentUser.getInstance().getUID())) {
-                                    writeUserProfile(CurrentUser.getInstance().getDefaultEmail(), CurrentUser.getInstance().getAccountPhone());
-                                }
-                                loginPageActivity.goToMainPage();
-                            }
-                        }
-                    }
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    System.out.println("The read failed: " + databaseError.getCode());
-                }
-            };
-            userPhoneRef = FirebaseDatabase.getInstance().getReference("UserPhones");
-            userPhoneRef.addValueEventListener(userPhoneListener);
 
             notificationListener = new ValueEventListener() {
                 @Override
@@ -1156,6 +1139,13 @@ public class DatabaseManager {
             reviewRef = FirebaseDatabase.getInstance().getReference("ReviewList");
             reviewRef.addValueEventListener(reviewListener);
 
+
+
+
+
+
+
+
             return true;
         }
 
@@ -1163,7 +1153,41 @@ public class DatabaseManager {
         protected void onPostExecute(final Boolean success) {
             Log.d("mattTag", "DatabaseManager: database connected, allowing read/writes");
             if (success) allowReadWrite();
-//            dialog.dismiss();
+            if (context instanceof AccountCreateActivity){
+                ((AccountCreateActivity) context).notifyTaskFinished("Connected to database");
+
+                final String username = ((AccountCreateActivity) context).username;
+                final String email = ((AccountCreateActivity) context).profileEmail;
+                final String phone = ((AccountCreateActivity) context).phone;
+
+                writeUsername(username, new DatabaseReference.CompletionListener() {
+                    @Override
+                    public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                        CurrentUser.getInstance().setUsername(username);
+                        ((AccountCreateActivity) context).notifyTaskFinished("Username written to database");
+                    }
+                });
+
+                manager.writeUserProfile(email, phone, new DatabaseReference.CompletionListener() {
+                    @Override
+                    public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                        CurrentUser.getInstance().setProfileEmail(email);
+                        ((AccountCreateActivity) context).notifyTaskFinished("user email written to database");
+                    }
+                }, new DatabaseReference.CompletionListener() {
+                    @Override
+                    public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                        CurrentUser.getInstance().setProfilePhone(phone);
+                        ((AccountCreateActivity) context).notifyTaskFinished("user phone written to database");
+                    }
+                });
+
+
+
+            }
+            if (context instanceof LoginPageActivity){
+                LoginPageActivity.notifyTaskFinished(context,"Connected to database");
+            }
         }
 
     }

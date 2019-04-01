@@ -13,6 +13,7 @@ import android.util.Log;
 
 import com.example.booknet.Activities.AccountCreateActivity;
 import com.example.booknet.Activities.LoginPageActivity;
+import com.example.booknet.Adapters.BookSearchAdapter;
 import com.example.booknet.Constants.BookListingStatus;
 import com.example.booknet.Constants.NotificationType;
 import com.example.booknet.Model.BookLibrary;
@@ -131,7 +132,10 @@ public class DatabaseManager {
      * Empty Constructor
      */
     private DatabaseManager() {
+
+
     }
+
 
     public DatabaseReference getUserListingsRef() {
         return userListingsRef;
@@ -219,7 +223,6 @@ public class DatabaseManager {
      */
     public void writeUserBookListing(BookListing listing) {
 
-
         int dupCount = getListingDupCount(listing, CurrentUser.getInstance().getUID());
 
         userListingsRef.child(generateUserListingPath(listing, dupCount)).setValue(listing);
@@ -287,7 +290,6 @@ public class DatabaseManager {
      * @param listing : the booklisting that requires a thumbnail
      * @param adapter : the adpater to notify once the thumbnail is fetched from db and cached in manager
      */
-    
     public synchronized void fetchListingThumbnail(final BookListing listing, final RecyclerView.Adapter adapter) {
         Log.d("mattFin", listing.toString());
         if (!(listing.getOwnerUsername().isEmpty() || listing.getISBN().isEmpty())) {
@@ -308,9 +310,7 @@ public class DatabaseManager {
                 public void onSuccess(byte[] bytes) {
                     Bitmap fetchedThumnail = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                     thumbnailCacheWriteLock.lock();
-                    Log.d("mattOmegaLul", listing.toString());
                     thumbNailCache.put(listing.getOwnerUsername() + "-" + listing.getISBN() + "-" + listing.getDupInd(), fetchedThumnail);
-
                     thumbnailCacheWriteLock.unlock();
                     listing.setPhoto(new Photo(fetchedThumnail));
                     adapter.notifyDataSetChanged();
@@ -318,6 +318,8 @@ public class DatabaseManager {
 
                 }
             });
+
+
         }
     }
 
@@ -373,7 +375,7 @@ public class DatabaseManager {
 
         allListingReadLock.lock();
         for (BookListing l : allBookLibrary) {
-            if (l.hasBookWithTheSameISBN(listing) && belongsToUser(l, UID)) {
+            if (l.hasSameBook(listing) && belongsToUser(l, UID)) {
                 currentInd += 1;
             }
         }
@@ -1048,6 +1050,7 @@ public class DatabaseManager {
             userPhoneRef = FirebaseDatabase.getInstance().getReference("UserPhones");
             userPhoneRef.addValueEventListener(userPhoneListener);
 
+
             allListingsListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -1154,6 +1157,7 @@ public class DatabaseManager {
             reviewRef = FirebaseDatabase.getInstance().getReference("ReviewList");
             reviewRef.addValueEventListener(reviewListener);
 
+
             return true;
         }
 
@@ -1189,6 +1193,8 @@ public class DatabaseManager {
                         ((AccountCreateActivity) context).notifyTaskFinished("user phone written to database");
                     }
                 });
+
+
             }
             if (context instanceof LoginPageActivity) {
                 LoginPageActivity.notifyTaskFinished(context, "Connected to database");

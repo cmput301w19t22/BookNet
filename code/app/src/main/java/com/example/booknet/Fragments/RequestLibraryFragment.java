@@ -127,7 +127,7 @@ public class RequestLibraryFragment extends Fragment {
                 }
 
                 listingAdapter.notifyDataSetChanged();
-                bookCountLabel.setText(String.format("%d Books",filteredLibrary.size()));
+                bookCountLabel.setText(String.format("%d Book(s)",filteredLibrary.size()));
                 writeLock.unlock();
             }
 
@@ -165,7 +165,7 @@ public class RequestLibraryFragment extends Fragment {
                     writeLock.unlock();
                     new ThumbnailFetchingTask(getActivity()).execute();
                     listingAdapter.notifyDataSetChanged();
-                    bookCountLabel.setText(String.format("%d Books",filteredLibrary.size()));
+                    bookCountLabel.setText(String.format("%d Book(s)",filteredLibrary.size()));
                 }
             }
 

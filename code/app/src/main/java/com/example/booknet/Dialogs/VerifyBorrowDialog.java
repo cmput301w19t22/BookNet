@@ -78,7 +78,11 @@ public class VerifyBorrowDialog extends ISBNScannerDialog {
         if (listing != null) {
             if (listing.getStatus() == BookListingStatus.Accepted) {
                 //Verifying Borrow
-                titleText.setText("Borrowing");
+                if (isMyBook) {
+                    titleText.setText("Lending");
+                } else {
+                    titleText.setText("Borrowing");
+                }
             } else if (listing.getStatus() == BookListingStatus.Borrowed) {
                 //Verifying Return
                 titleText.setText("Returning");

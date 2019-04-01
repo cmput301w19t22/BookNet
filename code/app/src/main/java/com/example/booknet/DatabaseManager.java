@@ -657,8 +657,9 @@ public class DatabaseManager {
         allRef.child(key).setValue(true);
         userRef.child(key).setValue(true);
 
-        BookListing dbListing = readBookListingOfUsername(listing.getOwnerUsername(),
-                listing.getISBN(), listing.getDupInd());
+        allListingReadLock.lock();
+        BookListing dbListing = allBookLibrary.getListingMatching(listing);
+        allListingReadLock.unlock();
 
         //Check for other verification
         //String otherVerified = allRef.child(otherKey).getKey();

@@ -79,6 +79,15 @@ public class BookLibrary implements Serializable, Iterable<BookListing> {
         return false;
     }
 
+    public BookListing getListingMatching(BookListing listing) {
+        for (BookListing b : this) {
+            if (listing.isSameListing(b)) {
+                return b;
+            }
+        }
+        return null;
+    }
+
     /**
      * Makes a copy of this BookLibrary.
      *

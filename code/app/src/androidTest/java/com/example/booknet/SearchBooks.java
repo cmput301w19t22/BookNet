@@ -75,13 +75,33 @@ public class SearchBooks extends ActivityTestRule<LoginPageActivity> {
 
         //todo implement clicking on searchView and entering "Harry Potter"
 
+        solo.clickOnView(solo.getView(R.id.searchBar));
+
+        char[] ch_array = "Harry Potter".toCharArray();
+        for(int i=0;i<ch_array.length;i++)
+        {
+            solo.sendKey( (int) ch_array[i]);
+        }
+
+
         assertTrue(solo.searchText("J.K. Rowling"));
 
         //todo implement clicking on searchView and entering "John Locke"
 
+        ch_array = "John Locke".toCharArray();
+        for(int i=0;i<ch_array.length;i++)
+        {
+            solo.sendKey( (int) ch_array[i]);
+        }
+
         assertTrue(solo.searchText("Lost: The Book"));
 
         //todo implement clicking on the searchView and entering "4815162342"
+        ch_array = "4815162342".toCharArray();
+        for(int i=0;i<ch_array.length;i++)
+        {
+            solo.sendKey( (int) ch_array[i]);
+        }
 
         assertTrue(solo.searchText("John Locke"));
 
@@ -89,8 +109,7 @@ public class SearchBooks extends ActivityTestRule<LoginPageActivity> {
 
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
 
-        solo.clickOnButton("Logout");
-
+        solo.clickOnView(solo.getView(R.id.logoutButton));
 
 
 

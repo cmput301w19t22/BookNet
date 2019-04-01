@@ -27,7 +27,6 @@ import com.example.booknet.Model.BookLibrary;
 import com.example.booknet.Model.BookListing;
 import com.example.booknet.Model.Photo;
 import com.example.booknet.R;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -250,14 +249,9 @@ public class BookSearchFragment extends Fragment {
 
                     if (thumbnailBitmap == null) {
                         manager.fetchListingThumbnail(bl,
-                                listingAdapter,
+                                listingAdapter
 
-                                new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.d("imageFetching", "fetching failed, cause: " + e.getLocalizedMessage());
-                                    }
-                                });
+                        );
 
                     } else {
                         bl.setPhoto(new Photo(thumbnailBitmap));

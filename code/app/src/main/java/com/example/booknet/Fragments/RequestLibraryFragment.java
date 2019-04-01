@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -26,7 +25,6 @@ import com.example.booknet.Model.BookListing;
 import com.example.booknet.Model.CurrentUser;
 import com.example.booknet.Model.Photo;
 import com.example.booknet.R;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -214,15 +212,9 @@ public class RequestLibraryFragment extends Fragment {
                     if (thumbnailBitmap == null) {
                         Log.d("mattX", bl.toString() + " photo is not cached");
                         manager.fetchListingThumbnail(bl,
-                                listingAdapter,
+                                listingAdapter
 
-                                new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.d("mattX", bl.toString() + " photo fethcing falied");
-                                        Log.d("imageFetching", "fetching failed, cause: " + e.getLocalizedMessage());
-                                    }
-                                });
+                        );
 
                     } else {
                         Log.d("mattX", bl.toString() + " photo is cached in ownbooks");

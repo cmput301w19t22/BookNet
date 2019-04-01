@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
@@ -34,7 +35,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -60,6 +60,8 @@ public class PhotoEditDialog extends DialogFragment {
     private ImageButton selectFileButton;
     private ImageButton deleteButton;
     private ImageButton submitButton;
+    private ImageButton rotateLeftButton;
+    private ImageButton rotateRightButton;
     private View dialogView;
 
 
@@ -120,8 +122,10 @@ public class PhotoEditDialog extends DialogFragment {
         deleteButton = dialogView.findViewById(R.id.deleteButton);
         leaveButton = dialogView.findViewById(R.id.leave_button);
         submitButton = dialogView.findViewById(R.id.submitButton);
+        rotateLeftButton = dialogView.findViewById(R.id.rotateLeftButton);
+        rotateRightButton = dialogView.findViewById(R.id.rotateRightButton);
 
-        Bitmap photoBitmap = manager.getCachedThumbnail(listing);
+        final Bitmap photoBitmap = manager.getCachedThumbnail(listing);
         if (photoBitmap != null) {
             photoView.setImageBitmap(photoBitmap);
         } else {
@@ -139,6 +143,34 @@ public class PhotoEditDialog extends DialogFragment {
             @Override
             public void onClick(View v) {
                 selectImageFromFile();
+            }
+        });
+
+        rotateLeftButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    Bitmap rotated = rotatePhoto(viewingBitmap, -90);
+                    //viewingBitmap.recycle();
+                    viewingBitmap = rotated;
+                    photoView.setImageBitmap(viewingBitmap);
+                } catch (Exception e) {
+                    Log.e("jamie", "error rotating photo\n" + e.getLocalizedMessage());
+                }
+            }
+        });
+
+        rotateRightButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    Bitmap rotated = rotatePhoto(viewingBitmap, 90);
+                    //viewingBitmap.recycle();
+                    viewingBitmap = rotated;
+                    photoView.setImageBitmap(viewingBitmap);
+                } catch (Exception e) {
+                    Log.e("jamie", "error rotating photo\n" + e.getLocalizedMessage());
+                }
             }
         });
 
@@ -217,6 +249,7 @@ public class PhotoEditDialog extends DialogFragment {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             photoView.setImageBitmap(imageBitmap);
+            Log.d("jamie", "Image W: " + imageBitmap.getWidth() + " H: " + imageBitmap.getHeight());
 
             viewingBitmap = imageBitmap;
         }
@@ -235,8 +268,21 @@ public class PhotoEditDialog extends DialogFragment {
 
 
                 try {
-                    viewingBitmap = Bitmap.createBitmap(MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), dataPath));
-                } catch (IOException e) {
+                    //viewingBitmap = Bitmap.createBitmap(MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), dataPath));
+                    //viewingBitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), dataPath);
+
+                    BitmapFactory.Options options = new BitmapFactory.Options();
+                    options.inJustDecodeBounds = true;
+                    BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(dataPath), null, options);
+                    float wScale = (float) options.outWidth / 512f;
+                    float hScale = (float) options.outHeight / 512f;
+                    float allScale = Math.max(wScale, hScale);
+                    allScale = Math.max(allScale, 1f);
+                    options.inSampleSize = Math.round(allScale);
+                    options.inJustDecodeBounds = false;
+                    viewingBitmap = BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(dataPath), null, options);
+                    Log.d("jamie", "Image W: " + viewingBitmap.getWidth() + " H: " + viewingBitmap.getHeight());
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -383,22 +429,27 @@ public class PhotoEditDialog extends DialogFragment {
 
 
     /**
-     * Saves a photo bitmap to file/database.
-     *
-     * @param photo The bitmap of the photo to be saved
-     */
-    private void savePhoto(Bitmap photo) {
-        //todo revise signature and implement
-    }
-
-    /**
      * Deletes the photo from the listing.
      */
     private void deletePhoto() {
         listing.deletePhoto();
-        //todo delete from db
-        Toast.makeText(getActivity(), "Deleted Photo", Toast.LENGTH_LONG).show();
-        dismiss();
+        manager.deleteThumbnailForListing(listing,
+                new OnSuccessListener() {
+                    @Override
+                    public void onSuccess(Object o) {
+                        Toast.makeText(getActivity(), "Photo Deleted", Toast.LENGTH_SHORT).show();
+                        dismiss();
+                    }
+                },
+
+                new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(getActivity(), "Delete failed.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+        manager.removeCachedThumbnail(listing);
+        //dismiss();
     }
 
     /**

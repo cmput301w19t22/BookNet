@@ -1,6 +1,7 @@
 package com.example.booknet.Adapters;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.FragmentActivity;
@@ -11,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
-import android.view.animation.AnticipateOvershootInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
@@ -43,12 +43,14 @@ public class BookSearchAdapter extends RecyclerView.Adapter<BookSearchAdapter.Bo
     //The activity this adapter was created from
     private FragmentActivity sourceActivity;
 
-    private ArrayList<Animation> animations = new ArrayList<>();
     private ArrayList<View> views = new ArrayList<>();
+    private ArrayList<BookListingViewHolder> viewHolders = new ArrayList<>();
 
+    private Drawable bookDefault;
     private boolean allowNewAnimation = true;
 
     public void setAllowNewAnimation(boolean allowNewAnimation) {
+        Log.d("jamie", "animation " + (allowNewAnimation ? "on" : "off"));
         this.allowNewAnimation = allowNewAnimation;
     }
 
@@ -59,16 +61,29 @@ public class BookSearchAdapter extends RecyclerView.Adapter<BookSearchAdapter.Bo
      * @param sourceActivity The activity that created this adapter
      * @param readLock
      */
-    public BookSearchAdapter(BookLibrary data, FragmentActivity sourceActivity, ReentrantReadWriteLock.ReadLock readLock) {
+    public BookSearchAdapter(BookLibrary data, final FragmentActivity sourceActivity, ReentrantReadWriteLock.ReadLock readLock) {
         this.data = data;
         this.sourceActivity = sourceActivity;
         this.readLock = readLock;
+        bookDefault = sourceActivity.getDrawable(R.drawable.ic_book_default);
         registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
             public void onChanged() {
                 super.onChanged();
 
-                Log.d("jamie", "data obsrever on change");
+                Log.d("jamie", "data observer on change");
+                for (BookListingViewHolder holder : viewHolders) {
+                    if (holder != null) {
+                        Log.d("jamie", "disable animation for " + holder.toString());
+                        //if (holder.bookThumbnail.getDrawable() == bookDefault) {
+                        //    holder.allowAnimation = true;
+                        //} else {
+                        holder.allowAnimation = false;
+                        //}
+                    } else {
+                        viewHolders.remove(holder);
+                    }
+                }
                 //setAllowNewAnimation(false);
             }
         });
@@ -87,6 +102,7 @@ public class BookSearchAdapter extends RecyclerView.Adapter<BookSearchAdapter.Bo
         View view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.book_listing_item_list, viewGroup, false);
         BookListingViewHolder bookListingViewHolder = new BookListingViewHolder(view);
+        viewHolders.add(bookListingViewHolder);
         return bookListingViewHolder;
     }
 
@@ -99,6 +115,7 @@ public class BookSearchAdapter extends RecyclerView.Adapter<BookSearchAdapter.Bo
     @Override
     public void onBindViewHolder(@NonNull BookListingViewHolder bookListingViewHolder, int position) {
         readLock.lock();
+        Log.d("jamie", "view bind " + bookListingViewHolder.toString());
         //Get the data at the provided position
         final BookListing item = data.getBookAtPosition(position);
         //Index to pass to the edit activity
@@ -135,72 +152,35 @@ public class BookSearchAdapter extends RecyclerView.Adapter<BookSearchAdapter.Bo
             }
         });
 
-
-        /*AlphaAnimation animIn = new AlphaAnimation(0.0f, 1.0f);
-        animIn.setDuration(500);
-        bookListingViewHolder.itemView.startAnimation(animIn);
-        ScaleAnimation anim2 = new ScaleAnimation(0f, 1f, 0f, 1f,
-                Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-        anim2.setDuration(500);
-        anim2.setInterpolator(new OvershootInterpolator());
-        bookListingViewHolder.itemView.startAnimation(anim2);*/
         readLock.unlock();
+
+        if (bookListingViewHolder.allowAnimation) {
+            AlphaAnimation animIn = new AlphaAnimation(0.0f, 1.0f);
+            animIn.setDuration(500);
+            bookListingViewHolder.itemView.startAnimation(animIn);
+            final ScaleAnimation anim2 = new ScaleAnimation(0.5f, 1f, 0.5f, 1f,
+                    Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+            anim2.setDuration(500);
+            anim2.setInterpolator(new OvershootInterpolator());
+            bookListingViewHolder.itemView.startAnimation(anim2);
+            //anim2.cancel();
+            Log.d("jamie", "animated list item " + bookListingViewHolder.toString());
+        } else {
+            Log.d("jamie", "not allowed animation for " + bookListingViewHolder.toString());
+        }
     }
 
     @Override
     public void onViewRecycled(@NonNull BookListingViewHolder holder) {
         super.onViewRecycled(holder);
-        if (allowNewAnimation) {
-            AlphaAnimation animIn = new AlphaAnimation(0.0f, 1.0f);
-            animIn.setDuration(500);
-            holder.itemView.startAnimation(animIn);
-            final ScaleAnimation anim2 = new ScaleAnimation(0.5f, 1f, 0.5f, 1f,
-                    Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-            anim2.setDuration(500);
-            anim2.setInterpolator(new OvershootInterpolator());
-            holder.itemView.startAnimation(anim2);
-            //anim2.cancel();
-            anim2.setAnimationListener(new Animation.AnimationListener() {
-                @Override
-                public void onAnimationStart(Animation animation) {
-                    animations.add(anim2);
-                }
-
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    if (animations.contains(animation)) {
-                        animations.remove(animation);
-                    }
-                }
-
-                @Override
-                public void onAnimationRepeat(Animation animation) {
-
-                }
-            });
-            Log.d("jamie", "animated list item");
-        } else {
-            Log.d("jamie", "not allowed animation");
-        }
-    }
-
-    /**
-     * Cancels all animations being performed by items in this adapter.
-     */
-    public void cancelAllAnimations() {
-        for (Animation a : animations) {
-            a.cancel();
-        }
-        for (View v : views) {
-            v.clearAnimation();
-            v.animate().cancel();
-        }
-        animations.clear();
+        Log.d("jamie", "view recycle " + holder.toString());
+        //holder.setAllowAnimation(false);
     }
 
     @Override
     public void onViewDetachedFromWindow(@NonNull BookListingViewHolder holder) {
         super.onViewDetachedFromWindow(holder);
+        Log.d("jamie", "view detach window " + holder.toString());
         holder.itemView.clearAnimation();
         if (views.contains(holder.itemView)) {
             views.remove(holder.itemView);
@@ -210,6 +190,8 @@ public class BookSearchAdapter extends RecyclerView.Adapter<BookSearchAdapter.Bo
     @Override
     public void onViewAttachedToWindow(@NonNull BookListingViewHolder holder) {
         super.onViewAttachedToWindow(holder);
+        Log.d("jamie", "view attach window " + holder.toString());
+        holder.allowAnimation = true;
         views.add(holder.itemView);
     }
 
@@ -253,6 +235,8 @@ public class BookSearchAdapter extends RecyclerView.Adapter<BookSearchAdapter.Bo
         private TextView ownerLabel;
         private TextView statusLabel;
         private BookListing item;
+
+        private boolean allowAnimation = true;
 
         /**
          * Creates the BookListingViewHolder

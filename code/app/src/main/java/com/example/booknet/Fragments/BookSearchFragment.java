@@ -117,7 +117,7 @@ public class BookSearchFragment extends Fragment {
 
                     writeLock.unlock();
 
-                    //new ThumbnailFetchingTask(getActivity()).execute();
+                    new ThumbnailFetchingTask(getActivity()).execute();
                     listingAdapter.setAllowNewAnimation(false);
                     listingAdapter.notifyDataSetChanged();
                     //listingAdapter.setAllowNewAnimation(true);
@@ -167,7 +167,7 @@ public class BookSearchFragment extends Fragment {
 
                 }
                 writeLock.unlock();
-                //new ThumbnailFetchingTask(getActivity()).execute();
+                new ThumbnailFetchingTask(getActivity()).execute();
                 listingAdapter.notifyDataSetChanged();
                 //listingAdapter.cancelAllAnimations();
                 resultsCountLabel.setText(String.format("%d Results", filteredLibrary.size()));
@@ -188,7 +188,7 @@ public class BookSearchFragment extends Fragment {
                     } else {
                         filteredLibrary.filterByStatus(allBookListings, BookListingStatus.valueOf(selectedItem));
                     }
-                    //new ThumbnailFetchingTask(getActivity()).execute();
+                    new ThumbnailFetchingTask(getActivity()).execute();
                     listingAdapter.notifyDataSetChanged();
                     listingAdapter.cancelAllAnimations();
                     resultsCountLabel.setText(String.format("%d Results", filteredLibrary.size()));
@@ -201,7 +201,7 @@ public class BookSearchFragment extends Fragment {
             }
         });
 
-        //new ThumbnailFetchingTask(getActivity()).execute();
+        new ThumbnailFetchingTask(getActivity()).execute();
 
         return view;
     }
@@ -281,8 +281,5 @@ public class BookSearchFragment extends Fragment {
 
             return true;
         }
-
-
     }
-
 }

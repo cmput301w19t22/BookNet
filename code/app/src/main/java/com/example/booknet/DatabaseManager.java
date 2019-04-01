@@ -79,7 +79,6 @@ public class DatabaseManager {
 
     private StorageReference storageRef = FirebaseStorage.getInstance().getReference();
 
-
     private ValueEventListener allListingsListener;
     private ValueEventListener userListingsListener;
     private ValueEventListener usernameListener;
@@ -108,19 +107,19 @@ public class DatabaseManager {
     private ReentrantReadWriteLock.WriteLock userListingWriteLock = l2.writeLock();
 
     private ReentrantReadWriteLock l3 = new ReentrantReadWriteLock();
-    private ReentrantReadWriteLock.ReadLock notificationReadLock = l3.readLock();
-    private ReentrantReadWriteLock.WriteLock notificationWriteLock = l3.writeLock();
+    //private ReentrantReadWriteLock.ReadLock notificationReadLock = l3.readLock();
+    //private ReentrantReadWriteLock.WriteLock notificationWriteLock = l3.writeLock();
 
     private ReentrantReadWriteLock l4 = new ReentrantReadWriteLock();
     private ReentrantReadWriteLock.ReadLock thumbnailCacheReadLock = l4.readLock();
     private ReentrantReadWriteLock.WriteLock thumbnailCacheWriteLock = l4.writeLock();
 
     private ReentrantReadWriteLock l5 = new ReentrantReadWriteLock();
-    private ReentrantReadWriteLock.ReadLock usernamesReadLock = l5.readLock();
+    //private ReentrantReadWriteLock.ReadLock usernamesReadLock = l5.readLock();
     private ReentrantReadWriteLock.WriteLock usernamesWriteLock = l5.writeLock();
 
     private ReentrantReadWriteLock l6 = new ReentrantReadWriteLock();
-    private ReentrantReadWriteLock.ReadLock userProfileReadLock = l6.readLock();
+    //private ReentrantReadWriteLock.ReadLock userProfileReadLock = l6.readLock();
     private ReentrantReadWriteLock.WriteLock userProfileWriteLock = l6.writeLock();
 
     //not in effect
@@ -128,14 +127,12 @@ public class DatabaseManager {
     //#endregion
 
     //#region Constructor, Getters, Setters
+
+    /**
+     * Empty Constructor
+     */
     private DatabaseManager() {
-
-
-
-
     }
-
-
 
     public DatabaseReference getUserListingsRef() {
         return userListingsRef;
@@ -163,7 +160,7 @@ public class DatabaseManager {
      * @return A list of BookListings from the database if any are found
      */
     public BookLibrary readAllBookListings() {
-        BookLibrary libClone = new BookLibrary();
+        BookLibrary libClone;
 
         allListingReadLock.lock();
         libClone = allBookLibrary.clone();
@@ -213,20 +210,14 @@ public class DatabaseManager {
         return res;
     }
 
-    /**
-     * Writes a BookListing to the database
-     *
-     * @param listing The listing to write
-     */
-
-    public void writeToAllBookListings(BookListing listing) {
-        int dupCount = getListingDupCount(listing, CurrentUser.getInstance().getUID());
-        String path = generateAllListingPath(listing, dupCount, CurrentUser.getInstance().getUID());
-        allListingsRef.child(path).setValue(listing);
-    }
-
     // write a book to the user owned book listings
     // also adds the listing to the app
+
+    /**
+     * Writes BookListing to DB
+     *
+     * @param listing:  Listing to write
+     */
     public void writeUserBookListing(BookListing listing) {
 
         int dupCount = getListingDupCount(listing, CurrentUser.getInstance().getUID());
@@ -313,14 +304,15 @@ public class DatabaseManager {
 
                 }
             }).addOnFailureListener(onFailureListener);
-
-
-
         }
-
     }
 
-
+    /**
+     * Gets cached thumbnail from DB
+     *
+     * @param bl: BookListing for the thumbnail
+     * @return: The thumbnail
+     */
     public Bitmap getCachedThumbnail(BookListing bl) {
         thumbnailCacheReadLock.lock();
         Bitmap cachedBitmap = thumbNailCache.get(bl.getOwnerUsername() + "-" + bl.getISBN() + "-" + bl.getDupInd());
@@ -330,15 +322,29 @@ public class DatabaseManager {
     }
     //#endregion
 
+    /**
+     * Generates a path to store all listings
+     *
+     * @param listing: Listing to save
+     * @param dupCount: Duplication ID
+     * @param uid: Unique ID of user
+     * @return: Returns the string path
+     */
     private String generateAllListingPath(BookListing listing, int dupCount, String uid) {
         return listing.getBook().getIsbn() + "-" + String.valueOf(dupCount) + "-" + uid;
     }
 
+    /**
+     * Generates a path for user listings
+     * @param listing: Listing to save
+     * @param dupCount: Duplication ID
+     * @return: Returns path string
+     */
     @SuppressLint("DefaultLocale")
     private String generateUserListingPath(BookListing listing, int dupCount) {
-
         return String.format("%s-%d", listing.getISBN(), dupCount);
     }
+
 
     public int getListingDupCount(BookListing listing, String UID) {
         int currentInd = 0;
@@ -351,7 +357,6 @@ public class DatabaseManager {
         }
         allListingReadLock.unlock();
         return currentInd;
-
     }
 
     /**
@@ -417,7 +422,6 @@ public class DatabaseManager {
             for (BookListing l : allBookLibrary) {
                 if (l.isSameListing(listing)) {
 
-
                     ArrayList<String> newRequests = new ArrayList<String>();
                     boolean isRequester = false;
                     String requesterName = CurrentUser.getInstance().getUsername();
@@ -442,7 +446,6 @@ public class DatabaseManager {
                         changeListingRequestsTo(listing, newRequests);
                     }
                     break;
-
                 }
             }
 
@@ -940,7 +943,6 @@ public class DatabaseManager {
         protected Boolean doInBackground(Void... params) {
             String uid = CurrentUser.getInstance().getUID();
 
-
             allUserProfileListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -968,7 +970,6 @@ public class DatabaseManager {
             };
             allUserProfileRef = FirebaseDatabase.getInstance().getReference("UserProfiles");
             allUserProfileRef.addValueEventListener(allUserProfileListener);
-
 
             usernameListener = new ValueEventListener() {
                 @Override
@@ -998,7 +999,6 @@ public class DatabaseManager {
             usernameRef = FirebaseDatabase.getInstance().getReference("Usernames");
             usernameRef.addValueEventListener(usernameListener);
 
-
             userPhoneListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -1023,14 +1023,6 @@ public class DatabaseManager {
             };
             userPhoneRef = FirebaseDatabase.getInstance().getReference("UserPhones");
             userPhoneRef.addValueEventListener(userPhoneListener);
-
-
-
-
-
-
-
-
 
             allListingsListener = new ValueEventListener() {
                 @Override
@@ -1058,7 +1050,6 @@ public class DatabaseManager {
             };
             allListingsRef = FirebaseDatabase.getInstance().getReference("BookListings");
             allListingsRef.addValueEventListener(allListingsListener);
-
 
             userListingsListener = new ValueEventListener() {
                 @Override
@@ -1139,13 +1130,6 @@ public class DatabaseManager {
             reviewRef = FirebaseDatabase.getInstance().getReference("ReviewList");
             reviewRef.addValueEventListener(reviewListener);
 
-
-
-
-
-
-
-
             return true;
         }
 
@@ -1181,15 +1165,11 @@ public class DatabaseManager {
                         ((AccountCreateActivity) context).notifyTaskFinished("user phone written to database");
                     }
                 });
-
-
-
             }
             if (context instanceof LoginPageActivity){
                 LoginPageActivity.notifyTaskFinished(context,"Connected to database");
             }
         }
-
     }
 
     // temporarily not in effect: database read/write permission is always allowed even if connection failed

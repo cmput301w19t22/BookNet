@@ -21,18 +21,17 @@ public class BookListingTest {
     @Test
     public void Constructor() {
         Book book = new Book("title", "author", "description", "1234567890");
-        UserAccount owner = new UserAccount("owner");
         BookListing listing = new BookListing(book);
-
+        UserAccount owner = CurrentUser.getInstance().getUserAccount();
 
         assertEquals(book, listing.getBook());
-        assertEquals("owner", listing.getOwnerUsername());
+        assertEquals(owner.getUsername(), listing.getOwnerUsername());
     }
 
     @Test
     public void AddRequest() {
         Book book = new Book("title", "author", "description", "1234567890");
-        UserAccount owner = new UserAccount("owner");
+        UserAccount owner = new UserAccount("test_owner");
         BookListing listing = new BookListing(book);
 
         listing.addRequest("requester1");
@@ -47,10 +46,8 @@ public class BookListingTest {
     @Test
     public void AcceptRequest() {
         Book book = new Book("title", "author", "description", "1234567890");
-
-        UserAccount owner = new UserAccount("owner");
+        UserAccount owner = new UserAccount("test_owner");
         BookListing listing = new BookListing(book);
-
 
         listing.addRequest("requester1");
         listing.addRequest("requester2");
@@ -66,7 +63,7 @@ public class BookListingTest {
     @Test
     public void DenyRequest() {
         Book book = new Book("title", "author", "description", "1234567890");
-        UserAccount owner = new UserAccount("owner");
+        UserAccount owner = new UserAccount("test_owner");
         BookListing listing = new BookListing(book);
 
         listing.addRequest("requester1");
@@ -90,7 +87,7 @@ public class BookListingTest {
     @Test
     public void BookBorrowed() {
         Book book = new Book("title", "author", "description", "1234567890");
-        UserAccount owner = new UserAccount("owner");
+        UserAccount owner = new UserAccount("test_owner");
         BookListing listing = new BookListing(book);
 
         listing.addRequest("requester1");
@@ -107,7 +104,7 @@ public class BookListingTest {
     @Test
     public void BookReturned() {
         Book book = new Book("title", "author", "description", "1234567890");
-        UserAccount owner = new UserAccount("owner");
+        UserAccount owner = new UserAccount("test_owner");
         BookListing listing = new BookListing(book);
 
         listing.addRequest("requester1");
@@ -124,9 +121,8 @@ public class BookListingTest {
     @Test
     public void SetGeoLocation(){
         Book book = new Book("title", "author", "description", "1234567890");
-        UserAccount owner = new UserAccount("owner");
+        UserAccount owner = new UserAccount("test_owner");
         BookListing listing = new BookListing(book);
-
 
         //listing.setGeoLocation(new Location());
         //todo: how to get location?

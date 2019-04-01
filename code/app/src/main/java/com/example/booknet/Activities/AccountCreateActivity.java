@@ -42,11 +42,7 @@ public class AccountCreateActivity extends AppCompatActivity {
         setContentView(R.layout.activity_account_create);
 
         //Get Layout Objects
-        usernameField = findViewById(R.id.usernameField);
-        emailField = findViewById(R.id.etEmailAddr);
-        phoneField = findViewById(R.id.phoneField);
-        passwordField = findViewById(R.id.etPassword);
-        createButton = findViewById(R.id.createAccountButton);
+
 
         mAuth = FirebaseAuth.getInstance();
 

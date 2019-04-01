@@ -10,10 +10,10 @@ import static org.junit.Assert.assertNotEquals;
 public class ReviewTest {
 
     @Test
-    public void Constructors() {
-        String reviewer = "1";
-        String reviewed = "2";
-        Review review = new Review(reviewer, reviewed, 5, "review1");
+    public void Constructors(){
+        UserAccount reviewer = new UserAccount("test_username_1");
+        UserAccount reviewed = new UserAccount("test_username_2");
+        Review review = new Review(reviewer,reviewed,5,"review1");
 
         //Basic
         assertEquals(reviewer, review.getReviewerUsername());
@@ -24,10 +24,10 @@ public class ReviewTest {
     }
 
     @Test
-    public void Setters() {
-        String reviewer = "1";
-        String reviewed = "2";
-        Review review = new Review(reviewer, reviewed, 5, "review1");
+    public void Setters(){
+        UserAccount reviewer = new UserAccount("test_username_1");
+        UserAccount reviewed = new UserAccount("test_username_2");
+        Review review = new Review(reviewer,reviewed,5,"review1");
 
         review.setMessage("newmessage");
         review.setScore(3);
@@ -37,10 +37,10 @@ public class ReviewTest {
     }
 
     @Test
-    public void ScoreRange() {
-        String reviewer = "1";
-        String reviewed = "2";
-        Review review = new Review(reviewer, reviewed, 5, "review1");
+    public void ScoreRange(){
+        UserAccount reviewer = new UserAccount("test_username_1");
+        UserAccount reviewed = new UserAccount("test_username_2");
+        Review review = new Review(reviewer,reviewed,5,"review1");
 
         //Negative
         review.setScore(-1);
@@ -50,21 +50,25 @@ public class ReviewTest {
         assertNotEquals(6, review.getScore());
         //Zero
         review.setScore(0);
-        assertNotEquals(0, review.getScore());
+        assertEquals(0,review.getScore());
     }
 
     @Test
-    public void UtilityScoreStarFill() {
-        for (float s = 0f; s <= 5.0f; s += 0.1f) {
-            int f1 = Review.starFill(s, 0);
-            if (s < 0.5f) {
-                assertEquals(String.format("Empty?: %f", s), 0, f1);
-            } else if (s >= 0.5f && s < 1f) {
-                assertEquals(String.format("Half?: %f", s), 1, f1);
-            } else {
-                assertEquals(String.format("Full?: %f", s), 2, f1);
-            }
-        }
+    public void EditReview(){
+        UserAccount reviewer = new UserAccount("test_username_1");
+        UserAccount reviewed = new UserAccount("test_username_2");
+        Review review = new Review(reviewer,reviewed,5,"message");
 
+        //review.editReview(reviewer,reviewed,3,"newmessage");
+        //todo: implement editing review?
+
+        assertEquals(3,review.getScore());
+        assertEquals("newmessage",review.getMessage());
+
+        //Check values
+        assertEquals(reviewer,review.getReviewerAccount());
+        assertEquals(reviewed,review.getReviewedAccount());
+        assertNotEquals(5,review.getScore());
+        assertNotEquals("message",review.getMessage());
     }
 }

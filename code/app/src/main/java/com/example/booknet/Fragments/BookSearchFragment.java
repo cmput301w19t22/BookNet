@@ -95,8 +95,6 @@ public class BookSearchFragment extends Fragment {
         resultsCountLabel.setText(String.format("%d Results", filteredLibrary.size()));
         writeLock.unlock();
 
-
-
         listener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -137,12 +135,6 @@ public class BookSearchFragment extends Fragment {
             }
         };
         manager.getAllListingsRef().addValueEventListener(listener);
-
-
-//        mSoundPool = new SoundPool(MAX_STREAM, AudioManager.STREAM_MUSIC, 0);
-//        final int backgroundSoundId = mSoundPool.load(this, R.raw.nice_keyboard_sound, 0);
-
-//        player.prepareAsync();
 
         allBookListings = manager.readAllBookListings();
 
@@ -197,7 +189,6 @@ public class BookSearchFragment extends Fragment {
                     writeLock.unlock();
                     new ThumbnailFetchingTask(getActivity()).execute();
                     listingAdapter.notifyDataSetChanged();
-                    listingAdapter.cancelAllAnimations();
                 }
             }
 
@@ -272,7 +263,6 @@ public class BookSearchFragment extends Fragment {
                                 listingAdapter.setAllowNewAnimation(false);
                                 listingAdapter.notifyItemChanged(filteredLibrary.indexOf(bl));
                                 listingAdapter.setAllowNewAnimation(true);
-                                listingAdapter.cancelAllAnimations();
                                 readLock.unlock();
                             }
                         });

@@ -23,6 +23,7 @@ import com.example.booknet.Model.BookListing;
 import com.example.booknet.R;
 
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.ArrayList;
 
 //Reused/adapted code from assignment 1
 
@@ -41,6 +42,7 @@ public class OwnedLibraryAdapter extends RecyclerView.Adapter<OwnedLibraryAdapte
     private FragmentActivity sourceActivity;
 
     private ReentrantReadWriteLock.ReadLock readLock;
+    private ArrayList<OwnedListingViewHolder> viewHolders = new ArrayList<>();
 
     /**
      * Creates the adapter
@@ -52,6 +54,21 @@ public class OwnedLibraryAdapter extends RecyclerView.Adapter<OwnedLibraryAdapte
         this.library = library;
         this.sourceActivity = sourceActivity;
         this.readLock = readLock;
+
+        registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onChanged() {
+                super.onChanged();
+                for (OwnedListingViewHolder holder : viewHolders) {
+                    if (holder != null) {
+                        Log.d("jamie", "disable animation for " + holder.toString());
+                        holder.allowAnimation = false;
+                    } else {
+                        viewHolders.remove(holder);
+                    }
+                }
+            }
+        });
     }
 
     /**
@@ -194,6 +211,4 @@ public class OwnedLibraryAdapter extends RecyclerView.Adapter<OwnedLibraryAdapte
             ownerLabel.setSelected(true);
         }
     }
-
-
 }

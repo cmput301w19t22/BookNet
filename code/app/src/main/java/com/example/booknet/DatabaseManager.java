@@ -283,7 +283,7 @@ public class DatabaseManager {
      * @param listing           : the booklisting that requires a thumbnail
      * @param adapter           : the adpater to notify once the thumbnail is fetched from db and cached in manager
      */
-    public void fetchListingThumbnail(final BookListing listing, final RecyclerView.Adapter adapter) {
+    public synchronized void fetchListingThumbnail(final BookListing listing, final RecyclerView.Adapter adapter) {
         Log.d("mattFin", listing.toString());
         if (! (listing.getOwnerUsername().isEmpty() || listing.getISBN().isEmpty())){
             StorageReference ref = storageRef.child(listing.getOwnerUsername()).child(listing.getISBN() + "-" + listing.getDupInd());

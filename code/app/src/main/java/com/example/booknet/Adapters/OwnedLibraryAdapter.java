@@ -24,6 +24,8 @@ import com.example.booknet.R;
 
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import java.util.ArrayList;
+
 //Reused/adapted code from assignment 1
 
 /**
@@ -41,6 +43,8 @@ public class OwnedLibraryAdapter extends RecyclerView.Adapter<OwnedLibraryAdapte
     private FragmentActivity sourceActivity;
 
     private ReentrantReadWriteLock.ReadLock readLock;
+    private ArrayList<OwnedListingViewHolder> viewHolders = new ArrayList<>();
+
     /**
      * Creates the adapter
      *  @param library        The BookLibrary to use for the list display
@@ -51,6 +55,20 @@ public class OwnedLibraryAdapter extends RecyclerView.Adapter<OwnedLibraryAdapte
         this.library = library;
         this.sourceActivity = sourceActivity;
         this.readLock = readLock;
+        registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onChanged() {
+                super.onChanged();
+                for (OwnedListingViewHolder holder : viewHolders) {
+                    if (holder != null) {
+                        Log.d("jamie", "disable animation for " + holder.toString());
+                        holder.allowAnimation = false;
+                    } else {
+                        viewHolders.remove(holder);
+                    }
+                }
+            }
+        });
     }
 
     /**
@@ -110,14 +128,23 @@ public class OwnedLibraryAdapter extends RecyclerView.Adapter<OwnedLibraryAdapte
             }
         });
 
-        AlphaAnimation animIn = new AlphaAnimation(0.0f, 1.0f);
-        animIn.setDuration(500);
-        ownedListingViewHolder.itemView.startAnimation(animIn);
-        ScaleAnimation anim2 = new ScaleAnimation(0.5f, 1f, 0.5f, 1f,
-                Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-        anim2.setDuration(500);
-        anim2.setInterpolator(new OvershootInterpolator());
-        ownedListingViewHolder.itemView.startAnimation(anim2);
+        if (ownedListingViewHolder.allowAnimation) {
+            AlphaAnimation animIn = new AlphaAnimation(0.0f, 1.0f);
+            animIn.setDuration(500);
+            ownedListingViewHolder.itemView.startAnimation(animIn);
+            ScaleAnimation anim2 = new ScaleAnimation(0.5f, 1f, 0.5f, 1f,
+                    Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+            anim2.setDuration(500);
+            anim2.setInterpolator(new OvershootInterpolator());
+            ownedListingViewHolder.itemView.startAnimation(anim2);
+        }
+    }
+
+    @Override
+    public void onViewAttachedToWindow(@NonNull OwnedListingViewHolder holder) {
+        super.onViewAttachedToWindow(holder);
+        holder.allowAnimation = true;
+        holder.itemView.clearAnimation();
     }
 
     /**
@@ -159,6 +186,7 @@ public class OwnedLibraryAdapter extends RecyclerView.Adapter<OwnedLibraryAdapte
         private TextView ownedLabel;
         private TextView statusLabel;
 
+        private boolean allowAnimation = true;
 
         /**
          * Creates the RequestListingViewHolder

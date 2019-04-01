@@ -197,7 +197,7 @@ public class BookSearchFragment extends Fragment {
                     writeLock.unlock();
                     new ThumbnailFetchingTask(getActivity()).execute();
                     listingAdapter.notifyDataSetChanged();
-                    listingAdapter.cancelAllAnimations();
+
 
                 }
             }
@@ -256,10 +256,9 @@ public class BookSearchFragment extends Fragment {
                     Bitmap thumbnailBitmap = manager.getCachedThumbnail(bl);
 
                     if (thumbnailBitmap == null) {
+                        listingAdapter.setAllowNewAnimation(false);
                         manager.fetchListingThumbnail(bl,
-                                listingAdapter
-
-                        );
+                                listingAdapter);
 
                     } else {
                         bl.setPhoto(new Photo(thumbnailBitmap));
@@ -274,7 +273,6 @@ public class BookSearchFragment extends Fragment {
                                 listingAdapter.setAllowNewAnimation(false);
                                 listingAdapter.notifyItemChanged(filteredLibrary.indexOf(bl));
                                 listingAdapter.setAllowNewAnimation(true);
-                                listingAdapter.cancelAllAnimations();
                                 readLock.unlock();
                             }
                         });

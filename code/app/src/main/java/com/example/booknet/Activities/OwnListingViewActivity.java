@@ -13,10 +13,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ImageButton;
 
 import com.example.booknet.Constants.BookListingStatus;
 import com.example.booknet.DatabaseManager;
@@ -25,6 +25,7 @@ import com.example.booknet.Dialogs.EditBookDialog;
 import com.example.booknet.Dialogs.PhotoEditDialog;
 import com.example.booknet.Dialogs.VerifyBorrowDialog;
 import com.example.booknet.Model.BookListing;
+import com.example.booknet.Model.UserLocation;
 import com.example.booknet.R;
 
 /**
@@ -237,7 +238,6 @@ public class OwnListingViewActivity extends AppCompatActivity implements DialogC
     /**
      * Updates the contents of the layout objects. Called when creating the activity
      * and should be called whenever the listing data changes.
-     *
      */
     private void updateLayout() {
         Log.d("jamie", "update own listing layout");
@@ -260,6 +260,11 @@ public class OwnListingViewActivity extends AppCompatActivity implements DialogC
             viewRequestsButton.setVisibility(View.GONE);
             requestsCountCircle.setVisibility(View.GONE);
             geoLocationBlock.setVisibility(View.VISIBLE);
+
+            UserLocation location = listing.getGeoLocation();
+            if (location != null) {
+                geolocationLabel.setText(String.format("Meetup location: %3.3f, %3.3f", location.getLatitude(), location.getLongitude()));
+            }
 
         } else {
             verifyButton.setVisibility(View.GONE);

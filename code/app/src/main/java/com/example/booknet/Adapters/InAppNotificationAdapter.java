@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.booknet.Activities.ListingViewActivity;
+import com.example.booknet.Activities.OwnListingViewActivity;
 import com.example.booknet.Constants.NotificationType;
 import com.example.booknet.DatabaseManager;
 import com.example.booknet.Model.InAppNotification;
@@ -104,13 +105,25 @@ public class InAppNotificationAdapter extends RecyclerView.Adapter<InAppNotifica
         notificationViewHolder.gotoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(sourceActivity, ListingViewActivity.class);
-                if (item != null) {
-                    intent.putExtra("ownerUsername", item.getRequestedBookListing().getOwnerUsername());
-                    intent.putExtra("isbn", item.getRequestedBookListing().getBook().getIsbn());
-                    intent.putExtra("dupID", item.getRequestedBookListing().getDupInd());
+                Intent intent;
+                if (item.getNotificationType() == NotificationType.hasRequested) {
+                    intent = new Intent(sourceActivity, OwnListingViewActivity.class);
+                    if (item != null) {
+                        intent.putExtra("isbn", item.getRequestedBookListing().getBook().getIsbn());
+                        intent.putExtra("dupID", item.getRequestedBookListing().getDupInd());
+                    }
                 }
+                else {
+                    intent = new Intent(sourceActivity, ListingViewActivity.class);
+                    if (item != null) {
+                        intent.putExtra("ownerUsername", item.getRequestedBookListing().getOwnerUsername());
+                        intent.putExtra("isbn", item.getRequestedBookListing().getBook().getIsbn());
+                        intent.putExtra("dupID", item.getRequestedBookListing().getDupInd());
+                    }
+                }
+
                 sourceActivity.startActivity(intent);
+                removeNotification(item);
             }
         });
     }

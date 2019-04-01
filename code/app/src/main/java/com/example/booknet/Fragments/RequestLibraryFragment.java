@@ -46,7 +46,7 @@ public class RequestLibraryFragment extends Fragment {
     private TextView bookCountLabel;
 
     //Activity Data
-    private BookLibrary filteredLibrary = new BookLibrary();
+    private BookLibrary filteredLibrary;
 
     DatabaseManager manager = DatabaseManager.getInstance();
     ValueEventListener listener;
@@ -91,9 +91,8 @@ public class RequestLibraryFragment extends Fragment {
         titlelabel.setText("Requested Books");//Change the page title
 
         //Get Data From the Database
-        writeLock.lock();
-        filteredLibrary.copyOneByOne(manager.readUserRequestLibrary());
-        writeLock.unlock();
+        filteredLibrary = manager.readUserRequestLibrary();
+        Log.d("mattTag", "SIZE" + filteredLibrary.size());
 
 
         listener = new ValueEventListener() {

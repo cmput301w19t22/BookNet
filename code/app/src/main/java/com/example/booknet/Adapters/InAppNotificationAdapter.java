@@ -123,7 +123,7 @@ public class InAppNotificationAdapter extends RecyclerView.Adapter<InAppNotifica
                 }
 
                 sourceActivity.startActivity(intent);
-                removeNotification(item);
+                //removeNotification(item);//do not actually
             }
         });
     }

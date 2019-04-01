@@ -3,8 +3,8 @@ package com.example.booknet.Constants;
 public enum NotificationType {
     hasRequested,
     hasAccepted,
-    hasDeclined;
-
+    hasDeclined,
+    canReview;
     /**
      * Returns the InAppNotification type as a text string.
      *
@@ -19,6 +19,8 @@ public enum NotificationType {
                 return " has accepted your book request";
             case hasDeclined:
                 return " has declined your book request";
+            case canReview:
+                return  " can be reviewed.";
         }
         return super.toString();
     }

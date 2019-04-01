@@ -13,7 +13,6 @@ import android.util.Log;
 
 import com.example.booknet.Activities.AccountCreateActivity;
 import com.example.booknet.Activities.LoginPageActivity;
-import com.example.booknet.Adapters.BookSearchAdapter;
 import com.example.booknet.Constants.BookListingStatus;
 import com.example.booknet.Constants.NotificationType;
 import com.example.booknet.Model.BookLibrary;
@@ -219,7 +218,7 @@ public class DatabaseManager {
     /**
      * Writes BookListing to DB
      *
-     * @param listing:  Listing to write
+     * @param listing: Listing to write
      */
     public void writeUserBookListing(BookListing listing) {
 
@@ -271,6 +270,12 @@ public class DatabaseManager {
 
         UploadTask uploadTask = ref.putBytes(data);
         uploadTask.addOnFailureListener(onFailureListener).addOnSuccessListener(onSuccessListener);
+
+        //Add to the cache
+        thumbnailCacheWriteLock.lock();
+        thumbNailCache.put(listing.getOwnerUsername() + "-" + listing.getISBN() + "-" + listing.getDupInd(), bitmap);
+        thumbnailCacheWriteLock.unlock();
+        //listing.setPhoto(new Photo(bitmap));
     }
 
     /**
@@ -349,9 +354,9 @@ public class DatabaseManager {
     /**
      * Generates a path to store all listings
      *
-     * @param listing: Listing to save
+     * @param listing:  Listing to save
      * @param dupCount: Duplication ID
-     * @param uid: Unique ID of user
+     * @param uid:      Unique ID of user
      * @return: Returns the string path
      */
     private String generateAllListingPath(BookListing listing, int dupCount, String uid) {
@@ -360,7 +365,8 @@ public class DatabaseManager {
 
     /**
      * Generates a path for user listings
-     * @param listing: Listing to save
+     *
+     * @param listing:  Listing to save
      * @param dupCount: Duplication ID
      * @return: Returns path string
      */
@@ -375,7 +381,7 @@ public class DatabaseManager {
 
         allListingReadLock.lock();
         for (BookListing l : allBookLibrary) {
-            if (l.hasSameBook(listing) && belongsToUser(l, UID)) {
+            if (l.hasBookWithTheSameISBN(listing) && belongsToUser(l, UID)) {
                 currentInd += 1;
             }
         }
@@ -457,6 +463,7 @@ public class DatabaseManager {
 
                     //for cancelling a request after it is accepted
                     if (isBorrower) {
+                        changeListingBorrowerNameTo(listing, "");
                         changeListingStatusTo(listing, Available);
                         break;
                     }
@@ -575,6 +582,17 @@ public class DatabaseManager {
         userRef.setValue(newRequests);
     }
 
+
+    private void changeListingBorrowerNameTo(BookListing l, String borrower) {
+        String allPath = generateAllListingPath(l, l.getDupInd(), getUIDFromName(l.getOwnerUsername()));
+        DatabaseReference allRef = allListingsRef.child(allPath).child("borrowerName");
+        allRef.setValue(borrower);
+
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("UserBooks/"
+                + getUIDFromName(l.getOwnerUsername()) + "/" + generateUserListingPath(l, l.getDupInd())).child("borrowerName");
+        userRef.setValue(borrower);
+    }
+
     public boolean ifListingRequestedByCurrentUser(BookListing listing) {
         Boolean alreadyRequested = true;
 
@@ -631,7 +649,7 @@ public class DatabaseManager {
      *
      * @return True if the verification is complete (by both users)
      */
-    public boolean verifyRequest(BookListing listing, boolean byOwner) {
+    public boolean verifyRequest(BookListing listing, boolean byOwner,) {
         String key = byOwner ? "verifiedByOwner" : "verifiedByBorrower";
         String otherKey = !byOwner ? "verifiedByOwner" : "verifiedByBorrower";
         DatabaseReference allRef = allListingsRef.child(generateAllListingPath(listing, listing.getDupInd(), getUIDFromName(listing.getOwnerUsername())));
@@ -639,9 +657,14 @@ public class DatabaseManager {
         allRef.child(key).setValue(true);
         userRef.child(key).setValue(true);
 
+        BookListing dbListing = readBookListingOfUsername(listing.getOwnerUsername(),
+                listing.getISBN(), listing.getDupInd());
+
         //Check for other verification
-        String otherVerified = allRef.child(otherKey).getKey();
-        boolean isVerified = Boolean.parseBoolean(otherVerified);
+        //String otherVerified = allRef.child(otherKey).getKey();
+        //boolean otherVerified = otherKey.equals("verifiedByBorrower") ? dbListing.isVerifiedByBorrower() : dbListing.isVerifiedByOwner();
+        //boolean isVerified = Boolean.parseBoolean(otherVerified);
+        boolean isVerified = otherKey.equals("verifiedByBorrower") ? dbListing.isVerifiedByBorrower() : dbListing.isVerifiedByOwner()
         if (isVerified) {
             //Both verified so proceed with transaction
             if (listing.getStatus() == Accepted) {

@@ -51,8 +51,6 @@ public class MapSelectActivity extends AppCompatActivity implements OnMapReadyCa
     SupportMapFragment mapView;
     TextView latLongTV;
     SearchView searchBar;
-    Button addressButton;
-    EditText searchText;
     EditText noteField;
     TextView noteLabel;
 
@@ -110,8 +108,8 @@ public class MapSelectActivity extends AppCompatActivity implements OnMapReadyCa
         noteField = findViewById(R.id.noteText);
         noteLabel = findViewById(R.id.noteLabel);
         searchBar = findViewById(R.id.searchField);
-        addressButton = (Button) findViewById(R.id.searchButton);
-        searchText = (EditText) findViewById(R.id.addressField);
+        //addressButton = (Button) findViewById(R.id.searchButton);
+        //searchText = (EditText) findViewById(R.id.addressField);
         latLongTV = (TextView) findViewById(R.id.latLongLabel);
         //mapView = findViewById(R.id.mapView);
         mapView = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapView);
@@ -119,11 +117,12 @@ public class MapSelectActivity extends AppCompatActivity implements OnMapReadyCa
         selectButton.setEnabled(false);
         if (editMode) {
             noteLabel.setVisibility(View.GONE);
-            searchBar.setVisibility(View.GONE);
+
         } else {
             noteField.setVisibility(View.GONE);
             noteLabel.setVisibility(View.VISIBLE);
             selectButton.setVisibility(View.GONE);
+            searchBar.setVisibility(View.GONE);
         }
 
         //Set Listeners
@@ -162,7 +161,7 @@ public class MapSelectActivity extends AppCompatActivity implements OnMapReadyCa
             }
         });
 
-        addressButton.setOnClickListener(new View.OnClickListener() {
+        /*addressButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
 
@@ -172,7 +171,7 @@ public class MapSelectActivity extends AppCompatActivity implements OnMapReadyCa
                 locationAddress.getAddressFromLocation(address,
                         getApplicationContext(), new GeocoderHandler());
             }
-        });
+        });*/
 
         searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override

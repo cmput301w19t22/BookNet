@@ -195,6 +195,9 @@ public class BookListing implements Serializable, Cloneable {
      */
     public void cancelRequest(String requesterName) {
         this.requests.remove(requesterName);
+        if (this.borrowerName.equals(requesterName)) {
+            borrowerName = "";
+        }
         //todo send notification for successful removal?
     }
 

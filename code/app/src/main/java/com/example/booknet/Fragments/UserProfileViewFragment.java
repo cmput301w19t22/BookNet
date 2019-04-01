@@ -3,11 +3,15 @@ package com.example.booknet.Fragments;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.OvershootInterpolator;
+import android.view.animation.ScaleAnimation;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -36,6 +40,8 @@ import java.util.HashMap;
 public class UserProfileViewFragment extends Fragment {
 
     //Layout Objects
+    private ConstraintLayout profileView;
+    private ConstraintLayout reviewsView;
     private TextView usernameLabel;
     private TextView phoneLabel;
     private TextView emailLabel;
@@ -118,6 +124,8 @@ public class UserProfileViewFragment extends Fragment {
         userRatingCount = manager.readUserReviewCount(CurrentUser.getInstance().getUsername());
 
         //Obtain References To Layout Objects
+        profileView = view.findViewById(R.id.profile);
+        reviewsView = view.findViewById(R.id.ratings);
         usernameLabel = view.findViewById(R.id.userNameLabel);
         phoneLabel = view.findViewById(R.id.phoneNumberLabel);
         emailLabel = view.findViewById(R.id.emailLabel);
@@ -192,6 +200,22 @@ public class UserProfileViewFragment extends Fragment {
         ratingCountLabel.setText(String.format("(%d Ratings)", userRatingCount));
 
 
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        ScaleAnimation anim2 = new ScaleAnimation(0.5f, 1f, 0.5f, 1f,
+                Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 1f);
+        anim2.setDuration(500);
+        anim2.setInterpolator(new OvershootInterpolator());
+        if (profileView != null) {
+            profileView.startAnimation(anim2);
+        }
+        if (reviewsView != null) {
+            reviewsView.startAnimation(anim2);
+        }
     }
 
     /**

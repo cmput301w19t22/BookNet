@@ -128,6 +128,7 @@ public class PhotoEditDialog extends DialogFragment {
         final Bitmap photoBitmap = manager.getCachedThumbnail(listing);
         if (photoBitmap != null) {
             photoView.setImageBitmap(photoBitmap);
+            viewingBitmap = photoBitmap;
         } else {
             photoView.setImageResource(R.drawable.ic_book_default);
         }

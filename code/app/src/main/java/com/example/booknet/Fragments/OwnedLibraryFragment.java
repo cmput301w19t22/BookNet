@@ -122,7 +122,7 @@ public class OwnedLibraryFragment extends Fragment {
                 new ThumbnailFetchingTask(getActivity()).execute();
 
                 listingAdapter.notifyDataSetChanged();
-                bookCountLabel.setText(String.format("%d Book(s)", filteredLibrary.size()));
+                bookCountLabel.setText(String.format("%d Books", filteredLibrary.size()));
             }
 
             @Override
@@ -135,12 +135,12 @@ public class OwnedLibraryFragment extends Fragment {
 
         filteredLibrary = library.clone();
 
-        bookCountLabel.setText(String.format("%d Book(s)", filteredLibrary.size()));
+        bookCountLabel.setText(String.format("%d Books", filteredLibrary.size()));
 
         //Apply Adapter to RecyclerView
         libraryListView = view.findViewById(R.id.bookLibrary);
         libraryListView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        listingAdapter = new OwnedLibraryAdapter(filteredLibrary, getActivity());
+        listingAdapter = new OwnedLibraryAdapter(filteredLibrary, getActivity(), readLock);
         libraryListView.setAdapter(listingAdapter);
         libraryListView.addItemDecoration(new SpaceDecoration(12, 16));
 
@@ -159,7 +159,7 @@ public class OwnedLibraryFragment extends Fragment {
                     }
                     new ThumbnailFetchingTask(getActivity()).execute();
                     listingAdapter.notifyDataSetChanged();
-                    bookCountLabel.setText(String.format("%d Book(s)", filteredLibrary.size()));
+                    bookCountLabel.setText(String.format("%d Books", filteredLibrary.size()));
                 }
 
             }

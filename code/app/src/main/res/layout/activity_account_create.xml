@@ -99,6 +99,22 @@
             app:layout_constraintTop_toBottomOf="@+id/etPassword" />
 
         <EditText
+            android:id="@+id/profileEmailField"
+            style="@style/BookNet.EditText.Login"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
+            android:drawableLeft="@drawable/ic_email_black_24dp"
+            android:drawablePadding="4dp"
+            android:hint="Profile Email (Optional)"
+            android:inputType="textEmailAddress"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/usernameField" />
+
+        <EditText
             android:id="@+id/phoneField"
             style="@style/BookNet.EditText.Login"
             android:layout_width="match_parent"
@@ -113,7 +129,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/usernameField" />
+            app:layout_constraintTop_toBottomOf="@+id/profileEmailField" />
 
         <TextView
             android:id="@+id/tvSignInStatus"

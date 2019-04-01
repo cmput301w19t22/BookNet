@@ -1,5 +1,5 @@
 package com.example.booknet;
 
 public class Debugger {
-    final static String debuggerName = "Noone";
+    final static String debuggerName = "noone";
 }

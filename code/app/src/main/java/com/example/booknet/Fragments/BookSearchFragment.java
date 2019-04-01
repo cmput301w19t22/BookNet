@@ -89,11 +89,9 @@ public class BookSearchFragment extends Fragment {
         filter.setAdapter(filterAdapter);
 
         allBookListings = manager.readAllBookListings();
-
-        writeLock.lock();
         filteredLibrary.copyOneByOne(allBookListings);
-        resultsCountLabel.setText(String.format("%d Results", filteredLibrary.size()));
-        writeLock.unlock();
+
+        resultsCountLabel.setText(String.format("%d Result(s)", filteredLibrary.size()));
 
         listener = new ValueEventListener() {
             @Override
@@ -101,7 +99,6 @@ public class BookSearchFragment extends Fragment {
                 // once the data is changed, we just change our corresponding static variable
 
                 //first empty it
-                int size = 0;
                 if (searchBar != null) {
 
                     writeLock.lock();
@@ -116,7 +113,7 @@ public class BookSearchFragment extends Fragment {
                             }
                         }
                     }
-                    size = filteredLibrary.size();
+
                     writeLock.unlock();
 
                     new ThumbnailFetchingTask(getActivity()).execute();
@@ -126,7 +123,7 @@ public class BookSearchFragment extends Fragment {
                     //listingAdapter.cancelAllAnimations();
                 }
                 //update results count
-                resultsCountLabel.setText(String.format("%d Results", size));
+                resultsCountLabel.setText(String.format("%d Result(s)", filteredLibrary.size()));
             }
 
             @Override
@@ -135,6 +132,12 @@ public class BookSearchFragment extends Fragment {
             }
         };
         manager.getAllListingsRef().addValueEventListener(listener);
+
+
+//        mSoundPool = new SoundPool(MAX_STREAM, AudioManager.STREAM_MUSIC, 0);
+//        final int backgroundSoundId = mSoundPool.load(this, R.raw.nice_keyboard_sound, 0);
+
+//        player.prepareAsync();
 
         allBookListings = manager.readAllBookListings();
 
@@ -166,7 +169,7 @@ public class BookSearchFragment extends Fragment {
                 new ThumbnailFetchingTask(getActivity()).execute();
                 listingAdapter.notifyDataSetChanged();
                 //listingAdapter.cancelAllAnimations();
-                resultsCountLabel.setText(String.format("%d Results", filteredLibrary.size()));
+                resultsCountLabel.setText(String.format("%d Result(s)", filteredLibrary.size()));
                 return true;
             }
         });
@@ -179,16 +182,14 @@ public class BookSearchFragment extends Fragment {
 
                 if (selectedView != null) {
                     String selectedItem = selectedView.getText().toString();
-                    writeLock.lock();
                     if (selectedItem.equals("All")) {
                         filteredLibrary.copyOneByOne(allBookListings);
                     } else {
                         filteredLibrary.filterByStatus(allBookListings, BookListingStatus.valueOf(selectedItem));
                     }
-                    resultsCountLabel.setText(String.format("%d Results", filteredLibrary.size()));
-                    writeLock.unlock();
                     new ThumbnailFetchingTask(getActivity()).execute();
                     listingAdapter.notifyDataSetChanged();
+                    resultsCountLabel.setText(String.format("%d Result(s)", filteredLibrary.size()));
                 }
             }
 
@@ -258,12 +259,10 @@ public class BookSearchFragment extends Fragment {
                         searchResults.post(new Runnable() {
                             @Override
                             public void run() {
-                                readLock.lock();
                                 //listingAdapter.notifyDataSetChanged();
                                 listingAdapter.setAllowNewAnimation(false);
                                 listingAdapter.notifyItemChanged(filteredLibrary.indexOf(bl));
                                 listingAdapter.setAllowNewAnimation(true);
-                                readLock.unlock();
                             }
                         });
                     }

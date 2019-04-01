@@ -275,6 +275,16 @@
                 app:layout_constraintStart_toStartOf="@+id/viewRequestsButton"
                 app:layout_constraintTop_toTopOf="@+id/viewRequestsButton" />
 
+            <TextView
+                android:id="@+id/borrowerLabel"
+                style="@style/BookNet.Text.Main.Small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="[borrower]"
+                app:layout_constraintBaseline_toBaselineOf="@+id/statusLabel"
+                app:layout_constraintStart_toEndOf="@+id/statusLabel" />
+
         </android.support.constraint.ConstraintLayout>
 
         <android.support.constraint.ConstraintLayout

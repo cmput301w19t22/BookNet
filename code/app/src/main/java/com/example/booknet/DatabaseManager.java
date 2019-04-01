@@ -649,7 +649,7 @@ public class DatabaseManager {
      *
      * @return True if the verification is complete (by both users)
      */
-    public boolean verifyRequest(BookListing listing, boolean byOwner,) {
+    public boolean verifyRequest(BookListing listing, boolean byOwner) {
         String key = byOwner ? "verifiedByOwner" : "verifiedByBorrower";
         String otherKey = !byOwner ? "verifiedByOwner" : "verifiedByBorrower";
         DatabaseReference allRef = allListingsRef.child(generateAllListingPath(listing, listing.getDupInd(), getUIDFromName(listing.getOwnerUsername())));
@@ -664,7 +664,7 @@ public class DatabaseManager {
         //String otherVerified = allRef.child(otherKey).getKey();
         //boolean otherVerified = otherKey.equals("verifiedByBorrower") ? dbListing.isVerifiedByBorrower() : dbListing.isVerifiedByOwner();
         //boolean isVerified = Boolean.parseBoolean(otherVerified);
-        boolean isVerified = otherKey.equals("verifiedByBorrower") ? dbListing.isVerifiedByBorrower() : dbListing.isVerifiedByOwner()
+        boolean isVerified = otherKey.equals("verifiedByBorrower") ? dbListing.isVerifiedByBorrower() : dbListing.isVerifiedByOwner();
         if (isVerified) {
             //Both verified so proceed with transaction
             if (listing.getStatus() == Accepted) {

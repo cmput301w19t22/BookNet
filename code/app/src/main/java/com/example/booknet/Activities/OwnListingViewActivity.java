@@ -44,6 +44,7 @@ public class OwnListingViewActivity extends AppCompatActivity implements DialogC
     private TextView isbnLabel;
     private TextView statusLabel;
     private TextView requestsCountCircle;
+    private TextView borrowerLabel;
     private Button requestButton;
     private Button viewRequestsButton;
     private Button verifyButton;
@@ -87,6 +88,7 @@ public class OwnListingViewActivity extends AppCompatActivity implements DialogC
         requestsCountCircle = findViewById(R.id.requestsNum);
         requestButton = findViewById(R.id.requestButton);
         viewRequestsButton = findViewById(R.id.viewRequestsButton);
+        borrowerLabel = findViewById(R.id.borrowerLabel);
         verifyButton = findViewById(R.id.verifyButton);
         deleteButton = findViewById(R.id.deleteButton);
         editButton = findViewById(R.id.editButton);
@@ -260,6 +262,8 @@ public class OwnListingViewActivity extends AppCompatActivity implements DialogC
             viewRequestsButton.setVisibility(View.GONE);
             requestsCountCircle.setVisibility(View.GONE);
             geoLocationBlock.setVisibility(View.VISIBLE);
+            borrowerLabel.setVisibility(View.VISIBLE);
+            borrowerLabel.setText(listing.getBorrowerName());
 
             UserLocation location = listing.getGeoLocation();
             if (location != null) {
@@ -268,6 +272,7 @@ public class OwnListingViewActivity extends AppCompatActivity implements DialogC
 
         } else {
             verifyButton.setVisibility(View.GONE);
+            borrowerLabel.setVisibility(View.GONE);
             geoLocationBlock.setVisibility(View.GONE);
             //Requests View Block
             int numRequests = listing.getRequests().size();

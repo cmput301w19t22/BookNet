@@ -277,16 +277,6 @@ public class DatabaseManager {
      * @param onSuccessListener
      * @param onFailureListener
      */
-    public void deleteThumbnailForListing(BookListing listing, OnSuccessListener onSuccessListener, OnFailureListener onFailureListener) {
-        StorageReference ref = storageRef.child(listing.getOwnerUsername()).child(listing.getISBN() + "-" + listing.getDupInd());
-
-        ref.delete().addOnSuccessListener(onSuccessListener).addOnFailureListener(onFailureListener);
-    }
-
-    /**
-     * @param listing : the booklisting that requires a thumbnail
-     * @param adapter : the adpater to notify once the thumbnail is fetched from db and cached in manager
-     */
     public synchronized void fetchListingThumbnail(final BookListing listing, final RecyclerView.Adapter adapter) {
         Log.d("mattFin", listing.toString());
         if (!(listing.getOwnerUsername().isEmpty() || listing.getISBN().isEmpty())) {

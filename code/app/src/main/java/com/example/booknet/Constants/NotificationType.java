@@ -4,7 +4,9 @@ public enum NotificationType {
     hasRequested,
     hasAccepted,
     hasDeclined,
+    wantsReturn,
     canReview;
+
     /**
      * Returns the InAppNotification type as a text string.
      *
@@ -19,8 +21,10 @@ public enum NotificationType {
                 return " has accepted your book request";
             case hasDeclined:
                 return " has declined your book request";
+            case wantsReturn:
+                return " wants to return this book";
             case canReview:
-                return  " can be reviewed.";
+                return " can be reviewed.";
         }
         return super.toString();
     }

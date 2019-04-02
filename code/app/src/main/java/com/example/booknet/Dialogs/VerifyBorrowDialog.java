@@ -131,20 +131,35 @@ public class VerifyBorrowDialog extends ISBNScannerDialog {
     private void verifyTransaction() {
         if (isMyBook) {
             listing.setVerifiedByOwner(true);
+            BookListingStatus status = listing.getStatus();
             boolean complete = manager.verifyRequest(listing, isMyBook);
             if (complete) {
                 titleText.setText("Transaction Complete");
-                infoText.setText("You may now hand over the book.");
+                if (status == BookListingStatus.Accepted) {
+                    infoText.setText("You may now hand over the book.");
+                } else {
+                    infoText.setText("You may receive your book.");
+                }
             } else {
                 titleText.setText("Verified");
                 infoText.setText("Please have the borrower scan this book to complete.");
             }
         } else {
             listing.setVerifiedByBorrower(true);
+            BookListingStatus status = listing.getStatus();
             boolean complete = manager.verifyRequest(listing, isMyBook);
             if (complete) {
                 titleText.setText("Transaction Complete");
-                infoText.setText("Enjoy your book.");
+                if (status == BookListingStatus.Accepted) {
+                    infoText.setText("Enjoy your book.");
+                } else {
+                    infoText.setText("You may return the book to the owner.");
+                    try {
+                        manager.cancelRequestForListing(listing);
+                    } catch (DatabaseManager.DatabaseException e) {
+                        Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
             } else {
                 titleText.setText("Verified");
                 infoText.setText("Please have the owner scan this book to complete.");

@@ -19,11 +19,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.booknet.Constants.BookListingStatus;
+import com.example.booknet.Constants.NotificationType;
 import com.example.booknet.DatabaseManager;
 import com.example.booknet.Dialogs.OthersProfileViewCard;
 import com.example.booknet.Dialogs.VerifyBorrowDialog;
 import com.example.booknet.Model.BookListing;
 import com.example.booknet.Model.CurrentUser;
+import com.example.booknet.Model.InAppNotification;
 import com.example.booknet.R;
 
 
@@ -275,7 +277,8 @@ public class ListingViewActivity extends AppCompatActivity {
      * Requests to return the book for this book listing.
      */
     private void sendReturnRequest() throws DatabaseManager.DatabaseException {
-        //todo initiate book return
+        manager.writeNotification(new InAppNotification(listing,listing.getOwnerUsername(),
+                listing.getBorrowerName(), NotificationType.wantsReturn));
     }
 
     /**

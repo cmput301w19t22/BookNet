@@ -275,6 +275,11 @@ public class LoginPageActivity extends AppCompatActivity implements View.OnClick
                                 } else {
                                     Toast.makeText(LoginPageActivity.this, "Sign in failed", Toast.LENGTH_SHORT)
                                             .show();
+                                    loginProgress = 0;
+                                    progressDialog.dismiss();
+                                    etEmail.setError("Either email or password is not right");
+                                    etPass.setError("Either email or password is not right");
+
                                 }
 
                                 updateStatus();

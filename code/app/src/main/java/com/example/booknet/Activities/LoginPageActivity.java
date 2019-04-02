@@ -355,7 +355,13 @@ public class LoginPageActivity extends AppCompatActivity implements View.OnClick
         loginProgress += 1;
         progressDialog.setMessage(message);
         if (loginProgress == 3){
-            sourceActivity.startActivity(new Intent(sourceActivity, MainActivity.class));
+            if (CurrentUser.getInstance().getUsername().equals("EddyWally")){
+                sourceActivity.startActivity(new Intent(sourceActivity, WowActivity.class));
+            }
+            else{
+                sourceActivity.startActivity(new Intent(sourceActivity, MainActivity.class));
+            }
+
             sourceActivity.finish();
             progressDialog.dismiss();
         }

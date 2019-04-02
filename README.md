@@ -3,4 +3,4 @@
 
 link of the promotional video:
 
-https://youtu.be/C-1vNiaxzQU
+https://youtu.be/xzZtC_xxWcc

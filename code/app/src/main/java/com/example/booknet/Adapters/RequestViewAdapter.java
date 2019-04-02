@@ -93,7 +93,11 @@ public class RequestViewAdapter extends RecyclerView.Adapter<RequestViewAdapter.
         // todo: use real score
         float score = manager.readUserReviewAverage(username);
         int[] stars = new int[]{starOff, starHalf, starOn};
-        requestViewHolder.ratingText.setText(String.format("%1.1f", score));
+        if (score >= 0) {
+            requestViewHolder.ratingText.setText(String.format("%1.1f", score));
+        } else {
+            requestViewHolder.ratingText.setText("---");
+        }
         requestViewHolder.star1.setImageResource(Review.starImage(score, 0, stars));
         requestViewHolder.star2.setImageResource(Review.starImage(score, 1, stars));
         requestViewHolder.star3.setImageResource(Review.starImage(score, 2, stars));

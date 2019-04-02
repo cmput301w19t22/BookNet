@@ -620,7 +620,15 @@ public class DatabaseManager {
         return alreadyRequested;
     }
 
+    /**
+     * Checks whether the listing is requestable.
+     *
+     * @return
+     */
     private boolean isBookListingRequestableAndNotOwnBook(BookListing listing) {
+        if (listing.getOwnerUsername().equals(CurrentUser.getInstance().getUsername())) {
+            return false;
+        }
         boolean res = true;
         userListingReadLock.lock();
         for (BookListing l : userBookLibrary) {
@@ -697,6 +705,7 @@ public class DatabaseManager {
      */
     private void onReturnVerified(BookListing listing) {
         changeListingStatusTo(listing, Available);
+        changeListingBorrowerNameTo(listing, "");
         clearVerification(listing);
         writeNotification(new InAppNotification(listing, listing.getBorrowerName(), listing.getOwnerUsername(), NotificationType.canReview));
         writeNotification(new InAppNotification(listing, listing.getOwnerUsername(), listing.getBorrowerName(), NotificationType.canReview));

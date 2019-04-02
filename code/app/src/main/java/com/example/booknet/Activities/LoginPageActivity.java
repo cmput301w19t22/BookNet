@@ -141,6 +141,10 @@ public class LoginPageActivity extends AppCompatActivity implements View.OnClick
                 email = n + "@debug.com";
                 password = "123456";
             }
+            else if (n.equals("eddy")){
+                email = n + "@booknet.com";
+                password = "123456";
+            }
         }
         if (email != null) {
 

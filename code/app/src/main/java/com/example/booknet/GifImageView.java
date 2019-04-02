@@ -1,13 +1,19 @@
 package com.example.booknet;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Movie;
 import android.net.Uri;
 import android.os.SystemClock;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.View;
+import android.view.WindowManager;
+
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
@@ -18,6 +24,7 @@ public class GifImageView extends View {
     private int mWidth, mHeight;
     private long mStart;
     private Context mContext;
+    private float height, width;
 
     public GifImageView(Context context) {
         super(context);
@@ -30,6 +37,16 @@ public class GifImageView extends View {
 
     public GifImageView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+
+
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        ((Activity) getContext()).getWindowManager()
+                .getDefaultDisplay()
+                .getMetrics(displayMetrics);
+        height = displayMetrics.heightPixels;
+        width = displayMetrics.widthPixels;
+
+
         this.mContext = context;
         if (attrs.getAttributeName(1).equals("background")) {
             int id = Integer.parseInt(attrs.getAttributeValue(1).substring(1));
@@ -48,7 +65,7 @@ public class GifImageView extends View {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        setMeasuredDimension(mWidth, mHeight);
+        setMeasuredDimension((int)width, (int)height);
     }
 
     @Override
@@ -71,7 +88,20 @@ public class GifImageView extends View {
 
             mMovie.setTime(relTime);
 
-            mMovie.draw(canvas, 0, 0);
+//            canvas.drawColor(Color.TRANSPARENT);
+            float scale;
+            if(mHeight > getHeight() || mWidth > getWidth())
+                scale = ( 1f / Math.min(canvas.getHeight() / 240f, canvas.getWidth() / 344f) ) + 0.25f;
+            else
+                scale = Math.min(canvas.getHeight() / 240f, canvas.getWidth() / 344f);
+
+
+            canvas.scale(scale, scale);
+            canvas.translate(((float)getWidth() / scale - (float)mWidth)/2f,
+                    ((float)getHeight() / scale - (float)mHeight)/2f);
+
+            mMovie.draw(canvas, 0, 0);//mMovie is my gif picture
+
             invalidate();
         }
     }

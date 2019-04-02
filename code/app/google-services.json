@@ -1,0 +1,84 @@
+{
+  "project_info": {
+    "project_number": "953572038017",
+    "firebase_url": "https://booknet-57d7d.firebaseio.com",
+    "project_id": "booknet-57d7d",
+    "storage_bucket": "booknet-57d7d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:953572038017:android:eec9479270c38f85",
+        "android_client_info": {
+          "package_name": "com.example.booknet"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "953572038017-40todu53lraqcs9ne87a86n2c1otaa7b.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.booknet",
+            "certificate_hash": "ca86fedfa6d2e3d1358ef56eb10b9f5010e53fb5"
+          }
+        },
+        {
+          "client_id": "953572038017-0rtosqp19tjuc9po4ej49n4obc682f8l.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.booknet",
+            "certificate_hash": "0605a5fec1a98f3015894a3d0d7c4bb212922433"
+          }
+        },
+        {
+          "client_id": "953572038017-mtsmnosla59dcdbic7qjcl3btugb8f5r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.booknet",
+            "certificate_hash": "a7fdac462bbfca738bff6d8079ff463da41098ed"
+          }
+        },
+        {
+          "client_id": "953572038017-8hj04j7pslb4fjgsft0cjp4bh1fe2ff6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.booknet",
+            "certificate_hash": "5e5e40262461bb7fb7e64374b5705180f650ddbe"
+          }
+        },
+        {
+          "client_id": "953572038017-jf6ml1alnhblgfgjmo44sjel8r924t0j.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.booknet",
+            "certificate_hash": "245931864435e035b06f62e52fed330d24b8311d"
+          }
+        },
+        {
+          "client_id": "953572038017-037e0efh6vhna4g8l5hno7bk0dg0s3hk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.booknet",
+            "certificate_hash": "5d216092010f31196dd3ff9c14edae61ce719152"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAfl7PywUQczUr-QpT127xeNa8CWSO0oLs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "953572038017-4hh61e0lkud7l1or3vmnd3q3bvpfji82.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

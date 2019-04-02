@@ -1,6 +1,8 @@
 package com.example.booknet.Dialogs;
 
+import android.app.Activity;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
@@ -173,4 +175,17 @@ public class VerifyBorrowDialog extends ISBNScannerDialog {
         titleText.startAnimation(anim);
     }
 
+    /**
+     * Called when the dialog is dismissed. Tells the source activity the dialog dismissed
+     * if it has the DialogCloseListener interface.
+     */
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        super.onDismiss(dialog);
+        //Tell the source activity the dialog closed so it can update
+        Activity activity = getActivity();
+        if (activity instanceof DialogCloseListener) {
+            ((DialogCloseListener) activity).onDialogClose();
+        }
+    }
 }

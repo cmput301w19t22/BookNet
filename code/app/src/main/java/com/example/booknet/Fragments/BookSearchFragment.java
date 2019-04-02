@@ -223,6 +223,9 @@ public class BookSearchFragment extends Fragment {
         super.onResume();
         //Reset the filter
         filter.setSelection(0);
+
+        new ThumbnailFetchingTask(getActivity()).execute();
+
     }
 
     @Override
@@ -255,34 +258,34 @@ public class BookSearchFragment extends Fragment {
         protected Boolean doInBackground(Void... params) {
             writeLock.lock();
             for (final BookListing bl : filteredLibrary) {
-                if (bl.getPhotoBitmap() == null) {
-                    Log.d("mattX", bl.toString() + " photo is null");
 
-                    Bitmap thumbnailBitmap = manager.getCachedThumbnail(bl);
+                Log.d("mattX", bl.toString() + " photo is null");
 
-                    if (thumbnailBitmap == null) {
-                        listingAdapter.setAllowNewAnimation(false);
-                        manager.fetchListingThumbnail(bl,
-                                listingAdapter);
+                Bitmap thumbnailBitmap = manager.getCachedThumbnail(bl);
 
-                    } else {
-                        bl.setPhoto(new Photo(thumbnailBitmap));
+                if (thumbnailBitmap == null) {
+                    listingAdapter.setAllowNewAnimation(false);
+                    manager.fetchListingThumbnail(bl,
+                            listingAdapter);
 
-                        // weird bug happends while changing tab if you simply listingAdpater.notifyDataSetChanged()
-                        // solution found at: https://stackoverflow.com/questions/43221847/cannot-call-this-method-while-recyclerview-is-computing-a-layout-or-scrolling-wh
-                        searchResults.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                //listingAdapter.notifyDataSetChanged();
-                                listingAdapter.setAllowNewAnimation(false);
-                                readLock.lock();
-                                listingAdapter.notifyItemChanged(filteredLibrary.indexOf(bl));
-                                readLock.unlock();
-                                listingAdapter.setAllowNewAnimation(true);
-                            }
-                        });
-                    }
+                } else {
+                    bl.setPhoto(new Photo(thumbnailBitmap));
+
+                    // weird bug happends while changing tab if you simply listingAdpater.notifyDataSetChanged()
+                    // solution found at: https://stackoverflow.com/questions/43221847/cannot-call-this-method-while-recyclerview-is-computing-a-layout-or-scrolling-wh
+                    searchResults.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            //listingAdapter.notifyDataSetChanged();
+                            listingAdapter.setAllowNewAnimation(false);
+                            readLock.lock();
+                            listingAdapter.notifyItemChanged(filteredLibrary.indexOf(bl));
+                            readLock.unlock();
+                            listingAdapter.setAllowNewAnimation(true);
+                        }
+                    });
                 }
+
             }
             writeLock.unlock();
 

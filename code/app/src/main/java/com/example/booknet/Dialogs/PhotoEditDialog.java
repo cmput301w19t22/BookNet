@@ -71,6 +71,7 @@ public class PhotoEditDialog extends DialogFragment {
     final int FROM_CAMERA = 0;
     final int FROM_LIBRARY = 1;
 
+
     //Dialog Data
     private BookListing listing;
     private DatabaseManager manager = DatabaseManager.getInstance();

@@ -246,7 +246,7 @@ public class ListingViewActivity extends AppCompatActivity {
             }
         } else {
             if (listing.getStatus() == BookListingStatus.Accepted
-                    || listing.getStatus() == BookListingStatus.Borrowed) {
+                    || listing.getStatus() == BookListingStatus.Borrowed || manager.belongsToUser(listing, CurrentUser.getInstance().getUID())) {
                 requestButton.setEnabled(false);
                 requestButton.setVisibility(View.GONE);
             } else {

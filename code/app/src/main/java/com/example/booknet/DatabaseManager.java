@@ -114,7 +114,7 @@ public class DatabaseManager {
     private ReentrantReadWriteLock.WriteLock thumbnailCacheWriteLock = l4.writeLock();
 
     private ReentrantReadWriteLock l5 = new ReentrantReadWriteLock();
-    //private ReentrantReadWriteLock.ReadLock usernamesReadLock = l5.readLock();
+    private ReentrantReadWriteLock.ReadLock usernamesReadLock = l5.readLock();
     private ReentrantReadWriteLock.WriteLock usernamesWriteLock = l5.writeLock();
 
     private ReentrantReadWriteLock l6 = new ReentrantReadWriteLock();
@@ -396,7 +396,7 @@ public class DatabaseManager {
      * @param uid
      * @return
      */
-    private boolean belongsToUser(BookListing l, String uid) {
+    public boolean belongsToUser(BookListing l, String uid) {
         return getUIDFromName(l.getOwnerUsername()).equals(uid);
     }
     //#endregion
@@ -779,7 +779,10 @@ public class DatabaseManager {
      * @return
      */
     public String getUIDFromName(String name) {
-        return usernames.get(name);
+        usernamesReadLock.lock();
+        String res = usernames.get(name);
+        usernamesReadLock.unlock();
+        return res;
     }
 
     //#endregion

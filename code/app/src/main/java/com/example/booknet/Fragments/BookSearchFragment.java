@@ -25,11 +25,14 @@ import com.example.booknet.Constants.BookListingStatus;
 import com.example.booknet.DatabaseManager;
 import com.example.booknet.Model.BookLibrary;
 import com.example.booknet.Model.BookListing;
+import com.example.booknet.Model.CurrentUser;
 import com.example.booknet.Model.Photo;
 import com.example.booknet.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+
+import org.checkerframework.checker.units.qual.Current;
 
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -109,10 +112,11 @@ public class BookSearchFragment extends Fragment {
                     filteredLibrary.removeAllBooks();
 
                     // then fill it as it is in the database
+                    String currentUID = CurrentUser.getInstance().getUID();
                     for (DataSnapshot data : dataSnapshot.getChildren()) {
                         BookListing bookListing = data.getValue(BookListing.class);
                         if (bookListing != null) {
-                            if (bookListing.containKeyword(searchBar.getQuery().toString())) {
+                            if (bookListing.containKeyword(searchBar.getQuery().toString()) && ! manager.belongsToUser(bookListing, currentUID)) {
                                 filteredLibrary.addBookListing(bookListing.clone());
                             }
                         }
@@ -184,15 +188,18 @@ public class BookSearchFragment extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 //todo filter results
                 TextView selectedView = (TextView) view;
-
+                String currentUID = CurrentUser.getInstance().getUID();
                 if (selectedView != null) {
                     String selectedItem = selectedView.getText().toString();
                     writeLock.lock();
                     if (selectedItem.equals("All")) {
                         filteredLibrary.copyOneByOne(allBookListings);
+
+
                     } else {
                         filteredLibrary.filterByStatus(allBookListings, BookListingStatus.valueOf(selectedItem));
                     }
+
                     new ThumbnailFetchingTask(getActivity()).execute();
                     listingAdapter.notifyDataSetChanged();
                     resultsCountLabel.setText(String.format("%d Result(s)", filteredLibrary.size()));
@@ -268,7 +275,9 @@ public class BookSearchFragment extends Fragment {
                             public void run() {
                                 //listingAdapter.notifyDataSetChanged();
                                 listingAdapter.setAllowNewAnimation(false);
+                                readLock.lock();
                                 listingAdapter.notifyItemChanged(filteredLibrary.indexOf(bl));
+                                readLock.unlock();
                                 listingAdapter.setAllowNewAnimation(true);
                             }
                         });

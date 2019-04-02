@@ -89,9 +89,13 @@ public class BookSearchFragment extends Fragment {
         filter.setAdapter(filterAdapter);
 
         allBookListings = manager.readAllBookListings();
-        filteredLibrary.copyOneByOne(allBookListings);
 
+        writeLock.lock();
+        filteredLibrary.copyOneByOne(allBookListings);
         resultsCountLabel.setText(String.format("%d Result(s)", filteredLibrary.size()));
+        writeLock.unlock();
+
+
 
         listener = new ValueEventListener() {
             @Override
@@ -113,7 +117,7 @@ public class BookSearchFragment extends Fragment {
                             }
                         }
                     }
-
+                    resultsCountLabel.setText(String.format("%d Result(s)", filteredLibrary.size()));
                     writeLock.unlock();
 
                     new ThumbnailFetchingTask(getActivity()).execute();
@@ -123,7 +127,7 @@ public class BookSearchFragment extends Fragment {
                     //listingAdapter.cancelAllAnimations();
                 }
                 //update results count
-                resultsCountLabel.setText(String.format("%d Result(s)", filteredLibrary.size()));
+
             }
 
             @Override
@@ -165,11 +169,12 @@ public class BookSearchFragment extends Fragment {
                     }
 
                 }
+                resultsCountLabel.setText(String.format("%d Result(s)", filteredLibrary.size()));
                 writeLock.unlock();
                 new ThumbnailFetchingTask(getActivity()).execute();
                 listingAdapter.notifyDataSetChanged();
                 //listingAdapter.cancelAllAnimations();
-                resultsCountLabel.setText(String.format("%d Result(s)", filteredLibrary.size()));
+
                 return true;
             }
         });
@@ -182,6 +187,7 @@ public class BookSearchFragment extends Fragment {
 
                 if (selectedView != null) {
                     String selectedItem = selectedView.getText().toString();
+                    writeLock.lock();
                     if (selectedItem.equals("All")) {
                         filteredLibrary.copyOneByOne(allBookListings);
                     } else {
@@ -190,6 +196,7 @@ public class BookSearchFragment extends Fragment {
                     new ThumbnailFetchingTask(getActivity()).execute();
                     listingAdapter.notifyDataSetChanged();
                     resultsCountLabel.setText(String.format("%d Result(s)", filteredLibrary.size()));
+                    writeLock.unlock();
                 }
             }
 

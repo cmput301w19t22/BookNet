@@ -194,11 +194,23 @@ public class BookListing implements Serializable, Cloneable {
      * @param requesterName The user whose request to cancel
      */
     public void cancelRequest(String requesterName) {
-        this.requests.remove(requesterName);
+        for (String r : requests) {
+            if (r.equals(requesterName)) {
+                requests.remove(r);
+            }
+        }
+        //this.requests.remove(requesterName);
         if (this.borrowerName.equals(requesterName)) {
             borrowerName = "";
         }
-        //todo send notification for successful removal?
+        if (status == BookListingStatus.Accepted) {
+            setStatus(BookListingStatus.Requested);
+        }
+        if (status == BookListingStatus.Requested) {
+            if (requests.isEmpty()) {
+                setStatus(BookListingStatus.Available);
+            }
+        }
     }
 
 
@@ -336,6 +348,18 @@ public class BookListing implements Serializable, Cloneable {
 
     }
 
+    public boolean isOwnedBy(String username) {
+        return ownerUsername.equals(username);
+    }
+
+    public boolean isRequestedBy(String username) {
+        for (String user : requests) {
+            if (user.equals(username)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     //#endregion
 

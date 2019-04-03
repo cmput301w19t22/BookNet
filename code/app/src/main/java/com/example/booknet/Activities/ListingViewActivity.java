@@ -255,7 +255,7 @@ public class ListingViewActivity extends AppCompatActivity implements DialogClos
         }
 
         //Manage Request Button
-        if (manager.ifListingRequestedByCurrentUser(listing)) {
+        if (listing.isRequestedBy(CurrentUser.getInstance().getUsername())) {//was manager.ifListingRequestedByCurrentUser(listing)
             if (listing.getStatus() == BookListingStatus.Borrowed) {
                 requestButton.setEnabled(true);
                 requestButton.setText("Return");
@@ -265,7 +265,8 @@ public class ListingViewActivity extends AppCompatActivity implements DialogClos
             }
         } else {
             if (listing.getStatus() == BookListingStatus.Accepted
-                    || listing.getStatus() == BookListingStatus.Borrowed || manager.belongsToUser(listing, CurrentUser.getInstance().getUID())) {
+                    || listing.getStatus() == BookListingStatus.Borrowed
+                    || listing.isOwnedBy(CurrentUser.getInstance().getUsername())) {//was manager.belongsToUser(listing, CurrentUser.getInstance().getUID())
                 requestButton.setEnabled(false);
                 requestButton.setVisibility(View.GONE);
             } else {
@@ -276,14 +277,23 @@ public class ListingViewActivity extends AppCompatActivity implements DialogClos
         }
     }
 
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        Log.d("jamie", "restore");
+        if (listing != null) {
+            updateLayout(listing);
+        }
+    }
+
     /**
      * Creates a request for this book listing from the current user.
      */
     private void sendAddRequest() throws DatabaseManager.DatabaseException {
         manager.requestBookListing(listing);
-
-        recreate();
-        Log.d("jamie","recreate");
+        listing.addRequest(CurrentUser.getInstance().getUsername());
+        updateLayout(listing);
+        //recreate();
     }
 
     /**
@@ -291,7 +301,9 @@ public class ListingViewActivity extends AppCompatActivity implements DialogClos
      */
     private void sendRemoveRequest() throws DatabaseManager.DatabaseException {
         manager.cancelRequestForListing(listing);
-        recreate();
+        listing.cancelRequest(CurrentUser.getInstance().getUsername());
+        updateLayout(listing);
+        //recreate();
     }
 
     /**

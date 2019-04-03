@@ -120,6 +120,7 @@ public class VerifyBorrowDialog extends ISBNScannerDialog {
                 verifyTransaction();
             } else {
                 Log.d("isbn", "scanned isbn not match");
+                infoText.setText("ISBN did not match, please try again with a correct barcode.");
             }
         } else {
             Toast.makeText(getContext(), "Wasn't a valid ISBN", Toast.LENGTH_LONG);

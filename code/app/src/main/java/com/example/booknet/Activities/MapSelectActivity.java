@@ -151,11 +151,26 @@ public class MapSelectActivity extends AppCompatActivity implements OnMapReadyCa
                 if (editMode && myMarker != null) {
                     if (myMarker.isVisible()) {
                         String note = noteField.getText().toString();
-                        listing.setGeoLocation(new UserLocation(myMarker.getPosition(), note));
+
+                        UserLocation temp = new UserLocation(myMarker.getPosition(), note);
+                        listing.setGeoLocation(temp);
+                        OwnListingViewActivity.cachedLocation = temp;
                         manager.overwriteUserBookListing(listing);
                         selectButton.setEnabled(false);
                         Toast.makeText(getApplicationContext(), "Location Set", Toast.LENGTH_LONG).show();
+                        Intent intent = new Intent(MapSelectActivity.this, OwnListingViewActivity.class);
+
+                        intent.putExtra("isbn", listing.getBook().getIsbn());
+                        intent.putExtra("dupID", listing.getDupInd());
+
+
+                        MapSelectActivity.this.startActivity(intent);
                         finish();
+
+
+
+
+
                     }
                 }
             }
@@ -192,6 +207,17 @@ public class MapSelectActivity extends AppCompatActivity implements OnMapReadyCa
         mapView.getMapAsync(this);
 
 
+    }
+
+    @Override
+    public void onBackPressed(){
+        Intent intent = new Intent(MapSelectActivity.this, OwnListingViewActivity.class);
+
+        intent.putExtra("isbn", listing.getBook().getIsbn());
+        intent.putExtra("dupID", listing.getDupInd());
+
+        MapSelectActivity.this.startActivity(intent);
+        finish();
     }
 
     private class GeocoderHandler extends Handler {

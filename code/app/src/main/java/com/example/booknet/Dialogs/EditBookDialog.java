@@ -110,6 +110,11 @@ public class EditBookDialog extends ISBNScannerDialog {
         isbnField.setText(book.getIsbn());
         descriptionField.setText(book.getDescription());
 
+        isbnField.setEnabled(false);//Disable isbn editing
+        isbnField.setSelected(false);
+        scanButton.setVisibility(View.GONE);
+        titleField.setSelected(true);
+
         //#region Set Listeners
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override

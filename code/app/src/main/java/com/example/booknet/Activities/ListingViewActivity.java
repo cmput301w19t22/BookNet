@@ -145,7 +145,7 @@ public class ListingViewActivity extends AppCompatActivity implements DialogClos
                 }
 
 //                Log.d("mattTag", "finishing");
-                finish();
+                //finish();
             }
         });
 
@@ -281,6 +281,9 @@ public class ListingViewActivity extends AppCompatActivity implements DialogClos
      */
     private void sendAddRequest() throws DatabaseManager.DatabaseException {
         manager.requestBookListing(listing);
+
+        recreate();
+        Log.d("jamie","recreate");
     }
 
     /**
@@ -288,6 +291,7 @@ public class ListingViewActivity extends AppCompatActivity implements DialogClos
      */
     private void sendRemoveRequest() throws DatabaseManager.DatabaseException {
         manager.cancelRequestForListing(listing);
+        recreate();
     }
 
     /**

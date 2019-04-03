@@ -64,8 +64,9 @@ public class OwnListingViewActivity extends AppCompatActivity implements DialogC
     private String intenntIsbn;
     private int intentDupId;
 
-    static boolean refreshFlag = false;
-
+    // used to stored the user picked location from map activity
+    // replaces the listing location when the location is temporarily not fetched from the db
+    public static UserLocation cachedLocation = null;
 
     /**
      * Called when the activity is created.
@@ -78,6 +79,7 @@ public class OwnListingViewActivity extends AppCompatActivity implements DialogC
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d("matLuminati", "created");
         setContentView(R.layout.activity_own_listing_view);
 
         //#region Get References to Layout Objects
@@ -226,6 +228,7 @@ public class OwnListingViewActivity extends AppCompatActivity implements DialogC
     @Override
     protected void onResume() {
         super.onResume();
+        Log.d("matLuminati", "created");
         if (listing != null) {
             updateLayout();
         } else {
@@ -268,7 +271,12 @@ public class OwnListingViewActivity extends AppCompatActivity implements DialogC
             borrowerLabel.setText(listing.getBorrowerName());
 
             UserLocation location = listing.getGeoLocation();
-            if (location != null) {
+
+            if (cachedLocation != null){
+                geolocationLabel.setText(String.format("Meetup location: %3.3f, %3.3f", cachedLocation.getLatitude(), cachedLocation.getLongitude()));
+                cachedLocation = null;
+            }
+            else if (location != null){
                 geolocationLabel.setText(String.format("Meetup location: %3.3f, %3.3f", location.getLatitude(), location.getLongitude()));
             }
 
@@ -386,6 +394,7 @@ public class OwnListingViewActivity extends AppCompatActivity implements DialogC
         intent.putExtra("dupID", listing.getDupInd());
         intent.putExtra("editmode", editmode);
         startActivity(intent);
+        finish();
     }
 
 
@@ -395,7 +404,7 @@ public class OwnListingViewActivity extends AppCompatActivity implements DialogC
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        refreshFlag = true;
+        Log.d("mattTemp", "yes");
 
     }
 

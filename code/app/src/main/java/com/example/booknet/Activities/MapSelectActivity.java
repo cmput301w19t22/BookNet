@@ -151,11 +151,26 @@ public class MapSelectActivity extends AppCompatActivity implements OnMapReadyCa
                 if (editMode && myMarker != null) {
                     if (myMarker.isVisible()) {
                         String note = noteField.getText().toString();
-                        listing.setGeoLocation(new UserLocation(myMarker.getPosition(), note));
+
+                        UserLocation temp = new UserLocation(myMarker.getPosition(), note);
+                        listing.setGeoLocation(temp);
+                        OwnListingViewActivity.cachedLocation = temp;
                         manager.overwriteUserBookListing(listing);
                         selectButton.setEnabled(false);
                         Toast.makeText(getApplicationContext(), "Location Set", Toast.LENGTH_LONG).show();
+                        Intent intent = new Intent(MapSelectActivity.this, OwnListingViewActivity.class);
+
+                        intent.putExtra("isbn", listing.getBook().getIsbn());
+                        intent.putExtra("dupID", listing.getDupInd());
+
+
+                        MapSelectActivity.this.startActivity(intent);
                         finish();
+
+
+
+
+
                     }
                 }
             }
@@ -194,6 +209,17 @@ public class MapSelectActivity extends AppCompatActivity implements OnMapReadyCa
 
     }
 
+    @Override
+    public void onBackPressed(){
+        Intent intent = new Intent(MapSelectActivity.this, OwnListingViewActivity.class);
+
+        intent.putExtra("isbn", listing.getBook().getIsbn());
+        intent.putExtra("dupID", listing.getDupInd());
+
+        MapSelectActivity.this.startActivity(intent);
+        finish();
+    }
+
     private class GeocoderHandler extends Handler {
         @Override
         public void handleMessage(Message message) {
@@ -221,9 +247,8 @@ public class MapSelectActivity extends AppCompatActivity implements OnMapReadyCa
      */
     private void requestPermissions() {
         ActivityCompat.requestPermissions(this
-                , new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
-        ActivityCompat.requestPermissions(this
-                , new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+                , new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+
     }
 
     /**
@@ -232,6 +257,7 @@ public class MapSelectActivity extends AppCompatActivity implements OnMapReadyCa
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
         mapView.getMapAsync(this);
     }
 

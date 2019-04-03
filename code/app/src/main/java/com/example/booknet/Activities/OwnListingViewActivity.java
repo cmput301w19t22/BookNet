@@ -64,6 +64,8 @@ public class OwnListingViewActivity extends AppCompatActivity implements DialogC
     private String intenntIsbn;
     private int intentDupId;
 
+    static boolean refreshFlag = false;
+
 
     /**
      * Called when the activity is created.
@@ -395,6 +397,8 @@ public class OwnListingViewActivity extends AppCompatActivity implements DialogC
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        refreshFlag = true;
+
     }
 
     @Override
@@ -416,6 +420,8 @@ public class OwnListingViewActivity extends AppCompatActivity implements DialogC
             photoEditDialog.selectImageFromFile();
         }
     }
+
+
 
 
 }

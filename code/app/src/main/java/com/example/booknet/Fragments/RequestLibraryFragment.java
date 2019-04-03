@@ -194,6 +194,12 @@ public class RequestLibraryFragment extends Fragment {
     }
 
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        new ThumbnailFetchingTask(getActivity()).execute();
+    }
+
     public class ThumbnailFetchingTask extends AsyncTask<Void, Void, Boolean> {
         Activity context;
 
@@ -205,31 +211,32 @@ public class RequestLibraryFragment extends Fragment {
         protected Boolean doInBackground(Void... params) {
             writeLock.lock();
             for (final BookListing bl : filteredLibrary) {
-                if (bl.getPhotoBitmap() == null) {
 
-                    Log.d("mattX", bl.toString() + " photo is null");
 
-                    Bitmap thumbnailBitmap = manager.getCachedThumbnail(bl);
+                Log.d("mattX", bl.toString() + " photo is null");
 
-                    if (thumbnailBitmap == null) {
-                        Log.d("mattX", bl.toString() + " photo is not cached");
-                        manager.fetchListingThumbnail(bl,
-                                listingAdapter
+                Bitmap thumbnailBitmap = manager.getCachedThumbnail(bl);
 
-                        );
+                if (thumbnailBitmap == null) {
+                    Log.d("mattX", bl.toString() + " photo is not cached");
+                    manager.fetchListingThumbnail(bl,
+                            listingAdapter
 
-                    } else {
-                        Log.d("mattX", bl.toString() + " photo is cached in ownbooks");
-                        bl.setPhoto(new Photo(thumbnailBitmap));
-                        libraryListView.post(new Runnable()
-                        {
-                            @Override
-                            public void run() {
-                                listingAdapter.notifyDataSetChanged();
-                            }
-                        });
-                    }
+                    );
+
+                } else {
+                    Log.d("mattX", bl.toString() + " photo is cached in ownbooks");
+                    bl.setPhoto(new Photo(thumbnailBitmap));
+                    libraryListView.post(new Runnable()
+                    {
+                        @Override
+                        public void run() {
+                            listingAdapter.notifyDataSetChanged();
+
+                        }
+                    });
                 }
+
 
             }
             writeLock.unlock();

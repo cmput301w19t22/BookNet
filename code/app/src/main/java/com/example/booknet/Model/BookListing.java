@@ -353,6 +353,9 @@ public class BookListing implements Serializable, Cloneable {
     }
 
     public boolean isRequestedBy(String username) {
+        if(borrowerName.equals(username)) {
+            return true;
+        }
         for (String user : requests) {
             if (user.equals(username)) {
                 return true;

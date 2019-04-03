@@ -214,7 +214,7 @@ public class ListingViewActivity extends AppCompatActivity implements DialogClos
     @Override
     public void onDialogClose() {
 
-        listing = manager.readUserOwnedBookListing(intentIsbn, intentDupId);
+        // listing = manager.readUserOwnedBookListing(intentIsbn, intentDupId);
         updateLayout(listing);
     }
 
@@ -243,7 +243,8 @@ public class ListingViewActivity extends AppCompatActivity implements DialogClos
         verifyButton.setVisibility(View.GONE);
         if (CurrentUser.getInstance().isMe(listing.getBorrowerName())) {
             //Decide if showing geolocation
-            if (listing.getStatus() == BookListingStatus.Accepted) {
+            if (listing.getStatus() == BookListingStatus.Accepted
+                    || listing.getStatus() == BookListingStatus.Borrowed) {
                 //Show geolocation stuff
                 geoLocationBlock.setVisibility(View.VISIBLE);
             }
@@ -256,6 +257,7 @@ public class ListingViewActivity extends AppCompatActivity implements DialogClos
 
         //Manage Request Button
         if (listing.isRequestedBy(CurrentUser.getInstance().getUsername())) {//was manager.ifListingRequestedByCurrentUser(listing)
+            requestButton.setVisibility(View.VISIBLE);
             if (listing.getStatus() == BookListingStatus.Borrowed) {
                 requestButton.setEnabled(true);
                 requestButton.setText("Return");
@@ -271,6 +273,7 @@ public class ListingViewActivity extends AppCompatActivity implements DialogClos
                 requestButton.setVisibility(View.GONE);
             } else {
                 requestButton.setEnabled(true);
+                requestButton.setVisibility(View.VISIBLE);
             }
             requestButton.setText("Request");
 

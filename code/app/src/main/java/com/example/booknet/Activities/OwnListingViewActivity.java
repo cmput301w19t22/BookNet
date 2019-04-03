@@ -240,7 +240,7 @@ public class OwnListingViewActivity extends AppCompatActivity implements DialogC
     @Override
     public void onDialogClose() {
 
-        listing = manager.readUserOwnedBookListing(intenntIsbn, intentDupId);
+        // listing = manager.readUserOwnedBookListing(intenntIsbn, intentDupId);
         updateLayout();
     }
 

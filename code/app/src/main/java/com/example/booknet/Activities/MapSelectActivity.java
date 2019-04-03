@@ -221,9 +221,8 @@ public class MapSelectActivity extends AppCompatActivity implements OnMapReadyCa
      */
     private void requestPermissions() {
         ActivityCompat.requestPermissions(this
-                , new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
-        ActivityCompat.requestPermissions(this
-                , new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+                , new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+
     }
 
     /**
@@ -232,6 +231,7 @@ public class MapSelectActivity extends AppCompatActivity implements OnMapReadyCa
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
         mapView.getMapAsync(this);
     }
 

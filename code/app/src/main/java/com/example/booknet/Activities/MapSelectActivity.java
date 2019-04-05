@@ -201,7 +201,7 @@ public class MapSelectActivity extends AppCompatActivity implements OnMapReadyCa
 
     }
 
-    @Override
+    /*@Override
     public void onBackPressed() {
         Intent intent = new Intent(MapSelectActivity.this, OwnListingViewActivity.class);
 
@@ -210,7 +210,7 @@ public class MapSelectActivity extends AppCompatActivity implements OnMapReadyCa
 
         MapSelectActivity.this.startActivity(intent);
         finish();
-    }
+    }*/
 
     private class GeocoderHandler extends Handler {
         @Override

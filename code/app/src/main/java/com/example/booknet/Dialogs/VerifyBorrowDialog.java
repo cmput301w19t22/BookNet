@@ -1,6 +1,8 @@
 package com.example.booknet.Dialogs;
 
+import android.app.Activity;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
@@ -118,6 +120,7 @@ public class VerifyBorrowDialog extends ISBNScannerDialog {
                 verifyTransaction();
             } else {
                 Log.d("isbn", "scanned isbn not match");
+                infoText.setText("ISBN did not match, please try again with a correct barcode.");
             }
         } else {
             Toast.makeText(getContext(), "Wasn't a valid ISBN", Toast.LENGTH_LONG);
@@ -131,20 +134,35 @@ public class VerifyBorrowDialog extends ISBNScannerDialog {
     private void verifyTransaction() {
         if (isMyBook) {
             listing.setVerifiedByOwner(true);
+            BookListingStatus status = listing.getStatus();
             boolean complete = manager.verifyRequest(listing, isMyBook);
             if (complete) {
                 titleText.setText("Transaction Complete");
-                infoText.setText("You may now hand over the book.");
+                if (status == BookListingStatus.Accepted) {
+                    infoText.setText("You may now hand over the book.");
+                } else {
+                    infoText.setText("You may receive your book.");
+                }
             } else {
                 titleText.setText("Verified");
                 infoText.setText("Please have the borrower scan this book to complete.");
             }
         } else {
             listing.setVerifiedByBorrower(true);
+            BookListingStatus status = listing.getStatus();
             boolean complete = manager.verifyRequest(listing, isMyBook);
             if (complete) {
                 titleText.setText("Transaction Complete");
-                infoText.setText("Enjoy your book.");
+                if (status == BookListingStatus.Accepted) {
+                    infoText.setText("Enjoy your book.");
+                } else {
+                    infoText.setText("You may return the book to the owner.");
+                    try {
+                        manager.cancelRequestForListing(listing);
+                    } catch (DatabaseManager.DatabaseException e) {
+                        Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
             } else {
                 titleText.setText("Verified");
                 infoText.setText("Please have the owner scan this book to complete.");
@@ -158,4 +176,17 @@ public class VerifyBorrowDialog extends ISBNScannerDialog {
         titleText.startAnimation(anim);
     }
 
+    /**
+     * Called when the dialog is dismissed. Tells the source activity the dialog dismissed
+     * if it has the DialogCloseListener interface.
+     */
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        super.onDismiss(dialog);
+        //Tell the source activity the dialog closed so it can update
+        Activity activity = getActivity();
+        if (activity instanceof DialogCloseListener) {
+            ((DialogCloseListener) activity).onDialogClose();
+        }
+    }
 }

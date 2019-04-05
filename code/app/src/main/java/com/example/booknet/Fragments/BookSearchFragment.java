@@ -116,7 +116,8 @@ public class BookSearchFragment extends Fragment {
                     for (DataSnapshot data : dataSnapshot.getChildren()) {
                         BookListing bookListing = data.getValue(BookListing.class);
                         if (bookListing != null) {
-                            if (bookListing.containKeyword(searchBar.getQuery().toString()) && ! manager.belongsToUser(bookListing, currentUID)) {
+                            if (bookListing.containKeyword(searchBar.getQuery().toString())
+                                    && ! manager.belongsToUser(bookListing, currentUID)) {
                                 filteredLibrary.addBookListing(bookListing.clone());
                             }
                         }
@@ -147,7 +148,7 @@ public class BookSearchFragment extends Fragment {
 
 //        player.prepareAsync();
 
-        allBookListings = manager.readAllBookListings();
+        //allBookListings = manager.readAllBookListings();
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         searchResults.setLayoutManager(layoutManager);

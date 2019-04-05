@@ -7,17 +7,17 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.booknet.Model.CurrentUser;
 import com.example.booknet.DatabaseManager;
+import com.example.booknet.Model.CurrentUser;
 import com.example.booknet.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -32,7 +32,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class AccountCreateActivity extends AppCompatActivity {
@@ -44,6 +43,7 @@ public class AccountCreateActivity extends AppCompatActivity {
     private EditText phoneField;
     private EditText passwordField;
     private Button createButton;
+    private ImageButton backButton;
 
     private boolean usernameWritten;
     private boolean phoneWritten;
@@ -111,7 +111,6 @@ public class AccountCreateActivity extends AppCompatActivity {
         usernameRef.addValueEventListener(usernameListener);
 
 
-
         accountCreatingProgress = 0;
 
         usernameWritten = false;
@@ -132,7 +131,14 @@ public class AccountCreateActivity extends AppCompatActivity {
         phoneField = findViewById(R.id.phoneField);
         passwordField = findViewById(R.id.etPassword);
         createButton = findViewById(R.id.createAccountButton);
+        backButton = findViewById(R.id.backButton);
 
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -165,16 +171,12 @@ public class AccountCreateActivity extends AppCompatActivity {
         username = usernameField.getText().toString();
 
 
-
-        if (isUsernameTaken(username)){
+        if (isUsernameTaken(username)) {
             progressDialog.dismiss();
             usernameField.setError("Username taken!");
             updateStatus("Username " + username + " is taken");
             return;
         }
-
-
-
 
 
         mAuth.createUserWithEmailAndPassword(email, password)
@@ -188,8 +190,6 @@ public class AccountCreateActivity extends AppCompatActivity {
                                             .show();
 
                                     signIn(email, password);
-
-
 
 
                                 } else {
@@ -241,7 +241,7 @@ public class AccountCreateActivity extends AppCompatActivity {
     }
 
 
-    private void signIn(String email, String password){
+    private void signIn(String email, String password) {
 
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this,
@@ -266,9 +266,7 @@ public class AccountCreateActivity extends AppCompatActivity {
                         });
 
 
-
     }
-
 
 
     private boolean checkFormFields() {
@@ -306,13 +304,13 @@ public class AccountCreateActivity extends AppCompatActivity {
     }
 
     // synchronized ensures accountCreatingProgress to be incremented by one thread everytime to avoid missing counting
-    public synchronized void notifyTaskFinished(String finishingMessage){
+    public synchronized void notifyTaskFinished(String finishingMessage) {
         accountCreatingProgress += 1;
 
         // todo: have some progress bar effect?
         progressDialog.setMessage(finishingMessage);
 
-        if (accountCreatingProgress == 6){
+        if (accountCreatingProgress == 6) {
 
             startActivity(new Intent(getApplicationContext(), MainActivity.class));
             finish();

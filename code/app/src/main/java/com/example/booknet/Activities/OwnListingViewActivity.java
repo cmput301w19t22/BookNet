@@ -239,6 +239,8 @@ public class OwnListingViewActivity extends AppCompatActivity implements DialogC
 
     @Override
     public void onDialogClose() {
+
+        // listing = manager.readUserOwnedBookListing(intenntIsbn, intentDupId);
         updateLayout();
     }
 
@@ -272,11 +274,10 @@ public class OwnListingViewActivity extends AppCompatActivity implements DialogC
 
             UserLocation location = listing.getGeoLocation();
 
-            if (cachedLocation != null){
+            if (cachedLocation != null) {
                 geolocationLabel.setText(String.format("Meetup location: %3.3f, %3.3f", cachedLocation.getLatitude(), cachedLocation.getLongitude()));
                 cachedLocation = null;
-            }
-            else if (location != null){
+            } else if (location != null) {
                 geolocationLabel.setText(String.format("Meetup location: %3.3f, %3.3f", location.getLatitude(), location.getLongitude()));
             }
 
@@ -394,7 +395,8 @@ public class OwnListingViewActivity extends AppCompatActivity implements DialogC
         intent.putExtra("dupID", listing.getDupInd());
         intent.putExtra("editmode", editmode);
         startActivity(intent);
-        finish();
+        //finish();
+        recreate();
     }
 
 
@@ -427,8 +429,6 @@ public class OwnListingViewActivity extends AppCompatActivity implements DialogC
             photoEditDialog.selectImageFromFile();
         }
     }
-
-
 
 
 }

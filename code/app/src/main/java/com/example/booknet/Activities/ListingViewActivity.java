@@ -8,10 +8,6 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnticipateOvershootInterpolator;
-import android.view.animation.RotateAnimation;
-import android.view.animation.ScaleAnimation;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -19,11 +15,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.booknet.Constants.BookListingStatus;
+import com.example.booknet.Constants.NotificationType;
 import com.example.booknet.DatabaseManager;
+import com.example.booknet.Dialogs.DialogCloseListener;
 import com.example.booknet.Dialogs.OthersProfileViewCard;
 import com.example.booknet.Dialogs.VerifyBorrowDialog;
 import com.example.booknet.Model.BookListing;
 import com.example.booknet.Model.CurrentUser;
+import com.example.booknet.Model.InAppNotification;
 import com.example.booknet.R;
 
 
@@ -34,7 +33,7 @@ import com.example.booknet.R;
  * @author Jamie
  * @version 1.0
  */
-public class ListingViewActivity extends AppCompatActivity {
+public class ListingViewActivity extends AppCompatActivity implements DialogCloseListener {
 
     //Layout Objects
     private ImageView bookThumbnail;
@@ -58,6 +57,8 @@ public class ListingViewActivity extends AppCompatActivity {
     private BookListing listing;
 
     private boolean alreadyRequested;
+    private String intentIsbn;
+    private int intentDupId;
 
     private String CHANNEL_ID = "BOOKNET_NOTIFICATION";
 
@@ -100,9 +101,9 @@ public class ListingViewActivity extends AppCompatActivity {
         //Check if given info to fetch listing
         if (intent.hasExtra("ownerUsername") && intent.hasExtra("isbn")) {
             String username = intent.getStringExtra("ownerUsername");
-            String isbn = intent.getStringExtra("isbn");
-            int dupID = intent.getIntExtra("dupID", 0);
-            listing = manager.readBookListingOfUsername(username, isbn, dupID);
+            intentIsbn = intent.getStringExtra("isbn");
+            intentDupId = intent.getIntExtra("dupID", 0);
+            listing = manager.readBookListingOfUsername(username, intentIsbn, intentDupId);
         }
 
         //if (listing.getOwnerUsername().equals(CurrentUser.getInstance().getUsername())) {
@@ -144,7 +145,7 @@ public class ListingViewActivity extends AppCompatActivity {
                 }
 
 //                Log.d("mattTag", "finishing");
-                finish();
+                //finish();
             }
         });
 
@@ -199,6 +200,24 @@ public class ListingViewActivity extends AppCompatActivity {
         findViewById(R.id.listingView).startAnimation(anim1);*/
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (listing != null) {
+            updateLayout(listing);
+        } else {
+            Log.d("jamie", "Listing was null, attempt to read from db again");
+            listing = manager.readUserOwnedBookListing(intentIsbn, intentDupId);
+        }
+    }
+
+    @Override
+    public void onDialogClose() {
+
+        // listing = manager.readUserOwnedBookListing(intentIsbn, intentDupId);
+        updateLayout(listing);
+    }
+
     /**
      * Updates the contents of the layout objects. Called when creating the activity
      * and should be called whenever the listing data changes.
@@ -224,7 +243,8 @@ public class ListingViewActivity extends AppCompatActivity {
         verifyButton.setVisibility(View.GONE);
         if (CurrentUser.getInstance().isMe(listing.getBorrowerName())) {
             //Decide if showing geolocation
-            if (listing.getStatus() == BookListingStatus.Accepted) {
+            if (listing.getStatus() == BookListingStatus.Accepted
+                    || listing.getStatus() == BookListingStatus.Borrowed) {
                 //Show geolocation stuff
                 geoLocationBlock.setVisibility(View.VISIBLE);
             }
@@ -236,7 +256,8 @@ public class ListingViewActivity extends AppCompatActivity {
         }
 
         //Manage Request Button
-        if (manager.ifListingRequestedByCurrentUser(listing)) {
+        if (listing.isRequestedBy(CurrentUser.getInstance().getUsername())) {//was manager.ifListingRequestedByCurrentUser(listing)
+            requestButton.setVisibility(View.VISIBLE);
             if (listing.getStatus() == BookListingStatus.Borrowed) {
                 requestButton.setEnabled(true);
                 requestButton.setText("Return");
@@ -246,14 +267,25 @@ public class ListingViewActivity extends AppCompatActivity {
             }
         } else {
             if (listing.getStatus() == BookListingStatus.Accepted
-                    || listing.getStatus() == BookListingStatus.Borrowed || manager.belongsToUser(listing, CurrentUser.getInstance().getUID())) {
+                    || listing.getStatus() == BookListingStatus.Borrowed
+                    || listing.isOwnedBy(CurrentUser.getInstance().getUsername())) {//was manager.belongsToUser(listing, CurrentUser.getInstance().getUID())
                 requestButton.setEnabled(false);
                 requestButton.setVisibility(View.GONE);
             } else {
                 requestButton.setEnabled(true);
+                requestButton.setVisibility(View.VISIBLE);
             }
             requestButton.setText("Request");
 
+        }
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        Log.d("jamie", "restore");
+        if (listing != null) {
+            updateLayout(listing);
         }
     }
 
@@ -262,6 +294,9 @@ public class ListingViewActivity extends AppCompatActivity {
      */
     private void sendAddRequest() throws DatabaseManager.DatabaseException {
         manager.requestBookListing(listing);
+        listing.addRequest(CurrentUser.getInstance().getUsername());
+        updateLayout(listing);
+        //recreate();
     }
 
     /**
@@ -269,13 +304,17 @@ public class ListingViewActivity extends AppCompatActivity {
      */
     private void sendRemoveRequest() throws DatabaseManager.DatabaseException {
         manager.cancelRequestForListing(listing);
+        listing.cancelRequest(CurrentUser.getInstance().getUsername());
+        updateLayout(listing);
+        //recreate();
     }
 
     /**
      * Requests to return the book for this book listing.
      */
     private void sendReturnRequest() throws DatabaseManager.DatabaseException {
-        //todo initiate book return
+        manager.writeNotification(new InAppNotification(listing, listing.getOwnerUsername(),
+                listing.getBorrowerName(), NotificationType.wantsReturn));
     }
 
     /**

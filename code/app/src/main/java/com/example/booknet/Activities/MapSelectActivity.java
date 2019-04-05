@@ -158,19 +158,11 @@ public class MapSelectActivity extends AppCompatActivity implements OnMapReadyCa
                         manager.overwriteUserBookListing(listing);
                         selectButton.setEnabled(false);
                         Toast.makeText(getApplicationContext(), "Location Set", Toast.LENGTH_LONG).show();
-                        Intent intent = new Intent(MapSelectActivity.this, OwnListingViewActivity.class);
-
+                        /*Intent intent = new Intent(MapSelectActivity.this, OwnListingViewActivity.class);
                         intent.putExtra("isbn", listing.getBook().getIsbn());
                         intent.putExtra("dupID", listing.getDupInd());
-
-
-                        MapSelectActivity.this.startActivity(intent);
+                        MapSelectActivity.this.startActivity(intent);*/
                         finish();
-
-
-
-
-
                     }
                 }
             }
@@ -209,8 +201,8 @@ public class MapSelectActivity extends AppCompatActivity implements OnMapReadyCa
 
     }
 
-    @Override
-    public void onBackPressed(){
+    /*@Override
+    public void onBackPressed() {
         Intent intent = new Intent(MapSelectActivity.this, OwnListingViewActivity.class);
 
         intent.putExtra("isbn", listing.getBook().getIsbn());
@@ -218,7 +210,7 @@ public class MapSelectActivity extends AppCompatActivity implements OnMapReadyCa
 
         MapSelectActivity.this.startActivity(intent);
         finish();
-    }
+    }*/
 
     private class GeocoderHandler extends Handler {
         @Override

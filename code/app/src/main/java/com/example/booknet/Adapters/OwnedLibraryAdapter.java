@@ -141,10 +141,21 @@ public class OwnedLibraryAdapter extends RecyclerView.Adapter<OwnedLibraryAdapte
     }
 
     @Override
+    public void onViewDetachedFromWindow(@NonNull OwnedListingViewHolder holder) {
+        super.onViewDetachedFromWindow(holder);
+        Log.d("jamie", "view detach window " + holder.toString());
+        holder.itemView.clearAnimation();
+        if (viewHolders.contains(holder.itemView)) {
+            viewHolders.remove(holder.itemView);
+        }
+    }
+
+    @Override
     public void onViewAttachedToWindow(@NonNull OwnedListingViewHolder holder) {
         super.onViewAttachedToWindow(holder);
         holder.allowAnimation = true;
-        holder.itemView.clearAnimation();
+        viewHolders.add(holder);
+        //holder.itemView.clearAnimation();
     }
 
     /**
